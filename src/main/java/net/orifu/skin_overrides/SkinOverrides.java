@@ -1,6 +1,8 @@
 package net.orifu.skin_overrides;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Optional;
 
@@ -11,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.client.texture.PlayerSkin;
+import net.orifu.skin_overrides.texture.LocalHttpTexture;
+import net.orifu.skin_overrides.texture.LocalSkinTexture;
 
 public class SkinOverrides {
 	public static final Logger LOGGER = LoggerFactory.getLogger("skin overrides");
@@ -18,21 +22,31 @@ public class SkinOverrides {
 	public static final String SKIN_OVERRIDES = "skin_overrides";
 	public static final String CAPE_OVERRIDES = "cape_overrides";
 
-	public static Optional<OverriddenSkinTexture> skinTextureFor(GameProfile profile) {
+	public static Optional<LocalSkinTexture> skinTextureFor(GameProfile profile) {
 		return getTextureFor(SKIN_OVERRIDES, profile)
-				.map(file -> new OverriddenSkinTexture(file, PlayerSkin.Model.WIDE))
-				.or(() -> getTextureFor(SKIN_OVERRIDES, profile, "wide")
-						.map(file -> new OverriddenSkinTexture(file, PlayerSkin.Model.WIDE)))
+				.or(() -> getTextureFor(SKIN_OVERRIDES, profile, "wide"))
+				.map(file -> new LocalSkinTexture(file, PlayerSkin.Model.WIDE))
 				.or(() -> getTextureFor(SKIN_OVERRIDES, profile, "slim")
-						.map(file -> new OverriddenSkinTexture(file, PlayerSkin.Model.SLIM)));
+						.map(file -> new LocalSkinTexture(file, PlayerSkin.Model.SLIM)));
 	}
 
-	public static Optional<OverriddenHttpTexture> capeTextureFor(GameProfile profile) {
-		return getTextureFor(CAPE_OVERRIDES, profile).map(file -> new OverriddenHttpTexture(file));
+	public static Optional<String> userIdFor(GameProfile profile) {
+		return getTextureFor(SKIN_OVERRIDES, profile, null, "txt").flatMap(file -> {
+			try {
+				return Optional.of(Files.readString(file.toPath()).trim());
+			} catch (IOException e) {
+				return Optional.empty();
+			}
+		}).flatMap(content -> content.length() == 0 ? Optional.empty() : Optional.of(content));
 	}
 
-	public static Optional<File> getTextureFor(String path, GameProfile profile, @Nullable String suffix) {
-		String suff = (suffix == null ? "" : "." + suffix) + ".png";
+	public static Optional<LocalHttpTexture> capeTextureFor(GameProfile profile) {
+		return getTextureFor(CAPE_OVERRIDES, profile).map(file -> new LocalHttpTexture(file));
+	}
+
+	public static Optional<File> getTextureFor(String path, GameProfile profile, @Nullable String suffix,
+			@Nullable String ext) {
+		String suff = (suffix == null ? "" : "." + suffix) + "." + (ext == null ? "png" : ext);
 
 		// username
 		File file = Paths.get(path, profile.getName() + suff).toFile();
@@ -51,6 +65,10 @@ public class SkinOverrides {
 			return Optional.of(file);
 
 		return Optional.empty();
+	}
+
+	public static Optional<File> getTextureFor(String path, GameProfile profile, @Nullable String suffix) {
+		return getTextureFor(path, profile, null, null);
 	}
 
 	public static Optional<File> getTextureFor(String path, GameProfile profile) {
