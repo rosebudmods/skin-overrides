@@ -9,6 +9,9 @@ quilt_loader = "0.26.0"
 # quilted_fabric_api = "9.0.0-alpha.8+0.97.0-1.20.4"
 fabric_api = "0.97.0+1.20.4"
 
+ears = "1.4.6+fabric-1.20.2"
+modmenu = "9.2.0-beta.2"
+
 [libraries]
 minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
 quilt_mappings = { module = "org.quiltmc:quilt-mappings", version.ref = "quilt_mappings" }
@@ -18,6 +21,9 @@ quilt_loader = { module = "org.quiltmc:quilt-loader", version.ref = "quilt_loade
 # quilted_fabric_api_deprecated = { module = "org.quiltmc.quilted-fabric-api:quilted-fabric-api-deprecated", version.ref = "quilted_fabric_api" }
 
 fabric_api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric_api" }
+
+ears = { module = "maven.modrinth:ears", version.ref = "ears" }
+modmenu = { module = "maven.modrinth:modmenu", version.ref = "modmenu" }
 
 # If you have multiple similar dependencies, you can declare a dependency bundle and reference it on the build script with "libs.bundles.example".
 [bundles]
