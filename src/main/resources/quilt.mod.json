@@ -1,0 +1,39 @@
+{
+	"schema_version": 1,
+	"quilt_loader": {
+		"group": "${group}",
+		"id": "skin_overrides",
+		"version": "${version}",
+		"metadata": {
+			"name": "skin overrides",
+			"description": "local overrides for player skins.",
+			"contributors": {
+				"orifu": "owner"
+			},
+			"contact": {
+				"homepage": "https://lumity.dev/orifu/skin-overrides",
+				"sources": "https://lumity.dev/orifu/skin-overrides"
+			},
+			"icon": "assets/example_mod/icon.png"
+		},
+		"intermediate_mappings": "net.fabricmc:intermediary",
+		"entrypoints": {
+			"init": "net.orifu.skin_overrides.SkinOverrides"
+		},
+		"depends": [
+			{
+				"id": "quilt_loader",
+				"versions": ">=0.19.1"
+			},
+			{
+				"id": "fabric-api",
+				"versions": ">=0.97.0"
+			},
+			{
+				"id": "minecraft",
+				"versions": "=1.20.4"
+			}
+		]
+	},
+	"mixin": "skin_overrides.mixins.json"
+}
