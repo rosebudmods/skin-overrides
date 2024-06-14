@@ -26,19 +26,31 @@ public class PlayerListEntryMixin {
         return null;
     }
 
-    @Inject(method = "getSkin", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "getSkin", at = @At("RETURN"), cancellable = true)
     private void getSkin(CallbackInfoReturnable<PlayerSkin> cir) {
+        PlayerSkin skin = cir.getReturnValue();
+        MinecraftClient client = MinecraftClient.getInstance();
+
         var skinFile = SkinOverrides.skinTextureFor(this.profile);
         if (skinFile.isPresent()) {
-            MinecraftClient client = MinecraftClient.getInstance();
-
             // register skin texture
-            Identifier skinId = new Identifier("skin_overrides", this.profile.getId().toString());
+            Identifier skinId = new Identifier("skin_overrides", "skin/" + this.profile.getId().toString());
             client.getTextureManager().registerTexture(skinId, skinFile.get());
-
-            // create player skin
-            PlayerSkin playerSkin = new PlayerSkin(skinId, null, null, null, PlayerSkin.Model.SLIM, false);
-            cir.setReturnValue(playerSkin);
+            // update skin
+            skin = new PlayerSkin(skinId, null, skin.capeTexture(), skin.elytraTexture(), PlayerSkin.Model.SLIM, false);
         }
+
+        var capeFile = SkinOverrides.capeTextureFor(this.profile);
+        if (capeFile.isPresent()) {
+            // register cape texture
+            Identifier capeId = new Identifier("skin_overrides", "cape/" + this.profile.getId().toString());
+            client.getTextureManager().registerTexture(capeId, capeFile.get());
+            // update skin
+            // note: the elytra texture is a separate part of the record,
+            // but updating the cape still updates the elytra.
+            skin = new PlayerSkin(skin.texture(), skin.textureUrl(), capeId, skin.elytraTexture(), skin.model(), false);
+        }
+
+        cir.setReturnValue(skin);
     }
 }

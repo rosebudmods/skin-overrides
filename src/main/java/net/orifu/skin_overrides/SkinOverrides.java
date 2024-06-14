@@ -12,9 +12,12 @@ import com.mojang.authlib.GameProfile;
 public class SkinOverrides {
 	public static final Logger LOGGER = LoggerFactory.getLogger("skin overrides");
 
-	public static Optional<OverridenPlayerSkinTexture> skinTextureFor(GameProfile profile) {
-		var skinFile = getTextureFor("skin_overrides", profile);
-		return skinFile.map(sf -> new OverridenPlayerSkinTexture(sf));
+	public static Optional<OverridenHttpTexture> skinTextureFor(GameProfile profile) {
+		return getTextureFor("skin_overrides", profile).map(file -> new OverridenSkinTexture(file));
+	}
+
+	public static Optional<OverridenHttpTexture> capeTextureFor(GameProfile profile) {
+		return getTextureFor("cape_overrides", profile).map(file -> new OverridenHttpTexture(file));
 	}
 
 	public static Optional<File> getTextureFor(String path, GameProfile profile) {
