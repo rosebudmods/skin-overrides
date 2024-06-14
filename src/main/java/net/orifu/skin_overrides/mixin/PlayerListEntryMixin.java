@@ -34,10 +34,11 @@ public class PlayerListEntryMixin {
         var skinFile = SkinOverrides.skinTextureFor(this.profile);
         if (skinFile.isPresent()) {
             // register skin texture
+            var texture = skinFile.get();
             Identifier skinId = new Identifier("skin_overrides", "skin/" + this.profile.getId().toString());
-            client.getTextureManager().registerTexture(skinId, skinFile.get());
+            client.getTextureManager().registerTexture(skinId, texture);
             // update skin
-            skin = new PlayerSkin(skinId, null, skin.capeTexture(), skin.elytraTexture(), PlayerSkin.Model.SLIM, false);
+            skin = new PlayerSkin(skinId, null, skin.capeTexture(), skin.elytraTexture(), texture.model, false);
         }
 
         var capeFile = SkinOverrides.capeTextureFor(this.profile);

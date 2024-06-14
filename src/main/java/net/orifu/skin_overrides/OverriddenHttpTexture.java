@@ -11,16 +11,16 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.PlayerSkinTexture;
 import net.minecraft.resource.ResourceManager;
 
-public class OverridenHttpTexture extends PlayerSkinTexture {
+public class OverriddenHttpTexture extends PlayerSkinTexture {
     private final File textureFile;
 
-    public OverridenHttpTexture(File textureFile, boolean isSkin, Runnable loadedCallback) {
+    public OverriddenHttpTexture(File textureFile, boolean isSkin, Runnable loadedCallback) {
         super(null, null, null, isSkin, loadedCallback);
 
         this.textureFile = textureFile;
     }
 
-    public OverridenHttpTexture(File textureFile) {
+    public OverriddenHttpTexture(File textureFile) {
         this(textureFile, false, () -> {
         });
     }
