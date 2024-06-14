@@ -1,5 +1,7 @@
 package net.orifu.skin_overrides.mixin;
 
+import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import org.jetbrains.annotations.Nullable;
@@ -10,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.mojang.authlib.GameProfile;
+import com.mojang.util.UndashedUuid;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.PlayerListEntry;
@@ -21,11 +24,6 @@ import net.orifu.skin_overrides.SkinOverrides;
 public class PlayerListEntryMixin {
     @Shadow
     private GameProfile profile;
-
-    @Shadow
-    private static Supplier<PlayerSkin> getSkinSupplier(GameProfile gameProfile) {
-        return null;
-    }
 
     @Nullable
     String orifu$remoteName = null;
@@ -47,20 +45,37 @@ public class PlayerListEntryMixin {
             skin = new PlayerSkin(skinId, null, skin.capeTexture(), skin.elytraTexture(), texture.model, false);
         }
 
-        var userOverride = SkinOverrides.userIdFor(this.profile);
+        var userOverride = SkinOverrides.playerIdFor(this.profile);
         if (userOverride.isPresent()) {
             String name = userOverride.get();
 
             // new name, fetch the new profile
             if (!name.equals(this.orifu$remoteName)) {
                 // get the uuid
-                var profile = client.getServer().getUserCache().findByName(name);
-                if (profile.isPresent()) {
-                    // get the full profile
-                    var profileResult = client.getSessionService().fetchProfile(profile.get().getId(), false);
+                Optional<UUID> uuid = Optional.empty();
+                if (name.matches(SkinOverrides.UUID_REGEX)) {
+                    // parse uuid
+                    try {
+                        uuid = Optional.of(name.contains("-") ? UUID.fromString(name) : UndashedUuid.fromString(name));
+                    } catch (IllegalArgumentException e) {
+                    }
+                } else {
+                    // convert player username to uuid
+                    var profile = client.getServer().getUserCache().findByName(name);
+                    if (profile.isPresent()) {
+                        uuid = Optional.of(profile.get().getId());
+                    }
+                }
 
-                    this.orifu$remoteName = name;
-                    this.orifu$remoteSkin = client.getSkinProvider().getSkinSupplier(profileResult.profile());
+                // if we have a uuid, get the full profile
+                if (uuid.isPresent()) {
+                    var profileResult = client.getSessionService().fetchProfile(uuid.get(), false);
+
+                    // if this is a valid profile, use its skin
+                    if (profileResult != null) {
+                        this.orifu$remoteName = name;
+                        this.orifu$remoteSkin = client.getSkinProvider().getSkinSupplier(profileResult.profile());
+                    }
                 }
             }
 

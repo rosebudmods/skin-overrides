@@ -22,6 +22,8 @@ public class SkinOverrides {
 	public static final String SKIN_OVERRIDES = "skin_overrides";
 	public static final String CAPE_OVERRIDES = "cape_overrides";
 
+	public static final String UUID_REGEX = "^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$";
+
 	public static Optional<LocalSkinTexture> skinTextureFor(GameProfile profile) {
 		return getTextureFor(SKIN_OVERRIDES, profile)
 				.or(() -> getTextureFor(SKIN_OVERRIDES, profile, "wide"))
@@ -30,7 +32,7 @@ public class SkinOverrides {
 						.map(file -> new LocalSkinTexture(file, PlayerSkin.Model.SLIM)));
 	}
 
-	public static Optional<String> userIdFor(GameProfile profile) {
+	public static Optional<String> playerIdFor(GameProfile profile) {
 		return getTextureFor(SKIN_OVERRIDES, profile, null, "txt").flatMap(file -> {
 			try {
 				return Optional.of(Files.readString(file.toPath()).trim());
@@ -68,7 +70,7 @@ public class SkinOverrides {
 	}
 
 	public static Optional<File> getTextureFor(String path, GameProfile profile, @Nullable String suffix) {
-		return getTextureFor(path, profile, null, null);
+		return getTextureFor(path, profile, suffix, null);
 	}
 
 	public static Optional<File> getTextureFor(String path, GameProfile profile) {
