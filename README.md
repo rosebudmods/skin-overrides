@@ -15,6 +15,8 @@ additionally, creating a txt file (eg `Steve.txt`) and putting a username or uui
 
 capes/elytra can also be overridden by placing cape textures in `.minecraft/cape_overrides`. like skins, player names or uuids can be used as the file name.
 
+all files will automatically reload! no commands or resource pack reload required. :)
+
 ## notes
 
 this mod supports 1.20.2+. for 1.16 - 1.20.1, see [selfskin](https://modrinth.com/mod/selfskin)!
