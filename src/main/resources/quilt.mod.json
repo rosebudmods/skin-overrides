@@ -35,5 +35,6 @@
 			}
 		]
 	},
-	"mixin": "skin_overrides.mixins.json"
+	"mixin": "skin_overrides.mixins.json",
+	"access_widener": "skin_overrides.accesswidener"
 }

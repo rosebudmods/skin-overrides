@@ -1,7 +1,12 @@
 package net.orifu.skin_overrides;
 
+import java.io.File;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.mojang.authlib.GameProfile;
 
 import net.fabricmc.api.ModInitializer;
 
@@ -11,6 +16,13 @@ public class SkinOverrides implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("hello, world!");
+	}
+
+	public static Optional<OverridenPlayerSkinTexture> skinTextureFor(GameProfile profile) {
+		File skinFile = new File("skin_overrides/" + profile.getName() + ".png");
+
+		return skinFile.exists()
+				? Optional.of(new OverridenPlayerSkinTexture(skinFile))
+				: Optional.empty();
 	}
 }
