@@ -94,10 +94,23 @@ public class SkinOverridesScreen extends Screen {
     class OverridesTab extends GridWidgetTab {
         public final boolean isSkin;
 
+        private final PlayerListWidget players;
+
         public OverridesTab(boolean isSkin) {
             super(isSkin ? SKIN_TITLE : CAPE_TITLE);
 
             this.isSkin = isSkin;
+
+            var helper = this.grid.createAdditionHelper(1);
+            this.players = helper.add(new PlayerListWidget());
+        }
+
+        @Override
+        public void refreshLayout(ScreenArea area) {
+            super.refreshLayout(area);
+
+            this.players.setPosition(area.x(), area.y());
+            this.players.setDimensions(area.width(), area.height());
         }
     }
 }
