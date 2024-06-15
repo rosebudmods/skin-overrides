@@ -18,7 +18,9 @@
 			"icon": "assets/skin_overrides/icon.png"
 		},
 		"intermediate_mappings": "net.fabricmc:intermediary",
-		"entrypoints": {},
+		"entrypoints": {
+			"modmenu": "net.orifu.skin_overrides.ModMenuEntrypoint"
+		},
 		"depends": [
 			{
 				"id": "quilt_loader",

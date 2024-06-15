@@ -21,6 +21,13 @@ repositories {
 		name "Modrinth"
 		url "https://api.modrinth.com/maven"
 	}
+
+	// for some reason using the terraformers maven version of
+	// modmenu breaks quilt loader.
+	// maven {
+	// 	name "Terraformers"
+	// 	url "https://maven.terraformersmc.com"
+	// }
 }
 
 loom {
@@ -58,10 +65,10 @@ dependencies {
 	// modImplementation libs.quilted.fabric.api
 	// modImplementation libs.bundles.quilted.fabric.api // If you wish to use Fabric API's deprecated modules, you can replace the above line with this one
 
-	modRuntimeOnly libs.fabric.api
+	modImplementation libs.modmenu
 
+	modRuntimeOnly libs.fabric.api
 	modRuntimeOnly libs.ears
-	modRuntimeOnly libs.modmenu
 }
 
 processResources {
