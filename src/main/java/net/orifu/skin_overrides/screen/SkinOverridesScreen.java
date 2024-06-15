@@ -23,7 +23,7 @@ public class SkinOverridesScreen extends Screen {
     private static final Text CAPE_TITLE = Text.translatable("skin_overrides.title.cape");
 
     // TODO: move this into an xplat helper?
-    private static final Identifier FOOTER_SEPARATOR_TEXTURE = Identifier.tryParse("textures/gui/footer_separator.png");
+    private static final Identifier FOOTER_SEPARATOR_TEXTURE = new Identifier("textures/gui/footer_separator.png");
 
     private final TabManager tabManager = new TabManager(this::addDrawableSelectableElement, (wg) -> this.remove(wg));
 
