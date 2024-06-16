@@ -63,7 +63,7 @@ public class SkinOverridesScreen extends Screen {
 
         // add main content
         this.layout = new HeaderFooterLayoutWidget(this);
-        this.grid = this.layout.addToContents(new GridWidget().setColumnSpacing(8));
+        this.grid = this.layout.addToContents(new GridWidget().setColumnSpacing(16));
         this.initContent();
 
         // add footer

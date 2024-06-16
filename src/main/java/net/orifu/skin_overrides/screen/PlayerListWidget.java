@@ -33,16 +33,6 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
         }
     }
 
-    @Override
-    public int getRowWidth() {
-        return this.getWidth() - PADDING * 2;
-    }
-
-    @Override
-    protected int getRowTop(int index) {
-        return super.getRowTop(index) - 4 + PADDING;
-    }
-
     public boolean hasOverrideFor(GameProfile profile) {
         for (var player : this.children()) {
             if (player.profile.equals(profile)) {
@@ -50,5 +40,30 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
             }
         }
         return false;
+    }
+
+    // pad left and right
+    @Override
+    public int getRowWidth() {
+        return this.getWidth() - PADDING * 2;
+    }
+
+    // fix scrollbar position
+    @Override
+    public int getScrollbarPositionX() {
+        return this.getXEnd();
+    }
+
+    // pad top
+    @Override
+    protected int getRowTop(int index) {
+        return super.getRowTop(index) - 4 + PADDING;
+    }
+
+    // pad bottom
+    @Override
+    public int getMaxScroll() {
+        int maxScroll = super.getMaxScroll();
+        return maxScroll > 0 ? Math.max(0, super.getMaxScroll() - 4 + PADDING * 2) : 0;
     }
 }
