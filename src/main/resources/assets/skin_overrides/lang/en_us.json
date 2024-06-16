@@ -3,6 +3,7 @@
     "skin_overrides.title.skin": "skin overrides",
     "skin_overrides.title.cape": "cape overrides",
     "skin_overrides.no_selection": "select a player to configure.",
+    "skin_overrides.add_image": "drag and drop an image to use.",
     "skin_overrides.player.you": "%s (you)",
     "skin_overrides.player.offline": "%s (offline)",
     "skin_overrides.override.none": "no override",

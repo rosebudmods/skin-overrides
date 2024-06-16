@@ -4,6 +4,7 @@ import java.util.function.Consumer;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.gui.GuiGraphics;
@@ -19,9 +20,12 @@ import net.minecraft.client.gui.widget.layout.GridWidget;
 import net.minecraft.client.gui.widget.layout.HeaderFooterLayoutWidget;
 import net.minecraft.client.gui.widget.layout.LinearLayoutWidget;
 import net.minecraft.client.gui.widget.text.TextWidget;
+import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.text.CommonTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.orifu.skin_overrides.SkinOverrides;
+import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 
 public class SkinOverridesScreen extends Screen {
     private static final Text TITLE = Text.translatable("skin_overrides.title");
@@ -43,8 +47,12 @@ public class SkinOverridesScreen extends Screen {
     private HeaderBar header;
     private GridWidget grid;
     private PlayerListWidget playerList;
+    @Nullable
+    private FrameWidget playerSkinFrame;
 
     private boolean isSkin = true;
+    @Nullable
+    private GameProfile selectedProfile;
 
     public SkinOverridesScreen(@Nullable Screen parent) {
         super(TITLE);
@@ -91,7 +99,14 @@ public class SkinOverridesScreen extends Screen {
 
         // add configuration
         GridWidget config = helper.add(new GridWidget());
-        config.add(new TextWidget(Text.translatable("skin_overrides.no_selection"), this.textRenderer), 0, 0);
+        if (this.selectedProfile == null) {
+            config.add(new TextWidget(Text.translatable("skin_overrides.no_selection"), this.textRenderer), 0, 0);
+        } else {
+            config.add(new TextWidget(Text.translatable("skin_overrides.add_image"), this.textRenderer), 0, 0);
+
+            this.playerSkinFrame = config
+                    .add(new FrameWidget(PlayerSkinRenderer.WIDTH * 2, PlayerSkinRenderer.HEIGHT * 2), 0, 1);
+        }
     }
 
     @Override
@@ -102,6 +117,11 @@ public class SkinOverridesScreen extends Screen {
         graphics.drawTexture(FOOTER_SEPARATOR_TEXTURE, 0,
                 this.height - this.layout.getFooterHeight() - 2, 0, 0, this.width, 2, 32, 2);
         RenderSystem.disableBlend();
+
+        if (this.selectedProfile != null) {
+            PlayerSkin skin = SkinOverrides.getSkin(this.selectedProfile);
+            PlayerSkinRenderer.draw(graphics, skin, this.playerSkinFrame.getX(), this.playerSkinFrame.getY(), 2);
+        }
     }
 
     @Override
@@ -132,12 +152,15 @@ public class SkinOverridesScreen extends Screen {
     public void setIsSkin(boolean isSkin) {
         if (this.isSkin != isSkin) {
             this.isSkin = isSkin;
+            this.selectedProfile = null;
             this.clearAndInit();
         }
     }
 
     public void selectPlayer(PlayerListEntry entry) {
         this.playerList.setSelected(entry);
+        this.selectedProfile = entry.profile;
+        this.clearAndInit();
     }
 
     class DummyTab implements Tab {

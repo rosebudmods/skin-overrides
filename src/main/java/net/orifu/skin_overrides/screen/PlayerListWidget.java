@@ -27,9 +27,13 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
 
         // add offline players
         for (GameProfile profile : Overrides.profilesWithSkinOverride()) {
-            if (!this.hasOverrideFor(profile)) {
-                this.addEntry(new PlayerListEntry(this.client, profile, Type.OFFLINE, this.parent));
-            }
+            this.tryAddEntry(profile, Type.OFFLINE);
+        }
+    }
+
+    public void tryAddEntry(GameProfile profile, Type type) {
+        if (!this.hasOverrideFor(profile)) {
+            this.addEntry(new PlayerListEntry(this.client, profile, type, this.parent));
         }
     }
 
