@@ -1,5 +1,7 @@
 package net.orifu.skin_overrides.screen;
 
+import java.util.function.Consumer;
+
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -7,10 +9,12 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenArea;
-import net.minecraft.client.gui.tab.GridWidgetTab;
+import net.minecraft.client.gui.tab.Tab;
 import net.minecraft.client.gui.tab.TabManager;
+import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.HeaderBar;
 import net.minecraft.client.gui.widget.button.ButtonWidget;
+import net.minecraft.client.gui.widget.layout.FrameWidget;
 import net.minecraft.client.gui.widget.layout.GridWidget;
 import net.minecraft.client.gui.widget.layout.HeaderFooterLayoutWidget;
 import net.minecraft.client.gui.widget.layout.LinearLayoutWidget;
@@ -27,15 +31,20 @@ public class SkinOverridesScreen extends Screen {
     private static final int PAD = 32;
 
     // TODO: move this into an xplat helper?
-    private static final Identifier FOOTER_SEPARATOR_TEXTURE = new Identifier("textures/gui/footer_separator.png");
+    private static final Identifier FOOTER_SEPARATOR_TEXTURE = new Identifier("minecraft",
+            "textures/gui/footer_separator.png");
 
     private final TabManager tabManager = new TabManager(this::addDrawableSelectableElement, (wg) -> this.remove(wg));
 
     @Nullable
     private Screen parent;
 
-    private final HeaderFooterLayoutWidget layout = new HeaderFooterLayoutWidget(this);
+    private HeaderFooterLayoutWidget layout;
     private HeaderBar header;
+    private GridWidget grid;
+    private PlayerListWidget playerList;
+
+    private boolean isSkin = true;
 
     public SkinOverridesScreen(@Nullable Screen parent) {
         super(TITLE);
@@ -48,9 +57,14 @@ public class SkinOverridesScreen extends Screen {
         // add tabs header
         this.header = this.addDrawableSelectableElement(
                 HeaderBar.builder(this.tabManager, this.width)
-                        .tabs(new OverridesTab(true), new OverridesTab(false))
+                        .tabs(new DummyTab(true), new DummyTab(false))
                         .build());
-        this.header.setFocusedTab(0, false);
+        this.header.setFocusedTab(this.isSkin ? 0 : 1, false);
+
+        // add main content
+        this.layout = new HeaderFooterLayoutWidget(this);
+        this.grid = this.layout.addToContents(new GridWidget().setColumnSpacing(8));
+        this.initContent();
 
         // add footer
         LinearLayoutWidget footer = this.layout.addToFooter(LinearLayoutWidget.createHorizontal().setSpacing(5));
@@ -61,6 +75,23 @@ public class SkinOverridesScreen extends Screen {
         // finish
         this.layout.visitWidgets(this::addDrawableSelectableElement);
         this.repositionElements();
+    }
+
+    protected void initContent() {
+        var helper = this.grid.createAdditionHelper(2);
+
+        if (this.playerList != null && this.playerList.isSkin == this.isSkin) {
+            // player list already exists
+        } else {
+            this.playerList = new PlayerListWidget(this, this.isSkin);
+        }
+
+        // add player list
+        helper.add(this.playerList);
+
+        // add configuration
+        GridWidget config = helper.add(new GridWidget());
+        config.add(new TextWidget(Text.translatable("skin_overrides.no_selection"), this.textRenderer), 0, 0);
     }
 
     @Override
@@ -79,11 +110,14 @@ public class SkinOverridesScreen extends Screen {
         this.header.setWidth(this.width);
         this.header.arrangeElements();
 
-        // reposition tab area
         int hh = this.header.getArea().bottom();
         int ff = this.layout.getFooterHeight();
+
+        // reposition main content area
         ScreenArea area = new ScreenArea(PAD, hh + PAD, this.width - PAD * 2, this.height - ff - hh - PAD * 2);
-        this.tabManager.setTabArea(area);
+        FrameWidget.align(this.grid, area);
+        this.playerList.setPosition(area.x(), area.y());
+        this.playerList.setDimensions(Math.min(200, area.width() / 2), area.height());
 
         // reposition layout
         this.layout.setHeaderHeight(hh);
@@ -95,37 +129,39 @@ public class SkinOverridesScreen extends Screen {
         this.client.setScreen(this.parent);
     }
 
-    class OverridesTab extends GridWidgetTab {
+    public void setIsSkin(boolean isSkin) {
+        if (this.isSkin != isSkin) {
+            this.isSkin = isSkin;
+            this.clearAndInit();
+        }
+    }
+
+    public void selectPlayer(PlayerListEntry entry) {
+        this.playerList.setSelected(entry);
+    }
+
+    class DummyTab implements Tab {
+        public final Text title;
         public final boolean isSkin;
 
-        private final PlayerListWidget players;
-        private GridWidget config;
-
-        public OverridesTab(boolean isSkin) {
-            super(isSkin ? SKIN_TITLE : CAPE_TITLE);
-
+        public DummyTab(boolean isSkin) {
+            this.title = isSkin ? SKIN_TITLE : CAPE_TITLE;
             this.isSkin = isSkin;
+        }
 
-            this.grid.setColumnSpacing(8);
-            var helper = this.grid.createAdditionHelper(2);
+        @Override
+        public Text getTitle() {
+            return this.title;
+        }
 
-            this.players = helper.add(new PlayerListWidget(this));
-            this.config = helper.add(new GridWidget());
-
-            this.config.add(new TextWidget(Text.translatable("skin_overrides.no_selection"),
-                    SkinOverridesScreen.this.textRenderer), 0, 0);
+        @Override
+        public void visitChildren(Consumer<ClickableWidget> consumer) {
+            // when selected
+            SkinOverridesScreen.this.setIsSkin(this.isSkin);
         }
 
         @Override
         public void refreshLayout(ScreenArea area) {
-            this.players.setPosition(area.x(), area.y());
-            this.players.setDimensions(Math.min(200, area.width() / 2), area.height());
-
-            super.refreshLayout(area);
-        }
-
-        public void select(PlayerListEntry entry) {
-            this.players.setSelected(entry);
         }
     }
 }

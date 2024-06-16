@@ -10,16 +10,15 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.orifu.skin_overrides.Overrides;
 import net.orifu.skin_overrides.SkinOverrides;
-import net.orifu.skin_overrides.screen.SkinOverridesScreen.OverridesTab;
 
 public class PlayerListEntry extends Entry<PlayerListEntry> {
     private final MinecraftClient client;
     private final GameProfile profile;
     private final Type type;
 
-    private final OverridesTab parent;
+    private final SkinOverridesScreen parent;
 
-    public PlayerListEntry(MinecraftClient client, GameProfile profile, Type type, OverridesTab parent) {
+    public PlayerListEntry(MinecraftClient client, GameProfile profile, Type type, SkinOverridesScreen parent) {
         this.client = client;
         this.profile = profile;
         this.type = type;
@@ -70,7 +69,7 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        this.parent.select(this);
+        this.parent.selectPlayer(this);
 
         return true;
     }

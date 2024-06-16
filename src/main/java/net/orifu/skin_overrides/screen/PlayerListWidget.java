@@ -5,18 +5,20 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.list.AlwaysSelectedEntryListWidget;
 import net.orifu.skin_overrides.screen.PlayerListEntry.Type;
-import net.orifu.skin_overrides.screen.SkinOverridesScreen.OverridesTab;
 
 public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEntry> {
     private static final int PADDING = 8;
     private static final int ITEM_HEIGHT = 36;
 
-    private final OverridesTab parent;
+    private final SkinOverridesScreen parent;
 
-    public PlayerListWidget(OverridesTab parent) {
+    public final boolean isSkin;
+
+    public PlayerListWidget(SkinOverridesScreen parent, boolean isSkin) {
         super(MinecraftClient.getInstance(), 0, 0, 0, ITEM_HEIGHT);
 
         this.parent = parent;
+        this.isSkin = isSkin;
 
         // add local player
         GameProfile localPlayer = this.client.method_53462();
