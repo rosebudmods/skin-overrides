@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.list.AlwaysSelectedEntryListWidget;
+import net.orifu.skin_overrides.screen.PlayerListEntry.Type;
 import net.orifu.skin_overrides.screen.SkinOverridesScreen.OverridesTab;
 
 public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEntry> {
@@ -19,7 +20,7 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
 
         // add local player
         GameProfile localPlayer = this.client.method_53462();
-        this.addEntry(new PlayerListEntry(this.client, localPlayer, this.parent));
+        this.addEntry(new PlayerListEntry(this.client, localPlayer, Type.USER, this.parent));
     }
 
     @Override

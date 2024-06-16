@@ -2,6 +2,9 @@
     "skin_overrides.title": "skin overrides",
     "skin_overrides.title.skin": "skin overrides",
     "skin_overrides.title.cape": "cape overrides",
-    "skin_overrides.no_selection": "select a player on the left to get started.",
-    "skin_overrides.player.you": "%s (you)"
+    "skin_overrides.no_selection": "select a player to configure.",
+    "skin_overrides.player.you": "%s (you)",
+    "skin_overrides.override.none": "no override",
+    "skin_overrides.override.local_image": "local image",
+    "skin_overrides.override.copy": "copying %s"
 }
