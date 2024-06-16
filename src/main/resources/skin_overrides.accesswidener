@@ -2,3 +2,5 @@ accessWidener v2 named
 
 accessible method net/minecraft/client/texture/PlayerSkinTexture loadTexture (Ljava/io/InputStream;)Lcom/mojang/blaze3d/texture/NativeImage;
 accessible method net/minecraft/client/texture/PlayerSkinTexture onTextureLoaded (Lcom/mojang/blaze3d/texture/NativeImage;)V
+
+accessible field net/minecraft/client/MinecraftClient authService Lcom/mojang/authlib/yggdrasil/YggdrasilAuthenticationService;

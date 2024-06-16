@@ -11,7 +11,9 @@ import com.mojang.util.UndashedUuid;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.PlayerSkin;
+import net.minecraft.server.Services;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.UserCache;
 
 public class SkinOverrides {
 	public static final Logger LOGGER = LoggerFactory.getLogger("skin overrides");
@@ -20,6 +22,8 @@ public class SkinOverrides {
 	public static final String CAPE_OVERRIDES = "cape_overrides";
 
 	public static final String UUID_REGEX = "^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$";
+
+	private static UserCache userCache;
 
 	public static PlayerSkin getSkin(GameProfile profile) {
 		return overrideSkin(profile, MinecraftClient.getInstance().getSkinProvider().getSkin(profile));
@@ -52,7 +56,7 @@ public class SkinOverrides {
 				}
 			} else {
 				// convert player username to uuid (cached)
-				var remoteProfile = client.getServer().getUserCache().findByName(name);
+				var remoteProfile = getUserCache().findByName(name);
 				if (remoteProfile.isPresent()) {
 					uuid = Optional.of(remoteProfile.get().getId());
 				}
@@ -83,5 +87,16 @@ public class SkinOverrides {
 		}
 
 		return skin;
+	}
+
+	private static UserCache getUserCache() {
+		if (userCache != null) {
+			return userCache;
+		}
+
+		MinecraftClient client = MinecraftClient.getInstance();
+		Services services = Services.create(client.authService, client.runDirectory);
+		userCache = services.userCache();
+		return userCache;
 	}
 }
