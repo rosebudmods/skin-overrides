@@ -13,8 +13,8 @@ import net.orifu.skin_overrides.SkinOverrides;
 
 public class PlayerListEntry extends Entry<PlayerListEntry> {
     private final MinecraftClient client;
-    private final GameProfile profile;
-    private final Type type;
+    public final GameProfile profile;
+    public final Type type;
 
     private final SkinOverridesScreen parent;
 
@@ -43,7 +43,7 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
             case USER:
                 return Text.translatable("skin_overrides.player.you", name).formatted(Formatting.GRAY);
             case OFFLINE:
-                return Text.literal("wip");
+                return Text.translatable("skin_overrides.player.offline", name).formatted(Formatting.GRAY);
             case ONLINE:
                 return Text.literal("wip");
             default:
@@ -54,8 +54,12 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
     protected Text getOverrideStatus() {
         if (Overrides.hasSkinImageOverride(this.profile)) {
             return Text.translatable("skin_overrides.override.local_image").formatted(Formatting.GREEN);
-        } else if (Overrides.hasSkinCopyOverride(this.profile)) {
-            return Text.translatable("skin_overrides.override.copy", Overrides.getSkinCopyOverride(this.profile).get())
+        }
+
+        var copyOverride = Overrides.getSkinCopyOverride(this.profile);
+        if (copyOverride.isPresent()) {
+            return Text
+                    .translatable("skin_overrides.override.copy", copyOverride.get().getName())
                     .formatted(Formatting.GREEN);
         }
 

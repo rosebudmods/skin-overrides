@@ -4,6 +4,7 @@
     "skin_overrides.title.cape": "cape overrides",
     "skin_overrides.no_selection": "select a player to configure.",
     "skin_overrides.player.you": "%s (you)",
+    "skin_overrides.player.offline": "%s (offline)",
     "skin_overrides.override.none": "no override",
     "skin_overrides.override.local_image": "local image",
     "skin_overrides.override.copy": "copying %s"

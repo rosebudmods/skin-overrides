@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.list.AlwaysSelectedEntryListWidget;
+import net.orifu.skin_overrides.Overrides;
 import net.orifu.skin_overrides.screen.PlayerListEntry.Type;
 
 public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEntry> {
@@ -23,6 +24,13 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
         // add local player
         GameProfile localPlayer = this.client.method_53462();
         this.addEntry(new PlayerListEntry(this.client, localPlayer, Type.USER, this.parent));
+
+        // add offline players
+        for (GameProfile profile : Overrides.profilesWithSkinOverride()) {
+            if (!this.hasOverrideFor(profile)) {
+                this.addEntry(new PlayerListEntry(this.client, profile, Type.OFFLINE, this.parent));
+            }
+        }
     }
 
     @Override
@@ -33,5 +41,14 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
     @Override
     protected int getRowTop(int index) {
         return super.getRowTop(index) - 4 + PADDING;
+    }
+
+    public boolean hasOverrideFor(GameProfile profile) {
+        for (var player : this.children()) {
+            if (player.profile.equals(profile)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
