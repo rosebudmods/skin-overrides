@@ -40,7 +40,7 @@ public class SkinOverrides {
 					skin.elytraTexture(), remoteSkin.model(), false);
 		}
 
-		var capeFile = Overrides.getCapeImageOverride(profile);
+		var capeFile = Overrides.getLocalCapeOverride(profile);
 		if (capeFile.isPresent()) {
 			// register cape texture
 			Identifier capeId = new Identifier("skin_overrides", "cape/" + profile.getId().toString());

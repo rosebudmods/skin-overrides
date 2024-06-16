@@ -27,6 +27,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Overrides;
 import net.orifu.skin_overrides.SkinOverrides;
+import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 
 public class SkinOverridesScreen extends Screen {
@@ -34,7 +35,7 @@ public class SkinOverridesScreen extends Screen {
     private static final Text SKIN_TITLE = Text.translatable("skin_overrides.title.skin");
     private static final Text CAPE_TITLE = Text.translatable("skin_overrides.title.cape");
 
-    private static final int SKIN_SCALE = 3;
+    private static final int PREVIEW_SCALE = 3;
 
     // TODO: move this into an xplat helper?
     private static final Identifier FOOTER_SEPARATOR_TEXTURE = new Identifier("minecraft",
@@ -52,7 +53,7 @@ public class SkinOverridesScreen extends Screen {
     private FrameWidget configFrame;
 
     @Nullable
-    private FrameWidget playerSkinFrame;
+    private FrameWidget previewFrame;
 
     private boolean isSkin = true;
     @Nullable
@@ -108,21 +109,42 @@ public class SkinOverridesScreen extends Screen {
         if (this.selectedProfile == null) {
             config.add(new TextWidget(Text.translatable("skin_overrides.no_selection"), this.textRenderer), 0, 0);
         } else {
-            config.add(new TextWidget(Text.translatable("skin_overrides.add_image"), this.textRenderer), 0, 0);
+            if (this.isSkin) {
+                this.initSkinConfig(config);
+            } else {
+                this.initCapeConfig(config);
+            }
 
-            config.add(ButtonWidget
-                    .builder(Text.translatable("skin_overrides.remove.local_image"), (btn) -> this.removeLocalImage())
-                    .width(120)
-                    .build(), 1, 0).active = Overrides.hasLocalSkinOverride(this.selectedProfile);
-            config.add(ButtonWidget
-                    .builder(Text.translatable("skin_overrides.remove.copy"), (btn) -> this.removeCopy())
-                    .width(120)
-                    .build(), 2, 0).active = Overrides.hasSkinCopyOverride(this.selectedProfile);
-
-            this.playerSkinFrame = configCols.add(
-                    new FrameWidget(PlayerSkinRenderer.WIDTH * SKIN_SCALE, PlayerSkinRenderer.HEIGHT * SKIN_SCALE),
+            this.previewFrame = configCols.add(
+                    new FrameWidget(PlayerSkinRenderer.WIDTH * PREVIEW_SCALE,
+                            PlayerSkinRenderer.HEIGHT * PREVIEW_SCALE),
                     LayoutSettings.create().alignHorizontallyRight().alignVerticallyCenter());
         }
+    }
+
+    protected void initSkinConfig(GridWidget config) {
+        config.add(new TextWidget(Text.translatable("skin_overrides.add_skin"), this.textRenderer), 0, 0);
+
+        // add remove local image button
+        config.add(ButtonWidget
+                .builder(Text.translatable("skin_overrides.remove.local_image"), (btn) -> this.removeLocalImage())
+                .width(120)
+                .build(), 1, 0).active = Overrides.hasLocalSkinOverride(this.selectedProfile);
+        // add remove copy button
+        config.add(ButtonWidget
+                .builder(Text.translatable("skin_overrides.remove.copy"), (btn) -> this.removeCopy())
+                .width(120)
+                .build(), 2, 0).active = Overrides.hasSkinCopyOverride(this.selectedProfile);
+    }
+
+    protected void initCapeConfig(GridWidget config) {
+        config.add(new TextWidget(Text.translatable("skin_overrides.add_cape"), this.textRenderer), 0, 0);
+
+        // add remove local image button
+        config.add(ButtonWidget
+                .builder(Text.translatable("skin_overrides.remove.local_image"), (btn) -> this.removeLocalImage())
+                .width(120)
+                .build(), 1, 0).active = Overrides.hasLocalCapeOverride(this.selectedProfile);
     }
 
     @Override
@@ -135,10 +157,15 @@ public class SkinOverridesScreen extends Screen {
         RenderSystem.disableBlend();
 
         if (this.selectedProfile != null) {
-            // draw skin
+            // draw skin/cape preview
             PlayerSkin skin = SkinOverrides.getSkin(this.selectedProfile);
-            PlayerSkinRenderer.draw(graphics, skin, this.playerSkinFrame.getX(), this.playerSkinFrame.getY(),
-                    SKIN_SCALE);
+            if (this.isSkin) {
+                PlayerSkinRenderer.draw(graphics, skin, this.previewFrame.getX(), this.previewFrame.getY(),
+                        PREVIEW_SCALE);
+            } else {
+                PlayerCapeRenderer.draw(graphics, skin, this.previewFrame.getX(), this.previewFrame.getY(),
+                        PREVIEW_SCALE);
+            }
         }
     }
 
@@ -168,6 +195,10 @@ public class SkinOverridesScreen extends Screen {
         this.client.setScreen(this.parent);
     }
 
+    public boolean isSkin() {
+        return this.isSkin;
+    }
+
     public void setIsSkin(boolean isSkin) {
         if (this.isSkin != isSkin) {
             this.isSkin = isSkin;
@@ -188,7 +219,11 @@ public class SkinOverridesScreen extends Screen {
     }
 
     public void removeLocalImage() {
-        Overrides.removeLocalSkinOverride(this.selectedProfile);
+        if (this.isSkin) {
+            Overrides.removeLocalSkinOverride(this.selectedProfile);
+        } else {
+            Overrides.removeLocalCapeOverride(this.selectedProfile);
+        }
         this.upgradeProfile(); // get player's actual skin/cape
         this.clearAndInit(); // update remove buttons
     }

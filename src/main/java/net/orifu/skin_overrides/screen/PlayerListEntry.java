@@ -10,11 +10,13 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.orifu.skin_overrides.Overrides;
 import net.orifu.skin_overrides.SkinOverrides;
+import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 
 public class PlayerListEntry extends Entry<PlayerListEntry> {
     private final MinecraftClient client;
     public GameProfile profile;
     public final Type type;
+    public final boolean isSkin;
 
     private final SkinOverridesScreen parent;
 
@@ -22,14 +24,19 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
         this.client = client;
         this.profile = profile;
         this.type = type;
+        this.isSkin = parent.isSkin();
         this.parent = parent;
     }
 
     @Override
     public void render(GuiGraphics graphics, int index, int y, int x, int entryWidth, int entryHeight, int mouseX,
             int mouseY, boolean hovered, float tickDelta) {
-        // draw player face
-        PlayerFaceRenderer.draw(graphics, SkinOverrides.getSkin(this.profile), x, y, 32);
+        // draw player face/cape
+        if (this.isSkin) {
+            PlayerFaceRenderer.draw(graphics, SkinOverrides.getSkin(this.profile), x, y, 32);
+        } else {
+            PlayerCapeRenderer.draw(graphics, SkinOverrides.getSkin(this.profile), x, y, 2);
+        }
 
         // draw player name
         graphics.drawShadowedText(this.client.textRenderer, this.getPlayerName(), x + 32 + 2, y + 1, 0);
@@ -57,15 +64,21 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
     }
 
     protected Text getOverrideStatus() {
-        if (Overrides.hasLocalSkinOverride(this.profile)) {
-            return Text.translatable("skin_overrides.override.local_image").formatted(Formatting.GREEN);
-        }
+        if (this.isSkin) {
+            if (Overrides.hasLocalSkinOverride(this.profile)) {
+                return Text.translatable("skin_overrides.override.local_image").formatted(Formatting.GREEN);
+            }
 
-        var copyOverride = Overrides.getSkinCopyOverride(this.profile);
-        if (copyOverride.isPresent()) {
-            return Text
-                    .translatable("skin_overrides.override.copy", copyOverride.get().getName())
-                    .formatted(Formatting.GREEN);
+            var copyOverride = Overrides.getSkinCopyOverride(this.profile);
+            if (copyOverride.isPresent()) {
+                return Text
+                        .translatable("skin_overrides.override.copy", copyOverride.get().getName())
+                        .formatted(Formatting.GREEN);
+            }
+        } else {
+            if (Overrides.hasLocalCapeOverride(this.profile)) {
+                return Text.translatable("skin_overrides.override.local_image").formatted(Formatting.GREEN);
+            }
         }
 
         return Text.translatable("skin_overrides.override.none").formatted(Formatting.GRAY);

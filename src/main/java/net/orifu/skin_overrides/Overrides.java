@@ -107,12 +107,41 @@ public class Overrides {
         return profiles;
     }
 
-    public static boolean hasCapeImageOverride(GameProfile profile) {
-        return getCapeImageOverride(profile).isPresent();
+    protected static Optional<File> getLocalCapeOverrideFile(GameProfile profile) {
+        return getTextureFor(CAPE_OVERRIDES, profile);
     }
 
-    public static Optional<LocalHttpTexture> getCapeImageOverride(GameProfile profile) {
-        return getTextureFor(CAPE_OVERRIDES, profile).map(file -> new LocalHttpTexture(file));
+    public static boolean hasLocalCapeOverride(GameProfile profile) {
+        return getLocalCapeOverrideFile(profile).isPresent();
+    }
+
+    public static Optional<LocalHttpTexture> getLocalCapeOverride(GameProfile profile) {
+        return getLocalCapeOverrideFile(profile).map(file -> new LocalHttpTexture(file));
+    }
+
+    public static void removeLocalCapeOverride(GameProfile profile) {
+        Optional<File> file;
+        while ((file = getLocalCapeOverrideFile(profile)).isPresent()) {
+            file.get().delete();
+        }
+    }
+
+    public static List<GameProfile> profilesWithCapeOverride() {
+        File path = new File(CAPE_OVERRIDES);
+        ArrayList<GameProfile> profiles = new ArrayList<>();
+        for (File file : path.listFiles()) {
+            String name = FilenameUtils.getBaseName(file.getName());
+            String ext = FilenameUtils.getExtension(file.getName());
+
+            if (ext.equals("png")) {
+                var profile = Optional.of(idToBasicProfile(name));
+                if (profile.isPresent()) {
+                    profiles.add(profile.get());
+                }
+            }
+        }
+
+        return profiles;
     }
 
     public static GameProfile idToBasicProfile(String id) {
