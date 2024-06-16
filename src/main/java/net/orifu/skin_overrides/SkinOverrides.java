@@ -22,7 +22,7 @@ public class SkinOverrides {
 	public static PlayerSkin overrideSkin(GameProfile profile, PlayerSkin skin) {
 		MinecraftClient client = MinecraftClient.getInstance();
 
-		var imageOverride = Overrides.getSkinImageOverride(profile);
+		var imageOverride = Overrides.getLocalSkinOverride(profile);
 		if (imageOverride.isPresent()) {
 			// register skin texture
 			var texture = imageOverride.get();

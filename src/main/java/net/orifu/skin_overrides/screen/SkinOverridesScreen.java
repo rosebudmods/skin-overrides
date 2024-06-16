@@ -18,12 +18,14 @@ import net.minecraft.client.gui.widget.button.ButtonWidget;
 import net.minecraft.client.gui.widget.layout.FrameWidget;
 import net.minecraft.client.gui.widget.layout.GridWidget;
 import net.minecraft.client.gui.widget.layout.HeaderFooterLayoutWidget;
+import net.minecraft.client.gui.widget.layout.LayoutSettings;
 import net.minecraft.client.gui.widget.layout.LinearLayoutWidget;
 import net.minecraft.client.gui.widget.text.TextWidget;
 import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.text.CommonTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.orifu.skin_overrides.Overrides;
 import net.orifu.skin_overrides.SkinOverrides;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 
@@ -32,7 +34,7 @@ public class SkinOverridesScreen extends Screen {
     private static final Text SKIN_TITLE = Text.translatable("skin_overrides.title.skin");
     private static final Text CAPE_TITLE = Text.translatable("skin_overrides.title.cape");
 
-    private static final int PAD = 32;
+    private static final int SKIN_SCALE = 3;
 
     // TODO: move this into an xplat helper?
     private static final Identifier FOOTER_SEPARATOR_TEXTURE = new Identifier("minecraft",
@@ -47,6 +49,8 @@ public class SkinOverridesScreen extends Screen {
     private HeaderBar header;
     private GridWidget grid;
     private PlayerListWidget playerList;
+    private FrameWidget configFrame;
+
     @Nullable
     private FrameWidget playerSkinFrame;
 
@@ -98,14 +102,26 @@ public class SkinOverridesScreen extends Screen {
         helper.add(this.playerList);
 
         // add configuration
-        GridWidget config = helper.add(new GridWidget());
+        this.configFrame = helper.add(new FrameWidget());
+        LinearLayoutWidget configCols = configFrame.add(LinearLayoutWidget.createHorizontal()).setSpacing(8);
+        GridWidget config = configCols.add(new GridWidget()).setSpacing(4);
         if (this.selectedProfile == null) {
             config.add(new TextWidget(Text.translatable("skin_overrides.no_selection"), this.textRenderer), 0, 0);
         } else {
             config.add(new TextWidget(Text.translatable("skin_overrides.add_image"), this.textRenderer), 0, 0);
 
-            this.playerSkinFrame = config
-                    .add(new FrameWidget(PlayerSkinRenderer.WIDTH * 2, PlayerSkinRenderer.HEIGHT * 2), 0, 1);
+            config.add(ButtonWidget
+                    .builder(Text.translatable("skin_overrides.remove.local_image"), (btn) -> this.removeLocalImage())
+                    .width(120)
+                    .build(), 1, 0).active = Overrides.hasLocalSkinOverride(this.selectedProfile);
+            config.add(ButtonWidget
+                    .builder(Text.translatable("skin_overrides.remove.copy"), (btn) -> this.removeCopy())
+                    .width(120)
+                    .build(), 2, 0).active = Overrides.hasSkinCopyOverride(this.selectedProfile);
+
+            this.playerSkinFrame = configCols.add(
+                    new FrameWidget(PlayerSkinRenderer.WIDTH * SKIN_SCALE, PlayerSkinRenderer.HEIGHT * SKIN_SCALE),
+                    LayoutSettings.create().alignHorizontallyRight().alignVerticallyCenter());
         }
     }
 
@@ -119,8 +135,10 @@ public class SkinOverridesScreen extends Screen {
         RenderSystem.disableBlend();
 
         if (this.selectedProfile != null) {
+            // draw skin
             PlayerSkin skin = SkinOverrides.getSkin(this.selectedProfile);
-            PlayerSkinRenderer.draw(graphics, skin, this.playerSkinFrame.getX(), this.playerSkinFrame.getY(), 2);
+            PlayerSkinRenderer.draw(graphics, skin, this.playerSkinFrame.getX(), this.playerSkinFrame.getY(),
+                    SKIN_SCALE);
         }
     }
 
@@ -131,13 +149,14 @@ public class SkinOverridesScreen extends Screen {
         this.header.arrangeElements();
 
         int hh = this.header.getArea().bottom();
-        int ff = this.layout.getFooterHeight();
+        int fh = this.layout.getFooterHeight();
 
         // reposition main content area
-        ScreenArea area = new ScreenArea(PAD, hh + PAD, this.width - PAD * 2, this.height - ff - hh - PAD * 2);
+        ScreenArea area = new ScreenArea(0, hh, this.width, this.height - fh - hh);
         FrameWidget.align(this.grid, area);
         this.playerList.setPosition(area.x(), area.y());
         this.playerList.setDimensions(Math.min(200, area.width() / 2), area.height());
+        this.configFrame.setMinDimensions(Math.min(200, area.width() / 2), area.height());
 
         // reposition layout
         this.layout.setHeaderHeight(hh);
@@ -161,6 +180,23 @@ public class SkinOverridesScreen extends Screen {
         this.playerList.setSelected(entry);
         this.selectedProfile = entry.profile;
         this.clearAndInit();
+    }
+
+    protected void upgradeProfile() {
+        // get the full profile so we have the player's skin/cape (if any)
+        this.selectedProfile = this.playerList.getSelectedOrNull().upgrade();
+    }
+
+    public void removeLocalImage() {
+        Overrides.removeLocalSkinOverride(this.selectedProfile);
+        this.upgradeProfile(); // get player's actual skin/cape
+        this.clearAndInit(); // update remove buttons
+    }
+
+    public void removeCopy() {
+        Overrides.removeSkinCopyOverride(this.selectedProfile);
+        this.upgradeProfile(); // get player's actual skin/cape
+        this.clearAndInit(); // update remove buttons
     }
 
     class DummyTab implements Tab {

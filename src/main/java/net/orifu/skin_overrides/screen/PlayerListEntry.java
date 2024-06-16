@@ -13,7 +13,7 @@ import net.orifu.skin_overrides.SkinOverrides;
 
 public class PlayerListEntry extends Entry<PlayerListEntry> {
     private final MinecraftClient client;
-    public final GameProfile profile;
+    public GameProfile profile;
     public final Type type;
 
     private final SkinOverridesScreen parent;
@@ -37,6 +37,11 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
         graphics.drawShadowedText(this.client.textRenderer, this.getOverrideStatus(), x + 32 + 2, y + 12, 0);
     }
 
+    public GameProfile upgrade() {
+        this.profile = Overrides.tryUpgradeBasicProfile(this.profile);
+        return this.profile;
+    }
+
     protected Text getPlayerName() {
         Text name = Text.literal(this.profile.getName()).formatted(Formatting.WHITE);
         switch (this.type) {
@@ -52,7 +57,7 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
     }
 
     protected Text getOverrideStatus() {
-        if (Overrides.hasSkinImageOverride(this.profile)) {
+        if (Overrides.hasLocalSkinOverride(this.profile)) {
             return Text.translatable("skin_overrides.override.local_image").formatted(Formatting.GREEN);
         }
 

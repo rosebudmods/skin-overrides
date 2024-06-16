@@ -18,6 +18,7 @@ import com.mojang.util.UndashedUuid;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.server.Services;
+import net.minecraft.util.Pair;
 import net.minecraft.util.UserCache;
 import net.minecraft.util.UuidUtil;
 import net.orifu.skin_overrides.texture.LocalHttpTexture;
@@ -31,24 +32,40 @@ public class Overrides {
 
     private static UserCache userCache;
 
-    public static boolean hasSkinImageOverride(GameProfile profile) {
-        return getSkinImageOverride(profile).isPresent();
-    }
-
-    public static Optional<LocalSkinTexture> getSkinImageOverride(GameProfile profile) {
+    protected static Optional<Pair<File, PlayerSkin.Model>> getLocalSkinOverrideFile(GameProfile profile) {
         return getTextureFor(SKIN_OVERRIDES, profile)
                 .or(() -> getTextureFor(SKIN_OVERRIDES, profile, "wide"))
-                .map(file -> new LocalSkinTexture(file, PlayerSkin.Model.WIDE))
+                .map(file -> new Pair<>(file, PlayerSkin.Model.WIDE))
                 .or(() -> getTextureFor(SKIN_OVERRIDES, profile, "slim")
-                        .map(file -> new LocalSkinTexture(file, PlayerSkin.Model.SLIM)));
+                        .map(file -> new Pair<>(file, PlayerSkin.Model.SLIM)));
+    }
+
+    public static boolean hasLocalSkinOverride(GameProfile profile) {
+        return getLocalSkinOverrideFile(profile).isPresent();
+    }
+
+    public static Optional<LocalSkinTexture> getLocalSkinOverride(GameProfile profile) {
+        return getLocalSkinOverrideFile(profile)
+                .map(pair -> new LocalSkinTexture(pair.getLeft(), pair.getRight()));
+    }
+
+    public static void removeLocalSkinOverride(GameProfile profile) {
+        Optional<Pair<File, PlayerSkin.Model>> file;
+        while ((file = getLocalSkinOverrideFile(profile)).isPresent()) {
+            file.get().getLeft().delete();
+        }
+    }
+
+    protected static Optional<File> getSkinCopyOverrideFile(GameProfile profile) {
+        return getTextureFor(SKIN_OVERRIDES, profile, null, "txt");
     }
 
     public static boolean hasSkinCopyOverride(GameProfile profile) {
-        return getSkinCopyOverride(profile).isPresent();
+        return getSkinCopyOverrideFile(profile).isPresent();
     }
 
     public static Optional<GameProfile> getSkinCopyOverride(GameProfile profile) {
-        return getTextureFor(SKIN_OVERRIDES, profile, null, "txt").flatMap(file -> {
+        return getSkinCopyOverrideFile(profile).flatMap(file -> {
             try {
                 return Optional.of(Files.readString(file.toPath()).trim());
             } catch (IOException e) {
@@ -56,6 +73,13 @@ public class Overrides {
             }
         }).flatMap(content -> content.length() == 0 ? Optional.empty() : Optional.of(content))
                 .flatMap(id -> idToProfile(id));
+    }
+
+    public static void removeSkinCopyOverride(GameProfile profile) {
+        Optional<File> file;
+        while ((file = getSkinCopyOverrideFile(profile)).isPresent()) {
+            file.get().delete();
+        }
     }
 
     public static List<GameProfile> profilesWithSkinOverride() {
@@ -115,6 +139,10 @@ public class Overrides {
     public static Optional<GameProfile> idToProfile(String id) {
         var basicProfile = idToBasicProfile(id);
         return uuidToProfile(basicProfile.getId());
+    }
+
+    public static GameProfile tryUpgradeBasicProfile(GameProfile basicProfile) {
+        return uuidToProfile(basicProfile.getId()).orElse(basicProfile);
     }
 
     public static Optional<GameProfile> uuidToProfile(UUID uuid) {
