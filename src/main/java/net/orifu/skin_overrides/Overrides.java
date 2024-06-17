@@ -34,8 +34,8 @@ public class Overrides {
     private static UserCache userCache;
 
     protected static Optional<Pair<File, PlayerSkin.Model>> getLocalSkinOverrideFile(GameProfile profile) {
-        return getTextureFor(SKIN_OVERRIDES, profile)
-                .or(() -> getTextureFor(SKIN_OVERRIDES, profile, "wide"))
+        return getTextureFor(SKIN_OVERRIDES, profile, "wide")
+                .or(() -> getTextureFor(SKIN_OVERRIDES, profile))
                 .map(file -> new Pair<>(file, PlayerSkin.Model.WIDE))
                 .or(() -> getTextureFor(SKIN_OVERRIDES, profile, "slim")
                         .map(file -> new Pair<>(file, PlayerSkin.Model.SLIM)));
@@ -74,6 +74,20 @@ public class Overrides {
             }
         }).flatMap(content -> content.length() == 0 ? Optional.empty() : Optional.of(content))
                 .flatMap(id -> idToProfile(id));
+    }
+
+    public static void copyLocalSkinOverride(GameProfile profile, Path path, PlayerSkin.Model model) {
+        try {
+            Path outputPath = Paths.get(SKIN_OVERRIDES,
+                    profile.getName() + "." + model.toString().toLowerCase() + ".png");
+            if (outputPath.toFile().exists()) {
+                outputPath.toFile().delete();
+            }
+
+            Files.copy(path, outputPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void removeSkinCopyOverride(GameProfile profile) {

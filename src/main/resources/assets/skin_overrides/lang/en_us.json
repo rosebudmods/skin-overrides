@@ -11,5 +11,8 @@
     "skin_overrides.override.local_image": "local image",
     "skin_overrides.override.copy": "copying %s",
     "skin_overrides.remove.local_image": "remove local image",
-    "skin_overrides.remove.copy": "remove player copy"
+    "skin_overrides.remove.copy": "remove player copy",
+    "skin_overrides.pick_model": "choose the correct model for the skin",
+    "skin_overrides.model.wide": "wide",
+    "skin_overrides.model.slim": "slim"
 }

@@ -2,6 +2,7 @@ package net.orifu.skin_overrides.screen;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 import org.apache.commons.io.FilenameUtils;
@@ -30,6 +31,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Overrides;
 import net.orifu.skin_overrides.SkinOverrides;
+import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 
@@ -247,8 +249,21 @@ public class SkinOverridesScreen extends Screen {
             return;
         }
 
-        Overrides.copyLocalCapeOverride(this.selectedProfile, path);
-        this.clearAndInit();
+        if (this.isSkin) {
+            // register skin texture for preview
+            var texture = new LocalSkinTexture(path.toFile(), null);
+            Identifier textureId = new Identifier("skin_overrides", UUID.randomUUID().toString());
+            this.client.getTextureManager().registerTexture(textureId, texture);
+
+            // open model selection screen
+            this.client.setScreen(new PlayerModelSelectScreen(this, textureId, model -> {
+                Overrides.copyLocalSkinOverride(this.selectedProfile, path, model);
+                this.clearAndInit();
+            }));
+        } else {
+            Overrides.copyLocalCapeOverride(this.selectedProfile, path);
+            this.clearAndInit();
+        }
     }
 
     class DummyTab implements Tab {
