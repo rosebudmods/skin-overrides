@@ -77,12 +77,11 @@ public class Overrides {
     }
 
     public static void copyLocalSkinOverride(GameProfile profile, Path path, PlayerSkin.Model model) {
+        removeLocalSkinOverride(profile);
+
         try {
             Path outputPath = Paths.get(SKIN_OVERRIDES,
                     profile.getName() + "." + model.toString().toLowerCase() + ".png");
-            if (outputPath.toFile().exists()) {
-                outputPath.toFile().delete();
-            }
 
             Files.copy(path, outputPath);
         } catch (IOException e) {
@@ -136,12 +135,10 @@ public class Overrides {
     }
 
     public static void copyLocalCapeOverride(GameProfile profile, Path path) {
+        removeLocalCapeOverride(profile);
+
         try {
             Path outputPath = Paths.get(CAPE_OVERRIDES, profile.getName() + ".png");
-            if (outputPath.toFile().exists()) {
-                outputPath.toFile().delete();
-            }
-
             Files.copy(path, outputPath);
         } catch (IOException e) {
             e.printStackTrace();

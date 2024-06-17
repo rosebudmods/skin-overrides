@@ -241,13 +241,15 @@ public class SkinOverridesScreen extends Screen {
 
     @Override
     public void filesDragged(List<Path> paths) {
-        if (paths.size() == 0 || this.selectedProfile == null) {
+        if (paths.size() == 0) {
             return;
         }
         Path path = paths.get(0);
         if (!path.toFile().isFile() || !FilenameUtils.isExtension(path.toFile().getName(), "png")) {
             return;
         }
+
+        GameProfile profile = this.selectedProfile != null ? this.selectedProfile : this.client.method_53462();
 
         if (this.isSkin) {
             // register skin texture for preview
@@ -257,11 +259,11 @@ public class SkinOverridesScreen extends Screen {
 
             // open model selection screen
             this.client.setScreen(new PlayerModelSelectScreen(this, textureId, model -> {
-                Overrides.copyLocalSkinOverride(this.selectedProfile, path, model);
+                Overrides.copyLocalSkinOverride(profile, path, model);
                 this.clearAndInit();
             }));
         } else {
-            Overrides.copyLocalCapeOverride(this.selectedProfile, path);
+            Overrides.copyLocalCapeOverride(profile, path);
             this.clearAndInit();
         }
     }
