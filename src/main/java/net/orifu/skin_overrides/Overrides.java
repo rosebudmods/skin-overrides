@@ -1,6 +1,5 @@
 package net.orifu.skin_overrides;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -8,37 +7,40 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
-
-import org.apache.commons.io.FilenameUtils;
-import org.jetbrains.annotations.Nullable;
 
 import com.mojang.authlib.GameProfile;
-import com.mojang.util.UndashedUuid;
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.PlayerSkin;
-import net.minecraft.server.Services;
-import net.minecraft.util.Pair;
-import net.minecraft.util.UserCache;
-import net.minecraft.util.UuidUtil;
 import net.orifu.skin_overrides.texture.LocalHttpTexture;
 import net.orifu.skin_overrides.texture.LocalSkinTexture;
+import net.orifu.skin_overrides.util.ProfileHelper;
+import net.orifu.skin_overrides.util.OverrideFiles.Validated;
 
 import static net.orifu.skin_overrides.SkinOverrides.CAPE_OVERRIDES;
 import static net.orifu.skin_overrides.SkinOverrides.SKIN_OVERRIDES;
+import static net.orifu.skin_overrides.util.OverrideFiles.deleteProfileFiles;
+import static net.orifu.skin_overrides.util.OverrideFiles.findProfileFile;
+import static net.orifu.skin_overrides.util.OverrideFiles.listProfiles;
 
 public class Overrides {
-    public static final String UUID_REGEX = "^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$";
+    // #region local skin overrides
 
-    private static UserCache userCache;
+    protected static Optional<Validated<PlayerSkin.Model>> validateLocalSkinOverrideFile(String name, String ext) {
+        if (name.contains(".")) {
+            String[] parts = name.split("\\.", 2);
+            if (ext.equals("png") && (parts[1].equals("wide") || parts[1].equals("slim"))) {
+                return Optional.of(Validated.of(
+                        parts[0], parts[1].equals("wide") ? PlayerSkin.Model.WIDE : PlayerSkin.Model.SLIM));
+            }
+        } else if (ext.equals("png")) {
+            return Optional.of(Validated.of(name, PlayerSkin.Model.WIDE));
+        }
 
-    protected static Optional<Pair<File, PlayerSkin.Model>> getLocalSkinOverrideFile(GameProfile profile) {
-        return getTextureFor(SKIN_OVERRIDES, profile, "wide")
-                .or(() -> getTextureFor(SKIN_OVERRIDES, profile))
-                .map(file -> new Pair<>(file, PlayerSkin.Model.WIDE))
-                .or(() -> getTextureFor(SKIN_OVERRIDES, profile, "slim")
-                        .map(file -> new Pair<>(file, PlayerSkin.Model.SLIM)));
+        return Optional.empty();
+    }
+
+    protected static Optional<Validated<PlayerSkin.Model>> getLocalSkinOverrideFile(GameProfile profile) {
+        return findProfileFile(SKIN_OVERRIDES, profile, Overrides::validateLocalSkinOverrideFile);
     }
 
     public static boolean hasLocalSkinOverride(GameProfile profile) {
@@ -46,19 +48,26 @@ public class Overrides {
     }
 
     public static Optional<LocalSkinTexture> getLocalSkinOverride(GameProfile profile) {
-        return getLocalSkinOverrideFile(profile)
-                .map(pair -> new LocalSkinTexture(pair.getLeft(), pair.getRight()));
+        return getLocalSkinOverrideFile(profile).map(v -> new LocalSkinTexture(v.file(), v.data()));
     }
 
     public static void removeLocalSkinOverride(GameProfile profile) {
-        Optional<Pair<File, PlayerSkin.Model>> file;
-        while ((file = getLocalSkinOverrideFile(profile)).isPresent()) {
-            file.get().getLeft().delete();
-        }
+        deleteProfileFiles(SKIN_OVERRIDES, Overrides::validateLocalSkinOverrideFile, profile);
     }
 
-    protected static Optional<File> getSkinCopyOverrideFile(GameProfile profile) {
-        return getTextureFor(SKIN_OVERRIDES, profile, null, "txt");
+    // #endregion
+    // #region skin copy override
+
+    protected static Optional<Validated<Boolean>> validateSkinCopyOverrideFile(String name, String ext) {
+        if (ext.equals("txt")) {
+            return Optional.of(Validated.of(name));
+        }
+
+        return Optional.empty();
+    }
+
+    protected static Optional<Validated<Boolean>> getSkinCopyOverrideFile(GameProfile profile) {
+        return findProfileFile(SKIN_OVERRIDES, profile, Overrides::validateSkinCopyOverrideFile);
     }
 
     public static boolean hasSkinCopyOverride(GameProfile profile) {
@@ -66,15 +75,22 @@ public class Overrides {
     }
 
     public static Optional<GameProfile> getSkinCopyOverride(GameProfile profile) {
-        return getSkinCopyOverrideFile(profile).flatMap(file -> {
+        return getSkinCopyOverrideFile(profile).flatMap(v -> {
             try {
-                return Optional.of(Files.readString(file.toPath()).trim());
+                return Optional.of(Files.readString(v.file().toPath()).trim());
             } catch (IOException e) {
                 return Optional.empty();
             }
         }).flatMap(content -> content.length() == 0 ? Optional.empty() : Optional.of(content))
-                .flatMap(id -> idToProfile(id));
+                .flatMap(id -> ProfileHelper.idToProfile(id));
     }
+
+    public static void removeSkinCopyOverride(GameProfile profile) {
+        deleteProfileFiles(SKIN_OVERRIDES, Overrides::validateSkinCopyOverrideFile, profile);
+    }
+
+    // #endregion
+    // #region other skin override stuff
 
     public static void copyLocalSkinOverride(GameProfile profile, Path path, PlayerSkin.Model model) {
         removeLocalSkinOverride(profile);
@@ -89,41 +105,25 @@ public class Overrides {
         }
     }
 
-    public static void removeSkinCopyOverride(GameProfile profile) {
-        Optional<File> file;
-        while ((file = getSkinCopyOverrideFile(profile)).isPresent()) {
-            file.get().delete();
-        }
-    }
-
     public static List<GameProfile> profilesWithSkinOverride() {
-        File path = new File(SKIN_OVERRIDES);
-        path.mkdir();
-        ArrayList<GameProfile> profiles = new ArrayList<>();
-        for (File file : path.listFiles()) {
-            String name = FilenameUtils.getBaseName(file.getName());
-            String ext = FilenameUtils.getExtension(file.getName());
-            Optional<GameProfile> profile = Optional.empty();
-
-            if (name.contains(".")) {
-                String[] parts = name.split("\\.", 2);
-                if (ext.equals("png") && (parts[1].equals("wide") || parts[1].equals("slim"))) {
-                    profile = Optional.of(idToBasicProfile(parts[0]));
-                }
-            } else if (ext.equals("png") || ext.equals("txt")) {
-                profile = Optional.of(idToBasicProfile(name));
-            }
-
-            if (profile.isPresent()) {
-                profiles.add(profile.get());
-            }
-        }
-
-        return profiles;
+        var li = new ArrayList<>(listProfiles(SKIN_OVERRIDES, Overrides::validateLocalSkinOverrideFile));
+        li.addAll(listProfiles(SKIN_OVERRIDES, Overrides::validateSkinCopyOverrideFile));
+        return li;
     }
 
-    protected static Optional<File> getLocalCapeOverrideFile(GameProfile profile) {
-        return getTextureFor(CAPE_OVERRIDES, profile);
+    // #endregion
+    // #region local cape override
+
+    protected static Optional<Validated<Boolean>> validateLocalCapeOverrideFile(String name, String ext) {
+        if (ext.equals("png")) {
+            return Optional.of(Validated.of(name));
+        }
+
+        return Optional.empty();
+    }
+
+    protected static Optional<Validated<Boolean>> getLocalCapeOverrideFile(GameProfile profile) {
+        return findProfileFile(CAPE_OVERRIDES, profile, Overrides::validateLocalCapeOverrideFile);
     }
 
     public static boolean hasLocalCapeOverride(GameProfile profile) {
@@ -131,7 +131,7 @@ public class Overrides {
     }
 
     public static Optional<LocalHttpTexture> getLocalCapeOverride(GameProfile profile) {
-        return getLocalCapeOverrideFile(profile).map(file -> new LocalHttpTexture(file));
+        return getLocalCapeOverrideFile(profile).map(v -> new LocalHttpTexture(v.file()));
     }
 
     public static void copyLocalCapeOverride(GameProfile profile, Path path) {
@@ -146,110 +146,12 @@ public class Overrides {
     }
 
     public static void removeLocalCapeOverride(GameProfile profile) {
-        Optional<File> file;
-        while ((file = getLocalCapeOverrideFile(profile)).isPresent()) {
-            file.get().delete();
-        }
+        deleteProfileFiles(CAPE_OVERRIDES, Overrides::validateLocalCapeOverrideFile, profile);
     }
 
     public static List<GameProfile> profilesWithCapeOverride() {
-        File path = new File(CAPE_OVERRIDES);
-        path.mkdir();
-        ArrayList<GameProfile> profiles = new ArrayList<>();
-        for (File file : path.listFiles()) {
-            String name = FilenameUtils.getBaseName(file.getName());
-            String ext = FilenameUtils.getExtension(file.getName());
-
-            if (ext.equals("png")) {
-                var profile = Optional.of(idToBasicProfile(name));
-                if (profile.isPresent()) {
-                    profiles.add(profile.get());
-                }
-            }
-        }
-
-        return profiles;
+        return listProfiles(CAPE_OVERRIDES, Overrides::validateLocalCapeOverrideFile);
     }
 
-    public static GameProfile idToBasicProfile(String id) {
-        // get the uuid
-        Optional<GameProfile> profile = Optional.empty();
-        if (id.matches(UUID_REGEX)) {
-            try {
-                // parse uuid
-                UUID uuid = id.contains("-") ? UUID.fromString(id) : UndashedUuid.fromString(id);
-                // convert uuid to profile (cached)
-                // if not in cache, fetch the profile (also cached)
-                profile = getUserCache().getByUuid(uuid).or(() -> uuidToProfile(uuid));
-            } catch (IllegalArgumentException e) {
-            }
-
-        } else {
-            // convert player username to profile (cached)
-            profile = getUserCache().findByName(id);
-        }
-
-        return profile.orElseGet(() -> UuidUtil.method_54140(id));
-    }
-
-    public static Optional<GameProfile> idToProfile(String id) {
-        var basicProfile = idToBasicProfile(id);
-        return uuidToProfile(basicProfile.getId());
-    }
-
-    public static GameProfile tryUpgradeBasicProfile(GameProfile basicProfile) {
-        return uuidToProfile(basicProfile.getId()).orElse(basicProfile);
-    }
-
-    public static Optional<GameProfile> uuidToProfile(UUID uuid) {
-        // get the full profile (cached)
-        var profileResult = MinecraftClient.getInstance().getSessionService().fetchProfile(uuid, false);
-
-        if (profileResult != null) {
-            return Optional.of(profileResult.profile());
-        }
-        return Optional.empty();
-    }
-
-    protected static Optional<File> getTextureFor(String path, GameProfile profile, @Nullable String suffix,
-            @Nullable String ext) {
-        String suff = (suffix == null ? "" : "." + suffix) + "." + (ext == null ? "png" : ext);
-
-        // username
-        File file = Paths.get(path, profile.getName() + suff).toFile();
-        if (file.exists())
-            return Optional.of(file);
-
-        // uuid with hyphens
-        String uuid = profile.getId().toString();
-        file = Paths.get(path, uuid + suff).toFile();
-        if (file.exists())
-            return Optional.of(file);
-
-        // uuid without hyphens
-        file = Paths.get(path, uuid.replace("-", "") + suff).toFile();
-        if (file.exists())
-            return Optional.of(file);
-
-        return Optional.empty();
-    }
-
-    protected static Optional<File> getTextureFor(String path, GameProfile profile, @Nullable String suffix) {
-        return getTextureFor(path, profile, suffix, null);
-    }
-
-    protected static Optional<File> getTextureFor(String path, GameProfile profile) {
-        return getTextureFor(path, profile, null);
-    }
-
-    protected static UserCache getUserCache() {
-        if (userCache != null) {
-            return userCache;
-        }
-
-        MinecraftClient client = MinecraftClient.getInstance();
-        Services services = Services.create(client.authService, client.runDirectory);
-        userCache = services.userCache();
-        return userCache;
-    }
+    // #endregion
 }

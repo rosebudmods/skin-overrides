@@ -11,6 +11,7 @@ import net.minecraft.util.Formatting;
 import net.orifu.skin_overrides.Overrides;
 import net.orifu.skin_overrides.SkinOverrides;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
+import net.orifu.skin_overrides.util.ProfileHelper;
 
 public class PlayerListEntry extends Entry<PlayerListEntry> {
     private final MinecraftClient client;
@@ -45,7 +46,7 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
     }
 
     public GameProfile upgrade() {
-        this.profile = Overrides.tryUpgradeBasicProfile(this.profile);
+        this.profile = ProfileHelper.tryUpgradeBasicProfile(this.profile);
         return this.profile;
     }
 

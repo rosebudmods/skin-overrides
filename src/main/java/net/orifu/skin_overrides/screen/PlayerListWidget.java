@@ -39,6 +39,13 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
     }
 
     public boolean hasOverrideFor(GameProfile profile) {
+        // special case when the user is unauthenticated and an actual player has their
+        // username. because their uuids don't match, the authenticated account will
+        // be listed separately to the current user otherwise.
+        if (this.client.method_53462().getName().equalsIgnoreCase(profile.getName())) {
+            return true;
+        }
+
         for (var player : this.children()) {
             if (player.profile.equals(profile)) {
                 return true;
