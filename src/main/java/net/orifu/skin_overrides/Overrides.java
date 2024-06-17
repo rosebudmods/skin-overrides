@@ -3,6 +3,7 @@ package net.orifu.skin_overrides;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -84,6 +85,7 @@ public class Overrides {
 
     public static List<GameProfile> profilesWithSkinOverride() {
         File path = new File(SKIN_OVERRIDES);
+        path.mkdir();
         ArrayList<GameProfile> profiles = new ArrayList<>();
         for (File file : path.listFiles()) {
             String name = FilenameUtils.getBaseName(file.getName());
@@ -119,6 +121,19 @@ public class Overrides {
         return getLocalCapeOverrideFile(profile).map(file -> new LocalHttpTexture(file));
     }
 
+    public static void copyLocalCapeOverride(GameProfile profile, Path path) {
+        try {
+            Path outputPath = Paths.get(CAPE_OVERRIDES, profile.getName() + ".png");
+            if (outputPath.toFile().exists()) {
+                outputPath.toFile().delete();
+            }
+
+            Files.copy(path, outputPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void removeLocalCapeOverride(GameProfile profile) {
         Optional<File> file;
         while ((file = getLocalCapeOverrideFile(profile)).isPresent()) {
@@ -128,6 +143,7 @@ public class Overrides {
 
     public static List<GameProfile> profilesWithCapeOverride() {
         File path = new File(CAPE_OVERRIDES);
+        path.mkdir();
         ArrayList<GameProfile> profiles = new ArrayList<>();
         for (File file : path.listFiles()) {
             String name = FilenameUtils.getBaseName(file.getName());

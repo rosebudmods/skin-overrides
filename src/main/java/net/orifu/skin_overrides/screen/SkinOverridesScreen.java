@@ -1,7 +1,10 @@
 package net.orifu.skin_overrides.screen;
 
+import java.nio.file.Path;
+import java.util.List;
 import java.util.function.Consumer;
 
+import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.authlib.GameProfile;
@@ -232,6 +235,20 @@ public class SkinOverridesScreen extends Screen {
         Overrides.removeSkinCopyOverride(this.selectedProfile);
         this.upgradeProfile(); // get player's actual skin/cape
         this.clearAndInit(); // update remove buttons
+    }
+
+    @Override
+    public void filesDragged(List<Path> paths) {
+        if (paths.size() == 0 || this.selectedProfile == null) {
+            return;
+        }
+        Path path = paths.get(0);
+        if (!path.toFile().isFile() || !FilenameUtils.isExtension(path.toFile().getName(), "png")) {
+            return;
+        }
+
+        Overrides.copyLocalCapeOverride(this.selectedProfile, path);
+        this.clearAndInit();
     }
 
     class DummyTab implements Tab {
