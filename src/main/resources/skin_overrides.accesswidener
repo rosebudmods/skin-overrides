@@ -4,3 +4,5 @@ accessible method net/minecraft/client/texture/PlayerSkinTexture loadTexture (Lj
 accessible method net/minecraft/client/texture/PlayerSkinTexture onTextureLoaded (Lcom/mojang/blaze3d/texture/NativeImage;)V
 
 accessible field net/minecraft/client/MinecraftClient authService Lcom/mojang/authlib/yggdrasil/YggdrasilAuthenticationService;
+
+accessible field net/minecraft/client/util/DefaultSkinHelper DEFAULT_SKINS [Lnet/minecraft/client/texture/PlayerSkin;
