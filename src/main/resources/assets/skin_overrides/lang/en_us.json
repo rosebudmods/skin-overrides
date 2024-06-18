@@ -14,5 +14,6 @@
     "skin_overrides.remove.copy": "remove player copy",
     "skin_overrides.pick_model": "choose the correct model for the skin",
     "skin_overrides.model.wide": "wide",
-    "skin_overrides.model.slim": "slim"
+    "skin_overrides.model.slim": "slim",
+    "skin_overrides.library.open": "open library"
 }

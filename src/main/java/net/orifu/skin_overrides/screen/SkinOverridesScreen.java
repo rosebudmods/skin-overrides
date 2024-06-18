@@ -49,7 +49,7 @@ public class SkinOverridesScreen extends Screen {
     private final TabManager tabManager = new TabManager(this::addDrawableSelectableElement, (wg) -> this.remove(wg));
 
     @Nullable
-    private Screen parent;
+    private final Screen parent;
 
     private HeaderFooterLayoutWidget layout;
     private HeaderBar header;
@@ -86,6 +86,12 @@ public class SkinOverridesScreen extends Screen {
 
         // add footer
         LinearLayoutWidget footer = this.layout.addToFooter(LinearLayoutWidget.createHorizontal().setSpacing(5));
+
+        // library button
+        footer.add(ButtonWidget
+                .builder(Text.translatable("skin_overrides.library.open"),
+                        (btn) -> this.client.setScreen(new LibraryScreen(this)))
+                .build());
 
         // done button
         footer.add(ButtonWidget.builder(CommonTexts.DONE, (btn) -> this.closeScreen()).build());
