@@ -237,7 +237,7 @@ public class SkinOverridesScreen extends Screen {
     }
 
     public void pickedFromLibrary(LibraryEntry entry) {
-        Overrides.saveLocalSkinOverride(this.selectedProfile, entry.getTexture(), entry.getModel());
+        Overrides.pickSkinFromLibrary(this.selectedProfile, entry);
         this.clearAndInit();
     }
 

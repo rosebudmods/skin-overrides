@@ -72,9 +72,7 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
 
             var copyOverride = Overrides.getSkinCopyOverride(this.profile);
             if (copyOverride.isPresent()) {
-                return Text
-                        .translatable("skin_overrides.override.copy", copyOverride.get().getName())
-                        .formatted(Formatting.GREEN);
+                return copyOverride.get().description().formatted(Formatting.GREEN);
             }
         } else {
             if (Overrides.hasLocalCapeOverride(this.profile)) {

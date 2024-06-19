@@ -8,6 +8,7 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.util.Identifier;
+import net.orifu.skin_overrides.texture.CopiedSkinTexture;
 
 public class SkinOverrides {
 	public static final Logger LOGGER = LoggerFactory.getLogger("skin overrides");
@@ -34,10 +35,9 @@ public class SkinOverrides {
 
 		var profileOverride = Overrides.getSkinCopyOverride(profile);
 		if (profileOverride.isPresent()) {
-			// set the skin to the remote one (cached)
-			PlayerSkin remoteSkin = client.getSkinProvider().getSkinSupplier(profileOverride.get()).get();
-			skin = new PlayerSkin(remoteSkin.texture(), remoteSkin.textureUrl(), skin.capeTexture(),
-					skin.elytraTexture(), remoteSkin.model(), false);
+			CopiedSkinTexture copiedSkin = profileOverride.get();
+			skin = new PlayerSkin(copiedSkin.texture(), null, skin.capeTexture(),
+					skin.elytraTexture(), copiedSkin.model(), false);
 		}
 
 		var capeFile = Overrides.getLocalCapeOverride(profile);

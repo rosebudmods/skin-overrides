@@ -1,6 +1,7 @@
 package net.orifu.skin_overrides;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -9,11 +10,11 @@ import java.util.List;
 import java.util.Optional;
 
 import com.mojang.authlib.GameProfile;
-import com.mojang.blaze3d.texture.NativeImage;
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.util.Identifier;
+import net.orifu.skin_overrides.Library.LibraryEntry;
+import net.orifu.skin_overrides.texture.CopiedSkinTexture;
 import net.orifu.skin_overrides.texture.LocalHttpTexture;
 import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.ProfileHelper;
@@ -77,7 +78,7 @@ public class Overrides {
         return getSkinCopyOverrideFile(profile).isPresent();
     }
 
-    public static Optional<GameProfile> getSkinCopyOverride(GameProfile profile) {
+    public static Optional<CopiedSkinTexture> getSkinCopyOverride(GameProfile profile) {
         return getSkinCopyOverrideFile(profile).flatMap(v -> {
             try {
                 return Optional.of(Files.readString(v.file().toPath()).trim());
@@ -85,7 +86,23 @@ public class Overrides {
                 return Optional.empty();
             }
         }).flatMap(content -> content.length() == 0 ? Optional.empty() : Optional.of(content))
-                .flatMap(id -> ProfileHelper.idToProfile(id));
+                .flatMap(id -> {
+                    Identifier textureId = Identifier.tryParse(id);
+                    if (textureId.equals(null)) {
+                        return Optional.empty();
+                    } else if (textureId.getNamespace().equals("minecraft")) {
+                        var remoteProfile = ProfileHelper.idToProfile(textureId.getPath());
+                        if (remoteProfile.isPresent()) {
+                            return Optional.of(new CopiedSkinTexture(remoteProfile.get()));
+                        }
+                    } else if (textureId.getNamespace().equals("skin_overrides")) {
+                        var libraryEntry = Library.get(textureId.getPath());
+                        if (libraryEntry != null) {
+                            return Optional.of(new CopiedSkinTexture(libraryEntry));
+                        }
+                    }
+                    return Optional.empty();
+                });
     }
 
     public static void removeSkinCopyOverride(GameProfile profile) {
@@ -95,19 +112,17 @@ public class Overrides {
     // #endregion
     // #region other skin override stuff
 
-    public static void saveLocalSkinOverride(GameProfile profile, Identifier texture, PlayerSkin.Model model) {
+    public static void pickSkinFromLibrary(GameProfile profile, LibraryEntry libraryEntry) {
         removeLocalSkinOverride(profile);
         Path outputPath = Paths.get(SKIN_OVERRIDES,
-                profile.getName() + "." + model.toString().toLowerCase() + ".png");
+                profile.getName() + ".txt");
 
         try {
-            NativeImage image = new NativeImage(64, 64, false);
-            MinecraftClient.getInstance().getTextureManager().bindTexture(texture);
-            image.loadFromTextureImage(0, false);
-            image.writeFile(outputPath);
-            image.close();
+            var writer = Files.newBufferedWriter(outputPath, StandardCharsets.UTF_8);
+            writer.write(new Identifier("skin_overrides", libraryEntry.id).toString());
+            writer.close();
         } catch (IOException e) {
-            SkinOverrides.LOGGER.error("failed to save {} to file", texture, e);
+            SkinOverrides.LOGGER.error("failed to save library entry with id {} to file", libraryEntry.id, e);
         }
     }
 
