@@ -17,5 +17,10 @@
     "skin_overrides.model.slim": "slim",
     "skin_overrides.library.title": "your library",
     "skin_overrides.library.open": "open library",
-    "skin_overrides.library.input.name": "name input"
+    "skin_overrides.library.input.name": "name input",
+    "skin_overrides.library.input.use": "use",
+    "skin_overrides.library.input.back": "previous",
+    "skin_overrides.library.input.next": "next",
+    "skin_overrides.library.input.move_back": "move left",
+    "skin_overrides.library.input.move_next": "move right"
 }

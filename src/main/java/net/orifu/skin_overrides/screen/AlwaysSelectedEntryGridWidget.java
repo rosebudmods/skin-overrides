@@ -23,7 +23,7 @@ public abstract class AlwaysSelectedEntryGridWidget<E extends Entry<E>> extends 
     @Override
     protected int getMaxPosition() {
         // divide entry count by x tiles
-        return this.headerHeight + MathHelper.ceilDiv(this.getEntryCount(), this.xTiles) * this.itemHeight;
+        return this.headerHeight + MathHelper.ceilDiv(this.getEntryCount(), this.xTiles) * this.itemHeight + 4;
     }
 
     @Override
@@ -98,6 +98,19 @@ public abstract class AlwaysSelectedEntryGridWidget<E extends Entry<E>> extends 
         int i = entryY * this.xTiles + entryX;
 
         return i < this.getEntryCount() ? this.getEntry(i) : null;
+    }
+
+    @Override
+    protected void ensureVisible(E entry) {
+        int i = this.children().indexOf(entry);
+        int top = this.getRowTop(i);
+        int bottom = this.getRowBottom(i);
+
+        if (top < this.getY()) {
+            this.setScrollAmount(top - this.getRowTop(0));
+        } else if (bottom > this.getYEnd()) {
+            this.setScrollAmount(bottom - this.height - this.getRowTop(0) + 4 + 4);
+        }
     }
 
     @Deprecated

@@ -17,11 +17,13 @@ public class LibraryListEntry extends Entry<LibraryListEntry> {
 
     public final LibraryEntry entry;
     private final LibraryScreen parent;
+    public final int index;
     private final MinecraftClient client;
 
-    public LibraryListEntry(LibraryEntry entry, LibraryScreen parent) {
+    public LibraryListEntry(LibraryEntry entry, int index, LibraryScreen parent) {
         this.entry = entry;
         this.parent = parent;
+        this.index = index;
         this.client = MinecraftClient.getInstance();
     }
 

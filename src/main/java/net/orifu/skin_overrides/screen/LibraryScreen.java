@@ -4,7 +4,9 @@ import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.gui.widget.button.ButtonWidget;
 import net.minecraft.client.gui.widget.layout.FrameWidget;
 import net.minecraft.client.gui.widget.layout.LayoutSettings;
 import net.minecraft.client.gui.widget.layout.LinearLayoutWidget;
@@ -40,10 +42,12 @@ public class LibraryScreen extends Screen {
             this.libraryList = new LibraryListWidget(this);
         }
 
+        int optionsWidth = Math.min(this.width * 2 / 5, 200);
+
         this.libraryList.setPosition(0, HEADER_HEIGHT);
         this.libraryList.setDimensions(this.selectedEntry == null
                 ? this.width
-                : this.width * 2 / 3,
+                : this.width - optionsWidth,
                 this.height - HEADER_HEIGHT);
 
         var root = LinearLayoutWidget.createVertical();
@@ -55,13 +59,13 @@ public class LibraryScreen extends Screen {
         body.add(this.libraryList);
 
         if (this.selectedEntry != null) {
-            int width = this.width / 3;
-            var controlsFrame = body.add(new FrameWidget(width, 0));
+            var controlsFrame = body.add(new FrameWidget(optionsWidth, 0));
             var controls = controlsFrame.add(LinearLayoutWidget.createVertical()).setSpacing(8);
 
             // name input
-            controls.add(new TextFieldWidget(this.textRenderer, Math.min(width - 16, 200), 20,
-                    Text.translatable("skin_overrides.library.input.name")))
+            controls.add(new TextFieldWidget(this.textRenderer, Math.min(optionsWidth - 16, 150), 20,
+                    Text.translatable("skin_overrides.library.input.name")),
+                    LayoutSettings.create().alignHorizontallyCenter())
                     .setText(this.selectedEntry.entry.getName());
 
             // library entry preview
@@ -69,6 +73,32 @@ public class LibraryScreen extends Screen {
                     PlayerSkinRenderer.WIDTH * PREVIEW_SCALE,
                     PlayerSkinRenderer.HEIGHT * PREVIEW_SCALE),
                     LayoutSettings.create().alignHorizontallyCenter());
+
+            var smallControls = controls.add(LinearLayoutWidget.createHorizontal());
+
+            // previous entry
+            boolean isFirst = this.selectedEntry.index == 0;
+            smallControls.add(ButtonWidget.builder(Text.literal("<"), btn -> this.previousEntry()).width(20)
+                    .tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.back")))
+                    .build()).active = !isFirst;
+            // swap this and previous entry
+            smallControls.add(ButtonWidget.builder(Text.literal("<<"), btn -> {
+            }).width(30).tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.move_back")))
+                    .build()).active = !isFirst;
+
+            // use this entry
+            smallControls.add(ButtonWidget.builder(Text.translatable("skin_overrides.library.input.use"), btn -> {
+            }).width(optionsWidth - 40 - 60 - 20).build());
+
+            // swap this and next entry
+            boolean isLast = this.selectedEntry.index == this.libraryList.children().size() - 1;
+            smallControls.add(ButtonWidget.builder(Text.literal(">>"), btn -> {
+            }).tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.move_next"))).width(30)
+                    .build()).active = !isLast;
+            // next entry
+            smallControls.add(ButtonWidget.builder(Text.literal(">"), btn -> this.nextEntry())
+                    .tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.next"))).width(20)
+                    .build()).active = !isLast;
         }
 
         root.visitWidgets(this::addDrawableSelectableElement);
@@ -95,5 +125,21 @@ public class LibraryScreen extends Screen {
     public void selectEntry(LibraryListEntry entry) {
         this.selectedEntry = entry;
         this.clearAndInit();
+    }
+
+    public void previousEntry() {
+        if (this.selectedEntry == null || this.selectedEntry.index == 0) {
+            return;
+        }
+
+        this.libraryList.moveSelection(-1);
+    }
+
+    public void nextEntry() {
+        if (this.selectedEntry == null || this.selectedEntry.index == this.libraryList.children().size() - 1) {
+            return;
+        }
+
+        this.libraryList.moveSelection(1);
     }
 }
