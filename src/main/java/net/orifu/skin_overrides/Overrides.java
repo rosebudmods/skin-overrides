@@ -9,8 +9,11 @@ import java.util.List;
 import java.util.Optional;
 
 import com.mojang.authlib.GameProfile;
+import com.mojang.blaze3d.texture.NativeImage;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.PlayerSkin;
+import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.texture.LocalHttpTexture;
 import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.ProfileHelper;
@@ -92,6 +95,22 @@ public class Overrides {
     // #endregion
     // #region other skin override stuff
 
+    public static void saveLocalSkinOverride(GameProfile profile, Identifier texture, PlayerSkin.Model model) {
+        removeLocalSkinOverride(profile);
+        Path outputPath = Paths.get(SKIN_OVERRIDES,
+                profile.getName() + "." + model.toString().toLowerCase() + ".png");
+
+        try {
+            NativeImage image = new NativeImage(64, 64, false);
+            MinecraftClient.getInstance().getTextureManager().bindTexture(texture);
+            image.loadFromTextureImage(0, false);
+            image.writeFile(outputPath);
+            image.close();
+        } catch (IOException e) {
+            SkinOverrides.LOGGER.error("failed to save {} to file", texture, e);
+        }
+    }
+
     public static void copyLocalSkinOverride(GameProfile profile, Path path, PlayerSkin.Model model) {
         removeLocalSkinOverride(profile);
 
@@ -101,7 +120,7 @@ public class Overrides {
 
             Files.copy(path, outputPath);
         } catch (IOException e) {
-            e.printStackTrace();
+            SkinOverrides.LOGGER.error("failed to copy {}", path, e);
         }
     }
 
@@ -141,7 +160,7 @@ public class Overrides {
             Path outputPath = Paths.get(CAPE_OVERRIDES, profile.getName() + ".png");
             Files.copy(path, outputPath);
         } catch (IOException e) {
-            e.printStackTrace();
+            SkinOverrides.LOGGER.error("failed to copy {}", path, e);
         }
     }
 

@@ -1,5 +1,7 @@
 package net.orifu.skin_overrides.screen;
 
+import java.util.function.Consumer;
+
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.gui.GuiGraphics;
@@ -12,6 +14,7 @@ import net.minecraft.client.gui.widget.layout.LayoutSettings;
 import net.minecraft.client.gui.widget.layout.LinearLayoutWidget;
 import net.minecraft.client.gui.widget.text.TextWidget;
 import net.minecraft.text.Text;
+import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 
 public class LibraryScreen extends Screen {
@@ -21,6 +24,8 @@ public class LibraryScreen extends Screen {
 
     @Nullable
     private final Screen parent;
+    @Nullable
+    private final Consumer<LibraryEntry> callback;
 
     private FrameWidget header;
     private LibraryListWidget libraryList;
@@ -30,10 +35,15 @@ public class LibraryScreen extends Screen {
     @Nullable
     protected LibraryListEntry selectedEntry;
 
-    public LibraryScreen(@Nullable Screen parent) {
+    public LibraryScreen(@Nullable Screen parent, @Nullable Consumer<LibraryEntry> callback) {
         super(TITLE);
 
         this.parent = parent;
+        this.callback = callback;
+    }
+
+    public LibraryScreen(@Nullable Screen parent) {
+        this(parent, null);
     }
 
     @Override
@@ -88,7 +98,9 @@ public class LibraryScreen extends Screen {
 
             // use this entry
             smallControls.add(ButtonWidget.builder(Text.translatable("skin_overrides.library.input.use"), btn -> {
-            }).width(optionsWidth - 40 - 60 - 20).build());
+                this.callback.accept(this.selectedEntry.entry);
+                this.client.setScreen(this.parent);
+            }).width(optionsWidth - 40 - 60 - 20).build()).active = this.callback != null;
 
             // swap this and next entry
             boolean isLast = this.selectedEntry.index == this.libraryList.children().size() - 1;

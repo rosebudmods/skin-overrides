@@ -31,6 +31,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Overrides;
 import net.orifu.skin_overrides.SkinOverrides;
+import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
@@ -136,16 +137,22 @@ public class SkinOverridesScreen extends Screen {
     protected void initSkinConfig(GridWidget config) {
         config.add(new TextWidget(Text.translatable("skin_overrides.add_skin"), this.textRenderer), 0, 0);
 
+        // add pick from library button
+        config.add(ButtonWidget
+                .builder(Text.translatable("skin_overrides.library.pick"),
+                        (btn) -> this.client.setScreen(new LibraryScreen(this, this::pickedFromLibrary)))
+                .width(120).build(), 1, 0);
+
         // add remove local image button
         config.add(ButtonWidget
                 .builder(Text.translatable("skin_overrides.remove.local_image"), (btn) -> this.removeLocalImage())
                 .width(120)
-                .build(), 1, 0).active = Overrides.hasLocalSkinOverride(this.selectedProfile);
+                .build(), 2, 0).active = Overrides.hasLocalSkinOverride(this.selectedProfile);
         // add remove copy button
         config.add(ButtonWidget
                 .builder(Text.translatable("skin_overrides.remove.copy"), (btn) -> this.removeCopy())
                 .width(120)
-                .build(), 2, 0).active = Overrides.hasSkinCopyOverride(this.selectedProfile);
+                .build(), 3, 0).active = Overrides.hasSkinCopyOverride(this.selectedProfile);
     }
 
     protected void initCapeConfig(GridWidget config) {
@@ -227,6 +234,11 @@ public class SkinOverridesScreen extends Screen {
     protected void upgradeProfile() {
         // get the full profile so we have the player's skin/cape (if any)
         this.selectedProfile = this.playerList.getSelectedOrNull().upgrade();
+    }
+
+    public void pickedFromLibrary(LibraryEntry entry) {
+        Overrides.saveLocalSkinOverride(this.selectedProfile, entry.getTexture(), entry.getModel());
+        this.clearAndInit();
     }
 
     public void removeLocalImage() {
