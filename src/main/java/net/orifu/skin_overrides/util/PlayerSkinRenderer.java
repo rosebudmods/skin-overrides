@@ -62,7 +62,7 @@ public class PlayerSkinRenderer {
     public static final int WIDTH = TORSO_WIDTH + ARM_WIDE_WIDTH * 2;
     public static final int HEIGHT = HEAD_SIZE + TORSO_HEIGHT + LEG_HEIGHT;
 
-    public static final int LAYER_DOWNSCALE = 3;
+    public static final int LAYER_DOWNSCALE = 2;
 
     public static void draw(GuiGraphics graphics, PlayerSkin skin, int x, int y, int scale) {
         draw(graphics, skin.texture(), skin.model(), x, y, scale);
@@ -77,7 +77,6 @@ public class PlayerSkinRenderer {
         drawLeftLeg(graphics, texture, x, y, scale, false);
         drawRightLeg(graphics, texture, x, y, scale, false);
         drawTorso(graphics, texture, x, y, scale, false);
-        drawHead(graphics, texture, x, y, scale, false);
 
         RenderSystem.enableBlend();
         drawLeftArm(graphics, texture, x, y, scale, armWidth, true);
@@ -85,12 +84,18 @@ public class PlayerSkinRenderer {
         drawLeftLeg(graphics, texture, x, y, scale, true);
         drawRightLeg(graphics, texture, x, y, scale, true);
         drawTorso(graphics, texture, x, y, scale, true);
+
+        drawHead(graphics, texture, x, y, scale, false);
         drawHead(graphics, texture, x, y, scale, true);
         RenderSystem.disableBlend();
     }
 
+    private static int offset(boolean isLayer, int scale) {
+        return isLayer ? Math.max(scale / LAYER_DOWNSCALE, 1) : 0;
+    }
+
     private static void drawHead(GuiGraphics graphics, Identifier texture, int x, int y, int scale, boolean isLayer) {
-        int o = isLayer ? scale / LAYER_DOWNSCALE : 0;
+        int o = offset(isLayer, scale);
         graphics.drawTexture(texture,
                 x + HEAD_X * scale - o, y + HEAD_Y * scale - o,
                 HEAD_SIZE * scale + o * 2, HEAD_SIZE * scale + o * 2,
@@ -100,7 +105,7 @@ public class PlayerSkinRenderer {
     }
 
     private static void drawTorso(GuiGraphics graphics, Identifier texture, int x, int y, int scale, boolean isLayer) {
-        int o = isLayer ? scale / LAYER_DOWNSCALE : 0;
+        int o = offset(isLayer, scale);
         graphics.drawTexture(texture,
                 x + TORSO_X * scale - o, y + TORSO_Y * scale - o,
                 TORSO_WIDTH * scale + o * 2, TORSO_HEIGHT * scale + o * 2,
@@ -111,7 +116,7 @@ public class PlayerSkinRenderer {
 
     private static void drawLeftArm(GuiGraphics graphics, Identifier texture, int x, int y, int scale, int armWidth,
             boolean isLayer) {
-        int o = isLayer ? scale / LAYER_DOWNSCALE : 0;
+        int o = offset(isLayer, scale);
         graphics.drawTexture(texture,
                 x + ARM_LEFT_X * scale - o, y + ARM_LEFT_Y * scale - o,
                 armWidth * scale + o * 2, ARM_HEIGHT * scale + o * 2,
@@ -122,7 +127,7 @@ public class PlayerSkinRenderer {
 
     private static void drawRightArm(GuiGraphics graphics, Identifier texture, int x, int y, int scale, int armWidth,
             int rightArmOffset, boolean isLayer) {
-        int o = isLayer ? scale / LAYER_DOWNSCALE : 0;
+        int o = offset(isLayer, scale);
         graphics.drawTexture(texture,
                 x + (ARM_RIGHT_X + rightArmOffset) * scale - o, y + ARM_RIGHT_Y * scale - o,
                 armWidth * scale + o * 2, ARM_HEIGHT * scale + o * 2,
@@ -133,7 +138,7 @@ public class PlayerSkinRenderer {
 
     private static void drawLeftLeg(GuiGraphics graphics, Identifier texture, int x, int y, int scale,
             boolean isLayer) {
-        int o = isLayer ? scale / LAYER_DOWNSCALE : 0;
+        int o = offset(isLayer, scale);
         graphics.drawTexture(texture,
                 x + LEG_LEFT_X * scale - o, y + LEG_LEFT_Y * scale - o,
                 LEG_WIDTH * scale + o * 2, LEG_HEIGHT * scale + o * 2,
@@ -144,7 +149,7 @@ public class PlayerSkinRenderer {
 
     private static void drawRightLeg(GuiGraphics graphics, Identifier texture, int x, int y, int scale,
             boolean isLayer) {
-        int o = isLayer ? scale / LAYER_DOWNSCALE : 0;
+        int o = offset(isLayer, scale);
         graphics.drawTexture(texture,
                 x + LEG_RIGHT_X * scale - o, y + LEG_RIGHT_Y * scale - o,
                 LEG_WIDTH * scale + o * 2, LEG_HEIGHT * scale + o * 2,

@@ -6,15 +6,17 @@ import net.orifu.skin_overrides.Library;
 
 public class LibraryListWidget extends AlwaysSelectedEntryGridWidget<LibraryListEntry> {
     private final Library library;
+    private final LibraryScreen parent;
 
-    public LibraryListWidget() {
+    public LibraryListWidget(LibraryScreen parent) {
         super(MinecraftClient.getInstance(), 0, 0, 0,
                 LibraryListEntry.WIDTH, LibraryListEntry.HEIGHT, 6);
 
         this.library = new Library();
+        this.parent = parent;
 
         for (var entry : this.library.entries()) {
-            this.addEntry(new LibraryListEntry(entry));
+            this.addEntry(new LibraryListEntry(entry, this.parent));
         }
     }
 
@@ -25,7 +27,7 @@ public class LibraryListWidget extends AlwaysSelectedEntryGridWidget<LibraryList
 
     @Override
     public int getScrollbarPositionX() {
-        return this.getXEnd();
+        return this.getXEnd() - SCROLLBAR_WIDTH;
     }
 
     @Override

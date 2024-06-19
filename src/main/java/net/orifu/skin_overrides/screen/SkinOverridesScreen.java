@@ -81,7 +81,7 @@ public class SkinOverridesScreen extends Screen {
 
         // add main content
         this.layout = new HeaderFooterLayoutWidget(this);
-        this.grid = this.layout.addToContents(new GridWidget().setColumnSpacing(16));
+        this.grid = this.layout.addToContents(new GridWidget());
         this.initContent();
 
         // add footer
@@ -118,7 +118,7 @@ public class SkinOverridesScreen extends Screen {
         LinearLayoutWidget configCols = configFrame.add(LinearLayoutWidget.createHorizontal()).setSpacing(8);
         GridWidget config = configCols.add(new GridWidget()).setSpacing(4);
         if (this.selectedProfile == null) {
-            config.add(new TextWidget(Text.translatable("skin_overrides.no_selection"), this.textRenderer), 0, 0);
+            this.configFrame.add(new TextWidget(Text.translatable("skin_overrides.no_selection"), this.textRenderer));
         } else {
             if (this.isSkin) {
                 this.initSkinConfig(config);

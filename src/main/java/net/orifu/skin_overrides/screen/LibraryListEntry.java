@@ -15,11 +15,13 @@ public class LibraryListEntry extends Entry<LibraryListEntry> {
     public static final int WIDTH = SKIN_WIDTH + SKIN_OFFSET * 2 + PAD * 2;
     public static final int HEIGHT = SKIN_HEIGHT + 2 + 7 + PAD * 2;
 
-    private final LibraryEntry entry;
+    public final LibraryEntry entry;
+    private final LibraryScreen parent;
     private final MinecraftClient client;
 
-    public LibraryListEntry(LibraryEntry entry) {
+    public LibraryListEntry(LibraryEntry entry, LibraryScreen parent) {
         this.entry = entry;
+        this.parent = parent;
         this.client = MinecraftClient.getInstance();
     }
 
@@ -41,6 +43,8 @@ public class LibraryListEntry extends Entry<LibraryListEntry> {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        this.parent.selectEntry(this);
+
         return true;
     }
 }
