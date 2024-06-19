@@ -1,19 +1,36 @@
 package net.orifu.skin_overrides.screen;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.GuiGraphics;
 import net.orifu.skin_overrides.Library;
-import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 
 public class LibraryListWidget extends AlwaysSelectedEntryGridWidget<LibraryListEntry> {
     private final Library library;
 
     public LibraryListWidget() {
-        super(MinecraftClient.getInstance(), 0, 0, 0, PlayerSkinRenderer.WIDTH * 2, PlayerSkinRenderer.HEIGHT * 2, 4);
+        super(MinecraftClient.getInstance(), 0, 0, 0,
+                LibraryListEntry.WIDTH, LibraryListEntry.HEIGHT, 6);
 
         this.library = new Library();
 
         for (var entry : this.library.entries()) {
             this.addEntry(new LibraryListEntry(entry));
         }
+    }
+
+    @Override
+    public int getRowWidth() {
+        return this.xTiles * this.itemWidth;
+    }
+
+    @Override
+    public int getScrollbarPositionX() {
+        return this.getXEnd();
+    }
+
+    @Override
+    public void renderList(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+        this.xTiles = this.width / this.itemWidth;
+        super.renderList(graphics, mouseX, mouseY, delta);
     }
 }

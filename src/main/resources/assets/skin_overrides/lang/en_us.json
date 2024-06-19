@@ -15,5 +15,6 @@
     "skin_overrides.pick_model": "choose the correct model for the skin",
     "skin_overrides.model.wide": "wide",
     "skin_overrides.model.slim": "slim",
+    "skin_overrides.library.title": "your library",
     "skin_overrides.library.open": "open library"
 }

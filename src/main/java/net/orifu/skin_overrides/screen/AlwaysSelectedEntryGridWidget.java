@@ -10,7 +10,7 @@ import net.minecraft.util.math.MathHelper;
 
 public abstract class AlwaysSelectedEntryGridWidget<E extends Entry<E>> extends AlwaysSelectedEntryListWidget<E> {
     protected final int itemWidth;
-    protected final int xTiles;
+    protected int xTiles;
 
     public AlwaysSelectedEntryGridWidget(MinecraftClient client, int width, int height, int y, int itemWidth,
             int itemHeight, int xTiles) {
@@ -79,7 +79,7 @@ public abstract class AlwaysSelectedEntryGridWidget<E extends Entry<E>> extends 
     @Nullable
     protected final E getEntryAtPosition(double x, double y) {
         double relativeX = x - this.getRowLeft();
-        double unscrolledRelativeY = y - this.headerHeight - 4;
+        double unscrolledRelativeY = y - this.getY() - this.headerHeight - 4;
         double relativeY = unscrolledRelativeY + this.getScrollAmount();
 
         // ensure position is within boundaries

@@ -193,8 +193,8 @@ public class SkinOverridesScreen extends Screen {
         ScreenArea area = new ScreenArea(0, hh, this.width, this.height - fh - hh);
         FrameWidget.align(this.grid, area);
         this.playerList.setPosition(area.x(), area.y());
-        this.playerList.setDimensions(Math.min(200, area.width() / 2), area.height());
-        this.configFrame.setMinDimensions(Math.min(200, area.width() / 2), area.height());
+        this.playerList.setDimensions(area.width() / 2, area.height());
+        this.configFrame.setMinDimensions(area.width() / 2, area.height());
 
         // reposition layout
         this.layout.setHeaderHeight(hh);
