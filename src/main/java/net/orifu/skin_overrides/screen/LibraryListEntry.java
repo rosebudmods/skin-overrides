@@ -25,4 +25,9 @@ public class LibraryListEntry extends Entry<LibraryListEntry> {
     public Text getNarration() {
         return Text.translatable("narrator.select", this.entry.getName());
     }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        return true;
+    }
 }
