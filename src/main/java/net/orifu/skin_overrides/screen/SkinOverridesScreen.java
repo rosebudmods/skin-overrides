@@ -87,7 +87,7 @@ public class SkinOverridesScreen extends Screen {
         this.initContent();
 
         // add footer
-        LinearLayoutWidget footer = this.layout.addToFooter(LinearLayoutWidget.createHorizontal().setSpacing(5));
+        LinearLayoutWidget footer = this.layout.addToFooter(LinearLayoutWidget.createHorizontal().setSpacing(8));
 
         // library button
         footer.add(ButtonWidget

@@ -36,7 +36,8 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
         if (this.isSkin) {
             PlayerFaceRenderer.draw(graphics, SkinOverrides.getSkin(this.profile), x, y, 32);
         } else {
-            PlayerCapeRenderer.draw(graphics, SkinOverrides.getSkin(this.profile), x, y, 2);
+            int capeX = x + (32 - PlayerCapeRenderer.WIDTH * 2) / 2;
+            PlayerCapeRenderer.draw(graphics, SkinOverrides.getSkin(this.profile), capeX, y, 2);
         }
 
         // draw player name
@@ -70,13 +71,18 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
                 return Text.translatable("skin_overrides.override.local_image").formatted(Formatting.GREEN);
             }
 
-            var copyOverride = Overrides.getSkinCopyOverride(this.profile);
-            if (copyOverride.isPresent()) {
-                return copyOverride.get().description().formatted(Formatting.GREEN);
+            var skinOverride = Overrides.getSkinCopyOverride(this.profile);
+            if (skinOverride.isPresent()) {
+                return skinOverride.get().description().formatted(Formatting.GREEN);
             }
         } else {
             if (Overrides.hasLocalCapeOverride(this.profile)) {
                 return Text.translatable("skin_overrides.override.local_image").formatted(Formatting.GREEN);
+            }
+
+            var capeOverride = Overrides.getCapeCopyOverride(this.profile);
+            if (capeOverride.isPresent()) {
+                return capeOverride.get().description().formatted(Formatting.GREEN);
             }
         }
 

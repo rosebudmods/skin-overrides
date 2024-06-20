@@ -23,7 +23,7 @@ public class LibraryScreen extends Screen {
     private static final Text TITLE = Text.translatable("skin_overrides.library.title");
     private static final int HEADER_HEIGHT = 40;
     private static final int SKIN_SCALE = 4;
-    private static final int CAPE_SCALE = 6;
+    private static final int CAPE_SCALE = 8;
 
     public final boolean isSkin;
     @Nullable
