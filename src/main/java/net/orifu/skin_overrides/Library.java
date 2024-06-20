@@ -122,7 +122,7 @@ public class Library {
         ensureLoaded();
 
         saveInternal(SKIN_FILE, skinEntries);
-        saveInternal(SKIN_FILE, capeEntries);
+        saveInternal(CAPE_FILE, capeEntries);
     }
 
     private static <E extends LibraryEntry> void saveInternal(File file, List<E> entries) {
@@ -130,7 +130,7 @@ public class Library {
         entries.forEach(e -> arr.add(e.toJson()));
 
         try {
-            var writer = Files.newWriter(SKIN_FILE, StandardCharsets.UTF_8);
+            var writer = Files.newWriter(file, StandardCharsets.UTF_8);
             writer.write(GSON.toJson(arr));
             writer.close();
         } catch (IOException e) {
@@ -148,6 +148,11 @@ public class Library {
 
         public String getName() {
             return this.name;
+        }
+
+        public void rename(String newName) {
+            this.name = newName;
+            save();
         }
 
         public abstract Identifier getTexture();

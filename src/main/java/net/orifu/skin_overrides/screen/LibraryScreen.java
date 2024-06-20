@@ -35,6 +35,8 @@ public class LibraryScreen extends Screen {
     private LibraryListWidget libraryList;
     @Nullable
     private FrameWidget entryPreviewFrame;
+    @Nullable
+    private TextFieldWidget nameField;
 
     @Nullable
     protected LibraryListEntry selectedEntry;
@@ -77,17 +79,19 @@ public class LibraryScreen extends Screen {
             var controlsFrame = body.add(new FrameWidget(optionsWidth, 0));
             var controls = controlsFrame.add(LinearLayoutWidget.createVertical()).setSpacing(8);
 
-            // name input
-            controls.add(new TextFieldWidget(this.textRenderer, Math.min(optionsWidth - 16, 150), 20,
-                    Text.translatable("skin_overrides.library.input.name")),
-                    LayoutSettings.create().alignHorizontallyCenter())
-                    .setText(this.selectedEntry.entry.getName());
-
             // library entry preview
             this.entryPreviewFrame = controls.add(new FrameWidget(
                     this.isSkin ? PlayerSkinRenderer.WIDTH * SKIN_SCALE : PlayerCapeRenderer.WIDTH * CAPE_SCALE,
                     this.isSkin ? PlayerSkinRenderer.HEIGHT * SKIN_SCALE : PlayerCapeRenderer.HEIGHT * CAPE_SCALE),
                     LayoutSettings.create().alignHorizontallyCenter());
+
+            // name input
+            this.nameField = controls.add(new TextFieldWidget(this.textRenderer, Math.min(optionsWidth - 16, 150), 20,
+                    Text.translatable("skin_overrides.library.input.name")),
+                    LayoutSettings.create().alignHorizontallyCenter());
+            this.nameField.setText(this.selectedEntry.entry.getName());
+            this.nameField.setMaxLength(32);
+            this.nameField.setChangedListener(this::renameEntry);
 
             var smallControls = controls.add(LinearLayoutWidget.createHorizontal());
 
@@ -171,5 +175,13 @@ public class LibraryScreen extends Screen {
         }
 
         this.libraryList.moveSelection(1);
+    }
+
+    public void renameEntry(String newName) {
+        if (!newName.equals(this.selectedEntry.entry.getName())) {
+            this.selectedEntry.entry.rename(newName);
+            this.clearAndInit();
+            this.focusOn(this.nameField);
+        }
     }
 }
