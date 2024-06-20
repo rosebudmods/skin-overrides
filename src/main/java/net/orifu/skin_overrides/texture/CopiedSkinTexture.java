@@ -27,7 +27,6 @@ public class CopiedSkinTexture extends AbstractCopiedTexture {
     }
 
     public static Optional<CopiedSkinTexture> fromLibrary(String id) {
-        System.out.println("id is " + id);
         var entry = Library.getSkin(id);
         if (entry != null) {
             return Optional.of(new CopiedSkinTexture(entry.getTexture(), entry.getModel(), entry.getName(), false));

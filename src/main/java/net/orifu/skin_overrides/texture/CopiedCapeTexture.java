@@ -23,7 +23,7 @@ public class CopiedCapeTexture extends AbstractCopiedTexture {
         return Optional.empty();
     }
 
-    public static Optional<CopiedCapeTexture> fromEntry(String id) {
+    public static Optional<CopiedCapeTexture> fromLibrary(String id) {
         var entry = Library.getCape(id);
         if (entry != null) {
             return Optional.of(new CopiedCapeTexture(entry.getTexture(), entry.getName(), false));
@@ -36,7 +36,7 @@ public class CopiedCapeTexture extends AbstractCopiedTexture {
         if (id.getNamespace().equals("minecraft")) {
             return CopiedCapeTexture.fromPlayer(id.getPath());
         } else if (id.getNamespace().equals("skin_overrides")) {
-            return CopiedCapeTexture.fromEntry(id.getPath());
+            return CopiedCapeTexture.fromLibrary(id.getPath());
         }
         return Optional.empty();
     }

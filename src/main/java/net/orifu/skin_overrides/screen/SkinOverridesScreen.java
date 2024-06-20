@@ -90,7 +90,7 @@ public class SkinOverridesScreen extends Screen {
         // library button
         footer.add(ButtonWidget
                 .builder(Text.translatable("skin_overrides.library.open"),
-                        (btn) -> this.client.setScreen(new LibraryScreen(this.isSkin, this)))
+                        (btn) -> this.client.setScreen(new LibraryScreen(this.isSkin, this, this::pickedFromLibrary)))
                 .build());
 
         // done button
@@ -237,10 +237,11 @@ public class SkinOverridesScreen extends Screen {
     }
 
     public void pickedFromLibrary(LibraryEntry entry) {
+        var profile = this.selectedProfile != null ? this.selectedProfile : this.client.method_53462();
         if (entry instanceof SkinEntry skinEntry) {
-            Overrides.pickSkinFromLibrary(this.selectedProfile, skinEntry);
+            Overrides.pickSkinFromLibrary(profile, skinEntry);
         } else {
-            Overrides.pickCapeFromLibrary(this.selectedProfile, entry);
+            Overrides.pickCapeFromLibrary(profile, entry);
         }
         this.clearAndInit();
     }
