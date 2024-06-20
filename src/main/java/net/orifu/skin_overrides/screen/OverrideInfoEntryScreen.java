@@ -1,9 +1,12 @@
 package net.orifu.skin_overrides.screen;
 
+import java.nio.file.Path;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.Screen;
@@ -14,6 +17,7 @@ import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.text.CommonTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.orifu.skin_overrides.texture.LocalPlayerTexture;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 
 public class OverrideInfoEntryScreen extends Screen {
@@ -49,14 +53,23 @@ public class OverrideInfoEntryScreen extends Screen {
         this.callback = callback;
     }
 
-    public static OverrideInfoEntryScreen getModel(@Nullable Screen parent, Identifier texture,
+    public static OverrideInfoEntryScreen getModel(@Nullable Screen parent, Path texturePath,
             Consumer<PlayerSkin.Model> callback) {
-        return new OverrideInfoEntryScreen(parent, true, false, texture, (name, model) -> callback.accept(model));
+        var texture = new LocalPlayerTexture(texturePath.toFile());
+        Identifier textureId = new Identifier("skin_overrides", UUID.randomUUID().toString());
+        MinecraftClient.getInstance().getTextureManager().registerTexture(textureId, texture);
+
+        return new OverrideInfoEntryScreen(parent, true, false, textureId, (name, model) -> callback.accept(model));
     }
 
-    public static OverrideInfoEntryScreen getName(@Nullable Screen parent, Identifier texture, String defaultName,
+    public static OverrideInfoEntryScreen getName(@Nullable Screen parent, Path texturePath, String defaultName,
             Consumer<String> callback) {
-        var screen = new OverrideInfoEntryScreen(parent, false, true, texture, (name, model) -> callback.accept(name));
+        var texture = new LocalPlayerTexture(texturePath.toFile());
+        Identifier textureId = new Identifier("skin_overrides", UUID.randomUUID().toString());
+        MinecraftClient.getInstance().getTextureManager().registerTexture(textureId, texture);
+
+        var screen = new OverrideInfoEntryScreen(parent, false, true, textureId,
+                (name, model) -> callback.accept(name));
         // TODO screen.nameInput.setText(defaultName);
         return screen;
     }

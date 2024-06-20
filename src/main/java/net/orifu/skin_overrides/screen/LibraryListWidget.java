@@ -35,7 +35,7 @@ public class LibraryListWidget extends AlwaysSelectedEntryGridWidget<LibraryList
             }
 
             if (add) {
-                this.addEntry(new LibraryListEntry(entry, i++, this.parent));
+                this.children().add(i, new LibraryListEntry(entry, i++, this.parent));
             }
         }
     }

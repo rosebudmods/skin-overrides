@@ -2,7 +2,6 @@ package net.orifu.skin_overrides.screen;
 
 import java.nio.file.Path;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 import org.apache.commons.io.FilenameUtils;
@@ -33,7 +32,6 @@ import net.orifu.skin_overrides.Overrides;
 import net.orifu.skin_overrides.SkinOverrides;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.Library.SkinEntry;
-import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 
@@ -270,13 +268,8 @@ public class SkinOverridesScreen extends Screen {
         GameProfile profile = this.selectedProfile != null ? this.selectedProfile : this.client.method_53462();
 
         if (this.isSkin) {
-            // register skin texture for preview
-            var texture = new LocalSkinTexture(path.toFile(), null);
-            Identifier textureId = new Identifier("skin_overrides", UUID.randomUUID().toString());
-            this.client.getTextureManager().registerTexture(textureId, texture);
-
             // open model selection screen
-            this.client.setScreen(OverrideInfoEntryScreen.getModel(this, textureId, model -> {
+            this.client.setScreen(OverrideInfoEntryScreen.getModel(this, path, model -> {
                 Overrides.copyLocalSkinOverride(profile, path, model);
                 this.clearAndInit();
             }));

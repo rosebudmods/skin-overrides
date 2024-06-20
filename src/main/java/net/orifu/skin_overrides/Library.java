@@ -79,7 +79,7 @@ public class Library {
     }
 
     public static void addCape(CapeEntry entry) {
-        capeEntries.add(entry);
+        capeEntries.add(0, entry);
         save();
     }
 

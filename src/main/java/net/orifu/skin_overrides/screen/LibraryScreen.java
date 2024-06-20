@@ -2,7 +2,6 @@ package net.orifu.skin_overrides.screen;
 
 import java.nio.file.Path;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 import org.apache.commons.io.FilenameUtils;
@@ -18,11 +17,9 @@ import net.minecraft.client.gui.widget.layout.LayoutSettings;
 import net.minecraft.client.gui.widget.layout.LinearLayoutWidget;
 import net.minecraft.client.gui.widget.text.TextWidget;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.Library.SkinEntry;
 import net.orifu.skin_overrides.Overrides;
-import net.orifu.skin_overrides.texture.LocalPlayerTexture;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 
@@ -93,12 +90,14 @@ public class LibraryScreen extends Screen {
                     LayoutSettings.create().alignHorizontallyCenter());
 
             // name input
-            this.nameField = controls.add(new TextFieldWidget(this.textRenderer, Math.min(optionsWidth - 16, 150), 20,
-                    Text.translatable("skin_overrides.library.input.name")),
-                    LayoutSettings.create().alignHorizontallyCenter());
-            this.nameField.setText(this.selectedEntry.entry.getName());
-            this.nameField.setMaxLength(32);
-            this.nameField.setChangedListener(this::renameEntry);
+            if (this.nameField == null) {
+                this.nameField = new TextFieldWidget(this.textRenderer, Math.min(optionsWidth - 16, 150), 20,
+                        Text.translatable("skin_overrides.library.input.name"));
+                this.nameField.setMaxLength(32);
+                this.nameField.setChangedListener(this::renameEntry);
+                this.nameField.setText(this.selectedEntry.entry.getName());
+            }
+            controls.add(this.nameField, LayoutSettings.create().alignHorizontallyCenter());
 
             var smallControls = controls.add(LinearLayoutWidget.createHorizontal());
 
@@ -165,6 +164,7 @@ public class LibraryScreen extends Screen {
 
     public void selectEntry(LibraryListEntry entry) {
         this.selectedEntry = entry;
+        this.nameField = null;
         this.clearAndInit();
     }
 
@@ -206,13 +206,8 @@ public class LibraryScreen extends Screen {
         if (this.isSkin) {
             // TODO
         } else {
-            // register cape texture for preview
-            var texture = new LocalPlayerTexture(path.toFile());
-            Identifier textureId = new Identifier("skin_overrides", UUID.randomUUID().toString());
-            this.client.getTextureManager().registerTexture(textureId, texture);
-
             // open name input screen
-            this.client.setScreen(OverrideInfoEntryScreen.getName(this, textureId, guessedName,
+            this.client.setScreen(OverrideInfoEntryScreen.getName(this, path, guessedName,
                     name -> {
                         // add cape
                         Overrides.addCapeToLibrary(name, path);
