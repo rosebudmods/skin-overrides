@@ -13,6 +13,7 @@ import com.mojang.authlib.GameProfile;
 
 import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.util.Identifier;
+import net.orifu.skin_overrides.Library.CapeEntry;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.Library.SkinEntry;
 import net.orifu.skin_overrides.texture.CopiedCapeTexture;
@@ -56,6 +57,19 @@ public class Overrides {
         return getLocalSkinOverrideFile(profile).map(v -> new LocalSkinTexture(v.file(), v.data()));
     }
 
+    public static void copyLocalSkinOverride(GameProfile profile, Path path, PlayerSkin.Model model) {
+        removeLocalSkinOverride(profile);
+
+        try {
+            Path outputPath = Paths.get(SKIN_OVERRIDES,
+                    profile.getName() + "." + model.toString().toLowerCase() + ".png");
+
+            Files.copy(path, outputPath);
+        } catch (IOException e) {
+            SkinOverrides.LOGGER.error("failed to copy {}", path, e);
+        }
+    }
+
     public static void removeLocalSkinOverride(GameProfile profile) {
         deleteProfileFiles(SKIN_OVERRIDES, Overrides::validateLocalSkinOverrideFile, profile);
     }
@@ -95,6 +109,12 @@ public class Overrides {
         return hasLocalSkinOverride(profile) || hasSkinCopyOverride(profile);
     }
 
+    public static List<GameProfile> profilesWithSkinOverride() {
+        var li = new ArrayList<>(listProfiles(SKIN_OVERRIDES, Overrides::validateLocalSkinOverrideFile));
+        li.addAll(listProfiles(SKIN_OVERRIDES, Overrides::validateSkinCopyOverrideFile));
+        return li;
+    }
+
     public static void removeSkinOverride(GameProfile profile) {
         removeLocalSkinOverride(profile);
         removeSkinCopyOverride(profile);
@@ -111,25 +131,6 @@ public class Overrides {
         } catch (IOException e) {
             SkinOverrides.LOGGER.error("failed to save library entry with id {} to file", libraryEntry.id, e);
         }
-    }
-
-    public static void copyLocalSkinOverride(GameProfile profile, Path path, PlayerSkin.Model model) {
-        removeLocalSkinOverride(profile);
-
-        try {
-            Path outputPath = Paths.get(SKIN_OVERRIDES,
-                    profile.getName() + "." + model.toString().toLowerCase() + ".png");
-
-            Files.copy(path, outputPath);
-        } catch (IOException e) {
-            SkinOverrides.LOGGER.error("failed to copy {}", path, e);
-        }
-    }
-
-    public static List<GameProfile> profilesWithSkinOverride() {
-        var li = new ArrayList<>(listProfiles(SKIN_OVERRIDES, Overrides::validateLocalSkinOverrideFile));
-        li.addAll(listProfiles(SKIN_OVERRIDES, Overrides::validateSkinCopyOverrideFile));
-        return li;
     }
 
     // #endregion
@@ -170,10 +171,6 @@ public class Overrides {
         deleteProfileFiles(CAPE_OVERRIDES, Overrides::validateLocalCapeOverrideFile, profile);
     }
 
-    public static List<GameProfile> profilesWithCapeOverride() {
-        return listProfiles(CAPE_OVERRIDES, Overrides::validateLocalCapeOverrideFile);
-    }
-
     // #endregion
     // #region cape copy override
 
@@ -209,6 +206,10 @@ public class Overrides {
         return hasLocalCapeOverride(profile) || hasCapeCopyOverride(profile);
     }
 
+    public static List<GameProfile> profilesWithCapeOverride() {
+        return listProfiles(CAPE_OVERRIDES, Overrides::validateLocalCapeOverrideFile);
+    }
+
     public static void removeCapeOverride(GameProfile profile) {
         removeLocalCapeOverride(profile);
         removeCapeCopyOverride(profile);
@@ -224,6 +225,16 @@ public class Overrides {
             writer.close();
         } catch (IOException e) {
             SkinOverrides.LOGGER.error("failed to save library entry with id {} to file", libraryEntry.id, e);
+        }
+    }
+
+    public static void addCapeToLibrary(String name, Path path) {
+        try {
+            var entry = new CapeEntry(name);
+            Files.copy(path, entry.file.toPath());
+            Library.addCape(entry);
+        } catch (IOException e) {
+            SkinOverrides.LOGGER.error("failed to copy {}", path, e);
         }
     }
 

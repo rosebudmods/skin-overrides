@@ -1,7 +1,11 @@
 package net.orifu.skin_overrides.screen;
 
+import java.nio.file.Path;
+import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
 
+import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.gui.GuiGraphics;
@@ -14,8 +18,11 @@ import net.minecraft.client.gui.widget.layout.LayoutSettings;
 import net.minecraft.client.gui.widget.layout.LinearLayoutWidget;
 import net.minecraft.client.gui.widget.text.TextWidget;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.Library.SkinEntry;
+import net.orifu.skin_overrides.Overrides;
+import net.orifu.skin_overrides.texture.LocalPlayerTexture;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 
@@ -182,6 +189,33 @@ public class LibraryScreen extends Screen {
             this.selectedEntry.entry.rename(newName);
             this.clearAndInit();
             this.focusOn(this.nameField);
+        }
+    }
+
+    @Override
+    public void filesDragged(List<Path> paths) {
+        if (paths.size() == 0) {
+            return;
+        }
+        Path path = paths.get(0);
+        if (!path.toFile().isFile() || !FilenameUtils.isExtension(path.toFile().getName(), "png")) {
+            return;
+        }
+
+        if (this.isSkin) {
+            // TODO
+        } else {
+            // register cape texture for preview
+            var texture = new LocalPlayerTexture(path.toFile());
+            Identifier textureId = new Identifier("skin_overrides", UUID.randomUUID().toString());
+            this.client.getTextureManager().registerTexture(textureId, texture);
+
+            // open name input screen
+            this.client.setScreen(OverrideInfoEntryScreen.getName(this, textureId, "", name -> {
+                // add cape
+                Overrides.addCapeToLibrary(name, path);
+                this.clearAndInit();
+            }));
         }
     }
 }

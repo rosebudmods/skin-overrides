@@ -79,6 +79,11 @@ public class Library {
         return null;
     }
 
+    public static void addCape(CapeEntry entry) {
+        capeEntries.add(entry);
+        save();
+    }
+
     public static void reload() {
         skinEntries = new ArrayList<>();
         capeEntries = new ArrayList<>();
@@ -258,6 +263,14 @@ public class Library {
             this(name, UUID.randomUUID().toString(), file);
         }
 
+        public CapeEntry(String name, String id) {
+            this(name, id, new File(id + ".png"));
+        }
+
+        public CapeEntry(String name) {
+            this(name, UUID.randomUUID().toString());
+        }
+
         public CapeEntry(String name, String id, Identifier texture) {
             this.isFile = false;
             this.file = null;
@@ -326,7 +339,7 @@ public class Library {
             obj.addProperty("name", this.name);
             obj.addProperty("id", this.id);
             if (this.isFile) {
-                obj.addProperty("file", this.file.toString());
+                obj.addProperty("file", this.file.getName());
             } else {
                 obj.addProperty("texture", this.texture.toString());
             }

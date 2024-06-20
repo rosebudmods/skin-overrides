@@ -276,7 +276,7 @@ public class SkinOverridesScreen extends Screen {
             this.client.getTextureManager().registerTexture(textureId, texture);
 
             // open model selection screen
-            this.client.setScreen(new PlayerModelSelectScreen(this, textureId, model -> {
+            this.client.setScreen(OverrideInfoEntryScreen.getModel(this, textureId, model -> {
                 Overrides.copyLocalSkinOverride(profile, path, model);
                 this.clearAndInit();
             }));
