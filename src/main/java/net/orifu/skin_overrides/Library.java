@@ -26,12 +26,11 @@ import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.texture.LocalPlayerTexture;
 import net.orifu.skin_overrides.texture.LocalSkinTexture;
 
-import static net.orifu.skin_overrides.SkinOverrides.CAPE_OVERRIDES;
-import static net.orifu.skin_overrides.SkinOverrides.SKIN_OVERRIDES;
-
 public class Library {
     public static final File SKIN_FILE = new File(SkinOverrides.SKIN_OVERRIDES, "library.json");
     public static final File CAPE_FILE = new File(SkinOverrides.CAPE_OVERRIDES, "library.json");
+    public static final File SKIN_LIBRARY_DIR = new File(SkinOverrides.SKIN_OVERRIDES, "library");
+    public static final File CAPE_LIBRARY_DIR = new File(SkinOverrides.CAPE_OVERRIDES, "library");
     public static final Gson GSON = new Gson();
 
     protected static ArrayList<SkinEntry> skinEntries;
@@ -87,6 +86,9 @@ public class Library {
     public static void reload() {
         skinEntries = new ArrayList<>();
         capeEntries = new ArrayList<>();
+
+        SKIN_LIBRARY_DIR.mkdir();
+        CAPE_LIBRARY_DIR.mkdir();
 
         reloadInternal(SKIN_FILE, j -> SkinEntry.skinFromJson(j).ifPresent(skinEntries::add), () -> {
             resetSkins();
@@ -228,7 +230,7 @@ public class Library {
             if (cape.isFile) {
                 return Optional.of(new SkinEntry(
                         cape.name, cape.id,
-                        new File(SKIN_OVERRIDES, obj.get("file").getAsString()),
+                        new File(SKIN_LIBRARY_DIR, obj.get("file").getAsString()),
                         playerModel));
             } else {
                 return Optional.of(new SkinEntry(cape.name, cape.id, cape.texture, playerModel));
@@ -264,7 +266,7 @@ public class Library {
         }
 
         public CapeEntry(String name, String id) {
-            this(name, id, new File(id + ".png"));
+            this(name, id, new File(CAPE_LIBRARY_DIR, id + ".png"));
         }
 
         public CapeEntry(String name) {
@@ -318,7 +320,7 @@ public class Library {
                 if (fileStr == null)
                     return Optional.empty();
 
-                return Optional.of(new CapeEntry(nameStr, idStr, new File(CAPE_OVERRIDES, fileStr)));
+                return Optional.of(new CapeEntry(nameStr, idStr, new File(CAPE_LIBRARY_DIR, fileStr)));
             } else if (texture != null) {
                 String textureStr = texture.getAsString();
                 if (textureStr == null)

@@ -201,6 +201,7 @@ public class LibraryScreen extends Screen {
         if (!path.toFile().isFile() || !FilenameUtils.isExtension(path.toFile().getName(), "png")) {
             return;
         }
+        String guessedName = path.toFile().getName().replace(".png", "").replace("_", " ");
 
         if (this.isSkin) {
             // TODO
@@ -211,11 +212,13 @@ public class LibraryScreen extends Screen {
             this.client.getTextureManager().registerTexture(textureId, texture);
 
             // open name input screen
-            this.client.setScreen(OverrideInfoEntryScreen.getName(this, textureId, "", name -> {
-                // add cape
-                Overrides.addCapeToLibrary(name, path);
-                this.clearAndInit();
-            }));
+            this.client.setScreen(OverrideInfoEntryScreen.getName(this, textureId, guessedName,
+                    name -> {
+                        // add cape
+                        Overrides.addCapeToLibrary(name, path);
+                        this.libraryList.reload();
+                        this.clearAndInit();
+                    }));
         }
     }
 }

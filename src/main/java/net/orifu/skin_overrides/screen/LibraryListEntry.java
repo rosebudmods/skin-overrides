@@ -23,16 +23,18 @@ public class LibraryListEntry extends Entry<LibraryListEntry> {
     public static final int SKIN_ENTRY_HEIGHT = SKIN_HEIGHT + 2 + 7 + PAD * 2;
     public static final int CAPE_ENTRY_HEIGHT = CAPE_HEIGHT + 2 + 7 + PAD * 2;
 
-    public final LibraryEntry entry;
     private final LibraryScreen parent;
-    public final int index;
     private final MinecraftClient client;
 
+    public LibraryEntry entry;
+    public int index;
+
     public LibraryListEntry(LibraryEntry entry, int index, LibraryScreen parent) {
-        this.entry = entry;
         this.parent = parent;
-        this.index = index;
         this.client = MinecraftClient.getInstance();
+
+        this.entry = entry;
+        this.index = index;
     }
 
     @Override
