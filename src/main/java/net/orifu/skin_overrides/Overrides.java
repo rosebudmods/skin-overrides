@@ -133,6 +133,16 @@ public class Overrides {
         }
     }
 
+    public static void addSkinToLibrary(String name, Path path, PlayerSkin.Model model) {
+        try {
+            var entry = new SkinEntry(name, model);
+            Files.copy(path, entry.file.toPath());
+            Library.addSkin(entry);
+        } catch (IOException e) {
+            SkinOverrides.LOGGER.error("failed to copy {}", path, e);
+        }
+    }
+
     // #endregion
     // #region local cape override
 

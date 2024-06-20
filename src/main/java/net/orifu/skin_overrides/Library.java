@@ -78,6 +78,11 @@ public class Library {
         return null;
     }
 
+    public static void addSkin(SkinEntry entry) {
+        skinEntries.add(0, entry);
+        save();
+    }
+
     public static void addCape(CapeEntry entry) {
         capeEntries.add(0, entry);
         save();
@@ -177,6 +182,14 @@ public class Library {
 
         public SkinEntry(String name, File file, PlayerSkin.Model model) {
             this(name, UUID.randomUUID().toString(), file, model);
+        }
+
+        public SkinEntry(String name, String id, PlayerSkin.Model model) {
+            this(name, id, new File(SKIN_LIBRARY_DIR, id + ".png"), model);
+        }
+
+        public SkinEntry(String name, PlayerSkin.Model model) {
+            this(name, UUID.randomUUID().toString(), model);
         }
 
         public SkinEntry(String name, String id, Identifier texture, PlayerSkin.Model model) {

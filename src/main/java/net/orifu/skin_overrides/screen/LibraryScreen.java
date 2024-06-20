@@ -204,7 +204,14 @@ public class LibraryScreen extends Screen {
         String guessedName = path.toFile().getName().replace(".png", "").replace("_", " ");
 
         if (this.isSkin) {
-            // TODO
+            // open name and model input screen
+            this.client.setScreen(OverrideInfoEntryScreen.getNameAndModel(this, path, guessedName,
+                    (name, model) -> {
+                        // add skin
+                        Overrides.addSkinToLibrary(name, path, model);
+                        this.libraryList.reload();
+                        this.clearAndInit();
+                    }));
         } else {
             // open name input screen
             this.client.setScreen(OverrideInfoEntryScreen.getName(this, path, guessedName,

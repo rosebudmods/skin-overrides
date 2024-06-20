@@ -18,10 +18,14 @@ import net.minecraft.text.CommonTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.texture.LocalPlayerTexture;
+import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 
 public class OverrideInfoEntryScreen extends Screen {
-    private static final Text TITLE = Text.translatable("skin_overrides.pick_model");
+    private static final Text INPUT_MODEL = Text.translatable("skin_overrides.input.model");
+    private static final Text INPUT_NAME = Text.translatable("skin_overrides.input.name");
+    private static final Text INPUT_NAME_AND_MODEL = Text.translatable("skin_overrides.input.name_and_model");
+
     private static final Text MODEL_WIDE = Text.translatable("skin_overrides.model.wide");
     private static final Text MODEL_SLIM = Text.translatable("skin_overrides.model.slim");
 
@@ -33,6 +37,7 @@ public class OverrideInfoEntryScreen extends Screen {
     private final Screen parent;
     private final boolean wantsModel;
     private final boolean wantsName;
+    private final String defaultName;
 
     private final Identifier texture;
     private final OverrideInfoCallback callback;
@@ -42,24 +47,26 @@ public class OverrideInfoEntryScreen extends Screen {
     @Nullable
     private TextFieldWidget nameInput;
 
-    private OverrideInfoEntryScreen(@Nullable Screen parent, boolean wantsModel, boolean wantsName, Identifier texture,
+    private OverrideInfoEntryScreen(@Nullable Screen parent, boolean wantsModel, boolean wantsName, String defaultName,
+            Identifier texture,
             OverrideInfoCallback callback) {
-        super(TITLE);
+        super(getMessageStatic(wantsName, wantsModel));
 
         this.parent = parent;
         this.wantsModel = wantsModel;
         this.wantsName = wantsName;
+        this.defaultName = defaultName;
         this.texture = texture;
         this.callback = callback;
     }
 
     public static OverrideInfoEntryScreen getModel(@Nullable Screen parent, Path texturePath,
             Consumer<PlayerSkin.Model> callback) {
-        var texture = new LocalPlayerTexture(texturePath.toFile());
+        var texture = new LocalSkinTexture(texturePath.toFile(), null);
         Identifier textureId = new Identifier("skin_overrides", UUID.randomUUID().toString());
         MinecraftClient.getInstance().getTextureManager().registerTexture(textureId, texture);
 
-        return new OverrideInfoEntryScreen(parent, true, false, textureId, (name, model) -> callback.accept(model));
+        return new OverrideInfoEntryScreen(parent, true, false, "", textureId, (name, model) -> callback.accept(model));
     }
 
     public static OverrideInfoEntryScreen getName(@Nullable Screen parent, Path texturePath, String defaultName,
@@ -68,15 +75,22 @@ public class OverrideInfoEntryScreen extends Screen {
         Identifier textureId = new Identifier("skin_overrides", UUID.randomUUID().toString());
         MinecraftClient.getInstance().getTextureManager().registerTexture(textureId, texture);
 
-        var screen = new OverrideInfoEntryScreen(parent, false, true, textureId,
+        return new OverrideInfoEntryScreen(parent, false, true, defaultName, textureId,
                 (name, model) -> callback.accept(name));
-        // TODO screen.nameInput.setText(defaultName);
-        return screen;
+    }
+
+    public static OverrideInfoEntryScreen getNameAndModel(@Nullable Screen parent, Path texturePath, String defaultName,
+            OverrideInfoCallback callback) {
+        var texture = new LocalSkinTexture(texturePath.toFile(), null);
+        Identifier textureId = new Identifier("skin_overrides", UUID.randomUUID().toString());
+        MinecraftClient.getInstance().getTextureManager().registerTexture(textureId, texture);
+
+        return new OverrideInfoEntryScreen(parent, true, true, defaultName, textureId, callback);
     }
 
     @Override
     protected void init() {
-        this.message = MultilineText.create(this.textRenderer, TITLE, this.width - 50);
+        this.message = MultilineText.create(this.textRenderer, this.getMessage(), this.width - 50);
 
         // add skin model selector buttons
         int buttonY = this.getModelButtonY();
@@ -96,9 +110,9 @@ public class OverrideInfoEntryScreen extends Screen {
             var nameInputWrapper = LinearLayoutWidget.createHorizontal();
             nameInputWrapper.setPosition((this.width - wrapperWidth) / 2, this.getNameInputY());
 
-            // TODO
-            this.nameInput = nameInputWrapper.add(
-                    new TextFieldWidget(this.textRenderer, 120, 20, Text.literal("WIP")));
+            this.nameInput = nameInputWrapper.add(new TextFieldWidget(this.textRenderer, 120, 20,
+                    Text.translatable("skin_overrides.library.input.name")));
+            this.nameInput.setText(this.defaultName);
 
             if (!this.wantsModel) {
                 nameInputWrapper.add(ButtonWidget.builder(CommonTexts.DONE, btn -> {
@@ -127,7 +141,7 @@ public class OverrideInfoEntryScreen extends Screen {
     }
 
     private void select(PlayerSkin.Model model) {
-        String name = this.wantsName ? null : this.nameInput.getText();
+        String name = this.wantsName ? this.nameInput.getText() : null;
         this.callback.receive(name, model);
         this.client.setScreen(this.parent);
     }
@@ -136,6 +150,18 @@ public class OverrideInfoEntryScreen extends Screen {
         return this.getMessagesHeight()
                 + (this.wantsModel ? 20 + PlayerSkinRenderer.HEIGHT * SKIN_SCALE + 20 + 20 : 0)
                 + (this.wantsName ? 20 + 20 : 0);
+    }
+
+    protected static Text getMessageStatic(boolean wantsName, boolean wantsModel) {
+        return wantsName && wantsModel
+                ? INPUT_NAME_AND_MODEL
+                : wantsName
+                        ? INPUT_NAME
+                        : INPUT_MODEL;
+    }
+
+    protected Text getMessage() {
+        return getMessageStatic(this.wantsName, this.wantsModel);
     }
 
     private int getMessagesHeight() {
