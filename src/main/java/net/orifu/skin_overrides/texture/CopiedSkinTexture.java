@@ -1,49 +1,51 @@
 package net.orifu.skin_overrides.texture;
 
-import com.mojang.authlib.GameProfile;
+import java.util.Optional;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.PlayerSkin;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.orifu.skin_overrides.Library.LibraryEntry;
+import net.orifu.skin_overrides.Library;
+import net.orifu.skin_overrides.util.ProfileHelper;
 
-public class CopiedSkinTexture {
-    public final Identifier source;
+public class CopiedSkinTexture extends AbstractCopiedTexture {
     public final PlayerSkin.Model model;
-    public final String name;
-    public final boolean isCopying;
 
-    public CopiedSkinTexture(GameProfile profile) {
-        // fetch the remote skin (cached)
-        PlayerSkin remoteSkin = MinecraftClient.getInstance().getSkinProvider().getSkin(profile);
-        this.source = remoteSkin.texture();
-        this.model = remoteSkin.model();
-        this.name = profile.getName();
-        this.isCopying = true;
+    protected CopiedSkinTexture(Identifier source, PlayerSkin.Model model, String name, boolean isCopying) {
+        super(source, name, isCopying);
+        this.model = model;
     }
 
-    public CopiedSkinTexture(LibraryEntry libraryEntry) {
-        this.source = libraryEntry.getTexture();
-        this.model = libraryEntry.getModel();
-        this.name = libraryEntry.getName();
-        this.isCopying = false;
+    public static Optional<CopiedSkinTexture> fromPlayer(String playerId) {
+        var profile = ProfileHelper.idToProfile(playerId);
+        if (profile.isPresent()) {
+            PlayerSkin skin = MinecraftClient.getInstance().getSkinProvider().getSkin(profile.get());
+            return Optional.of(new CopiedSkinTexture(skin.texture(), skin.model(), profile.get().getName(), true));
+        }
+
+        return Optional.empty();
     }
 
-    public Identifier texture() {
-        return this.source;
+    public static Optional<CopiedSkinTexture> fromLibrary(String id) {
+        System.out.println("id is " + id);
+        var entry = Library.getSkin(id);
+        if (entry != null) {
+            return Optional.of(new CopiedSkinTexture(entry.getTexture(), entry.getModel(), entry.getName(), false));
+        }
+
+        return Optional.empty();
+    }
+
+    public static Optional<CopiedSkinTexture> fromIdentifier(Identifier id) {
+        if (id.getNamespace().equals("minecraft")) {
+            return CopiedSkinTexture.fromPlayer(id.getPath());
+        } else if (id.getNamespace().equals("skin_overrides")) {
+            return CopiedSkinTexture.fromLibrary(id.getPath());
+        }
+        return Optional.empty();
     }
 
     public PlayerSkin.Model model() {
         return this.model;
-    }
-
-    public MutableText description() {
-        if (this.isCopying) {
-            return Text.translatable("skin_overrides.override.copy", this.name);
-        } else {
-            return Text.translatable("skin_overrides.override.library", this.name);
-        }
     }
 }

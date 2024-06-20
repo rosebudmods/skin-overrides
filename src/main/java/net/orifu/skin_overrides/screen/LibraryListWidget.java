@@ -7,14 +7,14 @@ import net.orifu.skin_overrides.Library;
 public class LibraryListWidget extends AlwaysSelectedEntryGridWidget<LibraryListEntry> {
     private final LibraryScreen parent;
 
-    public LibraryListWidget(LibraryScreen parent) {
+    public LibraryListWidget(LibraryScreen parent, boolean isSkin) {
         super(MinecraftClient.getInstance(), 0, 0, 0,
                 LibraryListEntry.WIDTH, LibraryListEntry.HEIGHT, 6);
 
         this.parent = parent;
 
         int i = 0;
-        for (var entry : Library.entries()) {
+        for (var entry : isSkin ? Library.skinEntries() : Library.capeEntries()) {
             this.addEntry(new LibraryListEntry(entry, i++, this.parent));
         }
     }

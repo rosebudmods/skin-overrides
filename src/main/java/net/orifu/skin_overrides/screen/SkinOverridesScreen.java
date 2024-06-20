@@ -32,6 +32,7 @@ import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Overrides;
 import net.orifu.skin_overrides.SkinOverrides;
 import net.orifu.skin_overrides.Library.LibraryEntry;
+import net.orifu.skin_overrides.Library.SkinEntry;
 import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
@@ -91,7 +92,7 @@ public class SkinOverridesScreen extends Screen {
         // library button
         footer.add(ButtonWidget
                 .builder(Text.translatable("skin_overrides.library.open"),
-                        (btn) -> this.client.setScreen(new LibraryScreen(this)))
+                        (btn) -> this.client.setScreen(new LibraryScreen(this.isSkin, this)))
                 .build());
 
         // done button
@@ -140,29 +141,30 @@ public class SkinOverridesScreen extends Screen {
         // add pick from library button
         config.add(ButtonWidget
                 .builder(Text.translatable("skin_overrides.library.pick"),
-                        (btn) -> this.client.setScreen(new LibraryScreen(this, this::pickedFromLibrary)))
+                        (btn) -> this.client.setScreen(new LibraryScreen(true, this, this::pickedFromLibrary)))
                 .width(120).build(), 1, 0);
 
-        // add remove local image button
+        // add remove override button
         config.add(ButtonWidget
-                .builder(Text.translatable("skin_overrides.remove.local_image"), (btn) -> this.removeLocalImage())
+                .builder(Text.translatable("skin_overrides.remove"), (btn) -> this.removeOverride())
                 .width(120)
-                .build(), 2, 0).active = Overrides.hasLocalSkinOverride(this.selectedProfile);
-        // add remove copy button
-        config.add(ButtonWidget
-                .builder(Text.translatable("skin_overrides.remove.copy"), (btn) -> this.removeCopy())
-                .width(120)
-                .build(), 3, 0).active = Overrides.hasSkinCopyOverride(this.selectedProfile);
+                .build(), 2, 0).active = Overrides.hasSkinOverride(this.selectedProfile);
     }
 
     protected void initCapeConfig(GridWidget config) {
         config.add(new TextWidget(Text.translatable("skin_overrides.add_cape"), this.textRenderer), 0, 0);
 
-        // add remove local image button
+        // add pick from library button
         config.add(ButtonWidget
-                .builder(Text.translatable("skin_overrides.remove.local_image"), (btn) -> this.removeLocalImage())
+                .builder(Text.translatable("skin_overrides.library.pick"),
+                        (btn) -> this.client.setScreen(new LibraryScreen(false, this, this::pickedFromLibrary)))
+                .width(120).build(), 1, 0);
+
+        // add remove override button
+        config.add(ButtonWidget
+                .builder(Text.translatable("skin_overrides.remove"), (btn) -> this.removeOverride())
                 .width(120)
-                .build(), 1, 0).active = Overrides.hasLocalCapeOverride(this.selectedProfile);
+                .build(), 2, 0).active = Overrides.hasCapeOverride(this.selectedProfile);
     }
 
     @Override
@@ -237,22 +239,20 @@ public class SkinOverridesScreen extends Screen {
     }
 
     public void pickedFromLibrary(LibraryEntry entry) {
-        Overrides.pickSkinFromLibrary(this.selectedProfile, entry);
+        if (entry instanceof SkinEntry skinEntry) {
+            Overrides.pickSkinFromLibrary(this.selectedProfile, skinEntry);
+        } else {
+            Overrides.pickCapeFromLibrary(this.selectedProfile, entry);
+        }
         this.clearAndInit();
     }
 
-    public void removeLocalImage() {
+    public void removeOverride() {
         if (this.isSkin) {
-            Overrides.removeLocalSkinOverride(this.selectedProfile);
+            Overrides.removeSkinOverride(this.selectedProfile);
         } else {
-            Overrides.removeLocalCapeOverride(this.selectedProfile);
+            Overrides.removeCapeOverride(this.selectedProfile);
         }
-        this.upgradeProfile(); // get player's actual skin/cape
-        this.clearAndInit(); // update remove buttons
-    }
-
-    public void removeCopy() {
-        Overrides.removeSkinCopyOverride(this.selectedProfile);
         this.upgradeProfile(); // get player's actual skin/cape
         this.clearAndInit(); // update remove buttons
     }

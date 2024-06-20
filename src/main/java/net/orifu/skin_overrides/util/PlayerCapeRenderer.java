@@ -9,7 +9,6 @@ public class PlayerCapeRenderer {
     public static final int HEIGHT = 16;
     public static final int U = 1;
     public static final int V = 1;
-    public static final int X_OFFSET = 3;
 
     public static void draw(GuiGraphics graphics, PlayerSkin skin, int x, int y, int scale) {
         Identifier capeTexture = skin.capeTexture();
@@ -21,8 +20,7 @@ public class PlayerCapeRenderer {
 
     public static void draw(GuiGraphics graphics, Identifier texture, int x, int y, int scale) {
         graphics.drawTexture(texture,
-                x + X_OFFSET * scale, y,
-                WIDTH * scale, HEIGHT * scale,
+                x, y, WIDTH * scale, HEIGHT * scale,
                 U, V, WIDTH, HEIGHT, 64, 32);
     }
 }

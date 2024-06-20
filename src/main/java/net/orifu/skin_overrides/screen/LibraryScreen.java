@@ -15,13 +15,17 @@ import net.minecraft.client.gui.widget.layout.LinearLayoutWidget;
 import net.minecraft.client.gui.widget.text.TextWidget;
 import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Library.LibraryEntry;
+import net.orifu.skin_overrides.Library.SkinEntry;
+import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 
 public class LibraryScreen extends Screen {
     private static final Text TITLE = Text.translatable("skin_overrides.library.title");
     private static final int HEADER_HEIGHT = 40;
-    private static final int PREVIEW_SCALE = 4;
+    private static final int SKIN_SCALE = 4;
+    private static final int CAPE_SCALE = 6;
 
+    public final boolean isSkin;
     @Nullable
     private final Screen parent;
     @Nullable
@@ -35,21 +39,22 @@ public class LibraryScreen extends Screen {
     @Nullable
     protected LibraryListEntry selectedEntry;
 
-    public LibraryScreen(@Nullable Screen parent, @Nullable Consumer<LibraryEntry> callback) {
+    public LibraryScreen(boolean isSkin, @Nullable Screen parent, @Nullable Consumer<LibraryEntry> callback) {
         super(TITLE);
 
+        this.isSkin = isSkin;
         this.parent = parent;
         this.callback = callback;
     }
 
-    public LibraryScreen(@Nullable Screen parent) {
-        this(parent, null);
+    public LibraryScreen(boolean isSkin, @Nullable Screen parent) {
+        this(isSkin, parent, null);
     }
 
     @Override
     protected void init() {
         if (this.libraryList == null) {
-            this.libraryList = new LibraryListWidget(this);
+            this.libraryList = new LibraryListWidget(this, this.isSkin);
         }
 
         int optionsWidth = Math.min(this.width * 2 / 5, 200);
@@ -80,8 +85,8 @@ public class LibraryScreen extends Screen {
 
             // library entry preview
             this.entryPreviewFrame = controls.add(new FrameWidget(
-                    PlayerSkinRenderer.WIDTH * PREVIEW_SCALE,
-                    PlayerSkinRenderer.HEIGHT * PREVIEW_SCALE),
+                    this.isSkin ? PlayerSkinRenderer.WIDTH * SKIN_SCALE : PlayerCapeRenderer.WIDTH * CAPE_SCALE,
+                    this.isSkin ? PlayerSkinRenderer.HEIGHT * SKIN_SCALE : PlayerCapeRenderer.HEIGHT * CAPE_SCALE),
                     LayoutSettings.create().alignHorizontallyCenter());
 
             var smallControls = controls.add(LinearLayoutWidget.createHorizontal());
@@ -122,10 +127,23 @@ public class LibraryScreen extends Screen {
         super.render(graphics, mouseX, mouseY, delta);
 
         if (this.selectedEntry != null) {
-            var texture = this.selectedEntry.entry.getTexture();
-            var model = this.selectedEntry.entry.getModel();
-            PlayerSkinRenderer.draw(graphics, texture, model,
-                    this.entryPreviewFrame.getX(), this.entryPreviewFrame.getY(), PREVIEW_SCALE);
+            if (this.selectedEntry.entry instanceof SkinEntry entry) {
+                var texture = entry.getTexture();
+                var model = entry.getModel();
+                PlayerSkinRenderer.draw(graphics, texture, model,
+                        this.entryPreviewFrame.getX(), this.entryPreviewFrame.getY(), SKIN_SCALE);
+            } else {
+                var texture = this.selectedEntry.entry.getTexture();
+                PlayerCapeRenderer.draw(graphics, texture, this.entryPreviewFrame.getX(), this.entryPreviewFrame.getY(),
+                        CAPE_SCALE);
+            }
+        }
+
+        // empty list text
+        if (this.libraryList.children().isEmpty()) {
+            graphics.drawCenteredShadowedText(this.textRenderer, Text.translatable("skin_overrides.library.empty"),
+                    this.libraryList.getX() + this.libraryList.getWidth() / 2,
+                    this.libraryList.getY() + this.libraryList.getHeight() / 2 - 4, 0xaaaaaa);
         }
     }
 

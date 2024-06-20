@@ -5,7 +5,8 @@
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [],
 	"client": [
-		"PlayerSkinProviderMixin"
+		"PlayerSkinProviderMixin",
+		"PlayerListEntryMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
