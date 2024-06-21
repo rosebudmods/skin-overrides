@@ -37,6 +37,8 @@ public class LibraryListWidget extends AlwaysSelectedEntryGridWidget<LibraryList
                 this.children().add(i, new LibraryListEntry(entry, i++, this.parent));
             }
         }
+
+        this.children().sort((a, b) -> Integer.compare(a.index, b.index));
     }
 
     public void removeFromLibrary() {
@@ -59,10 +61,18 @@ public class LibraryListWidget extends AlwaysSelectedEntryGridWidget<LibraryList
         this.parent.selectEntry(newEntry);
     }
 
+    public void swap(int i, int j) {
+        if (this.isSkin) {
+            Library.swapSkins(i, j);
+        } else {
+            Library.swapCapes(i, j);
+        }
+        this.reload();
+    }
+
     public void moveSelection(int amount) {
         var newSelected = this.getEntry(this.getSelectedOrNull().index + amount);
         this.setSelected(newSelected);
-        this.ensureVisible(newSelected);
         this.parent.selectEntry(newSelected);
     }
 

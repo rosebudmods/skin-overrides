@@ -107,11 +107,15 @@ public class LibraryScreen extends Screen {
 
             // previous entry
             boolean isFirst = this.selectedEntry.index == 0;
-            smallControls.add(ButtonWidget.builder(Text.literal("<"), btn -> this.previousEntry()).width(20)
+            smallControls.add(ButtonWidget.builder(Text.literal("<"),
+                    btn -> this.libraryList.moveSelection(-1)).width(20)
                     .tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.back")))
                     .build()).active = !isFirst;
             // swap this and previous entry
             smallControls.add(ButtonWidget.builder(Text.literal("<<"), btn -> {
+                this.libraryList.swap(this.selectedEntry.index, this.selectedEntry.index - 1);
+                this.libraryList.ensureVisible(this.selectedEntry);
+                this.clearAndInit();
             }).width(25).tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.move_back")))
                     .build()).active = !isFirst;
 
@@ -132,10 +136,14 @@ public class LibraryScreen extends Screen {
             // swap this and next entry
             boolean isLast = this.selectedEntry.index == this.libraryList.children().size() - 1;
             smallControls.add(ButtonWidget.builder(Text.literal(">>"), btn -> {
+                this.libraryList.swap(this.selectedEntry.index, this.selectedEntry.index + 1);
+                this.libraryList.ensureVisible(this.selectedEntry);
+                this.clearAndInit();
             }).tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.move_next"))).width(25)
                     .build()).active = !isLast;
             // next entry
-            smallControls.add(ButtonWidget.builder(Text.literal(">"), btn -> this.nextEntry())
+            smallControls.add(ButtonWidget.builder(Text.literal(">"),
+                    btn -> this.libraryList.moveSelection(1))
                     .tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.next"))).width(20)
                     .build()).active = !isLast;
         }
@@ -179,22 +187,6 @@ public class LibraryScreen extends Screen {
         this.nameField = null;
         this.clearAndInit();
         this.libraryList.ensureVisible(entry);
-    }
-
-    public void previousEntry() {
-        if (this.selectedEntry == null || this.selectedEntry.index == 0) {
-            return;
-        }
-
-        this.libraryList.moveSelection(-1);
-    }
-
-    public void nextEntry() {
-        if (this.selectedEntry == null || this.selectedEntry.index == this.libraryList.children().size() - 1) {
-            return;
-        }
-
-        this.libraryList.moveSelection(1);
     }
 
     public void renameEntry(String newName) {

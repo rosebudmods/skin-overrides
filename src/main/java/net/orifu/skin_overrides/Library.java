@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -95,6 +96,16 @@ public class Library {
 
     public static void removeCape(int index) {
         capeEntries.remove(index);
+        save();
+    }
+
+    public static void swapSkins(int i, int j) {
+        Collections.swap(skinEntries, i, j);
+        save();
+    }
+
+    public static void swapCapes(int i, int j) {
+        Collections.swap(capeEntries, i, j);
         save();
     }
 
