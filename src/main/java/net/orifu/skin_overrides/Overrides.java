@@ -217,7 +217,9 @@ public class Overrides {
     }
 
     public static List<GameProfile> profilesWithCapeOverride() {
-        return listProfiles(CAPE_OVERRIDES, Overrides::validateLocalCapeOverrideFile);
+        var li = new ArrayList<>(listProfiles(CAPE_OVERRIDES, Overrides::validateLocalCapeOverrideFile));
+        li.addAll(listProfiles(CAPE_OVERRIDES, Overrides::validateCapeCopyOverrideFile));
+        return li;
     }
 
     public static void removeCapeOverride(GameProfile profile) {
