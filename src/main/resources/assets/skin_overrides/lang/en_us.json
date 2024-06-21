@@ -6,6 +6,7 @@
     "skin_overrides.add_skin": "drag and drop a skin.",
     "skin_overrides.add_cape": "drag and drop a cape.",
     "skin_overrides.player.you": "%s (you)",
+    "skin_overrides.player.online": "%s (in-game)",
     "skin_overrides.player.offline": "%s (offline)",
     "skin_overrides.override.none": "no override",
     "skin_overrides.override.local_image": "local image",

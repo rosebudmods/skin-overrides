@@ -56,10 +56,10 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
         switch (this.type) {
             case USER:
                 return Text.translatable("skin_overrides.player.you", name).formatted(Formatting.GRAY);
+            case ONLINE:
+                return Text.translatable("skin_overrides.player.online", name).formatted(Formatting.GRAY);
             case OFFLINE:
                 return Text.translatable("skin_overrides.player.offline", name).formatted(Formatting.GRAY);
-            case ONLINE:
-                return Text.literal("wip");
             default:
                 throw new UnsupportedOperationException();
         }
@@ -103,7 +103,7 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
 
     enum Type {
         USER,
-        OFFLINE,
         ONLINE,
+        OFFLINE,
     }
 }

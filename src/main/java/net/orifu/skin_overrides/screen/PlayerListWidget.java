@@ -25,6 +25,13 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
         GameProfile localPlayer = this.client.method_53462();
         this.addEntry(new PlayerListEntry(this.client, localPlayer, Type.USER, this.parent));
 
+        // add online players
+        if (this.client.player != null) {
+            for (var player : this.client.player.networkHandler.getPlayerList()) {
+                this.tryAddEntry(player.getProfile(), Type.ONLINE);
+            }
+        }
+
         // add offline players
         var profiles = this.isSkin ? Overrides.profilesWithSkinOverride() : Overrides.profilesWithCapeOverride();
         for (GameProfile profile : profiles) {
