@@ -113,6 +113,7 @@ public class OverrideInfoEntryScreen extends Screen {
             this.nameInput = nameInputWrapper.add(new TextFieldWidget(this.textRenderer, 120, 20,
                     Text.translatable("skin_overrides.library.input.name")));
             this.nameInput.setText(this.defaultName);
+            this.focusOn(this.nameInput);
 
             if (!this.wantsModel) {
                 nameInputWrapper.add(ButtonWidget.builder(CommonTexts.DONE, btn -> {

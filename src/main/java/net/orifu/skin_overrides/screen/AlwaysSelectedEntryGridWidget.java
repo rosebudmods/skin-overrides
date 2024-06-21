@@ -20,17 +20,21 @@ public abstract class AlwaysSelectedEntryGridWidget<E extends Entry<E>> extends 
         this.xTiles = xTiles;
     }
 
+    protected int xTiles() {
+        return this.xTiles;
+    }
+
     @Override
     protected int getMaxPosition() {
         // divide entry count by x tiles
-        return this.headerHeight + MathHelper.ceilDiv(this.getEntryCount(), this.xTiles) * this.itemHeight + 4;
+        return this.headerHeight + MathHelper.ceilDiv(this.getEntryCount(), this.xTiles()) * this.itemHeight + 4;
     }
 
     @Override
     protected int getRowTop(int index) {
         // divide index by x tiles
         return this.getY() + 4 - (int) this.getScrollAmount()
-                + MathHelper.floorDiv(index, this.xTiles) * this.itemHeight
+                + MathHelper.floorDiv(index, this.xTiles()) * this.itemHeight
                 + this.headerHeight;
     }
 
@@ -42,7 +46,7 @@ public abstract class AlwaysSelectedEntryGridWidget<E extends Entry<E>> extends 
 
         for (int i = 0; i < this.getEntryCount(); ++i) {
             // get X and Y accounting for the x tiles
-            int x = baseX + i % this.xTiles * this.itemWidth;
+            int x = baseX + i % this.xTiles() * this.itemWidth;
             int y = this.getRowTop(i);
             int y2 = this.getRowBottom(i);
 
@@ -95,7 +99,7 @@ public abstract class AlwaysSelectedEntryGridWidget<E extends Entry<E>> extends 
         // convert the relative coordinates to item coordinates
         int entryX = (int) relativeX / this.itemWidth;
         int entryY = (int) relativeY / this.itemHeight;
-        int i = entryY * this.xTiles + entryX;
+        int i = entryY * this.xTiles() + entryX;
 
         return i < this.getEntryCount() ? this.getEntry(i) : null;
     }

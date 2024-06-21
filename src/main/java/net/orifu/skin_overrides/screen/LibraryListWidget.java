@@ -1,7 +1,6 @@
 package net.orifu.skin_overrides.screen;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.GuiGraphics;
 import net.orifu.skin_overrides.Library;
 
 public class LibraryListWidget extends AlwaysSelectedEntryGridWidget<LibraryListEntry> {
@@ -40,6 +39,26 @@ public class LibraryListWidget extends AlwaysSelectedEntryGridWidget<LibraryList
         }
     }
 
+    public void removeFromLibrary() {
+        int index = this.getSelectedOrNull().index;
+        int newIndex = index == this.children().size() - 1 ? index - 1 : index;
+        // remove element from this list
+        this.remove(index);
+
+        // remove from library
+        if (this.isSkin) {
+            Library.removeSkin(index);
+        } else {
+            Library.removeCape(index);
+        }
+        this.reload();
+
+        // update this and parent
+        var newEntry = this.getEntry(newIndex);
+        this.setSelected(newEntry);
+        this.parent.selectEntry(newEntry);
+    }
+
     public void moveSelection(int amount) {
         var newSelected = this.getEntry(this.getSelectedOrNull().index + amount);
         this.setSelected(newSelected);
@@ -48,18 +67,17 @@ public class LibraryListWidget extends AlwaysSelectedEntryGridWidget<LibraryList
     }
 
     @Override
+    protected int xTiles() {
+        return this.width / this.itemWidth;
+    }
+
+    @Override
     public int getRowWidth() {
-        return this.xTiles * this.itemWidth;
+        return this.xTiles() * this.itemWidth;
     }
 
     @Override
     public int getScrollbarPositionX() {
         return this.getXEnd() - SCROLLBAR_WIDTH;
-    }
-
-    @Override
-    public void renderList(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        this.xTiles = this.width / this.itemWidth;
-        super.renderList(graphics, mouseX, mouseY, delta);
     }
 }

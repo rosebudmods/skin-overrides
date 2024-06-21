@@ -88,6 +88,16 @@ public class Library {
         save();
     }
 
+    public static void removeSkin(int index) {
+        skinEntries.remove(index);
+        save();
+    }
+
+    public static void removeCape(int index) {
+        capeEntries.remove(index);
+        save();
+    }
+
     public static void reload() {
         skinEntries = new ArrayList<>();
         capeEntries = new ArrayList<>();
