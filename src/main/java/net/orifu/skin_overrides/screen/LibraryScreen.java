@@ -19,7 +19,7 @@ import net.minecraft.client.gui.widget.text.TextWidget;
 import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.Library.SkinEntry;
-import net.orifu.skin_overrides.Overrides;
+import net.orifu.skin_overrides.Library;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 
@@ -213,7 +213,7 @@ public class LibraryScreen extends Screen {
             this.client.setScreen(OverrideInfoEntryScreen.getNameAndModel(this, path, guessedName,
                     (name, model) -> {
                         // add skin
-                        Overrides.addSkinToLibrary(name, path, model);
+                        Library.addSkin(name, path, model);
                         this.libraryList.reload();
                         this.clearAndInit();
                     }));
@@ -222,7 +222,7 @@ public class LibraryScreen extends Screen {
             this.client.setScreen(OverrideInfoEntryScreen.getName(this, path, guessedName,
                     name -> {
                         // add cape
-                        Overrides.addCapeToLibrary(name, path);
+                        Library.addCape(name, path);
                         this.libraryList.reload();
                         this.clearAndInit();
                     }));

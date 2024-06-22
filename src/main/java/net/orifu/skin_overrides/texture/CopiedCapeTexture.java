@@ -6,6 +6,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Library;
+import net.orifu.skin_overrides.Library.CapeEntry;
 import net.orifu.skin_overrides.util.ProfileHelper;
 
 public class CopiedCapeTexture extends AbstractCopiedTexture {
@@ -25,11 +26,15 @@ public class CopiedCapeTexture extends AbstractCopiedTexture {
 
     public static Optional<CopiedCapeTexture> fromLibrary(String id) {
         var entry = Library.getCape(id);
-        if (entry != null) {
-            return Optional.of(new CopiedCapeTexture(entry.getTexture(), entry.getName(), false));
+        if (entry.isPresent()) {
+            return Optional.of(fromLibrary(entry.get()));
         }
 
         return Optional.empty();
+    }
+
+    public static CopiedCapeTexture fromLibrary(CapeEntry entry) {
+        return new CopiedCapeTexture(entry.getTexture(), entry.getName(), false);
     }
 
     public static Optional<CopiedCapeTexture> fromIdentifier(Identifier id) {

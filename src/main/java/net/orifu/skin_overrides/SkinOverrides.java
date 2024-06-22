@@ -8,6 +8,12 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.util.Identifier;
+import net.orifu.skin_overrides.override.CapeOverride;
+import net.orifu.skin_overrides.override.LibraryCapeOverride;
+import net.orifu.skin_overrides.override.LibrarySkinOverride;
+import net.orifu.skin_overrides.override.LocalCapeOverride;
+import net.orifu.skin_overrides.override.LocalSkinOverride;
+import net.orifu.skin_overrides.override.SkinOverride;
 import net.orifu.skin_overrides.texture.CopiedCapeTexture;
 import net.orifu.skin_overrides.texture.CopiedSkinTexture;
 
@@ -17,6 +23,13 @@ public class SkinOverrides {
 	public static final String SKIN_OVERRIDES = "skin_overrides";
 	public static final String CAPE_OVERRIDES = "cape_overrides";
 
+	public static final LocalSkinOverride SKINS_LOCAL = LocalSkinOverride.INSTANCE;
+	public static final LibrarySkinOverride SKINS_LIBRARY = LibrarySkinOverride.INSTANCE;
+	public static final SkinOverride SKINS = new SkinOverride();
+	public static final LocalCapeOverride CAPES_LOCAL = LocalCapeOverride.INSTANCE;
+	public static final LibraryCapeOverride CAPES_LIBRARY = LibraryCapeOverride.INSTANCE;
+	public static final CapeOverride CAPES = new CapeOverride();
+
 	public static PlayerSkin getSkin(GameProfile profile) {
 		return overrideSkin(profile, MinecraftClient.getInstance().getSkinProvider().getSkin(profile));
 	}
@@ -25,7 +38,7 @@ public class SkinOverrides {
 		MinecraftClient client = MinecraftClient.getInstance();
 
 		// skin image overrides
-		var skinOverride = Overrides.getLocalSkinOverride(profile);
+		var skinOverride = SKINS_LOCAL.getOverride(profile);
 		if (skinOverride.isPresent()) {
 			// register skin texture
 			var texture = skinOverride.get();
@@ -36,7 +49,7 @@ public class SkinOverrides {
 		}
 
 		// skin copy overrides
-		var skinCopyOverride = Overrides.getSkinCopyOverride(profile);
+		var skinCopyOverride = SKINS_LIBRARY.getOverride(profile);
 		if (skinCopyOverride.isPresent()) {
 			CopiedSkinTexture copiedSkin = skinCopyOverride.get();
 			skin = new PlayerSkin(copiedSkin.texture(), null, skin.capeTexture(),
@@ -44,7 +57,7 @@ public class SkinOverrides {
 		}
 
 		// cape image overrides
-		var capeFile = Overrides.getLocalCapeOverride(profile);
+		var capeFile = CAPES_LOCAL.getOverride(profile);
 		if (capeFile.isPresent()) {
 			// register cape texture
 			Identifier capeId = new Identifier("skin_overrides", "cape/" + profile.getId().toString());
@@ -56,7 +69,7 @@ public class SkinOverrides {
 		}
 
 		// cape copy overrides
-		var capeCopyOverride = Overrides.getCapeCopyOverride(profile);
+		var capeCopyOverride = CAPES_LIBRARY.getOverride(profile);
 		if (capeCopyOverride.isPresent()) {
 			CopiedCapeTexture copiedCape = capeCopyOverride.get();
 			skin = new PlayerSkin(skin.texture(), null, copiedCape.texture(),

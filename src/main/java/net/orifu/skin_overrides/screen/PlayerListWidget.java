@@ -1,10 +1,12 @@
 package net.orifu.skin_overrides.screen;
 
+import static net.orifu.skin_overrides.SkinOverrides.CAPES;
+import static net.orifu.skin_overrides.SkinOverrides.SKINS;
+
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.list.AlwaysSelectedEntryListWidget;
-import net.orifu.skin_overrides.Overrides;
 import net.orifu.skin_overrides.screen.PlayerListEntry.Type;
 
 public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEntry> {
@@ -33,7 +35,7 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
         }
 
         // add offline players
-        var profiles = this.isSkin ? Overrides.profilesWithSkinOverride() : Overrides.profilesWithCapeOverride();
+        var profiles = this.isSkin ? SKINS.profilesWithOverride() : CAPES.profilesWithOverride();
         for (GameProfile profile : profiles) {
             this.tryAddEntry(profile, Type.OFFLINE);
         }

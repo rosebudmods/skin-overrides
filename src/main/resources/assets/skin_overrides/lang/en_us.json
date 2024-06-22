@@ -22,6 +22,7 @@
     "skin_overrides.library.empty": "there's nothing here.",
     "skin_overrides.library.open": "open library",
     "skin_overrides.library.pick": "pick from library",
+    "skin_overrides.library.add": "add to library",
     "skin_overrides.library.input.name": "name input",
     "skin_overrides.library.input.use": "use this",
     "skin_overrides.library.input.remove": "remove this",

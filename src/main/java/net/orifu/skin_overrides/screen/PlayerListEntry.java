@@ -1,5 +1,10 @@
 package net.orifu.skin_overrides.screen;
 
+import static net.orifu.skin_overrides.SkinOverrides.CAPES_LIBRARY;
+import static net.orifu.skin_overrides.SkinOverrides.CAPES_LOCAL;
+import static net.orifu.skin_overrides.SkinOverrides.SKINS_LIBRARY;
+import static net.orifu.skin_overrides.SkinOverrides.SKINS_LOCAL;
+
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.client.MinecraftClient;
@@ -8,7 +13,6 @@ import net.minecraft.client.gui.PlayerFaceRenderer;
 import net.minecraft.client.gui.widget.list.AlwaysSelectedEntryListWidget.Entry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.orifu.skin_overrides.Overrides;
 import net.orifu.skin_overrides.SkinOverrides;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.ProfileHelper;
@@ -67,20 +71,20 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
 
     protected Text getOverrideStatus() {
         if (this.isSkin) {
-            if (Overrides.hasLocalSkinOverride(this.profile)) {
+            if (SKINS_LOCAL.hasOverride(this.profile)) {
                 return Text.translatable("skin_overrides.override.local_image").formatted(Formatting.GREEN);
             }
 
-            var skinOverride = Overrides.getSkinCopyOverride(this.profile);
+            var skinOverride = SKINS_LIBRARY.getOverride(this.profile);
             if (skinOverride.isPresent()) {
                 return skinOverride.get().description().formatted(Formatting.GREEN);
             }
         } else {
-            if (Overrides.hasLocalCapeOverride(this.profile)) {
+            if (CAPES_LOCAL.hasOverride(this.profile)) {
                 return Text.translatable("skin_overrides.override.local_image").formatted(Formatting.GREEN);
             }
 
-            var capeOverride = Overrides.getCapeCopyOverride(this.profile);
+            var capeOverride = CAPES_LIBRARY.getOverride(this.profile);
             if (capeOverride.isPresent()) {
                 return capeOverride.get().description().formatted(Formatting.GREEN);
             }

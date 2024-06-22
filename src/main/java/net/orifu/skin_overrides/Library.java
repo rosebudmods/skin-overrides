@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,7 +15,6 @@ import java.util.function.Consumer;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -54,34 +55,54 @@ public class Library {
     }
 
     @Nullable
-    public static SkinEntry getSkin(String id) {
+    public static Optional<SkinEntry> getSkin(String id) {
         ensureLoaded();
 
         for (var entry : skinEntries) {
             if (entry.getId().equals(id)) {
-                return entry;
+                return Optional.of(entry);
             }
         }
 
-        return null;
+        return Optional.empty();
     }
 
     @Nullable
-    public static CapeEntry getCape(String id) {
+    public static Optional<CapeEntry> getCape(String id) {
         ensureLoaded();
 
         for (var entry : capeEntries) {
             if (entry.getId().equals(id)) {
-                return entry;
+                return Optional.of(entry);
             }
         }
 
-        return null;
+        return Optional.empty();
+    }
+
+    public static void addSkin(String name, Path path, PlayerSkin.Model model) {
+        try {
+            var entry = new SkinEntry(name, model);
+            Files.copy(path, entry.file.toPath());
+            addSkin(entry);
+        } catch (IOException e) {
+            SkinOverrides.LOGGER.error("failed to copy {}", path, e);
+        }
     }
 
     public static void addSkin(SkinEntry entry) {
         skinEntries.add(0, entry);
         save();
+    }
+
+    public static void addCape(String name, Path path) {
+        try {
+            var entry = new CapeEntry(name);
+            Files.copy(path, entry.file.toPath());
+            addCape(entry);
+        } catch (IOException e) {
+            SkinOverrides.LOGGER.error("failed to copy {}", path, e);
+        }
     }
 
     public static void addCape(CapeEntry entry) {
@@ -129,7 +150,7 @@ public class Library {
 
     private static void reloadInternal(File file, Consumer<JsonElement> consumer, Runnable fail) {
         try {
-            var reader = Files.newReader(file, StandardCharsets.UTF_8);
+            var reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8);
             JsonArray arr = GSON.fromJson(reader, JsonArray.class);
 
             arr.forEach(consumer);
@@ -169,7 +190,7 @@ public class Library {
         entries.forEach(e -> arr.add(e.toJson()));
 
         try {
-            var writer = Files.newWriter(file, StandardCharsets.UTF_8);
+            var writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8);
             writer.write(GSON.toJson(arr));
             writer.close();
         } catch (IOException e) {

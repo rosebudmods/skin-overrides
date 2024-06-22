@@ -6,6 +6,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Library;
+import net.orifu.skin_overrides.Library.SkinEntry;
 import net.orifu.skin_overrides.util.ProfileHelper;
 
 public class CopiedSkinTexture extends AbstractCopiedTexture {
@@ -28,11 +29,15 @@ public class CopiedSkinTexture extends AbstractCopiedTexture {
 
     public static Optional<CopiedSkinTexture> fromLibrary(String id) {
         var entry = Library.getSkin(id);
-        if (entry != null) {
-            return Optional.of(new CopiedSkinTexture(entry.getTexture(), entry.getModel(), entry.getName(), false));
+        if (entry.isPresent()) {
+            return Optional.of(fromLibrary(entry.get()));
         }
 
         return Optional.empty();
+    }
+
+    public static CopiedSkinTexture fromLibrary(SkinEntry entry) {
+        return new CopiedSkinTexture(entry.getTexture(), entry.getModel(), entry.getName(), false);
     }
 
     public static Optional<CopiedSkinTexture> fromIdentifier(Identifier id) {

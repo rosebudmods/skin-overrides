@@ -36,7 +36,7 @@ public class OverrideFiles {
             String ext = FilenameUtils.getExtension(fileName);
 
             // ensure file name is valid
-            Optional<Validated<T>> maybeValidated = validator.validate(name, ext);
+            Optional<Validated<T>> maybeValidated = validator.validate(file, name, ext);
             if (maybeValidated.isEmpty()) {
                 continue;
             }
@@ -59,7 +59,7 @@ public class OverrideFiles {
             String name = FilenameUtils.getBaseName(file.getName());
             String ext = FilenameUtils.getExtension(file.getName());
 
-            Optional<Validated<T>> validated = validator.validate(name, ext);
+            Optional<Validated<T>> validated = validator.validate(file, name, ext);
             if (validated.isPresent()) {
                 files.add(validated.get().withFile(file));
             }
@@ -81,7 +81,7 @@ public class OverrideFiles {
     }
 
     public interface Validator<T> {
-        Optional<Validated<T>> validate(String name, String ext);
+        Optional<Validated<T>> validate(File file, String name, String ext);
     }
 
     public static class Validated<T> {
