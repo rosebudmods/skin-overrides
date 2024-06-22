@@ -122,6 +122,8 @@ public class Library {
         });
 
         reloadInternal(CAPE_FILE, j -> CapeEntry.capeFromJson(j).ifPresent(capeEntries::add), () -> {
+            resetCapes();
+            save();
         });
     }
 
@@ -149,6 +151,10 @@ public class Library {
             name += playerSkin.model().equals(PlayerSkin.Model.WIDE) ? " (wide)" : " (slim)";
             skinEntries.add(new SkinEntry(name, playerSkin.texture(), playerSkin.model()));
         }
+    }
+
+    public static void resetCapes() {
+        capeEntries.add(new CapeEntry("skin overrides", new Identifier("skin_overrides", "cape.png")));
     }
 
     public static void save() {
