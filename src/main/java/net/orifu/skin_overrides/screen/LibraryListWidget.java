@@ -2,18 +2,19 @@ package net.orifu.skin_overrides.screen;
 
 import net.minecraft.client.MinecraftClient;
 import net.orifu.skin_overrides.Library;
+import net.orifu.skin_overrides.override.Overridden;
 
 public class LibraryListWidget extends AlwaysSelectedEntryGridWidget<LibraryListEntry> {
     private final LibraryScreen parent;
-    private final boolean isSkin;
+    private final Overridden ov;
 
-    public LibraryListWidget(LibraryScreen parent, boolean isSkin) {
+    public LibraryListWidget(LibraryScreen parent, Overridden ov) {
         super(MinecraftClient.getInstance(), 0, 0, 0,
                 LibraryListEntry.WIDTH,
-                isSkin ? LibraryListEntry.SKIN_ENTRY_HEIGHT : LibraryListEntry.CAPE_ENTRY_HEIGHT, 6);
+                ov.skin() ? LibraryListEntry.SKIN_ENTRY_HEIGHT : LibraryListEntry.CAPE_ENTRY_HEIGHT, 6);
 
         this.parent = parent;
-        this.isSkin = isSkin;
+        this.ov = ov;
 
         this.reload();
     }
@@ -22,7 +23,7 @@ public class LibraryListWidget extends AlwaysSelectedEntryGridWidget<LibraryList
         Library.reload();
 
         int i = 0;
-        for (var entry : this.isSkin ? Library.skinEntries() : Library.capeEntries()) {
+        for (var entry : this.ov.libraryEntries()) {
             boolean add = true;
             for (var child : this.children()) {
                 if (child.entry.getId().equals(entry.getId())) {
@@ -48,7 +49,7 @@ public class LibraryListWidget extends AlwaysSelectedEntryGridWidget<LibraryList
         this.remove(index);
 
         // remove from library
-        if (this.isSkin) {
+        if (this.ov.skin()) {
             Library.removeSkin(index);
         } else {
             Library.removeCape(index);
@@ -62,7 +63,7 @@ public class LibraryListWidget extends AlwaysSelectedEntryGridWidget<LibraryList
     }
 
     public void swap(int i, int j) {
-        if (this.isSkin) {
+        if (this.ov.skin()) {
             Library.swapSkins(i, j);
         } else {
             Library.swapCapes(i, j);

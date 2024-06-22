@@ -10,7 +10,7 @@ import java.util.Optional;
 
 import com.mojang.authlib.GameProfile;
 
-import net.orifu.skin_overrides.SkinOverrides;
+import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.util.OverrideFiles;
 import net.orifu.skin_overrides.util.OverrideFiles.Validated;
 
@@ -47,7 +47,7 @@ public abstract class AbstractOverride<E, T> {
 
             Files.copy(path, outputPath);
         } catch (IOException e) {
-            SkinOverrides.LOGGER.error("failed to copy {}", path, e);
+            Mod.LOGGER.error("failed to copy {}", path, e);
         }
     }
 

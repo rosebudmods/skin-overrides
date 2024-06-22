@@ -9,9 +9,11 @@ import com.mojang.authlib.GameProfile;
 
 import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Library.LibraryEntry;
-import net.orifu.skin_overrides.SkinOverrides;
+import net.orifu.skin_overrides.texture.AbstractLibraryTexture;
+import net.orifu.skin_overrides.Mod;
 
-public abstract class AbstractLibraryOverride<E extends LibraryEntry, T> extends AbstractOverride<E, T> {
+public abstract class AbstractLibraryOverride<E extends LibraryEntry, T extends AbstractLibraryTexture>
+        extends AbstractOverride<E, T> {
     @Override
     protected String getFileName(GameProfile profile, E entry) {
         return profile.getName() + ".txt";
@@ -26,7 +28,7 @@ public abstract class AbstractLibraryOverride<E extends LibraryEntry, T> extends
             writer.write(new Identifier("skin_overrides", entry.getId()).toString());
             writer.close();
         } catch (IOException e) {
-            SkinOverrides.LOGGER.error("failed to save library entry with id {} to file", entry.getId(), e);
+            Mod.LOGGER.error("failed to save library entry with id {} to file", entry.getId(), e);
         }
     }
 }

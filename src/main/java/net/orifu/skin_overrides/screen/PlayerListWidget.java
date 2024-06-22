@@ -1,12 +1,10 @@
 package net.orifu.skin_overrides.screen;
 
-import static net.orifu.skin_overrides.SkinOverrides.CAPES;
-import static net.orifu.skin_overrides.SkinOverrides.SKINS;
-
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.list.AlwaysSelectedEntryListWidget;
+import net.orifu.skin_overrides.override.Overridden;
 import net.orifu.skin_overrides.screen.PlayerListEntry.Type;
 
 public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEntry> {
@@ -14,14 +12,13 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
     private static final int ITEM_HEIGHT = 36;
 
     private final SkinOverridesScreen parent;
+    public final Overridden ov;
 
-    public final boolean isSkin;
-
-    public PlayerListWidget(SkinOverridesScreen parent, boolean isSkin) {
+    public PlayerListWidget(SkinOverridesScreen parent, Overridden ov) {
         super(MinecraftClient.getInstance(), 0, 0, 0, ITEM_HEIGHT);
 
         this.parent = parent;
-        this.isSkin = isSkin;
+        this.ov = ov;
 
         // add local player
         GameProfile localPlayer = this.client.method_53462();
@@ -35,8 +32,7 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
         }
 
         // add offline players
-        var profiles = this.isSkin ? SKINS.profilesWithOverride() : CAPES.profilesWithOverride();
-        for (GameProfile profile : profiles) {
+        for (GameProfile profile : this.ov.profilesWithOverride()) {
             this.tryAddEntry(profile, Type.OFFLINE);
         }
     }

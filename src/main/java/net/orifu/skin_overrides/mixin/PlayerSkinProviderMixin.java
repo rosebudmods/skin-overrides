@@ -8,12 +8,12 @@ import com.mojang.authlib.GameProfile;
 
 import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.client.texture.PlayerSkinProvider;
-import net.orifu.skin_overrides.SkinOverrides;
+import net.orifu.skin_overrides.Mod;
 
 @Mixin(PlayerSkinProvider.class)
 public class PlayerSkinProviderMixin {
     @ModifyReturnValue(method = "getSkin", at = @At("RETURN"))
     private PlayerSkin getSkin(PlayerSkin skin, GameProfile profile) {
-        return SkinOverrides.overrideSkin(profile, skin);
+        return Mod.overrideSkin(profile, skin);
     }
 }

@@ -9,7 +9,7 @@ import net.orifu.skin_overrides.Library;
 import net.orifu.skin_overrides.Library.SkinEntry;
 import net.orifu.skin_overrides.util.ProfileHelper;
 
-public class CopiedSkinTexture extends AbstractCopiedTexture {
+public class CopiedSkinTexture extends AbstractLibraryTexture {
     public final PlayerSkin.Model model;
 
     protected CopiedSkinTexture(Identifier source, PlayerSkin.Model model, String name, boolean isCopying) {

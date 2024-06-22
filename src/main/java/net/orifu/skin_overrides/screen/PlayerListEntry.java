@@ -1,9 +1,6 @@
 package net.orifu.skin_overrides.screen;
 
-import static net.orifu.skin_overrides.SkinOverrides.CAPES_LIBRARY;
-import static net.orifu.skin_overrides.SkinOverrides.CAPES_LOCAL;
-import static net.orifu.skin_overrides.SkinOverrides.SKINS_LIBRARY;
-import static net.orifu.skin_overrides.SkinOverrides.SKINS_LOCAL;
+import java.util.Optional;
 
 import com.mojang.authlib.GameProfile;
 
@@ -13,7 +10,9 @@ import net.minecraft.client.gui.PlayerFaceRenderer;
 import net.minecraft.client.gui.widget.list.AlwaysSelectedEntryListWidget.Entry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.orifu.skin_overrides.SkinOverrides;
+import net.orifu.skin_overrides.Mod;
+import net.orifu.skin_overrides.override.Overridden;
+import net.orifu.skin_overrides.texture.AbstractLibraryTexture;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.ProfileHelper;
 
@@ -21,7 +20,7 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
     private final MinecraftClient client;
     public GameProfile profile;
     public final Type type;
-    public final boolean isSkin;
+    public final Overridden ov;
 
     private final SkinOverridesScreen parent;
 
@@ -29,7 +28,7 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
         this.client = client;
         this.profile = profile;
         this.type = type;
-        this.isSkin = parent.isSkin();
+        this.ov = parent.overriden();
         this.parent = parent;
     }
 
@@ -37,11 +36,11 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
     public void render(GuiGraphics graphics, int index, int y, int x, int entryWidth, int entryHeight, int mouseX,
             int mouseY, boolean hovered, float tickDelta) {
         // draw player face/cape
-        if (this.isSkin) {
-            PlayerFaceRenderer.draw(graphics, SkinOverrides.getSkin(this.profile), x, y, 32);
+        if (this.ov.skin()) {
+            PlayerFaceRenderer.draw(graphics, Mod.getSkin(this.profile), x, y, 32);
         } else {
             int capeX = x + (32 - PlayerCapeRenderer.WIDTH * 2) / 2;
-            PlayerCapeRenderer.draw(graphics, SkinOverrides.getSkin(this.profile), capeX, y, 2);
+            PlayerCapeRenderer.draw(graphics, Mod.getSkin(this.profile), capeX, y, 2);
         }
 
         // draw player name
@@ -70,24 +69,14 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
     }
 
     protected Text getOverrideStatus() {
-        if (this.isSkin) {
-            if (SKINS_LOCAL.hasOverride(this.profile)) {
-                return Text.translatable("skin_overrides.override.local_image").formatted(Formatting.GREEN);
-            }
+        if (this.ov.local().hasOverride(this.profile)) {
+            return Text.translatable("skin_overrides.override.local_image").formatted(Formatting.GREEN);
+        }
 
-            var skinOverride = SKINS_LIBRARY.getOverride(this.profile);
-            if (skinOverride.isPresent()) {
-                return skinOverride.get().description().formatted(Formatting.GREEN);
-            }
-        } else {
-            if (CAPES_LOCAL.hasOverride(this.profile)) {
-                return Text.translatable("skin_overrides.override.local_image").formatted(Formatting.GREEN);
-            }
-
-            var capeOverride = CAPES_LIBRARY.getOverride(this.profile);
-            if (capeOverride.isPresent()) {
-                return capeOverride.get().description().formatted(Formatting.GREEN);
-            }
+        @SuppressWarnings("unchecked")
+        var skinOverride = (Optional<AbstractLibraryTexture>) this.ov.library().getOverride(this.profile);
+        if (skinOverride.isPresent()) {
+            return skinOverride.get().description().formatted(Formatting.GREEN);
         }
 
         return Text.translatable("skin_overrides.override.none").formatted(Formatting.GRAY);

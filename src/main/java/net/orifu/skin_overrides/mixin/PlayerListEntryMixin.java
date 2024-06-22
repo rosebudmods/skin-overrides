@@ -9,7 +9,7 @@ import com.mojang.authlib.GameProfile;
 
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.texture.PlayerSkin;
-import net.orifu.skin_overrides.SkinOverrides;
+import net.orifu.skin_overrides.Mod;
 
 @Mixin(PlayerListEntry.class)
 public class PlayerListEntryMixin {
@@ -19,6 +19,6 @@ public class PlayerListEntryMixin {
     @ModifyReturnValue(method = "getSkin", at = @At("RETURN"))
     private PlayerSkin getSkin(PlayerSkin skin) {
         // the return value of this method is otherwise memoised
-        return SkinOverrides.overrideSkin(this.profile, skin);
+        return Mod.overrideSkin(this.profile, skin);
     }
 }

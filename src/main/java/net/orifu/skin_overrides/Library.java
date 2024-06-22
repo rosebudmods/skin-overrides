@@ -29,10 +29,10 @@ import net.orifu.skin_overrides.texture.LocalPlayerTexture;
 import net.orifu.skin_overrides.texture.LocalSkinTexture;
 
 public class Library {
-    public static final File SKIN_FILE = new File(SkinOverrides.SKIN_OVERRIDES, "library.json");
-    public static final File CAPE_FILE = new File(SkinOverrides.CAPE_OVERRIDES, "library.json");
-    public static final File SKIN_LIBRARY_DIR = new File(SkinOverrides.SKIN_OVERRIDES, "library");
-    public static final File CAPE_LIBRARY_DIR = new File(SkinOverrides.CAPE_OVERRIDES, "library");
+    public static final File SKIN_FILE = new File(Mod.SKIN_OVERRIDES, "library.json");
+    public static final File CAPE_FILE = new File(Mod.CAPE_OVERRIDES, "library.json");
+    public static final File SKIN_LIBRARY_DIR = new File(Mod.SKIN_OVERRIDES, "library");
+    public static final File CAPE_LIBRARY_DIR = new File(Mod.CAPE_OVERRIDES, "library");
     public static final Gson GSON = new Gson();
 
     protected static ArrayList<SkinEntry> skinEntries;
@@ -86,7 +86,7 @@ public class Library {
             Files.copy(path, entry.file.toPath());
             addSkin(entry);
         } catch (IOException e) {
-            SkinOverrides.LOGGER.error("failed to copy {}", path, e);
+            Mod.LOGGER.error("failed to copy {}", path, e);
         }
     }
 
@@ -101,7 +101,7 @@ public class Library {
             Files.copy(path, entry.file.toPath());
             addCape(entry);
         } catch (IOException e) {
-            SkinOverrides.LOGGER.error("failed to copy {}", path, e);
+            Mod.LOGGER.error("failed to copy {}", path, e);
         }
     }
 
@@ -159,7 +159,7 @@ public class Library {
         } catch (FileNotFoundException e) {
             fail.run();
         } catch (IOException | JsonParseException | NullPointerException e) {
-            SkinOverrides.LOGGER.error("failed to load library file {}", file, e);
+            Mod.LOGGER.error("failed to load library file {}", file, e);
         }
     }
 
@@ -194,7 +194,7 @@ public class Library {
             writer.write(GSON.toJson(arr));
             writer.close();
         } catch (IOException e) {
-            SkinOverrides.LOGGER.error("failed to save library file {e}", file, e);
+            Mod.LOGGER.error("failed to save library file {e}", file, e);
         }
     }
 

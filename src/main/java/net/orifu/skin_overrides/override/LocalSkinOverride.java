@@ -1,6 +1,6 @@
 package net.orifu.skin_overrides.override;
 
-import static net.orifu.skin_overrides.SkinOverrides.SKIN_OVERRIDES;
+import static net.orifu.skin_overrides.Mod.SKIN_OVERRIDES;
 
 import java.io.File;
 import java.util.Optional;

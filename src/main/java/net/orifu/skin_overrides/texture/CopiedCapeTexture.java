@@ -9,7 +9,7 @@ import net.orifu.skin_overrides.Library;
 import net.orifu.skin_overrides.Library.CapeEntry;
 import net.orifu.skin_overrides.util.ProfileHelper;
 
-public class CopiedCapeTexture extends AbstractCopiedTexture {
+public class CopiedCapeTexture extends AbstractLibraryTexture {
     protected CopiedCapeTexture(Identifier source, String name, boolean isCopying) {
         super(source, name, isCopying);
     }

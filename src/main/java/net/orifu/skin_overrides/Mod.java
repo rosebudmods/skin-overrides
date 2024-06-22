@@ -8,16 +8,15 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.util.Identifier;
-import net.orifu.skin_overrides.override.CapeOverride;
 import net.orifu.skin_overrides.override.LibraryCapeOverride;
 import net.orifu.skin_overrides.override.LibrarySkinOverride;
 import net.orifu.skin_overrides.override.LocalCapeOverride;
 import net.orifu.skin_overrides.override.LocalSkinOverride;
-import net.orifu.skin_overrides.override.SkinOverride;
+import net.orifu.skin_overrides.override.Overridden;
 import net.orifu.skin_overrides.texture.CopiedCapeTexture;
 import net.orifu.skin_overrides.texture.CopiedSkinTexture;
 
-public class SkinOverrides {
+public class Mod {
 	public static final Logger LOGGER = LoggerFactory.getLogger("skin overrides");
 
 	public static final String SKIN_OVERRIDES = "skin_overrides";
@@ -25,10 +24,10 @@ public class SkinOverrides {
 
 	public static final LocalSkinOverride SKINS_LOCAL = LocalSkinOverride.INSTANCE;
 	public static final LibrarySkinOverride SKINS_LIBRARY = LibrarySkinOverride.INSTANCE;
-	public static final SkinOverride SKINS = new SkinOverride();
+	public static final Overridden SKINS = new Overridden(SKINS_LOCAL, SKINS_LIBRARY);
 	public static final LocalCapeOverride CAPES_LOCAL = LocalCapeOverride.INSTANCE;
 	public static final LibraryCapeOverride CAPES_LIBRARY = LibraryCapeOverride.INSTANCE;
-	public static final CapeOverride CAPES = new CapeOverride();
+	public static final Overridden CAPES = new Overridden(CAPES_LOCAL, CAPES_LIBRARY);
 
 	public static PlayerSkin getSkin(GameProfile profile) {
 		return overrideSkin(profile, MinecraftClient.getInstance().getSkinProvider().getSkin(profile));

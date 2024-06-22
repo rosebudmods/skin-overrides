@@ -19,6 +19,7 @@ import net.minecraft.client.gui.widget.text.TextWidget;
 import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.Library.SkinEntry;
+import net.orifu.skin_overrides.override.Overridden;
 import net.orifu.skin_overrides.Library;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
@@ -31,7 +32,7 @@ public class LibraryScreen extends Screen {
 
     private static final int OPTIONS_PAD = 24;
 
-    public final boolean isSkin;
+    public final Overridden ov;
     @Nullable
     private final Screen parent;
     @Nullable
@@ -47,22 +48,22 @@ public class LibraryScreen extends Screen {
     @Nullable
     protected LibraryListEntry selectedEntry;
 
-    public LibraryScreen(boolean isSkin, @Nullable Screen parent, @Nullable Consumer<LibraryEntry> callback) {
+    public LibraryScreen(Overridden ov, @Nullable Screen parent, @Nullable Consumer<LibraryEntry> callback) {
         super(TITLE);
 
-        this.isSkin = isSkin;
+        this.ov = ov;
         this.parent = parent;
         this.callback = callback;
     }
 
-    public LibraryScreen(boolean isSkin, @Nullable Screen parent) {
-        this(isSkin, parent, null);
+    public LibraryScreen(Overridden ov, @Nullable Screen parent) {
+        this(ov, parent, null);
     }
 
     @Override
     protected void init() {
         if (this.libraryList == null) {
-            this.libraryList = new LibraryListWidget(this, this.isSkin);
+            this.libraryList = new LibraryListWidget(this, this.ov);
         }
 
         int optionsWidth = Math.min(this.width * 2 / 5 - OPTIONS_PAD, 150);
@@ -87,8 +88,8 @@ public class LibraryScreen extends Screen {
 
             // library entry preview
             this.entryPreviewFrame = controls.add(new FrameWidget(
-                    this.isSkin ? PlayerSkinRenderer.WIDTH * SKIN_SCALE : PlayerCapeRenderer.WIDTH * CAPE_SCALE,
-                    this.isSkin ? PlayerSkinRenderer.HEIGHT * SKIN_SCALE : PlayerCapeRenderer.HEIGHT * CAPE_SCALE),
+                    this.ov.skin() ? PlayerSkinRenderer.WIDTH * SKIN_SCALE : PlayerCapeRenderer.WIDTH * CAPE_SCALE,
+                    this.ov.skin() ? PlayerSkinRenderer.HEIGHT * SKIN_SCALE : PlayerCapeRenderer.HEIGHT * CAPE_SCALE),
                     LayoutSettings.create().alignHorizontallyCenter());
 
             controls.add(new FrameWidget(0, 16));
@@ -208,7 +209,7 @@ public class LibraryScreen extends Screen {
         }
         String guessedName = path.toFile().getName().replace(".png", "").replace("_", " ");
 
-        if (this.isSkin) {
+        if (this.ov.skin()) {
             // open name and model input screen
             this.client.setScreen(OverrideInfoEntryScreen.getNameAndModel(this, path, guessedName,
                     (name, model) -> {
