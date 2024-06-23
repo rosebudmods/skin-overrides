@@ -24,10 +24,10 @@ public class Mod {
 
 	public static final LocalSkinOverride SKINS_LOCAL = LocalSkinOverride.INSTANCE;
 	public static final LibrarySkinOverride SKINS_LIBRARY = LibrarySkinOverride.INSTANCE;
-	public static final Overridden SKINS = new Overridden(SKINS_LOCAL, SKINS_LIBRARY);
+	public static final Overridden SKINS = new Overridden.SkinOverrides();
 	public static final LocalCapeOverride CAPES_LOCAL = LocalCapeOverride.INSTANCE;
 	public static final LibraryCapeOverride CAPES_LIBRARY = LibraryCapeOverride.INSTANCE;
-	public static final Overridden CAPES = new Overridden(CAPES_LOCAL, CAPES_LIBRARY);
+	public static final Overridden CAPES = new Overridden.CapeOverrides();
 
 	public static PlayerSkin getSkin(GameProfile profile) {
 		return overrideSkin(profile, MinecraftClient.getInstance().getSkinProvider().getSkin(profile));

@@ -222,7 +222,6 @@ public class SkinOverridesScreen extends Screen {
         this.selectedProfile = this.playerList.getSelectedOrNull().upgrade();
     }
 
-    @SuppressWarnings("unchecked")
     public void pickedFromLibrary(LibraryEntry entry) {
         var profile = this.selectedProfile != null ? this.selectedProfile : this.client.method_53462();
         this.ov.library().addOverride(profile, entry);
@@ -235,7 +234,6 @@ public class SkinOverridesScreen extends Screen {
         this.clearAndInit(); // update remove buttons
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void filesDragged(List<Path> paths) {
         if (paths.size() == 0) {

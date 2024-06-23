@@ -1,7 +1,5 @@
 package net.orifu.skin_overrides.screen;
 
-import java.util.Optional;
-
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.client.MinecraftClient;
@@ -12,7 +10,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.override.Overridden;
-import net.orifu.skin_overrides.texture.AbstractLibraryTexture;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.ProfileHelper;
 
@@ -73,8 +70,7 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
             return Text.translatable("skin_overrides.override.local_image").formatted(Formatting.GREEN);
         }
 
-        @SuppressWarnings("unchecked")
-        var skinOverride = (Optional<AbstractLibraryTexture>) this.ov.library().getOverride(this.profile);
+        var skinOverride = this.ov.library().getOverride(this.profile);
         if (skinOverride.isPresent()) {
             return skinOverride.get().description().formatted(Formatting.GREEN);
         }

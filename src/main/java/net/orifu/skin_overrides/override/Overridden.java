@@ -7,48 +7,69 @@ import com.mojang.authlib.GameProfile;
 
 import net.orifu.skin_overrides.Library;
 import net.orifu.skin_overrides.Library.LibraryEntry;
+import net.orifu.skin_overrides.texture.AbstractLibraryTexture;
 
-@SuppressWarnings("rawtypes")
-public class Overridden {
-    protected final AbstractOverride local;
-    protected final AbstractLibraryOverride library;
+public interface Overridden {
+    public <E, T> AbstractOverride<E, T> local();
 
-    public Overridden(AbstractOverride local, AbstractLibraryOverride library) {
-        this.local = local;
-        this.library = library;
+    public <E extends LibraryEntry, T extends AbstractLibraryTexture> AbstractLibraryOverride<E, T> library();
+
+    default public boolean hasOverride(GameProfile profile) {
+        return this.local().hasOverride(profile) || this.library().hasOverride(profile);
     }
 
-    public AbstractOverride local() {
-        return this.local;
+    default public void removeOverride(GameProfile profile) {
+        this.local().removeOverride(profile);
+        this.library().removeOverride(profile);
     }
 
-    public AbstractLibraryOverride library() {
-        return this.library;
-    }
-
-    public boolean hasOverride(GameProfile profile) {
-        return this.local.hasOverride(profile) || this.library.hasOverride(profile);
-    }
-
-    public void removeOverride(GameProfile profile) {
-        this.local.removeOverride(profile);
-        this.library.removeOverride(profile);
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<GameProfile> profilesWithOverride() {
-        var li = new ArrayList<GameProfile>(this.local.profilesWithOverride());
-        li.addAll(this.library.profilesWithOverride());
+    default public List<GameProfile> profilesWithOverride() {
+        var li = new ArrayList<GameProfile>(this.local().profilesWithOverride());
+        li.addAll(this.library().profilesWithOverride());
         return li;
     }
 
     // everything from this point on is stupid lol
 
-    public boolean skin() {
-        return this.local instanceof LocalSkinOverride;
+    public boolean skin();
+
+    default public List<LibraryEntry> libraryEntries() {
+        return this.skin() ? new ArrayList<>(Library.skinEntries()) : new ArrayList<>(Library.capeEntries());
     }
 
-    public List<LibraryEntry> libraryEntries() {
-        return this.skin() ? new ArrayList<>(Library.skinEntries()) : new ArrayList<>(Library.capeEntries());
+    @SuppressWarnings("unchecked")
+    public static class SkinOverrides implements Overridden {
+        @Override
+        public LocalSkinOverride local() {
+            return LocalSkinOverride.INSTANCE;
+        }
+
+        @Override
+        public LibrarySkinOverride library() {
+            return LibrarySkinOverride.INSTANCE;
+        }
+
+        @Override
+        public boolean skin() {
+            return true;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static class CapeOverrides implements Overridden {
+        @Override
+        public LocalCapeOverride local() {
+            return LocalCapeOverride.INSTANCE;
+        }
+
+        @Override
+        public LibraryCapeOverride library() {
+            return LibraryCapeOverride.INSTANCE;
+        }
+
+        @Override
+        public boolean skin() {
+            return false;
+        }
     }
 }
