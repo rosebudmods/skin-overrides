@@ -1,7 +1,6 @@
 package net.orifu.skin_overrides.screen;
 
 import net.minecraft.client.MinecraftClient;
-import net.orifu.skin_overrides.Library;
 import net.orifu.skin_overrides.override.Overridden;
 
 public class LibraryListWidget extends AlwaysSelectedEntryGridWidget<LibraryListEntry> {
@@ -20,10 +19,10 @@ public class LibraryListWidget extends AlwaysSelectedEntryGridWidget<LibraryList
     }
 
     public void reload() {
-        Library.reload();
+        this.ov.library().reload();
 
         int i = 0;
-        for (var entry : this.ov.libraryEntries()) {
+        for (var entry : this.ov.library().entries()) {
             boolean add = true;
             for (var child : this.children()) {
                 if (child.entry.getId().equals(entry.getId())) {
@@ -49,11 +48,7 @@ public class LibraryListWidget extends AlwaysSelectedEntryGridWidget<LibraryList
         this.remove(index);
 
         // remove from library
-        if (this.ov.skin()) {
-            Library.removeSkin(index);
-        } else {
-            Library.removeCape(index);
-        }
+        this.ov.library().remove(index);
         this.reload();
 
         // update this and parent
@@ -63,11 +58,7 @@ public class LibraryListWidget extends AlwaysSelectedEntryGridWidget<LibraryList
     }
 
     public void swap(int i, int j) {
-        if (this.ov.skin()) {
-            Library.swapSkins(i, j);
-        } else {
-            Library.swapCapes(i, j);
-        }
+        this.ov.library().swap(i, j);
         this.reload();
     }
 

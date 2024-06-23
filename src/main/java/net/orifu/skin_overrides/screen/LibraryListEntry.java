@@ -5,7 +5,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.widget.list.AlwaysSelectedEntryListWidget.Entry;
 import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Library.LibraryEntry;
-import net.orifu.skin_overrides.Library.SkinEntry;
+import net.orifu.skin_overrides.override.LibrarySkinOverride.SkinEntry;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 

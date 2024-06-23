@@ -18,9 +18,9 @@ import net.minecraft.client.gui.widget.layout.LinearLayoutWidget;
 import net.minecraft.client.gui.widget.text.TextWidget;
 import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Library.LibraryEntry;
-import net.orifu.skin_overrides.Library.SkinEntry;
 import net.orifu.skin_overrides.override.Overridden;
-import net.orifu.skin_overrides.Library;
+import net.orifu.skin_overrides.override.LibraryCapeOverride.CapeEntry;
+import net.orifu.skin_overrides.override.LibrarySkinOverride.SkinEntry;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 
@@ -192,7 +192,7 @@ public class LibraryScreen extends Screen {
 
     public void renameEntry(String newName) {
         if (!newName.equals(this.selectedEntry.entry.getName())) {
-            this.selectedEntry.entry.rename(newName);
+            this.ov.library().rename(this.selectedEntry.entry, newName);
             this.clearAndInit();
             this.focusOn(this.nameField);
         }
@@ -214,7 +214,7 @@ public class LibraryScreen extends Screen {
             this.client.setScreen(OverrideInfoEntryScreen.getNameAndModel(this, path, guessedName,
                     (name, model) -> {
                         // add skin
-                        Library.addSkin(name, path, model);
+                        SkinEntry.create(name, path, model);
                         this.libraryList.reload();
                         this.clearAndInit();
                     }));
@@ -223,7 +223,7 @@ public class LibraryScreen extends Screen {
             this.client.setScreen(OverrideInfoEntryScreen.getName(this, path, guessedName,
                     name -> {
                         // add cape
-                        Library.addCape(name, path);
+                        CapeEntry.create(name, path);
                         this.libraryList.reload();
                         this.clearAndInit();
                     }));

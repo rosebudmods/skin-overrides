@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Optional;
+import java.util.UUID;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import net.minecraft.util.Identifier;
 
@@ -25,5 +29,17 @@ public class Util {
             }
         }
         return Optional.empty();
+    }
+
+    public static Optional<String> readString(Gson gson, JsonObject obj, String key) {
+        if (obj == null || !obj.has(key)) {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(obj.get(key).getAsString());
+    }
+
+    public static String randomId() {
+        return UUID.randomUUID().toString();
     }
 }

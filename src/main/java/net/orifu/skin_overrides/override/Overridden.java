@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.mojang.authlib.GameProfile;
 
-import net.orifu.skin_overrides.Library;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.texture.AbstractLibraryTexture;
 
@@ -32,10 +31,6 @@ public interface Overridden {
     // everything from this point on is stupid lol
 
     public boolean skin();
-
-    default public List<LibraryEntry> libraryEntries() {
-        return this.skin() ? new ArrayList<>(Library.skinEntries()) : new ArrayList<>(Library.capeEntries());
-    }
 
     @SuppressWarnings("unchecked")
     public static class SkinOverrides implements Overridden {
