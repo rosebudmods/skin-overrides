@@ -12,4 +12,8 @@ public class LocalSkinTexture extends LocalPlayerTexture {
 
         this.model = model;
     }
+
+    public LocalSkinTexture(File textureFile) {
+        this(textureFile, null);
+    }
 }

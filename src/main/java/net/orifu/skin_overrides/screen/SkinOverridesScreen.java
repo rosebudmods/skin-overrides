@@ -31,8 +31,10 @@ import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.override.Overridden;
+import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
+import net.orifu.skin_overrides.util.Util;
 
 public class SkinOverridesScreen extends Screen {
     private static final Text TITLE = Text.translatable("skin_overrides.title");
@@ -141,8 +143,8 @@ public class SkinOverridesScreen extends Screen {
                 .width(120).build(), 1, 0);
 
         // add to library button
-        config.add(ButtonWidget.builder(Text.translatable("skin_overrides.library.add"), (btn) -> {
-        }).width(120).build(), 2, 0).active = !this.ov.library().hasOverride(this.selectedProfile);
+        config.add(ButtonWidget.builder(Text.translatable("skin_overrides.library.add"), (btn) -> this.addToLibrary())
+                .width(120).build(), 2, 0).active = !this.ov.library().hasOverride(this.selectedProfile);
 
         // remove override button
         config.add(ButtonWidget
@@ -228,6 +230,18 @@ public class SkinOverridesScreen extends Screen {
         this.clearAndInit();
     }
 
+    protected void addToLibrary() {
+        String guessedName = this.selectedProfile.getName();
+
+        var playerSkin = Mod.getSkin(this.selectedProfile);
+        var texture = this.ov.skin() ? playerSkin.texture() : playerSkin.capeTexture();
+        this.client.setScreen(OverrideInfoEntryScreen.getName(this, texture, guessedName, name -> {
+            // if this is not override, save the player skin to the library
+            // if this is local override, move the skin to the library
+            // and switch to the library version
+        }));
+    }
+
     public void removeOverride() {
         this.ov.removeOverride(this.selectedProfile);
         this.upgradeProfile(); // get player's actual skin/cape
@@ -248,10 +262,12 @@ public class SkinOverridesScreen extends Screen {
 
         if (this.ov.skin()) {
             // open model selection screen
-            this.client.setScreen(OverrideInfoEntryScreen.getModel(this, path, model -> {
-                this.ov.local().copyOverride(profile, path, model);
-                this.clearAndInit();
-            }));
+            this.client.setScreen(OverrideInfoEntryScreen.getModel(this,
+                    Util.texture(new LocalSkinTexture(path.toFile())),
+                    model -> {
+                        this.ov.local().copyOverride(profile, path, model);
+                        this.clearAndInit();
+                    }));
         } else {
             this.ov.local().copyOverride(profile, path, null);
             this.clearAndInit();

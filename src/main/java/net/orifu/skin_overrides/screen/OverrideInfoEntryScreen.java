@@ -1,12 +1,9 @@
 package net.orifu.skin_overrides.screen;
 
-import java.nio.file.Path;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.Screen;
@@ -17,8 +14,6 @@ import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.text.CommonTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.orifu.skin_overrides.texture.LocalPlayerTexture;
-import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 
 public class OverrideInfoEntryScreen extends Screen {
@@ -60,31 +55,25 @@ public class OverrideInfoEntryScreen extends Screen {
         this.callback = callback;
     }
 
-    public static OverrideInfoEntryScreen getModel(@Nullable Screen parent, Path texturePath,
+    public static OverrideInfoEntryScreen getModel(@Nullable Screen parent, Identifier textureId,
             Consumer<PlayerSkin.Model> callback) {
-        var texture = new LocalSkinTexture(texturePath.toFile(), null);
-        Identifier textureId = new Identifier("skin_overrides", UUID.randomUUID().toString());
-        MinecraftClient.getInstance().getTextureManager().registerTexture(textureId, texture);
-
         return new OverrideInfoEntryScreen(parent, true, false, "", textureId, (name, model) -> callback.accept(model));
     }
 
-    public static OverrideInfoEntryScreen getName(@Nullable Screen parent, Path texturePath, String defaultName,
+    public static OverrideInfoEntryScreen getName(@Nullable Screen parent, Identifier textureId, String defaultName,
             Consumer<String> callback) {
-        var texture = new LocalPlayerTexture(texturePath.toFile());
-        Identifier textureId = new Identifier("skin_overrides", UUID.randomUUID().toString());
-        MinecraftClient.getInstance().getTextureManager().registerTexture(textureId, texture);
-
         return new OverrideInfoEntryScreen(parent, false, true, defaultName, textureId,
                 (name, model) -> callback.accept(name));
     }
 
-    public static OverrideInfoEntryScreen getNameAndModel(@Nullable Screen parent, Path texturePath, String defaultName,
-            OverrideInfoCallback callback) {
-        var texture = new LocalSkinTexture(texturePath.toFile(), null);
-        Identifier textureId = new Identifier("skin_overrides", UUID.randomUUID().toString());
-        MinecraftClient.getInstance().getTextureManager().registerTexture(textureId, texture);
+    public static OverrideInfoEntryScreen getName(@Nullable Screen parent, Identifier textureId, PlayerSkin.Model model,
+            String defaultName, Consumer<String> callback) {
+        return new OverrideInfoEntryScreen(parent, false, true, defaultName, textureId,
+                (name, model2) -> callback.accept(name));
+    }
 
+    public static OverrideInfoEntryScreen getNameAndModel(@Nullable Screen parent, Identifier textureId,
+            String defaultName, OverrideInfoCallback callback) {
         return new OverrideInfoEntryScreen(parent, true, true, defaultName, textureId, callback);
     }
 

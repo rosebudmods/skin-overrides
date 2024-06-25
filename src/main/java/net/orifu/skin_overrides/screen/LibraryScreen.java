@@ -21,8 +21,11 @@ import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.override.Overridden;
 import net.orifu.skin_overrides.override.LibraryCapeOverride.CapeEntry;
 import net.orifu.skin_overrides.override.LibrarySkinOverride.SkinEntry;
+import net.orifu.skin_overrides.texture.LocalPlayerTexture;
+import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
+import net.orifu.skin_overrides.util.Util;
 
 public class LibraryScreen extends Screen {
     private static final Text TITLE = Text.translatable("skin_overrides.library.title");
@@ -211,7 +214,8 @@ public class LibraryScreen extends Screen {
 
         if (this.ov.skin()) {
             // open name and model input screen
-            this.client.setScreen(OverrideInfoEntryScreen.getNameAndModel(this, path, guessedName,
+            this.client.setScreen(OverrideInfoEntryScreen.getNameAndModel(this,
+                    Util.texture(new LocalSkinTexture(path.toFile())), guessedName,
                     (name, model) -> {
                         // add skin
                         SkinEntry.create(name, path, model);
@@ -220,7 +224,8 @@ public class LibraryScreen extends Screen {
                     }));
         } else {
             // open name input screen
-            this.client.setScreen(OverrideInfoEntryScreen.getName(this, path, guessedName,
+            this.client.setScreen(OverrideInfoEntryScreen.getName(this,
+                    Util.texture(new LocalPlayerTexture(path.toFile())), guessedName,
                     name -> {
                         // add cape
                         CapeEntry.create(name, path);

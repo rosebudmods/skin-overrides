@@ -9,6 +9,8 @@ import java.util.UUID;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.util.Identifier;
 
 public class Util {
@@ -41,5 +43,11 @@ public class Util {
 
     public static String randomId() {
         return UUID.randomUUID().toString();
+    }
+
+    public static Identifier texture(AbstractTexture texture) {
+        Identifier textureId = new Identifier("skin_overrides", Util.randomId());
+        MinecraftClient.getInstance().getTextureManager().registerTexture(textureId, texture);
+        return textureId;
     }
 }
