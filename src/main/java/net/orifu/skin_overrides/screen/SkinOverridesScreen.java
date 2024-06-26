@@ -238,7 +238,7 @@ public class SkinOverridesScreen extends Screen {
 
         var playerSkin = Mod.getSkin(this.selectedProfile);
         var texture = this.ov.skin() ? playerSkin.texture() : playerSkin.capeTexture();
-        this.client.setScreen(OverrideInfoEntryScreen.getName(this, texture, guessedName, name -> {
+        Consumer<String> callback = name -> {
             // create the library entry
             Optional<LibraryEntry> entry = this.ov.skin()
                     ? SkinEntry.create(name, texture, playerSkin.model()).map(e -> (LibraryEntry) e)
@@ -250,7 +250,11 @@ public class SkinOverridesScreen extends Screen {
                 this.ov.library().addOverride(this.selectedProfile, entry.get());
                 this.clearAndInit();
             }
-        }));
+        };
+
+        this.client.setScreen(this.ov.skin()
+                ? OverrideInfoEntryScreen.getName(this, texture, playerSkin.model(), guessedName, callback)
+                : OverrideInfoEntryScreen.getName(this, texture, guessedName, callback));
     }
 
     public void removeOverride() {
