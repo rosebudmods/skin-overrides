@@ -3,11 +3,13 @@ package net.orifu.skin_overrides.util;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Optional;
 import java.util.UUID;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.mojang.blaze3d.texture.NativeImage;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.AbstractTexture;
@@ -49,5 +51,13 @@ public class Util {
         Identifier textureId = new Identifier("skin_overrides", Util.randomId());
         MinecraftClient.getInstance().getTextureManager().registerTexture(textureId, texture);
         return textureId;
+    }
+
+    public static void saveTexture(Identifier texture, int w, int h, Path path) throws IOException {
+        MinecraftClient.getInstance().getTextureManager().bindTexture(texture);
+        NativeImage img = new NativeImage(w, h, false);
+        img.loadFromTextureImage(0, false);
+        img.writeFile(path);
+        img.close();
     }
 }

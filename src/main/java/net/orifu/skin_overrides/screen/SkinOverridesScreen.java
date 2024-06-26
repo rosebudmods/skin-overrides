@@ -2,6 +2,7 @@ package net.orifu.skin_overrides.screen;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.apache.commons.io.FilenameUtils;
@@ -31,6 +32,8 @@ import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.override.Overridden;
+import net.orifu.skin_overrides.override.LibraryCapeOverride.CapeEntry;
+import net.orifu.skin_overrides.override.LibrarySkinOverride.SkinEntry;
 import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
@@ -236,9 +239,17 @@ public class SkinOverridesScreen extends Screen {
         var playerSkin = Mod.getSkin(this.selectedProfile);
         var texture = this.ov.skin() ? playerSkin.texture() : playerSkin.capeTexture();
         this.client.setScreen(OverrideInfoEntryScreen.getName(this, texture, guessedName, name -> {
-            // if this is not override, save the player skin to the library
-            // if this is local override, move the skin to the library
-            // and switch to the library version
+            // create the library entry
+            Optional<LibraryEntry> entry = this.ov.skin()
+                    ? SkinEntry.create(name, texture, playerSkin.model()).map(e -> (LibraryEntry) e)
+                    : CapeEntry.create(name, texture).map(e -> (LibraryEntry) e);
+
+            // if this is an override, replace it with the library version
+            if (this.ov.hasOverride(this.selectedProfile)) {
+                this.ov.removeOverride(this.selectedProfile);
+                this.ov.library().addOverride(this.selectedProfile, entry.get());
+                this.clearAndInit();
+            }
         }));
     }
 

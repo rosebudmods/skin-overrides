@@ -98,15 +98,30 @@ public class LibraryCapeOverride extends AbstractLibraryOverride<CapeEntry, Copi
             this.texture = texture;
         }
 
-        public static void create(String name, Path path) {
+        public static Optional<CapeEntry> create(String name, Path path) {
+            return createInternal(name, null, path);
+        }
+
+        public static Optional<CapeEntry> create(String name, Identifier texture) {
+            return createInternal(name, texture, null);
+        }
+
+        private static Optional<CapeEntry> createInternal(String name, Identifier texture, Path path) {
             try {
                 String id = Util.randomId();
                 File file = new File(LibraryCapeOverride.INSTANCE.libraryFolder(), id + ".png");
                 var entry = new CapeEntry(name, id, file);
-                Files.copy(path, entry.file.toPath());
+
+                if (path != null)
+                    Files.copy(path, entry.file.toPath());
+                else
+                    Util.saveTexture(texture, 64, 32, file.toPath());
+
                 LibraryCapeOverride.INSTANCE.add(entry);
+                return Optional.of(entry);
             } catch (IOException e) {
                 Mod.LOGGER.error("failed to copy {}", path, e);
+                return Optional.empty();
             }
         }
 

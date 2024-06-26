@@ -118,15 +118,31 @@ public class LibrarySkinOverride extends AbstractLibraryOverride<SkinEntry, Copi
             this.texture = texture;
         }
 
-        public static void create(String name, Path path, PlayerSkin.Model model) {
+        public static Optional<SkinEntry> create(String name, Path path, PlayerSkin.Model model) {
+            return createInternal(name, null, path, model);
+        }
+
+        public static Optional<SkinEntry> create(String name, Identifier texture, PlayerSkin.Model model) {
+            return createInternal(name, texture, null, model);
+        }
+
+        private static Optional<SkinEntry> createInternal(String name, Identifier texture, Path path,
+                PlayerSkin.Model model) {
             try {
                 String id = Util.randomId();
                 File file = new File(LibrarySkinOverride.INSTANCE.libraryFolder(), id + ".png");
                 var entry = new SkinEntry(name, id, file, model);
-                Files.copy(path, entry.file.toPath());
+
+                if (path != null)
+                    Files.copy(path, entry.file.toPath());
+                else
+                    Util.saveTexture(texture, 64, 64, file.toPath());
+
                 LibrarySkinOverride.INSTANCE.add(entry);
+                return Optional.of(entry);
             } catch (IOException e) {
                 Mod.LOGGER.error("failed to copy {}", path, e);
+                return Optional.empty();
             }
         }
 

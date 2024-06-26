@@ -43,7 +43,7 @@ public abstract class AbstractOverride<E, T> {
         this.removeOverride(profile);
 
         try {
-            Path outputPath = Paths.get(this.getFileName(profile, data));
+            Path outputPath = Paths.get(this.rootFolder(), this.getFileName(profile, data));
 
             Files.copy(path, outputPath);
         } catch (IOException e) {
