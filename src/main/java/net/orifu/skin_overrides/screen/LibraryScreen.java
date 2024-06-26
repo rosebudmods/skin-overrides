@@ -43,6 +43,7 @@ public class LibraryScreen extends Screen {
 
     private FrameWidget header;
     private LibraryListWidget libraryList;
+    private TextFieldWidget searchBox;
     @Nullable
     private FrameWidget entryPreviewFrame;
     @Nullable
@@ -70,6 +71,12 @@ public class LibraryScreen extends Screen {
         }
 
         int optionsWidth = Math.min(this.width * 2 / 5 - OPTIONS_PAD, 150);
+
+        if (this.searchBox == null) {
+            this.searchBox = new TextFieldWidget(this.textRenderer, 120, 20, Text.literal("WIP"));
+            this.searchBox.setChangedListener(this.libraryList::filter);
+        }
+        this.addDrawableSelectableElement(this.searchBox);
 
         this.libraryList.setPosition(0, HEADER_HEIGHT);
         this.libraryList.setDimensions(this.selectedEntry == null
@@ -110,14 +117,15 @@ public class LibraryScreen extends Screen {
             var smallControls = controls.add(LinearLayoutWidget.createHorizontal());
 
             // previous entry
-            boolean isFirst = this.selectedEntry.index == 0;
+            int index = this.libraryList.indexOf(this.selectedEntry);
+            boolean isFirst = index == 0;
             smallControls.add(ButtonWidget.builder(Text.literal("<"),
                     btn -> this.libraryList.moveSelection(-1)).width(20)
                     .tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.back")))
                     .build()).active = !isFirst;
             // swap this and previous entry
             smallControls.add(ButtonWidget.builder(Text.literal("<<"), btn -> {
-                this.libraryList.swap(this.selectedEntry.index, this.selectedEntry.index - 1);
+                this.libraryList.move(index, index - 1);
                 this.libraryList.ensureVisible(this.selectedEntry);
                 this.clearAndInit();
             }).width(25).tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.move_back")))
@@ -138,9 +146,9 @@ public class LibraryScreen extends Screen {
                     .build()).active = this.callback != null;
 
             // swap this and next entry
-            boolean isLast = this.selectedEntry.index == this.libraryList.children().size() - 1;
+            boolean isLast = index == this.libraryList.children().size() - 1;
             smallControls.add(ButtonWidget.builder(Text.literal(">>"), btn -> {
-                this.libraryList.swap(this.selectedEntry.index, this.selectedEntry.index + 1);
+                this.libraryList.move(index, index + 1);
                 this.libraryList.ensureVisible(this.selectedEntry);
                 this.clearAndInit();
             }).tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.move_next"))).width(25)

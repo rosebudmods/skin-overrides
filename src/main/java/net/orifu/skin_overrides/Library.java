@@ -1,6 +1,5 @@
 package net.orifu.skin_overrides;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,8 +34,8 @@ public interface Library {
         this.save();
     }
 
-    default public void swap(int i, int j) {
-        Collections.swap(this.entries(), i, j);
+    default public void move(int i, int j) {
+        this.entries().add(j, this.entries().remove(i));
         this.save();
     }
 
