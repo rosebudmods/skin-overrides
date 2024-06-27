@@ -72,7 +72,8 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
 
         var skinOverride = this.ov.library().getOverride(this.profile);
         if (skinOverride.isPresent()) {
-            return skinOverride.get().description().formatted(Formatting.GREEN);
+            return Text.translatable("skin_overrides.override.library", skinOverride.get().name)
+                    .formatted(Formatting.GREEN);
         }
 
         return Text.translatable("skin_overrides.override.none").formatted(Formatting.GRAY);

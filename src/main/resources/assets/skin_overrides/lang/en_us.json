@@ -10,7 +10,6 @@
     "skin_overrides.player.offline": "%s (offline)",
     "skin_overrides.override.none": "no override",
     "skin_overrides.override.local_image": "local image",
-    "skin_overrides.override.copy": "copying %s",
     "skin_overrides.override.library": "using %s",
     "skin_overrides.remove": "remove override",
     "skin_overrides.input.model": "choose the correct model for the skin",

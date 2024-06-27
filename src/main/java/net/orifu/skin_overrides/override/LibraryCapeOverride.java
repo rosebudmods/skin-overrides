@@ -18,12 +18,12 @@ import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.override.LibraryCapeOverride.CapeEntry;
-import net.orifu.skin_overrides.texture.CopiedCapeTexture;
+import net.orifu.skin_overrides.texture.LibraryCapeTexture;
 import net.orifu.skin_overrides.texture.LocalPlayerTexture;
 import net.orifu.skin_overrides.util.OverrideFiles.Validated;
 import net.orifu.skin_overrides.util.Util;
 
-public class LibraryCapeOverride extends AbstractLibraryOverride<CapeEntry, CopiedCapeTexture> {
+public class LibraryCapeOverride extends AbstractLibraryOverride<CapeEntry, LibraryCapeTexture> {
     public static final LibraryCapeOverride INSTANCE = new LibraryCapeOverride();
 
     @Override
@@ -42,8 +42,8 @@ public class LibraryCapeOverride extends AbstractLibraryOverride<CapeEntry, Copi
     }
 
     @Override
-    protected Optional<CopiedCapeTexture> tryGetTextureFromValidated(Validated<CapeEntry> v) {
-        return Optional.of(CopiedCapeTexture.fromLibrary(v.data()));
+    protected Optional<LibraryCapeTexture> tryGetTextureFromValidated(Validated<CapeEntry> v) {
+        return Optional.of(LibraryCapeTexture.fromLibrary(v.data()));
     }
 
     @Override

@@ -13,8 +13,6 @@ import net.orifu.skin_overrides.override.LibrarySkinOverride;
 import net.orifu.skin_overrides.override.LocalCapeOverride;
 import net.orifu.skin_overrides.override.LocalSkinOverride;
 import net.orifu.skin_overrides.override.Overridden;
-import net.orifu.skin_overrides.texture.CopiedCapeTexture;
-import net.orifu.skin_overrides.texture.CopiedSkinTexture;
 
 public class Mod {
 	public static final Logger LOGGER = LoggerFactory.getLogger("skin overrides");
@@ -47,12 +45,12 @@ public class Mod {
 			skin = new PlayerSkin(skinId, null, skin.capeTexture(), skin.elytraTexture(), texture.model, false);
 		}
 
-		// skin copy overrides
-		var skinCopyOverride = SKINS_LIBRARY.getOverride(profile);
-		if (skinCopyOverride.isPresent()) {
-			CopiedSkinTexture copiedSkin = skinCopyOverride.get();
-			skin = new PlayerSkin(copiedSkin.texture(), null, skin.capeTexture(),
-					skin.elytraTexture(), copiedSkin.model(), false);
+		// skin library overrides
+		var skinLibrary = SKINS_LIBRARY.getOverride(profile);
+		if (skinLibrary.isPresent()) {
+			var newSkin = skinLibrary.get();
+			skin = new PlayerSkin(newSkin.texture(), null, skin.capeTexture(),
+					skin.elytraTexture(), newSkin.model(), false);
 		}
 
 		// cape image overrides
@@ -67,11 +65,11 @@ public class Mod {
 			skin = new PlayerSkin(skin.texture(), skin.textureUrl(), capeId, skin.elytraTexture(), skin.model(), false);
 		}
 
-		// cape copy overrides
-		var capeCopyOverride = CAPES_LIBRARY.getOverride(profile);
-		if (capeCopyOverride.isPresent()) {
-			CopiedCapeTexture copiedCape = capeCopyOverride.get();
-			skin = new PlayerSkin(skin.texture(), null, copiedCape.texture(),
+		// cape library overrides
+		var capeLibrary = CAPES_LIBRARY.getOverride(profile);
+		if (capeLibrary.isPresent()) {
+			var newCape = capeLibrary.get();
+			skin = new PlayerSkin(skin.texture(), null, newCape.texture(),
 					skin.elytraTexture(), skin.model(), false);
 		}
 

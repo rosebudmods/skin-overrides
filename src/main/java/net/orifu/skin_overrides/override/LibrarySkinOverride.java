@@ -20,12 +20,12 @@ import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.override.LibrarySkinOverride.SkinEntry;
-import net.orifu.skin_overrides.texture.CopiedSkinTexture;
+import net.orifu.skin_overrides.texture.LibrarySkinTexture;
 import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.Util;
 import net.orifu.skin_overrides.util.OverrideFiles.Validated;
 
-public class LibrarySkinOverride extends AbstractLibraryOverride<SkinEntry, CopiedSkinTexture> {
+public class LibrarySkinOverride extends AbstractLibraryOverride<SkinEntry, LibrarySkinTexture> {
     public static final LibrarySkinOverride INSTANCE = new LibrarySkinOverride();
 
     @Override
@@ -44,8 +44,8 @@ public class LibrarySkinOverride extends AbstractLibraryOverride<SkinEntry, Copi
     }
 
     @Override
-    protected Optional<CopiedSkinTexture> tryGetTextureFromValidated(Validated<SkinEntry> v) {
-        return Optional.of(CopiedSkinTexture.fromLibrary(v.data()));
+    protected Optional<LibrarySkinTexture> tryGetTextureFromValidated(Validated<SkinEntry> v) {
+        return Optional.of(LibrarySkinTexture.fromLibrary(v.data()));
     }
 
     @Override
