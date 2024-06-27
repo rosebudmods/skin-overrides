@@ -180,7 +180,7 @@ public class LibraryScreen extends Screen {
 
         root.visitWidgets(this::addDrawableSelectableElement);
         root.arrangeElements();
-        this.focusOn(this.searchBox);
+        this.setFocusedChild(this.searchBox);
     }
 
     @Override
@@ -243,7 +243,7 @@ public class LibraryScreen extends Screen {
         if (!newName.equals(this.selectedEntry.entry.getName())) {
             this.ov.library().rename(this.selectedEntry.entry, newName);
             this.clearAndInit();
-            this.focusOn(this.nameField);
+            this.setFocusedChild(this.nameField);
         }
     }
 
