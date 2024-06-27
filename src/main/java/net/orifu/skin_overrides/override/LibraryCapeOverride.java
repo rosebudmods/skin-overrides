@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -128,7 +127,7 @@ public class LibraryCapeOverride extends AbstractLibraryOverride<CapeEntry, Copi
         @Override
         public Identifier getTexture() {
             if (this.isFile) {
-                Identifier id = new Identifier("skin_overrides", UUID.randomUUID().toString());
+                Identifier id = new Identifier("skin_overrides", "skin/library/" + this.id);
                 MinecraftClient.getInstance().getTextureManager().registerTexture(id,
                         new LocalPlayerTexture(this.file));
                 return id;

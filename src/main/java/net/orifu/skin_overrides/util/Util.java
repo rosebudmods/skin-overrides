@@ -48,7 +48,7 @@ public class Util {
     }
 
     public static Identifier texture(AbstractTexture texture) {
-        Identifier textureId = new Identifier("skin_overrides", Util.randomId());
+        Identifier textureId = new Identifier("skin_overrides", "temp/" + Util.randomId());
         MinecraftClient.getInstance().getTextureManager().registerTexture(textureId, texture);
         return textureId;
     }

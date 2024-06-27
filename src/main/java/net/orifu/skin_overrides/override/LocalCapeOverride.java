@@ -20,7 +20,7 @@ public class LocalCapeOverride extends AbstractOverride<Void, LocalPlayerTexture
 
     @Override
     protected String getFileName(GameProfile profile, Void data) {
-        return profile.getName() + ".png";
+        return profile.getId() + ".png";
     }
 
     @Override

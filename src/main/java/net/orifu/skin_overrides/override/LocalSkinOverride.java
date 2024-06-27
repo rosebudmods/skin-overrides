@@ -21,7 +21,7 @@ public class LocalSkinOverride extends AbstractOverride<PlayerSkin.Model, LocalS
 
     @Override
     protected String getFileName(GameProfile profile, PlayerSkin.Model model) {
-        return profile.getName() + "." + model.toString().toLowerCase() + ".png";
+        return profile.getId() + "." + model.toString().toLowerCase() + ".png";
     }
 
     @Override

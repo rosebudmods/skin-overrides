@@ -30,7 +30,7 @@ public abstract class AbstractLibraryOverride<E extends LibraryEntry, T extends 
 
     @Override
     protected String getFileName(GameProfile profile, E entry) {
-        return profile.getName() + ".txt";
+        return profile.getId() + ".txt";
     }
 
     public void addOverride(GameProfile profile, E entry) {
