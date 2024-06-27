@@ -2,12 +2,11 @@ package net.orifu.skin_overrides.screen;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.Nullable;
-
-import com.mojang.authlib.GameProfile;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.Screen;
@@ -18,11 +17,11 @@ import net.minecraft.client.gui.widget.layout.FrameWidget;
 import net.minecraft.client.gui.widget.layout.LayoutSettings;
 import net.minecraft.client.gui.widget.layout.LinearLayoutWidget;
 import net.minecraft.client.gui.widget.text.TextWidget;
+import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.CommonTexts;
 import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Library.LibraryEntry;
-import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.override.Overridden;
 import net.orifu.skin_overrides.override.LibraryCapeOverride.CapeEntry;
 import net.orifu.skin_overrides.override.LibrarySkinOverride.SkinEntry;
@@ -59,7 +58,9 @@ public class LibraryScreen extends Screen {
     private int skinScale;
 
     @Nullable
-    private GameProfile adding;
+    private CompletableFuture<PlayerSkin> adding;
+    @Nullable
+    private String addingName;
 
     public LibraryScreen(Overridden ov, @Nullable Screen parent, @Nullable Consumer<LibraryEntry> callback) {
         super(TITLE);
@@ -216,20 +217,18 @@ public class LibraryScreen extends Screen {
                     this.libraryList.getY() + this.libraryList.getHeight() / 2 - 4, 0xaaaaaa);
         }
 
-        if (this.adding != null) {
-            // the skin won't be properly loaded for a few frames
-            var skin = Mod.getSkin(this.adding);
-            if (skin.textureUrl() != null) {
-                if (this.ov.skin()) {
-                    SkinEntry.create(this.adding.getName(), skin.texture(), skin.model());
-                } else {
-                    CapeEntry.create(this.adding.getName(), skin.capeTexture());
-                }
-
-                this.adding = null;
-                this.libraryList.reload();
-                this.clearAndInit();
+        // the skin won't be properly loaded for a few frames
+        if (this.adding != null && this.adding.isDone()) {
+            var skin = this.adding.getNow(null);
+            if (this.ov.skin()) {
+                SkinEntry.create(this.addingName, skin.texture(), skin.model());
+            } else {
+                CapeEntry.create(this.addingName, skin.capeTexture());
             }
+
+            this.adding = null;
+            this.libraryList.reload();
+            this.clearAndInit();
         }
     }
 
@@ -297,7 +296,8 @@ public class LibraryScreen extends Screen {
                     Text.translatable("skin_overrides.no_profile.title", this.searchBox.getText()),
                     Text.translatable("skin_overrides.no_profile.description")));
         } else {
-            this.adding = maybeProfile.get();
+            this.adding = this.client.getSkinProvider().fetchSkin(maybeProfile.get());
+            this.addingName = maybeProfile.get().getName();
             this.searchBox.setText("");
         }
     }
