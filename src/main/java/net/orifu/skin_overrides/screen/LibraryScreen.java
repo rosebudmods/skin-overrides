@@ -38,6 +38,7 @@ public class LibraryScreen extends Screen {
     private static final int CAPE_SCALE = 8;
 
     private static final int OPTIONS_PAD = 24;
+    private static final int OPTIONS_WIDTH = 150;
 
     public final Overridden ov;
     @Nullable
@@ -89,8 +90,7 @@ public class LibraryScreen extends Screen {
             this.searchBox.setMaxLength(100);
         }
 
-        int optionsWidth = Math.min(this.width * 2 / 5 - OPTIONS_PAD, 150);
-        int libraryListWidth = this.selectedEntry == null ? this.width : this.width - optionsWidth - OPTIONS_PAD;
+        int libraryListWidth = this.selectedEntry == null ? this.width : this.width - OPTIONS_WIDTH - OPTIONS_PAD;
 
         this.searchBox.setDimensions(200, 20);
         this.libraryList.setDimensions(libraryListWidth, this.height - 8 - 9 - 5 - 20 - 6 - 33);
@@ -111,7 +111,7 @@ public class LibraryScreen extends Screen {
         body.add(this.libraryList);
 
         if (this.selectedEntry != null) {
-            var controlsFrame = body.add(new FrameWidget(optionsWidth + OPTIONS_PAD, 0));
+            var controlsFrame = body.add(new FrameWidget(OPTIONS_WIDTH + OPTIONS_PAD, 0));
             var controls = controlsFrame.add(LinearLayoutWidget.createVertical().setSpacing(2));
             this.skinScale = PlayerSkinRenderer.HEIGHT * 4 + 150 < this.height ? 4 : 3;
 
@@ -130,7 +130,7 @@ public class LibraryScreen extends Screen {
 
             // name input
             if (this.nameField == null) {
-                this.nameField = new TextFieldWidget(this.textRenderer, optionsWidth, 20,
+                this.nameField = new TextFieldWidget(this.textRenderer, OPTIONS_WIDTH, 20,
                         Text.translatable("skin_overrides.library.input.name"));
                 this.nameField.setMaxLength(32);
                 this.nameField.setChangedListener(this::renameEntry);
@@ -156,7 +156,7 @@ public class LibraryScreen extends Screen {
                     .build()).active = !isFirst;
 
             // use this entry
-            int mainControlWidth = (optionsWidth - 40 - 50) / 2;
+            int mainControlWidth = (OPTIONS_WIDTH - 40 - 50) / 2;
             smallControls.add(ButtonWidget.builder(Text.literal("+"), btn -> {
                 this.callback.accept(this.selectedEntry.entry);
                 this.client.setScreen(this.parent);
