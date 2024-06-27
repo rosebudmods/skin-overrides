@@ -71,7 +71,7 @@ public class LibraryCapeOverride extends AbstractLibraryOverride<CapeEntry, Libr
     @Override
     protected void loadFailed() {
         this.entries
-                .add(new CapeEntry("skin_overrides", "skin_overrides", new Identifier("skin_overrides", "cape.png")));
+                .add(new CapeEntry("skin overrides", "skin_overrides", new Identifier("skin_overrides", "cape.png")));
     }
 
     public static class CapeEntry extends LibraryEntry {

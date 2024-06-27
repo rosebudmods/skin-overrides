@@ -30,7 +30,10 @@ public class OverrideFiles {
 
     public static <T> Optional<Validated<T>> findProfileFile(String path, GameProfile profile,
             Validator<T> validator) {
-        for (File file : new File(path).listFiles()) {
+        File dir = new File(path);
+        dir.mkdir();
+
+        for (File file : dir.listFiles()) {
             String fileName = file.getName();
             String name = FilenameUtils.getBaseName(fileName);
             String ext = FilenameUtils.getExtension(fileName);
