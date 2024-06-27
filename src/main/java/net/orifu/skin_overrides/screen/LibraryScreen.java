@@ -19,6 +19,7 @@ import net.minecraft.client.gui.widget.layout.LayoutSettings;
 import net.minecraft.client.gui.widget.layout.LinearLayoutWidget;
 import net.minecraft.client.gui.widget.text.TextWidget;
 import net.minecraft.client.toast.SystemToast;
+import net.minecraft.text.CommonTexts;
 import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.Mod;
@@ -34,8 +35,6 @@ import net.orifu.skin_overrides.util.Util;
 
 public class LibraryScreen extends Screen {
     private static final Text TITLE = Text.translatable("skin_overrides.library.title");
-    private static final int HEADER_HEIGHT = 20;
-    private static final int SKIN_SCALE = 4;
     private static final int CAPE_SCALE = 8;
 
     private static final int OPTIONS_PAD = 24;
@@ -46,7 +45,6 @@ public class LibraryScreen extends Screen {
     @Nullable
     private final Consumer<LibraryEntry> callback;
 
-    private FrameWidget header;
     private LibraryListWidget libraryList;
     private TextFieldWidget searchBox;
     @Nullable
@@ -56,6 +54,8 @@ public class LibraryScreen extends Screen {
 
     @Nullable
     protected LibraryListEntry selectedEntry;
+
+    private int skinScale;
 
     @Nullable
     private GameProfile adding;
@@ -92,15 +92,16 @@ public class LibraryScreen extends Screen {
         int optionsWidth = Math.min(this.width * 2 / 5 - OPTIONS_PAD, 150);
         int libraryListWidth = this.selectedEntry == null ? this.width : this.width - optionsWidth - OPTIONS_PAD;
 
-        this.searchBox.setDimensions(libraryListWidth - 60, 20);
-        this.libraryList.setDimensions(libraryListWidth, this.height - HEADER_HEIGHT - 20);
+        this.searchBox.setDimensions(200, 20);
+        this.libraryList.setDimensions(libraryListWidth, this.height - 8 - 9 - 5 - 20 - 6 - 33);
 
         var root = LinearLayoutWidget.createVertical();
 
-        this.header = root.add(new FrameWidget(this.width, HEADER_HEIGHT));
-        this.header.add(new TextWidget(TITLE, this.textRenderer));
+        root.add(new TextWidget(TITLE, this.textRenderer),
+                LayoutSettings.create().alignHorizontallyCenter().setTopPadding(8).setBottomPadding(5));
 
-        var search = root.add(LinearLayoutWidget.createHorizontal());
+        var search = root.add(LinearLayoutWidget.createHorizontal(),
+                LayoutSettings.create().alignHorizontallyCenter().setBottomPadding(6));
         search.add(this.searchBox);
         search.add(ButtonWidget
                 .builder(Text.translatable("skin_overrides.library.search_add"), btn -> this.addFromSearch())
@@ -112,15 +113,20 @@ public class LibraryScreen extends Screen {
         if (this.selectedEntry != null) {
             var controlsFrame = body.add(new FrameWidget(optionsWidth + OPTIONS_PAD, 0));
             var controls = controlsFrame.add(LinearLayoutWidget.createVertical().setSpacing(2));
+            this.skinScale = PlayerSkinRenderer.HEIGHT * 4 + 150 < this.height ? 4 : 3;
 
             // library entry preview
             this.entryPreviewFrame = controls.add(new FrameWidget(
-                    this.ov.skin() ? PlayerSkinRenderer.WIDTH * SKIN_SCALE : PlayerCapeRenderer.WIDTH * CAPE_SCALE,
-                    this.ov.skin() ? PlayerSkinRenderer.HEIGHT * SKIN_SCALE : PlayerCapeRenderer.HEIGHT * CAPE_SCALE),
+                    this.ov.skin()
+                            ? PlayerSkinRenderer.WIDTH * this.skinScale
+                            : PlayerCapeRenderer.WIDTH * CAPE_SCALE,
+                    this.ov.skin()
+                            ? PlayerSkinRenderer.HEIGHT * this.skinScale
+                            : PlayerCapeRenderer.HEIGHT * CAPE_SCALE),
                     LayoutSettings.create().alignHorizontallyCenter());
 
             // padding
-            controls.add(new FrameWidget(0, 16));
+            controls.add(new FrameWidget(0, 4));
 
             // name input
             if (this.nameField == null) {
@@ -178,6 +184,9 @@ public class LibraryScreen extends Screen {
                     .build()).active = !isLast;
         }
 
+        var footer = root.add(new FrameWidget(this.width, 33));
+        footer.add(ButtonWidget.builder(CommonTexts.BACK, btn -> this.closeScreen()).build());
+
         root.visitWidgets(this::addDrawableSelectableElement);
         root.arrangeElements();
         this.setFocusedChild(this.searchBox);
@@ -192,7 +201,7 @@ public class LibraryScreen extends Screen {
                 var texture = entry.getTexture();
                 var model = entry.getModel();
                 PlayerSkinRenderer.draw(graphics, texture, model,
-                        this.entryPreviewFrame.getX(), this.entryPreviewFrame.getY(), SKIN_SCALE);
+                        this.entryPreviewFrame.getX(), this.entryPreviewFrame.getY(), this.skinScale);
             } else {
                 var texture = this.selectedEntry.entry.getTexture();
                 PlayerCapeRenderer.draw(graphics, texture, this.entryPreviewFrame.getX(), this.entryPreviewFrame.getY(),

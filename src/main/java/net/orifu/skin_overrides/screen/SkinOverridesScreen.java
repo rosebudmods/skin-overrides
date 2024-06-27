@@ -113,7 +113,7 @@ public class SkinOverridesScreen extends Screen {
 
         // add player list
         var listWrapper = helper.add(LinearLayoutWidget.createVertical().setSpacing(6));
-        listWrapper.add(this.searchBox, LayoutSettings.create().alignHorizontallyCenter().setTopPadding(6));
+        listWrapper.add(this.searchBox, LayoutSettings.create().alignHorizontallyCenter().setTopPadding(5));
         this.setFocusedChild(this.searchBox);
         listWrapper.add(this.playerList);
 
@@ -184,7 +184,7 @@ public class SkinOverridesScreen extends Screen {
         int height = this.height - hh - fh;
 
         // set main content size
-        this.playerList.setDimensions(this.width / 2, height - 20 - 6 - 6);
+        this.playerList.setDimensions(this.width / 2, height - 5 - 20 - 6);
         this.configFrame.setMinDimensions(this.width / 2, height);
 
         // reposition layout
