@@ -7,6 +7,8 @@ import java.util.function.Consumer;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.Nullable;
 
+import com.mojang.authlib.GameProfile;
+
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
@@ -16,8 +18,10 @@ import net.minecraft.client.gui.widget.layout.FrameWidget;
 import net.minecraft.client.gui.widget.layout.LayoutSettings;
 import net.minecraft.client.gui.widget.layout.LinearLayoutWidget;
 import net.minecraft.client.gui.widget.text.TextWidget;
+import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Library.LibraryEntry;
+import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.override.Overridden;
 import net.orifu.skin_overrides.override.LibraryCapeOverride.CapeEntry;
 import net.orifu.skin_overrides.override.LibrarySkinOverride.SkinEntry;
@@ -25,11 +29,12 @@ import net.orifu.skin_overrides.texture.LocalPlayerTexture;
 import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
+import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.Util;
 
 public class LibraryScreen extends Screen {
     private static final Text TITLE = Text.translatable("skin_overrides.library.title");
-    private static final int HEADER_HEIGHT = 40;
+    private static final int HEADER_HEIGHT = 20;
     private static final int SKIN_SCALE = 4;
     private static final int CAPE_SCALE = 8;
 
@@ -52,6 +57,9 @@ public class LibraryScreen extends Screen {
     @Nullable
     protected LibraryListEntry selectedEntry;
 
+    @Nullable
+    private GameProfile adding;
+
     public LibraryScreen(Overridden ov, @Nullable Screen parent, @Nullable Consumer<LibraryEntry> callback) {
         super(TITLE);
 
@@ -70,24 +78,33 @@ public class LibraryScreen extends Screen {
             this.libraryList = new LibraryListWidget(this, this.ov);
         }
 
-        int optionsWidth = Math.min(this.width * 2 / 5 - OPTIONS_PAD, 150);
-
         if (this.searchBox == null) {
-            this.searchBox = new TextFieldWidget(this.textRenderer, 120, 20, Text.literal("WIP"));
-            this.searchBox.setChangedListener(this.libraryList::filter);
+            this.searchBox = new TextFieldWidget(this.textRenderer, 0, 20,
+                    Text.translatable("skin_overrides.library.search"));
+            this.searchBox.setHint(Text.translatable("skin_overrides.library.search.hint"));
+            this.searchBox.setChangedListener(query -> {
+                this.libraryList.filter(query);
+                this.clearAndInit();
+            });
+            this.searchBox.setMaxLength(100);
         }
-        this.addDrawableSelectableElement(this.searchBox);
 
-        this.libraryList.setPosition(0, HEADER_HEIGHT);
-        this.libraryList.setDimensions(this.selectedEntry == null
-                ? this.width
-                : this.width - optionsWidth - OPTIONS_PAD,
-                this.height - HEADER_HEIGHT);
+        int optionsWidth = Math.min(this.width * 2 / 5 - OPTIONS_PAD, 150);
+        int libraryListWidth = this.selectedEntry == null ? this.width : this.width - optionsWidth - OPTIONS_PAD;
+
+        this.searchBox.setDimensions(libraryListWidth - 60, 20);
+        this.libraryList.setDimensions(libraryListWidth, this.height - HEADER_HEIGHT - 20);
 
         var root = LinearLayoutWidget.createVertical();
 
         this.header = root.add(new FrameWidget(this.width, HEADER_HEIGHT));
         this.header.add(new TextWidget(TITLE, this.textRenderer));
+
+        var search = root.add(LinearLayoutWidget.createHorizontal());
+        search.add(this.searchBox);
+        search.add(ButtonWidget
+                .builder(Text.translatable("skin_overrides.library.search_add"), btn -> this.addFromSearch())
+                .width(60).build());
 
         var body = root.add(LinearLayoutWidget.createHorizontal());
         body.add(this.libraryList);
@@ -102,6 +119,7 @@ public class LibraryScreen extends Screen {
                     this.ov.skin() ? PlayerSkinRenderer.HEIGHT * SKIN_SCALE : PlayerCapeRenderer.HEIGHT * CAPE_SCALE),
                     LayoutSettings.create().alignHorizontallyCenter());
 
+            // padding
             controls.add(new FrameWidget(0, 16));
 
             // name input
@@ -162,6 +180,7 @@ public class LibraryScreen extends Screen {
 
         root.visitWidgets(this::addDrawableSelectableElement);
         root.arrangeElements();
+        this.focusOn(this.searchBox);
     }
 
     @Override
@@ -187,6 +206,22 @@ public class LibraryScreen extends Screen {
                     this.libraryList.getX() + this.libraryList.getWidth() / 2,
                     this.libraryList.getY() + this.libraryList.getHeight() / 2 - 4, 0xaaaaaa);
         }
+
+        if (this.adding != null) {
+            // the skin won't be properly loaded for a few frames
+            var skin = Mod.getSkin(this.adding);
+            if (skin.textureUrl() != null) {
+                if (this.ov.skin()) {
+                    SkinEntry.create(this.adding.getName(), skin.texture(), skin.model());
+                } else {
+                    CapeEntry.create(this.adding.getName(), skin.capeTexture());
+                }
+
+                this.adding = null;
+                this.libraryList.reload();
+                this.clearAndInit();
+            }
+        }
     }
 
     @Override
@@ -194,11 +229,14 @@ public class LibraryScreen extends Screen {
         this.client.setScreen(this.parent);
     }
 
-    public void selectEntry(LibraryListEntry entry) {
+    public void selectEntry(@Nullable LibraryListEntry entry) {
         this.selectedEntry = entry;
         this.nameField = null;
         this.clearAndInit();
-        this.libraryList.ensureVisible(entry);
+
+        if (entry != null) {
+            this.libraryList.ensureVisible(entry);
+        }
     }
 
     public void renameEntry(String newName) {
@@ -240,6 +278,18 @@ public class LibraryScreen extends Screen {
                         this.libraryList.reload();
                         this.clearAndInit();
                     }));
+        }
+    }
+
+    private void addFromSearch() {
+        var maybeProfile = ProfileHelper.idToProfile(this.searchBox.getText());
+        if (maybeProfile.isEmpty()) {
+            this.client.getToastManager().add(new SystemToast(SystemToast.C_ozahoshp.field_47585,
+                    Text.translatable("skin_overrides.no_profile.title", this.searchBox.getText()),
+                    Text.translatable("skin_overrides.no_profile.description")));
+        } else {
+            this.adding = maybeProfile.get();
+            this.searchBox.setText("");
         }
     }
 }

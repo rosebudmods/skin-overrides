@@ -61,7 +61,7 @@ public class LibraryListWidget extends AlwaysSelectedEntryGridWidget<LibraryList
         this.reload();
 
         // update this and parent
-        var newEntry = this.getEntry(newIndex);
+        var newEntry = newIndex >= 0 ? this.getEntry(newIndex) : null;
         this.setSelected(newEntry);
         this.parent.selectEntry(newEntry);
     }

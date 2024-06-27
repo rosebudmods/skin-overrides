@@ -23,11 +23,16 @@
     "skin_overrides.library.open": "open library",
     "skin_overrides.library.pick": "pick from library",
     "skin_overrides.library.add": "add to library",
-    "skin_overrides.library.input.name": "name input",
+    "skin_overrides.library.search": "search",
+    "skin_overrides.library.search.hint": "search...",
+    "skin_overrides.library.search_add": "add",
+    "skin_overrides.library.input.name": "name",
     "skin_overrides.library.input.use": "use this",
     "skin_overrides.library.input.remove": "remove this",
     "skin_overrides.library.input.back": "previous",
     "skin_overrides.library.input.next": "next",
     "skin_overrides.library.input.move_back": "move left",
-    "skin_overrides.library.input.move_next": "move right"
+    "skin_overrides.library.input.move_next": "move right",
+    "skin_overrides.no_profile.title": "%s not found",
+    "skin_overrides.no_profile.description": "no profile with that name/uuid exists"
 }
