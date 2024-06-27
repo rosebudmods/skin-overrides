@@ -80,8 +80,8 @@ public class LibraryScreen extends Screen {
 
         if (this.searchBox == null) {
             this.searchBox = new TextFieldWidget(this.textRenderer, 0, 20,
-                    Text.translatable("skin_overrides.library.search"));
-            this.searchBox.setHint(Text.translatable("skin_overrides.library.search.hint"));
+                    Text.translatable("skin_overrides.input.search"));
+            this.searchBox.setHint(Text.translatable("skin_overrides.input.search.hint"));
             this.searchBox.setChangedListener(query -> {
                 this.libraryList.filter(query);
                 this.clearAndInit();

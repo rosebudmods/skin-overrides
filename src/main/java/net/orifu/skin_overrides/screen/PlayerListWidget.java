@@ -2,6 +2,8 @@ package net.orifu.skin_overrides.screen;
 
 import com.mojang.authlib.GameProfile;
 
+import java.util.ArrayList;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.list.AlwaysSelectedEntryListWidget;
 import net.orifu.skin_overrides.override.Overridden;
@@ -14,6 +16,9 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
     private final SkinOverridesScreen parent;
     public final Overridden ov;
 
+    private final ArrayList<PlayerListEntry> allEntries = new ArrayList<>();
+    private String query = "";
+
     public PlayerListWidget(SkinOverridesScreen parent, Overridden ov) {
         super(MinecraftClient.getInstance(), 0, 0, 0, ITEM_HEIGHT);
 
@@ -22,7 +27,7 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
 
         // add local player
         GameProfile localPlayer = this.client.method_53462();
-        this.addEntry(new PlayerListEntry(this.client, localPlayer, Type.USER, this.parent));
+        this.tryAddEntry(localPlayer, Type.USER);
 
         // add online players
         if (this.client.player != null) {
@@ -35,11 +40,13 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
         for (GameProfile profile : this.ov.profilesWithOverride()) {
             this.tryAddEntry(profile, Type.OFFLINE);
         }
+
+        this.filter(this.query);
     }
 
-    public void tryAddEntry(GameProfile profile, Type type) {
-        if (!this.hasOverrideFor(profile)) {
-            this.addEntry(new PlayerListEntry(this.client, profile, type, this.parent));
+    protected void tryAddEntry(GameProfile profile, Type type) {
+        if (!this.hasOverrideFor(profile) || type.equals(Type.USER)) {
+            this.allEntries.add(new PlayerListEntry(this.client, profile, type, this.parent));
         }
     }
 
@@ -51,7 +58,7 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
             return true;
         }
 
-        for (var player : this.children()) {
+        for (var player : this.allEntries) {
             if (player.profile.equals(profile)) {
                 return true;
             }
@@ -59,10 +66,21 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
         return false;
     }
 
+    public void filter(String query) {
+        this.query = query.toLowerCase();
+
+        this.children().clear(); // clearEntries removes selection
+        for (var entry : this.allEntries) {
+            if (entry.profile.getName().toLowerCase().contains(this.query)) {
+                this.addEntry(entry);
+            }
+        }
+    }
+
     // pad left and right
     @Override
     public int getRowWidth() {
-        return this.getWidth() - PADDING * 2;
+        return Math.min(this.getWidth() - PADDING * 2, 220);
     }
 
     // fix scrollbar position

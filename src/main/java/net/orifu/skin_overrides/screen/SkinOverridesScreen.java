@@ -9,7 +9,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.authlib.GameProfile;
-import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.Screen;
@@ -18,6 +17,7 @@ import net.minecraft.client.gui.tab.Tab;
 import net.minecraft.client.gui.tab.TabManager;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.HeaderBar;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.button.ButtonWidget;
 import net.minecraft.client.gui.widget.layout.FrameWidget;
 import net.minecraft.client.gui.widget.layout.GridWidget;
@@ -28,7 +28,6 @@ import net.minecraft.client.gui.widget.text.TextWidget;
 import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.text.CommonTexts;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.override.Overridden;
@@ -46,10 +45,6 @@ public class SkinOverridesScreen extends Screen {
 
     private static final int PREVIEW_SCALE = 3;
 
-    // TODO: move this into an xplat helper?
-    private static final Identifier FOOTER_SEPARATOR_TEXTURE = new Identifier("minecraft",
-            "textures/gui/footer_separator.png");
-
     private final TabManager tabManager = new TabManager(this::addDrawableSelectableElement, (wg) -> this.remove(wg));
 
     @Nullable
@@ -59,6 +54,7 @@ public class SkinOverridesScreen extends Screen {
     private HeaderBar header;
     private GridWidget grid;
     private PlayerListWidget playerList;
+    private TextFieldWidget searchBox;
     private FrameWidget configFrame;
 
     @Nullable
@@ -108,14 +104,18 @@ public class SkinOverridesScreen extends Screen {
     protected void initContent() {
         var helper = this.grid.createAdditionHelper(2);
 
-        if (this.playerList != null && this.playerList.ov == this.ov) {
-            // player list already exists
-        } else {
+        if (this.playerList == null || this.playerList.ov != this.ov) {
             this.playerList = new PlayerListWidget(this, this.ov);
+            this.searchBox = new TextFieldWidget(this.textRenderer, 200, 20,
+                    Text.translatable("skin_overrides.input.search"));
+            this.searchBox.setChangedListener(this.playerList::filter);
         }
 
         // add player list
-        helper.add(this.playerList);
+        var listWrapper = helper.add(LinearLayoutWidget.createVertical().setSpacing(6));
+        listWrapper.add(this.searchBox, LayoutSettings.create().alignHorizontallyCenter().setTopPadding(6));
+        this.setFocusedChild(this.searchBox);
+        listWrapper.add(this.playerList);
 
         // add configuration
         this.configFrame = helper.add(new FrameWidget());
@@ -160,11 +160,6 @@ public class SkinOverridesScreen extends Screen {
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         super.render(graphics, mouseX, mouseY, delta);
 
-        RenderSystem.enableBlend();
-        graphics.drawTexture(FOOTER_SEPARATOR_TEXTURE, 0,
-                this.height - this.layout.getFooterHeight() - 2, 0, 0, this.width, 2, 32, 2);
-        RenderSystem.disableBlend();
-
         if (this.selectedProfile != null) {
             // draw skin/cape preview
             PlayerSkin skin = Mod.getSkin(this.selectedProfile);
@@ -186,13 +181,11 @@ public class SkinOverridesScreen extends Screen {
 
         int hh = this.header.getArea().bottom();
         int fh = this.layout.getFooterHeight();
+        int height = this.height - hh - fh;
 
-        // reposition main content area
-        ScreenArea area = new ScreenArea(0, hh, this.width, this.height - fh - hh);
-        FrameWidget.align(this.grid, area);
-        this.playerList.setPosition(area.x(), area.y());
-        this.playerList.setDimensions(area.width() / 2, area.height());
-        this.configFrame.setMinDimensions(area.width() / 2, area.height());
+        // set main content size
+        this.playerList.setDimensions(this.width / 2, height - 20 - 6 - 6);
+        this.configFrame.setMinDimensions(this.width / 2, height);
 
         // reposition layout
         this.layout.setHeaderHeight(hh);
