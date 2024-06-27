@@ -60,7 +60,9 @@ public abstract class AbstractLibraryOverride<E extends LibraryEntry, T extends 
     }
 
     public File libraryFolder() {
-        return new File(this.rootFolder(), "library");
+        File folder = new File(this.rootFolder(), "library");
+        folder.mkdirs();
+        return folder;
     }
 
     @Override

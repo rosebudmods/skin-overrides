@@ -30,7 +30,7 @@ public interface Library {
     }
 
     default public void remove(int index) {
-        this.entries().remove(index);
+        this.entries().remove(index).remove();
         this.save();
     }
 
@@ -64,5 +64,7 @@ public interface Library {
         public abstract Identifier getTexture();
 
         public abstract JsonElement toJson();
+
+        public abstract void remove();
     }
 }

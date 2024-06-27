@@ -175,5 +175,12 @@ public class LibrarySkinOverride extends AbstractLibraryOverride<SkinEntry, Copi
             }
             return obj;
         }
+
+        @Override
+        public void remove() {
+            if (this.isFile) {
+                this.file.delete();
+            }
+        }
     }
 }

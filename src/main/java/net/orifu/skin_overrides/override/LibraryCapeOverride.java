@@ -149,5 +149,12 @@ public class LibraryCapeOverride extends AbstractLibraryOverride<CapeEntry, Copi
             }
             return obj;
         }
+
+        @Override
+        public void remove() {
+            if (this.isFile) {
+                this.file.delete();
+            }
+        }
     }
 }
