@@ -6,13 +6,14 @@
 		"version": "${version}",
 		"metadata": {
 			"name": "skin overrides",
-			"description": "local overrides for player skins.",
+			"description": "local overrides for player skins and capes.",
 			"contributors": {
 				"orifu": "owner"
 			},
 			"contact": {
-				"homepage": "https://lumity.dev/orifu/skin-overrides",
-				"sources": "https://lumity.dev/orifu/skin-overrides"
+				"homepage": "https://lumity.dev/orifu/skin-overrides/wiki/home",
+				"sources": "https://lumity.dev/orifu/skin-overrides",
+				"issues": "https://github.com/orifu/skin-overrides/issues"
 			},
 			"license": "MPL-2.0",
 			"icon": "assets/skin_overrides/icon.png"
@@ -28,7 +29,11 @@
 			},
 			{
 				"id": "minecraft",
-				"versions": ">=1.20.4"
+				"versions": ">=1.20.3"
+			},
+			{
+				"id": "modmenu",
+				"optional": true
 			}
 		]
 	},

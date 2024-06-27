@@ -1,26 +1,9 @@
 # skin overrides
 
-a simple mod for locally changing skins and capes.
-
-## how to use it
-
-by default, this mod will do nothing. skins can be overridden by placing images in `.minecraft/skin_overrides`. file names can be the username or uuid of the player whose skin will be changed. file names can also include `.wide` or `.slim` for wide/slim skins respectively. for example:
-
--   `Steve.png`
--   `oriifu.slim.png`
--   `f369e23f-ed67-4f6a-8e79-4a2ca148691a.slim.png`
--   `c06f89064c8a49119c29ea1dbd1aab82.wide.png`
-
-additionally, creating a txt file (eg `Steve.txt`) and putting a username or uuid in it will copy that player's skin.
-
-capes/elytra can also be overridden by placing cape textures in `.minecraft/cape_overrides`. like skins, player names or uuids can be used as the file name.
-
-all files will automatically reload! no commands or resource pack reload required. :)
-
-## notes
-
-this mod supports 1.20.2+. for 1.16 - 1.20.1, see [selfskin](https://modrinth.com/mod/selfskin)!
+a simple mod for locally changing skins and capes. to do this, open up mod menu and press the configure button by the mod. from here, you can easily add skin or cape overrides by dragging and dropping or choosing from your library. to add to your library, drag and drop, add from an online player, or enter a username.
 
 this mod needs [quilt loader](https://quiltmc.org/). if you're using fabric, you can switch over and keep all your mods!
 
-on \*nix systems, file names are case sensitive. player names should match how they are shown in-game and uuids should be all lowercase.
+this mod is client side only, meaning other people won't be able to see the changes you make. if you want to change your skin or cape, go to [minecraft.net](https://minecraft.net/), use the official launcher, or try a mod like [fabric tailor](https://modrinth.com/mod/g8w1NapE). this mod supports 1.20.3+. for 1.16.5 - 1.20.1, see [selfskin](https://modrinth.com/mod/kj7JLMnT).
+
+for more information and advanced usage, check out [the wiki](https://lumity.dev/orifu/skin-overrides/wiki/home)!
