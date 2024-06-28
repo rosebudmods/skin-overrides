@@ -34,7 +34,6 @@ import net.orifu.skin_overrides.util.Util;
 
 public class LibraryScreen extends Screen {
     private static final Text TITLE = Text.translatable("skin_overrides.library.title");
-    private static final int CAPE_SCALE = 8;
 
     private static final int OPTIONS_PAD = 24;
     private static final int OPTIONS_WIDTH = 150;
@@ -56,6 +55,7 @@ public class LibraryScreen extends Screen {
     protected LibraryListEntry selectedEntry;
 
     private int skinScale;
+    private int capeScale;
 
     @Nullable
     private CompletableFuture<PlayerSkin> adding;
@@ -115,15 +115,16 @@ public class LibraryScreen extends Screen {
             var controlsFrame = body.add(new FrameWidget(OPTIONS_WIDTH + OPTIONS_PAD, 0));
             var controls = controlsFrame.add(LinearLayoutWidget.createVertical().setSpacing(2));
             this.skinScale = PlayerSkinRenderer.HEIGHT * 4 + 150 < this.height ? 4 : 3;
+            this.capeScale = PlayerCapeRenderer.HEIGHT * 8 + 150 < this.height ? 8 : 6;
 
             // library entry preview
             this.entryPreviewFrame = controls.add(new FrameWidget(
                     this.ov.skin()
                             ? PlayerSkinRenderer.WIDTH * this.skinScale
-                            : PlayerCapeRenderer.WIDTH * CAPE_SCALE,
+                            : PlayerCapeRenderer.WIDTH * this.capeScale,
                     this.ov.skin()
                             ? PlayerSkinRenderer.HEIGHT * this.skinScale
-                            : PlayerCapeRenderer.HEIGHT * CAPE_SCALE),
+                            : PlayerCapeRenderer.HEIGHT * this.capeScale),
                     LayoutSettings.create().alignHorizontallyCenter());
 
             // padding
@@ -205,8 +206,8 @@ public class LibraryScreen extends Screen {
                         this.entryPreviewFrame.getX(), this.entryPreviewFrame.getY(), this.skinScale);
             } else {
                 var texture = this.selectedEntry.entry.getTexture();
-                PlayerCapeRenderer.draw(graphics, texture, this.entryPreviewFrame.getX(), this.entryPreviewFrame.getY(),
-                        CAPE_SCALE);
+                PlayerCapeRenderer.draw(graphics, texture,
+                        this.entryPreviewFrame.getX(), this.entryPreviewFrame.getY(), this.capeScale);
             }
         }
 
