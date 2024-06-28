@@ -198,7 +198,7 @@ public class SkinOverridesScreen extends Screen {
         this.client.setScreen(this.parent);
     }
 
-    public Overridden overriden() {
+    public Overridden overridden() {
         return this.ov;
     }
 

@@ -25,7 +25,7 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
         this.client = client;
         this.profile = profile;
         this.type = type;
-        this.ov = parent.overriden();
+        this.ov = parent.overridden();
         this.parent = parent;
     }
 

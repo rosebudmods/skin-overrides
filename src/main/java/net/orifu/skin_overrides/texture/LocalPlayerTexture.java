@@ -14,14 +14,14 @@ import net.minecraft.resource.ResourceManager;
 public class LocalPlayerTexture extends PlayerSkinTexture {
     private final File textureFile;
 
-    public LocalPlayerTexture(File textureFile, boolean isSkin, Runnable loadedCallback) {
-        super(null, null, null, isSkin, loadedCallback);
+    public LocalPlayerTexture(File textureFile, boolean isSkin) {
+        super(null, null, null, isSkin, null);
 
         this.textureFile = textureFile;
     }
 
     public LocalPlayerTexture(File textureFile) {
-        this(textureFile, false, null);
+        this(textureFile, false);
     }
 
     @Override
