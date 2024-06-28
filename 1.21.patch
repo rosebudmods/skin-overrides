@@ -49,28 +49,6 @@ index 87f344e..44eab8a 100644
                      Text.translatable("skin_overrides.no_profile.title", this.searchBox.getText()),
                      Text.translatable("skin_overrides.no_profile.description")));
          } else {
-diff --git a/src/main/java/net/orifu/skin_overrides/screen/OverrideInfoEntryScreen.java b/src/main/java/net/orifu/skin_overrides/screen/OverrideInfoEntryScreen.java
-index d6e7959..9a442ed 100644
---- a/src/main/java/net/orifu/skin_overrides/screen/OverrideInfoEntryScreen.java
-+++ b/src/main/java/net/orifu/skin_overrides/screen/OverrideInfoEntryScreen.java
-@@ -91,7 +91,7 @@ public static OverrideInfoEntryScreen getNameAndModel(@Nullable Screen parent, I
- 
-     @Override
-     protected void init() {
--        this.message = MultilineText.create(this.textRenderer, this.getMessage(), this.width - 50);
-+        this.message = MultilineText.method_30890(this.textRenderer, this.getMessage(), this.width - 50);
- 
-         // add skin model selector buttons
-         int buttonY = this.getModelButtonY();
-@@ -130,7 +130,7 @@ protected void init() {
-     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-         super.render(graphics, mouseX, mouseY, delta);
- 
--        this.message.render(graphics, this.width / 2, this.getMessageY());
-+        this.message.drawWithShadow(graphics, this.width / 2, this.getMessageY(), 8, 0xffffff);
- 
-         if (this.wantsModel) {
-             PlayerSkinRenderer.draw(graphics, this.texture, PlayerSkin.Model.WIDE,
 diff --git a/src/main/java/net/orifu/skin_overrides/util/ProfileHelper.java b/src/main/java/net/orifu/skin_overrides/util/ProfileHelper.java
 index 4354968..bd42bdc 100644
 --- a/src/main/java/net/orifu/skin_overrides/util/ProfileHelper.java
@@ -84,13 +62,3 @@ index 4354968..bd42bdc 100644
      }
  
      public static Optional<GameProfile> idToProfile(String id) {
-diff --git a/src/main/resources/skin_overrides.accesswidener b/src/main/resources/skin_overrides.accesswidener
-index 3ef811a..c41c904 100644
---- a/src/main/resources/skin_overrides.accesswidener
-+++ b/src/main/resources/skin_overrides.accesswidener
-@@ -8,3 +8,5 @@ accessible field net/minecraft/client/MinecraftClient authService Lcom/mojang/au
- accessible field net/minecraft/client/util/DefaultSkinHelper DEFAULT_SKINS [Lnet/minecraft/client/texture/PlayerSkin;
- 
- extendable method net/minecraft/client/gui/widget/list/EntryListWidget getEntryAtPosition (DD)Lnet/minecraft/client/gui/widget/list/EntryListWidget$Entry;
-+
-+accessible method net/minecraft/util/Identifier <init> (Ljava/lang/String;Ljava/lang/String;)V

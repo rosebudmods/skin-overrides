@@ -18,6 +18,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
+import net.orifu.skin_overrides.util.XPlat;
 
 public class OverrideInfoEntryScreen extends Screen {
     private static final Text INPUT_MODEL = Text.translatable("skin_overrides.input.model");
@@ -91,7 +92,7 @@ public class OverrideInfoEntryScreen extends Screen {
 
     @Override
     protected void init() {
-        this.message = MultilineText.create(this.textRenderer, this.getMessage(), this.width - 50);
+        this.message = XPlat.createMultilineText(this.textRenderer, this.getMessage(), this.width - 50);
 
         // add skin model selector buttons
         int buttonY = this.getModelButtonY();
@@ -130,7 +131,7 @@ public class OverrideInfoEntryScreen extends Screen {
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         super.render(graphics, mouseX, mouseY, delta);
 
-        this.message.render(graphics, this.width / 2, this.getMessageY());
+        XPlat.renderMultilineText(this.message, graphics, this.width / 2, this.getMessageY());
 
         if (this.wantsModel) {
             PlayerSkinRenderer.draw(graphics, this.texture, PlayerSkin.Model.WIDE,
