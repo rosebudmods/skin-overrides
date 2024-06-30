@@ -297,7 +297,7 @@ public class LibraryScreen extends Screen {
         if (maybeProfile.isEmpty()) {
             this.client.getToastManager().add(new SystemToast(
                     SystemToast.
-                            /*? if =1.21 {*/ Id.PACK_LOAD_FAILURE
+                            /*? if >=1.20.6 {*/ Id.PACK_LOAD_FAILURE
                             /*?} else >>*/ /*C_ozahoshp.field_47585*/ ,
                     Text.translatable("skin_overrides.no_profile.title", this.searchBox.getText()),
                     Text.translatable("skin_overrides.no_profile.description")));

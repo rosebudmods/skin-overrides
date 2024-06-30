@@ -35,7 +35,7 @@ public class ProfileHelper {
         }
 
         return profile.orElseGet(() -> UuidUtil.
-                /*? if =1.21 {*/ createOfflinePlayerProfile
+                /*? if >=1.20.6 {*/ createOfflinePlayerProfile
                 /*?} else >>*/ /*method_54140*/ (id));
     }
 

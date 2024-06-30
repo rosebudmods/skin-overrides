@@ -39,7 +39,7 @@ public abstract class AlwaysSelectedEntryGridWidget<E extends Entry<E>> extends 
     }
 
     @Override
-    protected void /*? if =1.21 {*/ method_25311 /*?} else >>*/ /*renderList*/
+    protected void /*? if >=1.20.6 {*/ method_25311 /*?} else >>*/ /*renderList*/
             (GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         int baseX = this.getRowLeft();
         int w = this.itemWidth;
