@@ -55,7 +55,7 @@ public class OverrideInfoEntryScreen extends Screen {
     private TextFieldWidget nameInput;
 
     private OverrideInfoEntryScreen(@Nullable Screen parent, boolean wantsModel, boolean wantsName, String defaultName,
-            Identifier texture, PlayerSkin.Model model, OverrideInfoCallback callback) {
+            Identifier texture, @Nullable PlayerSkin.Model model, OverrideInfoCallback callback) {
         super(getMessageStatic(wantsName, wantsModel));
 
         this.parent = parent;

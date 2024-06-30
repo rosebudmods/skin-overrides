@@ -28,7 +28,7 @@ public abstract class AbstractOverride<E, T> {
     }
 
     public Optional<T> getOverride(GameProfile profile) {
-        return this.getOverrideFile(profile).flatMap(v -> this.tryGetTextureFromValidated(v));
+        return this.getOverrideFile(profile).flatMap(this::tryGetTextureFromValidated);
     }
 
     public boolean hasOverride(GameProfile profile) {

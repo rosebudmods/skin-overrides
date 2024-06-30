@@ -10,7 +10,7 @@ public class LocalSkinTexture extends LocalPlayerTexture {
     @Nullable
     public final PlayerSkin.Model model;
 
-    public LocalSkinTexture(File textureFile, PlayerSkin.Model model) {
+    public LocalSkinTexture(File textureFile, @Nullable PlayerSkin.Model model) {
         super(textureFile, true);
 
         this.model = model;

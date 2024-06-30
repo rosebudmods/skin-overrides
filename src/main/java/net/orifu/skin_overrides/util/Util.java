@@ -19,7 +19,7 @@ public class Util {
     public static Optional<String> readFile(File file) {
         try {
             return Optional.of(Files.readString(file.toPath()).trim())
-                    .flatMap(content -> content.length() == 0 ? Optional.empty() : Optional.of(content));
+                    .flatMap(content -> content.isEmpty() ? Optional.empty() : Optional.of(content));
         } catch (IOException e) {
             return Optional.empty();
         }

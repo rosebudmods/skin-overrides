@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.JsonElement;
@@ -17,7 +18,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.util.Identifier;
-import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.override.LibrarySkinOverride.SkinEntry;
 import net.orifu.skin_overrides.texture.LibrarySkinTexture;
@@ -99,7 +99,7 @@ public class LibrarySkinOverride extends AbstractLibraryOverride<SkinEntry, Libr
         @Nullable
         protected final Identifier texture;
 
-        public SkinEntry(String name, String id, File file, PlayerSkin.Model model) {
+        public SkinEntry(String name, String id, @NotNull File file, PlayerSkin.Model model) {
             super(name, id);
 
             this.model = model;
@@ -108,7 +108,7 @@ public class LibrarySkinOverride extends AbstractLibraryOverride<SkinEntry, Libr
             this.texture = null;
         }
 
-        public SkinEntry(String name, String id, Identifier texture, PlayerSkin.Model model) {
+        public SkinEntry(String name, String id, @NotNull Identifier texture, PlayerSkin.Model model) {
             super(name, id);
 
             this.model = model;
@@ -132,10 +132,11 @@ public class LibrarySkinOverride extends AbstractLibraryOverride<SkinEntry, Libr
                 File file = new File(LibrarySkinOverride.INSTANCE.libraryFolder(), id + ".png");
                 var entry = new SkinEntry(name, id, file, model);
 
-                if (path != null)
+                if (path != null) {
                     Files.copy(path, entry.file.toPath());
-                else
+                } else {
                     Util.saveTexture(texture, 64, 64, file.toPath());
+                }
 
                 LibrarySkinOverride.INSTANCE.add(entry);
                 return Optional.of(entry);

@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.JsonElement;
@@ -15,7 +16,6 @@ import com.google.gson.JsonObject;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Identifier;
-import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.override.LibraryCapeOverride.CapeEntry;
 import net.orifu.skin_overrides.texture.LibraryCapeTexture;
@@ -81,7 +81,7 @@ public class LibraryCapeOverride extends AbstractLibraryOverride<CapeEntry, Libr
         @Nullable
         protected final Identifier texture;
 
-        public CapeEntry(String name, String id, File file) {
+        public CapeEntry(String name, String id, @NotNull File file) {
             super(name, id);
 
             this.isFile = true;
@@ -89,7 +89,7 @@ public class LibraryCapeOverride extends AbstractLibraryOverride<CapeEntry, Libr
             this.texture = null;
         }
 
-        public CapeEntry(String name, String id, Identifier texture) {
+        public CapeEntry(String name, String id, @NotNull Identifier texture) {
             super(name, id);
 
             this.isFile = false;
@@ -111,10 +111,11 @@ public class LibraryCapeOverride extends AbstractLibraryOverride<CapeEntry, Libr
                 File file = new File(LibraryCapeOverride.INSTANCE.libraryFolder(), id + ".png");
                 var entry = new CapeEntry(name, id, file);
 
-                if (path != null)
+                if (path != null) {
                     Files.copy(path, entry.file.toPath());
-                else
+                } else {
                     Util.saveTexture(texture, 64, 32, file.toPath());
+                }
 
                 LibraryCapeOverride.INSTANCE.add(entry);
                 return Optional.of(entry);

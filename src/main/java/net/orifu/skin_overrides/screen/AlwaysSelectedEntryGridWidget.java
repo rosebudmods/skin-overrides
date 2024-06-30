@@ -63,7 +63,7 @@ public abstract class AlwaysSelectedEntryGridWidget<E extends Entry<E>> extends 
         // changed to use the new drawEntrySelectionHighlight method
 
         E entry = this.getEntry(index);
-        boolean isHovered = this.getHoveredEntry() != null ? this.getHoveredEntry().equals(entry) : false;
+        boolean isHovered = this.getHoveredEntry() != null && this.getHoveredEntry().equals(entry);
 
         entry.drawBorder(graphics, index, y, x, width, height, mouseX, mouseY, isHovered, delta);
 

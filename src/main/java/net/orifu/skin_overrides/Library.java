@@ -8,13 +8,13 @@ import com.google.gson.JsonElement;
 import net.minecraft.util.Identifier;
 
 public interface Library {
-    public void save();
+    void save();
 
-    public void reload();
+    void reload();
 
-    public List<LibraryEntry> entries();
+    List<LibraryEntry> entries();
 
-    default public Optional<LibraryEntry> get(String id) {
+    default Optional<LibraryEntry> get(String id) {
         for (var entry : this.entries()) {
             if (entry.getId().equals(id)) {
                 return Optional.of(entry);
@@ -24,27 +24,27 @@ public interface Library {
         return Optional.empty();
     }
 
-    default public void add(LibraryEntry entry) {
+    default void add(LibraryEntry entry) {
         this.entries().add(0, entry);
         this.save();
     }
 
-    default public void remove(int index) {
+    default void remove(int index) {
         this.entries().remove(index).remove();
         this.save();
     }
 
-    default public void move(int i, int j) {
+    default void move(int i, int j) {
         this.entries().add(j, this.entries().remove(i));
         this.save();
     }
 
-    default public void rename(LibraryEntry entry, String newName) {
+    default void rename(LibraryEntry entry, String newName) {
         entry.name = newName;
         this.save();
     }
 
-    public static abstract class LibraryEntry {
+    abstract class LibraryEntry {
         protected String name;
         protected String id;
 

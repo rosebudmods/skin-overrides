@@ -53,16 +53,14 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
 
     protected Text getPlayerName() {
         Text name = Text.literal(this.profile.getName()).formatted(Formatting.WHITE);
-        switch (this.type) {
-            case USER:
-                return Text.translatable("skin_overrides.player.you", name).formatted(Formatting.GRAY);
-            case ONLINE:
-                return Text.translatable("skin_overrides.player.online", name).formatted(Formatting.GRAY);
-            case OFFLINE:
-                return Text.translatable("skin_overrides.player.offline", name).formatted(Formatting.GRAY);
-            default:
-                throw new UnsupportedOperationException();
-        }
+        return switch (this.type) {
+            case USER ->
+                    Text.translatable("skin_overrides.player.you", name).formatted(Formatting.GRAY);
+            case ONLINE ->
+                    Text.translatable("skin_overrides.player.online", name).formatted(Formatting.GRAY);
+            case OFFLINE ->
+                    Text.translatable("skin_overrides.player.offline", name).formatted(Formatting.GRAY);
+        };
     }
 
     protected Text getOverrideStatus() {
@@ -91,7 +89,7 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
         return true;
     }
 
-    enum Type {
+    public enum Type {
         USER,
         ONLINE,
         OFFLINE,

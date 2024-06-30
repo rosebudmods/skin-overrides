@@ -94,7 +94,6 @@ public abstract class AbstractLibraryOverride<E extends LibraryEntry, T extends 
 
             arr.forEach(this::tryLoadFromJson);
             reader.close();
-            return;
         } catch (FileNotFoundException | NoSuchFileException e) {
             this.loadFailed();
         } catch (IOException | JsonParseException | NullPointerException e) {

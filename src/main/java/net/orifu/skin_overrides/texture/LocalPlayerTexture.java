@@ -25,7 +25,7 @@ public class LocalPlayerTexture extends PlayerSkinTexture {
     }
 
     @Override
-    public void load(ResourceManager manager) throws IOException {
+    public void load(ResourceManager manager) {
         MinecraftClient.getInstance().execute(() -> {
             try {
                 NativeImage texture = this.loadTexture(new FileInputStream(this.textureFile));

@@ -160,15 +160,17 @@ public class LibraryScreen extends Screen {
             // use this entry
             int mainControlWidth = (OPTIONS_WIDTH - 40 - 50) / 2;
             smallControls.add(ButtonWidget.builder(Text.literal("+"), btn -> {
-                this.callback.accept(this.selectedEntry.entry);
+                if (this.callback != null) {
+                    this.callback.accept(this.selectedEntry.entry);
+                }
                 this.client.setScreen(this.parent);
             }).width(mainControlWidth).tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.use")))
                     .build()).active = this.callback != null;
 
             // remove this entry
-            smallControls.add(ButtonWidget.builder(Text.literal("-"), btn -> {
-                this.libraryList.removeFromLibrary();
-            }).width(mainControlWidth).tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.remove")))
+            smallControls.add(ButtonWidget.builder(Text.literal("-"), btn ->
+                    this.libraryList.removeFromLibrary()
+            ).width(mainControlWidth).tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.remove")))
                     .build()).active = this.callback != null;
 
             // swap this and next entry
@@ -258,7 +260,7 @@ public class LibraryScreen extends Screen {
 
     @Override
     public void filesDragged(List<Path> paths) {
-        if (paths.size() == 0) {
+        if (paths.isEmpty()) {
             return;
         }
         Path path = paths.get(0);

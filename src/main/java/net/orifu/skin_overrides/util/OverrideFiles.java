@@ -63,9 +63,7 @@ public class OverrideFiles {
             String ext = FilenameUtils.getExtension(file.getName());
 
             Optional<Validated<T>> validated = validator.validate(file, name, ext);
-            if (validated.isPresent()) {
-                files.add(validated.get().withFile(file));
-            }
+            validated.ifPresent(val -> files.add(val.withFile(file)));
         }
 
         return files;
@@ -88,9 +86,9 @@ public class OverrideFiles {
     }
 
     public static class Validated<T> {
-        private String id;
+        private final String id;
         private File file;
-        private T data;
+        private final T data;
 
         protected Validated(String id, File file, T data) {
             this.id = id;

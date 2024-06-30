@@ -9,31 +9,31 @@ import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.texture.AbstractLibraryTexture;
 
 public interface Overridden {
-    public <E, T> AbstractOverride<E, T> local();
+    <E, T> AbstractOverride<E, T> local();
 
-    public <E extends LibraryEntry, T extends AbstractLibraryTexture> AbstractLibraryOverride<E, T> library();
+    <E extends LibraryEntry, T extends AbstractLibraryTexture> AbstractLibraryOverride<E, T> library();
 
-    default public boolean hasOverride(GameProfile profile) {
+    default boolean hasOverride(GameProfile profile) {
         return this.local().hasOverride(profile) || this.library().hasOverride(profile);
     }
 
-    default public void removeOverride(GameProfile profile) {
+    default void removeOverride(GameProfile profile) {
         this.local().removeOverride(profile);
         this.library().removeOverride(profile);
     }
 
-    default public List<GameProfile> profilesWithOverride() {
-        var li = new ArrayList<GameProfile>(this.local().profilesWithOverride());
+    default List<GameProfile> profilesWithOverride() {
+        var li = new ArrayList<>(this.local().profilesWithOverride());
         li.addAll(this.library().profilesWithOverride());
         return li;
     }
 
     // everything from this point on is stupid lol
 
-    public boolean skin();
+    boolean skin();
 
     @SuppressWarnings("unchecked")
-    public static class SkinOverrides implements Overridden {
+    class SkinOverrides implements Overridden {
         @Override
         public LocalSkinOverride local() {
             return LocalSkinOverride.INSTANCE;
@@ -51,7 +51,7 @@ public interface Overridden {
     }
 
     @SuppressWarnings("unchecked")
-    public static class CapeOverrides implements Overridden {
+    class CapeOverrides implements Overridden {
         @Override
         public LocalCapeOverride local() {
             return LocalCapeOverride.INSTANCE;

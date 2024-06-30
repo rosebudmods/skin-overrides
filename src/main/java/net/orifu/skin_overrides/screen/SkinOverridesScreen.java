@@ -45,7 +45,7 @@ public class SkinOverridesScreen extends Screen {
 
     private static final int PREVIEW_SCALE = 3;
 
-    private final TabManager tabManager = new TabManager(this::addDrawableSelectableElement, (wg) -> this.remove(wg));
+    private final TabManager tabManager = new TabManager(this::addDrawableSelectableElement, this::remove);
 
     @Nullable
     private final Screen parent;
@@ -239,7 +239,7 @@ public class SkinOverridesScreen extends Screen {
                     : CapeEntry.create(name, texture).map(e -> (LibraryEntry) e);
 
             // if this is an override, replace it with the library version
-            if (this.ov.hasOverride(this.selectedProfile)) {
+            if (this.ov.hasOverride(this.selectedProfile) && entry.isPresent()) {
                 this.ov.removeOverride(this.selectedProfile);
                 this.ov.library().addOverride(this.selectedProfile, entry.get());
                 this.clearAndInit();
@@ -259,7 +259,7 @@ public class SkinOverridesScreen extends Screen {
 
     @Override
     public void filesDragged(List<Path> paths) {
-        if (paths.size() == 0) {
+        if (paths.isEmpty()) {
             return;
         }
         Path path = paths.get(0);
