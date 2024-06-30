@@ -153,7 +153,7 @@ public class LibrarySkinOverride extends AbstractLibraryOverride<SkinEntry, Libr
         @Override
         public Identifier getTexture() {
             if (this.isFile) {
-                Identifier id = new Identifier("skin_overrides", "cape/library/" + this.id);
+                Identifier id = Mod.id("cape/library/" + this.id);
                 MinecraftClient.getInstance().getTextureManager().registerTexture(id,
                         new LocalSkinTexture(this.file, null));
                 return id;

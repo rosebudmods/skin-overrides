@@ -16,6 +16,7 @@ import net.orifu.skin_overrides.override.Overridden;
 
 public class Mod {
 	public static final Logger LOGGER = LoggerFactory.getLogger("skin overrides");
+	public static final String MOD_ID = "skin_overrides";
 
 	public static final String SKIN_OVERRIDES = "skin_overrides";
 	public static final String CAPE_OVERRIDES = "cape_overrides";
@@ -26,6 +27,14 @@ public class Mod {
 	public static final LocalCapeOverride CAPES_LOCAL = LocalCapeOverride.INSTANCE;
 	public static final LibraryCapeOverride CAPES_LIBRARY = LibraryCapeOverride.INSTANCE;
 	public static final Overridden CAPES = new Overridden.CapeOverrides();
+
+
+	public static Identifier id(String path) {
+		//? if >=1.21 {
+		 return Identifier.of(MOD_ID, path); 
+		//?} else
+		/*return new Identifier(MOD_ID, path);*/
+	}
 
 	public static PlayerSkin getSkin(GameProfile profile) {
 		return overrideSkin(profile, MinecraftClient.getInstance().getSkinProvider().getSkin(profile));
@@ -39,7 +48,7 @@ public class Mod {
 		if (skinOverride.isPresent()) {
 			// register skin texture
 			var texture = skinOverride.get();
-			Identifier skinId = new Identifier("skin_overrides", "skin/" + profile.getId().toString());
+			Identifier skinId = id("skin/" + profile.getId().toString());
 			client.getTextureManager().registerTexture(skinId, texture);
 			// update skin
 			skin = new PlayerSkin(skinId, null, skin.capeTexture(), skin.elytraTexture(), texture.model, false);
@@ -57,7 +66,7 @@ public class Mod {
 		var capeFile = CAPES_LOCAL.getOverride(profile);
 		if (capeFile.isPresent()) {
 			// register cape texture
-			Identifier capeId = new Identifier("skin_overrides", "cape/" + profile.getId().toString());
+			Identifier capeId = id("cape/" + profile.getId().toString());
 			client.getTextureManager().registerTexture(capeId, capeFile.get());
 			// update skin
 			// note: the elytra texture is a separate part of the record,

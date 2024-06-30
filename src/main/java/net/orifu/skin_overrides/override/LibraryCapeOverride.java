@@ -71,7 +71,7 @@ public class LibraryCapeOverride extends AbstractLibraryOverride<CapeEntry, Libr
     @Override
     protected void loadFailed() {
         this.entries
-                .add(new CapeEntry("skin overrides", "skin_overrides", new Identifier("skin_overrides", "cape.png")));
+                .add(new CapeEntry("skin overrides", "skin_overrides", Mod.id("cape.png")));
     }
 
     public static class CapeEntry extends LibraryEntry {
@@ -128,7 +128,7 @@ public class LibraryCapeOverride extends AbstractLibraryOverride<CapeEntry, Libr
         @Override
         public Identifier getTexture() {
             if (this.isFile) {
-                Identifier id = new Identifier("skin_overrides", "skin/library/" + this.id);
+                Identifier id = Mod.id("skin/library/" + this.id);
                 MinecraftClient.getInstance().getTextureManager().registerTexture(id,
                         new LocalPlayerTexture(this.file));
                 return id;

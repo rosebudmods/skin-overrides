@@ -14,6 +14,7 @@ import com.mojang.blaze3d.texture.NativeImage;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.util.Identifier;
+import net.orifu.skin_overrides.Mod;
 
 public class Util {
     public static Optional<String> readFile(File file) {
@@ -48,7 +49,7 @@ public class Util {
     }
 
     public static Identifier texture(AbstractTexture texture) {
-        Identifier textureId = new Identifier("skin_overrides", "temp/" + Util.randomId());
+        Identifier textureId = Mod.id("temp/" + Util.randomId());
         MinecraftClient.getInstance().getTextureManager().registerTexture(textureId, texture);
         return textureId;
     }

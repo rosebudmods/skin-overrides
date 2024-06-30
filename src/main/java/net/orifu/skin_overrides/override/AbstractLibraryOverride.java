@@ -39,7 +39,7 @@ public abstract class AbstractLibraryOverride<E extends LibraryEntry, T extends 
 
         try {
             var writer = Files.newBufferedWriter(outputPath, StandardCharsets.UTF_8);
-            writer.write(new Identifier("skin_overrides", entry.getId()).toString());
+            writer.write(Mod.id(entry.getId()).toString());
             writer.close();
         } catch (IOException e) {
             Mod.LOGGER.error("failed to save library entry with id {} to file", entry.getId(), e);
