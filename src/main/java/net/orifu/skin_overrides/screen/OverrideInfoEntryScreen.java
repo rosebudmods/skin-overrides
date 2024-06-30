@@ -133,7 +133,10 @@ public class OverrideInfoEntryScreen extends Screen {
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         super.render(graphics, mouseX, mouseY, delta);
 
+        //? if >=1.20.6 {
         this.message.drawWithShadow(graphics, this.width / 2, this.getMessageY(), 8, 0xffffff);
+        //?} else
+         /*this.message.render(graphics, this.width / 2, this.getMessageY());*/ 
 
         if (this.wantsModel) {
             PlayerSkinRenderer.draw(graphics, this.texture, PlayerSkin.Model.WIDE,

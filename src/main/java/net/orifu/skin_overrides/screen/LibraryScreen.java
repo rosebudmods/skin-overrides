@@ -118,8 +118,10 @@ public class LibraryScreen extends Screen {
         var body = root.add(LinearLayoutWidget.createHorizontal());
         //? if >1.20.2 {
          body.add(this.libraryList); 
-        //?} else
-        /*body.add(this.libraryListFrame);*/
+        //?} else {
+        /*body.add(this.libraryListFrame);
+        this.addSelectableElement(this.libraryList);
+        *///?}
 
         if (this.selectedEntry != null) {
             var controlsFrame = body.add(new FrameWidget(OPTIONS_WIDTH + OPTIONS_PAD, 0));

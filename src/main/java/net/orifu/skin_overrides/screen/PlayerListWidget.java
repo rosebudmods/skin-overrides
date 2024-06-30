@@ -80,14 +80,13 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
         }
     }
 
-
-    //? if >=1.20.4 {
-
     // pad left and right
     @Override
     public int getRowWidth() {
-        return Math.min(this.getWidth() - PADDING * 2, 220);
+        return Math.min(this.width - PADDING * 2, 220);
     }
+
+    //? if >=1.20.4 {
 
     // fix scrollbar position
     @Override

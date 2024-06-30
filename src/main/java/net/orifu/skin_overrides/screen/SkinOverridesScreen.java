@@ -121,8 +121,10 @@ public class SkinOverridesScreen extends Screen {
         this.setFocusedChild(this.searchBox);
         //? if >=1.20.4 {
          listWrapper.add(this.playerList); 
-        //?} else
-        /*listWrapper.add(this.playerListFrame);*/
+        //?} else {
+        /*listWrapper.add(this.playerListFrame);
+        this.addSelectableElement(this.playerList);
+        *///?}
 
         // add configuration
         this.configFrame = helper.add(new FrameWidget());
