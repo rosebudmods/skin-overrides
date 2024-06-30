@@ -53,10 +53,14 @@ public class SkinOverridesScreen extends Screen {
     private HeaderFooterLayoutWidget layout;
     private HeaderBar header;
     private GridWidget grid;
-    private PlayerListWidget playerList;
-    private TextFieldWidget searchBox;
-    private FrameWidget configFrame;
 
+    private PlayerListWidget playerList;
+    // use frame for list positioning
+    //? if <1.20.4
+    /*private FrameWidget playerListFrame = new FrameWidget();*/
+    private TextFieldWidget searchBox;
+
+    private FrameWidget configFrame;
     @Nullable
     private FrameWidget previewFrame;
 
@@ -115,7 +119,10 @@ public class SkinOverridesScreen extends Screen {
         var listWrapper = helper.add(LinearLayoutWidget.createVertical().setSpacing(6));
         listWrapper.add(this.searchBox, LayoutSettings.create().alignHorizontallyCenter().setTopPadding(5));
         this.setFocusedChild(this.searchBox);
-        listWrapper.add(this.playerList);
+        //? if >=1.20.4 {
+         listWrapper.add(this.playerList); 
+        //?} else
+        /*listWrapper.add(this.playerListFrame);*/
 
         // add configuration
         this.configFrame = helper.add(new FrameWidget());
@@ -160,6 +167,9 @@ public class SkinOverridesScreen extends Screen {
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         super.render(graphics, mouseX, mouseY, delta);
 
+        //? if <1.20.4
+        /*this.playerList.render(graphics, mouseX, mouseY, delta);*/
+
         if (this.selectedProfile != null) {
             // draw skin/cape preview
             PlayerSkin skin = Mod.getSkin(this.selectedProfile);
@@ -188,9 +198,17 @@ public class SkinOverridesScreen extends Screen {
         this.playerList.setDimensions(this.width / 2, height - 5 - 20 - 6);
         this.configFrame.setMinDimensions(this.width / 2, height);
 
+        // weird <=1.20.2 compat
+        //? if <1.20.4
+        /*this.playerListFrame.setMinDimensions(this.width / 2, height - 5 - 20 - 6);*/
+
         // reposition layout
         this.layout.setHeaderHeight(hh);
         this.layout.arrangeElements();
+
+        // more <=1.20.2 compat...
+        //? if <1.20.4
+        /*this.playerList.setPosition(this.playerListFrame.getX(), this.playerListFrame.getY());*/
     }
 
     @Override

@@ -1,5 +1,6 @@
 package net.orifu.skin_overrides.screen;
 
+import net.minecraft.client.gui.screen.ScreenArea;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.MinecraftClient;
@@ -14,7 +15,10 @@ public abstract class AlwaysSelectedEntryGridWidget<E extends Entry<E>> extends 
 
     public AlwaysSelectedEntryGridWidget(MinecraftClient client, int width, int height, int y, int itemWidth,
             int itemHeight, int xTiles) {
+        //? if >=1.20.4 {
         super(client, width, height, y, itemHeight);
+         //?} else
+        /*super(MinecraftClient.getInstance(), width, height, y, y + height, itemHeight);*/
 
         this.itemWidth = itemWidth;
         this.xTiles = xTiles;
@@ -124,4 +128,39 @@ public abstract class AlwaysSelectedEntryGridWidget<E extends Entry<E>> extends 
         // old bad method
         throw new UnsupportedOperationException();
     }
+
+    /*? if <1.20.4 {*/
+    /*public int getX() {
+        return this.left;
+    }
+
+    public int getXEnd() {
+        return this.right;
+    }
+
+    public int getY() {
+        return this.top;
+    }
+
+    public int getYEnd() {
+        return this.bottom;
+    }
+
+    public int getHeight() {
+        return this.height;
+    }
+
+    public int getWidth() {
+        return this.width;
+    }
+
+    public void moveTo(ScreenArea area) {
+        this.left = area.x();
+        this.right = area.right();
+        this.top = area.y();
+        this.bottom = area.bottom();
+        this.width = area.width();
+        this.height = area.height();
+    }
+    *//*?}*/
 }

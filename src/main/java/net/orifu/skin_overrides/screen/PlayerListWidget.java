@@ -20,7 +20,10 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
     private String query = "";
 
     public PlayerListWidget(SkinOverridesScreen parent, Overridden ov) {
+        //? if >=1.20.4 {
         super(MinecraftClient.getInstance(), 0, 0, 0, ITEM_HEIGHT);
+        //?} else
+        /*super(MinecraftClient.getInstance(), 0, 0, 0, 0, ITEM_HEIGHT);*/
 
         this.parent = parent;
         this.ov = ov;
@@ -77,6 +80,9 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
         }
     }
 
+
+    //? if >=1.20.4 {
+
     // pad left and right
     @Override
     public int getRowWidth() {
@@ -101,4 +107,20 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
         int maxScroll = super.getMaxScroll();
         return maxScroll > 0 ? Math.max(0, super.getMaxScroll() - 4 + PADDING * 2) : 0;
     }
+
+    //?} else {
+
+    /*public void setDimensions(int width, int height) {
+        this.width = width;
+        this.height = height;
+    }
+
+    public void setPosition(int x, int y) {
+        this.left = x;
+        this.top = y;
+        this.right = x + this.width;
+        this.bottom = y + this.height;
+    }
+
+    *///?}
 }

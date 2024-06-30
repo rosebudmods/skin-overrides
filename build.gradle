@@ -11,6 +11,13 @@ var minecraft_version = property("deps.minecraft")
 version = "${project.version}+${minecraft_version}"
 group = project.maven_group
 
+if (stonecutter.current.isActive) {
+	rootProject.tasks.register('client') {
+		group 'project'
+		dependsOn tasks.named('runClient')
+	}
+}
+
 repositories {
 	// Add repositories to retrieve artifacts from in here.
 	// You should only use this when depending on other mods because

@@ -45,6 +45,10 @@ public class LibraryScreen extends Screen {
     private final Consumer<LibraryEntry> callback;
 
     private LibraryListWidget libraryList;
+    // use frame for list positioning
+    //? if <1.20.4
+    /*private FrameWidget libraryListFrame = new FrameWidget();*/
+
     private TextFieldWidget searchBox;
     @Nullable
     private FrameWidget entryPreviewFrame;
@@ -81,7 +85,7 @@ public class LibraryScreen extends Screen {
         }
 
         if (this.searchBox == null) {
-            this.searchBox = new TextFieldWidget(this.textRenderer, 0, 20,
+            this.searchBox = new TextFieldWidget(this.textRenderer, 200, 20,
                     Text.translatable("skin_overrides.input.search"));
             this.searchBox.setHint(Text.translatable("skin_overrides.input.search.hint"));
             this.searchBox.setChangedListener(query -> {
@@ -93,8 +97,11 @@ public class LibraryScreen extends Screen {
 
         int libraryListWidth = this.selectedEntry == null ? this.width : this.width - OPTIONS_WIDTH - OPTIONS_PAD;
 
-        this.searchBox.setDimensions(200, 20);
-        this.libraryList.setDimensions(libraryListWidth, this.height - 8 - 9 - 5 - 20 - 6 - 33);
+        //? if >=1.20.4 {
+        this.libraryList.setDimensions
+        //?} else
+        /*this.libraryListFrame.setMinDimensions*/
+                (libraryListWidth, this.height - 8 - 9 - 5 - 20 - 6 - 33);
 
         var root = LinearLayoutWidget.createVertical();
 
@@ -109,7 +116,10 @@ public class LibraryScreen extends Screen {
                 .width(60).build());
 
         var body = root.add(LinearLayoutWidget.createHorizontal());
-        body.add(this.libraryList);
+        //? if >1.20.2 {
+         body.add(this.libraryList); 
+        //?} else
+        /*body.add(this.libraryListFrame);*/
 
         if (this.selectedEntry != null) {
             var controlsFrame = body.add(new FrameWidget(OPTIONS_WIDTH + OPTIONS_PAD, 0));
@@ -199,6 +209,11 @@ public class LibraryScreen extends Screen {
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         super.render(graphics, mouseX, mouseY, delta);
+
+        //? if <1.20.4 {
+        /*this.libraryList.moveTo(this.libraryListFrame.getArea());
+        this.libraryList.render(graphics, mouseX, mouseY, delta);
+        *///?}
 
         if (this.selectedEntry != null) {
             if (this.selectedEntry.entry instanceof SkinEntry entry) {
@@ -298,7 +313,8 @@ public class LibraryScreen extends Screen {
             this.client.getToastManager().add(new SystemToast(
                     SystemToast.
                             /*? if >=1.20.6 {*/ Id.PACK_LOAD_FAILURE
-                            /*?} else >>*/ /*C_ozahoshp.field_47585*/ ,
+                            /*?} else if =1.20.4 {*/ /*C_ozahoshp.field_47585
+                            *//*?} else >>*/ /*Type.PACK_LOAD_FAILURE*/ ,
                     Text.translatable("skin_overrides.no_profile.title", this.searchBox.getText()),
                     Text.translatable("skin_overrides.no_profile.description")));
         } else {
