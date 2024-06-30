@@ -293,7 +293,10 @@ public class LibraryScreen extends Screen {
     private void addFromSearch() {
         var maybeProfile = ProfileHelper.idToProfile(this.searchBox.getText());
         if (maybeProfile.isEmpty()) {
-            this.client.getToastManager().add(new SystemToast(SystemToast.C_ozahoshp.field_47585,
+            this.client.getToastManager().add(new SystemToast(
+                    SystemToast.
+                            /*? if =1.21 {*/ Id.PACK_LOAD_FAILURE
+                            /*?} else >>*/ /*C_ozahoshp.field_47585*/ ,
                     Text.translatable("skin_overrides.no_profile.title", this.searchBox.getText()),
                     Text.translatable("skin_overrides.no_profile.description")));
         } else {

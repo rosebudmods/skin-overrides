@@ -34,7 +34,9 @@ public class ProfileHelper {
             profile = getUserCache().findByName(id);
         }
 
-        return profile.orElseGet(() -> UuidUtil.method_54140(id));
+        return profile.orElseGet(() -> UuidUtil.
+                /*? if =1.21 {*/ createOfflinePlayerProfile
+                /*?} else >>*/ /*method_54140*/ (id));
     }
 
     public static Optional<GameProfile> idToProfile(String id) {
