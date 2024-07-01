@@ -186,15 +186,13 @@ public class SkinOverridesScreen extends Screen {
         int fh = this.layout.getFooterHeight();
         int height = this.height - hh - fh;
 
-        System.out.println("height is " + this.height + ", hh, fh and bh are " + hh + ", " + fh + ", " + height);
-
         // set main content size
         this.searchBox.setWidth(Math.min(200, this.width / 2 - 16));
         this.playerList.setDimensions(this.width / 2, height - 5 - 20 - 6);
         this.configFrame.setMinDimensions(this.width / 2, height);
 
         // reposition layout
-        this.layout.setHeaderHeight(hh);
+        this.layout.setHeaderHeight(0);
         this.layout.arrangeElements();
     }
 
