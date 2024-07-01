@@ -1,7 +1,10 @@
 package net.orifu.skin_overrides.xplat.gui.widget;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Drawable;
+import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.ScreenArea;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.Widget;
@@ -12,6 +15,8 @@ public abstract class AlwaysSelectedEntryListWidget
         <E extends AlwaysSelectedEntryListWidget.Entry<E>>
         extends /*? if >=1.20.2 {*/ net.minecraft.client.gui.widget.list.AlwaysSelectedEntryListWidget<E>
         /*?} else >>*/ /*net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget<E>*/ {
+    private final ListWidgetShim shim = new ListWidgetShim();
+
     public AlwaysSelectedEntryListWidget(MinecraftClient client, int width, int height, int y, int itemHeight) {
         //? if >=1.20.4 {
         super(client, width, height, y, itemHeight);
@@ -62,14 +67,48 @@ public abstract class AlwaysSelectedEntryListWidget
         this.bottom = y + this.height;
     }
 
-    public void setDimensionsAndPosition(int width, int height, int x, int y) {
+    public void setDimensions(int width, int height) {
         this.width = width;
         this.height = height;
+        this.shim.setMinDimensions(width, height);
+    }
+
+    public void setDimensionsAndPosition(int width, int height, int x, int y) {
+        this.setDimensions(width, height);
         this.setX(x);
         this.setY(y);
     }
 
     *///?}
+
+    public <T extends Element & Drawable & Selectable> void add(Consumer<Widget> add, Consumer<T> screen) {
+        //? if <1.20.2 {
+        /*add.accept(this.shim);
+        screen.accept((T) this);
+        *///?} else
+        add.accept(this);
+    }
+
+    public class ListWidgetShim extends FrameWidget {
+        @Override
+        public void arrangeElements() {
+            super.arrangeElements();
+            AlwaysSelectedEntryListWidget.this.setDimensionsAndPosition(
+                    this.width, this.height, this.getX(), this.getY());
+        }
+
+        @Override
+        public void setX(int x) {
+            super.setX(x);
+            AlwaysSelectedEntryListWidget.this.setX(x);
+        }
+
+        @Override
+        public void setY(int y) {
+            super.setY(y);
+            AlwaysSelectedEntryListWidget.this.setY(y);
+        }
+    }
 
     public static abstract class Entry<E extends AlwaysSelectedEntryListWidget.Entry<E>>
             extends /*? if >=1.20.2 {*/ net.minecraft.client.gui.widget.list.AlwaysSelectedEntryListWidget.Entry<E>

@@ -104,19 +104,5 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
         return maxScroll > 0 ? Math.max(0, super.getMaxScroll() - 4 + PADDING * 2) : 0;
     }
 
-    //?} else {
-
-    /*public void setDimensions(int width, int height) {
-        this.width = width;
-        this.height = height;
-    }
-
-    public void setPosition(int x, int y) {
-        this.left = x;
-        this.top = y;
-        this.right = x + this.width;
-        this.bottom = y + this.height;
-    }
-
-    *///?}
+    //?}
 }

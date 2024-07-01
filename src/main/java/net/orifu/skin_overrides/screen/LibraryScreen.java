@@ -27,7 +27,6 @@ import net.orifu.skin_overrides.xplat.gui.Screen;
 import net.orifu.skin_overrides.xplat.gui.widget.ButtonWidget;
 import net.orifu.skin_overrides.xplat.gui.widget.FrameWidget;
 import net.orifu.skin_overrides.xplat.gui.widget.LinearLayoutWidget;
-import net.orifu.skin_overrides.xplat.gui.widget.ListWrapper;
 import net.orifu.skin_overrides.xplat.gui.widget.TextFieldWidget;
 import net.orifu.skin_overrides.xplat.gui.widget.TextWidget;
 import org.apache.commons.io.FilenameUtils;
@@ -108,8 +107,8 @@ public class LibraryScreen extends Screen {
                 .width(60).build());
 
         var body = root.add(LinearLayoutWidget.createHorizontal());
-        body.add(new ListWrapper<>(this.libraryList))
-                .setDimensions(libraryListWidth, this.height - 8 - 9 - 5 - 20 - 6 - 33);
+        this.libraryList.add(body::add, this::addDrawableSelectableElement);
+        this.libraryList.setDimensions(libraryListWidth, this.height - 8 - 9 - 5 - 20 - 6 - 33);
 
         if (this.selectedEntry != null) {
             var controlsFrame = body.add(new FrameWidget(OPTIONS_WIDTH + OPTIONS_PAD, 0));
@@ -198,6 +197,8 @@ public class LibraryScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+        //? if <1.20.2
+        /*this.renderBackground(graphics);*/
         super.render(graphics, mouseX, mouseY, delta);
 
         if (this.selectedEntry != null) {

@@ -32,7 +32,6 @@ import net.orifu.skin_overrides.xplat.gui.widget.GridWidget;
 import net.orifu.skin_overrides.xplat.gui.LayoutSettings;
 import net.orifu.skin_overrides.xplat.gui.widget.HeaderFooterLayoutWidget;
 import net.orifu.skin_overrides.xplat.gui.widget.LinearLayoutWidget;
-import net.orifu.skin_overrides.xplat.gui.widget.ListWrapper;
 import net.orifu.skin_overrides.xplat.gui.widget.TextFieldWidget;
 import net.orifu.skin_overrides.xplat.gui.widget.TextWidget;
 import org.apache.commons.io.FilenameUtils;
@@ -55,7 +54,6 @@ public class SkinOverridesScreen extends Screen {
     private GridWidget grid;
 
     private PlayerListWidget playerList;
-    private ListWrapper<PlayerListWidget> playerListWrapper;
     private TextFieldWidget searchBox;
 
     private FrameWidget configFrame;
@@ -117,7 +115,8 @@ public class SkinOverridesScreen extends Screen {
         var listWrapper = helper.add(LinearLayoutWidget.createVertical().setSpacing(6));
         listWrapper.add(this.searchBox, LayoutSettings.create().alignHorizontallyCenter().setTopPadding(5));
         this.setFocusedChild(this.searchBox);
-        this.playerListWrapper = listWrapper.add(new ListWrapper<>(this.playerList));
+        this.playerList.add(listWrapper::add, this::addDrawable);
+        this.addDrawableSelectableElement(this.playerList);
 
         // add configuration
         this.configFrame = helper.add(new FrameWidget());
@@ -187,9 +186,11 @@ public class SkinOverridesScreen extends Screen {
         int fh = this.layout.getFooterHeight();
         int height = this.height - hh - fh;
 
+        System.out.println("height is " + this.height + ", hh, fh and bh are " + hh + ", " + fh + ", " + height);
+
         // set main content size
         this.searchBox.setWidth(Math.min(200, this.width / 2 - 16));
-        this.playerListWrapper.setDimensions(this.width / 2, height - 5 - 20 - 6);
+        this.playerList.setDimensions(this.width / 2, height - 5 - 20 - 6);
         this.configFrame.setMinDimensions(this.width / 2, height);
 
         // reposition layout

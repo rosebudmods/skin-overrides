@@ -18,5 +18,9 @@ public class Screen extends net.minecraft.client.gui.screen.Screen {
     /*protected <T extends Element & Drawable & Selectable> T addDrawableSelectableElement(T drawableElement) {
         return this.addDrawableChild(drawableElement);
     }
+
+    protected <T extends Element & Selectable> T addSelectableElement(T selectableElement) {
+        return this.addSelectableChild(selectableElement);
+    }
     *///?}
 }
