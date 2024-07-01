@@ -5,38 +5,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import net.orifu.skin_overrides.util.ProfileHelper;
-import org.apache.commons.io.FilenameUtils;
-import org.jetbrains.annotations.Nullable;
-
 import com.mojang.authlib.GameProfile;
-
+import net.orifu.skin_overrides.util.ProfileHelper;
+import net.orifu.skin_overrides.xplat.gui.Screen;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenArea;
 import net.minecraft.client.gui.tab.Tab;
 import net.minecraft.client.gui.tab.TabManager;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.HeaderBar;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.layout.HeaderFooterLayoutWidget;
-import net.minecraft.client.gui.widget.layout.LinearLayoutWidget;
-//? if >=1.20.2 {
-import net.minecraft.client.gui.widget.button.ButtonWidget;
-import net.minecraft.client.gui.widget.layout.FrameWidget;
-import net.minecraft.client.gui.widget.layout.GridWidget;
-import net.minecraft.client.gui.widget.layout.LayoutSettings;
-import net.minecraft.client.gui.widget.text.TextWidget;
-//?} else {
-/*import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.FrameWidget;
-import net.minecraft.client.gui.widget.GridWidget;
-import net.minecraft.client.gui.widget.container.LayoutSettings;
-import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.Selectable;
-*///?}
 import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.text.CommonTexts;
 import net.minecraft.text.Text;
@@ -49,6 +26,17 @@ import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.skin_overrides.util.Util;
+import net.orifu.skin_overrides.xplat.gui.widget.ButtonWidget;
+import net.orifu.skin_overrides.xplat.gui.widget.FrameWidget;
+import net.orifu.skin_overrides.xplat.gui.widget.GridWidget;
+import net.orifu.skin_overrides.xplat.gui.LayoutSettings;
+import net.orifu.skin_overrides.xplat.gui.widget.HeaderFooterLayoutWidget;
+import net.orifu.skin_overrides.xplat.gui.widget.LinearLayoutWidget;
+import net.orifu.skin_overrides.xplat.gui.widget.ListWrapper;
+import net.orifu.skin_overrides.xplat.gui.widget.TextFieldWidget;
+import net.orifu.skin_overrides.xplat.gui.widget.TextWidget;
+import org.apache.commons.io.FilenameUtils;
+import org.jetbrains.annotations.Nullable;
 
 public class SkinOverridesScreen extends Screen {
     private static final Text TITLE = Text.translatable("skin_overrides.title");
@@ -60,16 +48,14 @@ public class SkinOverridesScreen extends Screen {
     private final TabManager tabManager = new TabManager(this::addDrawableSelectableElement, this::remove);
 
     @Nullable
-    private final Screen parent;
+    private final net.minecraft.client.gui.screen.Screen parent;
 
     private HeaderFooterLayoutWidget layout;
     private HeaderBar header;
     private GridWidget grid;
 
     private PlayerListWidget playerList;
-    // use frame for list positioning
-    //? if <1.20.4
-    /*private FrameWidget playerListFrame = new FrameWidget();*/
+    private ListWrapper<PlayerListWidget> playerListWrapper;
     private TextFieldWidget searchBox;
 
     private FrameWidget configFrame;
@@ -80,7 +66,7 @@ public class SkinOverridesScreen extends Screen {
     @Nullable
     private GameProfile selectedProfile;
 
-    public SkinOverridesScreen(@Nullable Screen parent) {
+    public SkinOverridesScreen(@Nullable net.minecraft.client.gui.screen.Screen parent) {
         super(TITLE);
 
         this.parent = parent;
@@ -101,7 +87,7 @@ public class SkinOverridesScreen extends Screen {
         this.initContent();
 
         // add footer
-        LinearLayoutWidget footer = this.layout.addToFooter(LinearLayoutWidget.createHorizontal().setSpacing(8));
+        var footer = this.layout.addToFooter(LinearLayoutWidget.createHorizontal().setSpacing(8));
 
         // library button
         footer.add(ButtonWidget
@@ -122,7 +108,7 @@ public class SkinOverridesScreen extends Screen {
 
         if (this.playerList == null || this.playerList.ov != this.ov) {
             this.playerList = new PlayerListWidget(this, this.ov);
-            this.searchBox = new TextFieldWidget(this.textRenderer, 200, 20, 0, 0,
+            this.searchBox = new TextFieldWidget(this.textRenderer, 200, 20,
                     Text.translatable("skin_overrides.input.search"));
             this.searchBox.setChangedListener(this.playerList::filter);
         }
@@ -131,20 +117,12 @@ public class SkinOverridesScreen extends Screen {
         var listWrapper = helper.add(LinearLayoutWidget.createVertical().setSpacing(6));
         listWrapper.add(this.searchBox, LayoutSettings.create().alignHorizontallyCenter().setTopPadding(5));
         this.setFocusedChild(this.searchBox);
-        //? if >=1.20.4 {
-         listWrapper.add(this.playerList); 
-        //?} else {
-        /*listWrapper.add(this.playerListFrame);
-        //? if >=1.20.2 {
-        /^this.addSelectableElement(this.playerList);
-        ^///?} else
-        this.addSelectableChild(this.playerList);
-        *///?}
+        this.playerListWrapper = listWrapper.add(new ListWrapper<>(this.playerList));
 
         // add configuration
         this.configFrame = helper.add(new FrameWidget());
-        LinearLayoutWidget configCols = configFrame.add(LinearLayoutWidget.createHorizontal()).setSpacing(8);
-        GridWidget config = configCols.add(new GridWidget()).setSpacing(4);
+        var configCols = configFrame.add(LinearLayoutWidget.createHorizontal()).setSpacing(8);
+        GridWidget config = (GridWidget) configCols.add(new GridWidget()).setSpacing(4);
         if (this.selectedProfile == null) {
             this.configFrame.add(new TextWidget(Text.translatable("skin_overrides.no_selection"), this.textRenderer));
         } else {
@@ -182,10 +160,9 @@ public class SkinOverridesScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+        //? if <1.20.2
+        /*this.renderBackground(graphics);*/
         super.render(graphics, mouseX, mouseY, delta);
-
-        //? if <1.20.4
-        /*this.playerList.render(graphics, mouseX, mouseY, delta);*/
 
         if (this.selectedProfile != null) {
             // draw skin/cape preview
@@ -212,20 +189,12 @@ public class SkinOverridesScreen extends Screen {
 
         // set main content size
         this.searchBox.setWidth(Math.min(200, this.width / 2 - 16));
-        this.playerList.setDimensions(this.width / 2, height - 5 - 20 - 6);
+        this.playerListWrapper.setDimensions(this.width / 2, height - 5 - 20 - 6);
         this.configFrame.setMinDimensions(this.width / 2, height);
-
-        // weird <=1.20.2 compat
-        //? if <1.20.4
-        /*this.playerListFrame.setMinDimensions(this.width / 2, height - 5 - 20 - 6);*/
 
         // reposition layout
         this.layout.setHeaderHeight(hh);
         this.layout.arrangeElements();
-
-        // more <=1.20.2 compat...
-        //? if <1.20.4
-        /*this.playerList.setPosition(this.playerListFrame.getX(), this.playerListFrame.getY());*/
     }
 
     @Override
@@ -317,12 +286,6 @@ public class SkinOverridesScreen extends Screen {
             this.clearAndInit();
         }
     }
-
-    //? if <1.20.2 {
-    /*private <T extends Element & Drawable & Selectable> T addDrawableSelectableElement(T element) {
-        return this.addDrawableChild(element);
-    }
-    *///?}
 
     class DummyTab implements Tab {
         public final Text title;

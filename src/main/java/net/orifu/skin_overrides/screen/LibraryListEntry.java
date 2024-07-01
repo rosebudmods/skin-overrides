@@ -2,16 +2,12 @@ package net.orifu.skin_overrides.screen;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.GuiGraphics;
-//? if >=1.20.2 {
-import net.minecraft.client.gui.widget.list.AlwaysSelectedEntryListWidget.Entry;
- //?} else {
-/*import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget.Entry;
-*///?}
 import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.override.LibrarySkinOverride.SkinEntry;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
+import net.orifu.skin_overrides.xplat.gui.widget.AlwaysSelectedEntryListWidget.Entry;
 
 public class LibraryListEntry extends Entry<LibraryListEntry> {
     public static final int SKIN_WIDTH = PlayerSkinRenderer.WIDTH * 2;

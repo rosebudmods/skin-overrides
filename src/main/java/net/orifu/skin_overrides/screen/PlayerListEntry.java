@@ -1,21 +1,16 @@
 package net.orifu.skin_overrides.screen;
 
 import com.mojang.authlib.GameProfile;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.PlayerFaceRenderer;
-//? if >=1.20.2 {
-import net.minecraft.client.gui.widget.list.AlwaysSelectedEntryListWidget.Entry;
-//?} else {
-/*import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget.Entry;
-*///?}
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.override.Overridden;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.ProfileHelper;
+import net.orifu.skin_overrides.xplat.gui.widget.AlwaysSelectedEntryListWidget.Entry;
 
 public class PlayerListEntry extends Entry<PlayerListEntry> {
     private final MinecraftClient client;

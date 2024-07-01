@@ -1,17 +1,13 @@
 package net.orifu.skin_overrides.screen;
 
-import com.mojang.authlib.GameProfile;
-
 import java.util.ArrayList;
 
+import com.mojang.authlib.GameProfile;
 import net.minecraft.client.MinecraftClient;
-//? if >=1.20.2 {
-import net.minecraft.client.gui.widget.list.AlwaysSelectedEntryListWidget;
-//?} else
-/*import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;*/
 import net.orifu.skin_overrides.override.Overridden;
 import net.orifu.skin_overrides.screen.PlayerListEntry.Type;
 import net.orifu.skin_overrides.util.ProfileHelper;
+import net.orifu.skin_overrides.xplat.gui.widget.AlwaysSelectedEntryListWidget;
 
 public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEntry> {
     private static final int PADDING = 8;
@@ -24,10 +20,7 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
     private String query = "";
 
     public PlayerListWidget(SkinOverridesScreen parent, Overridden ov) {
-        //? if >=1.20.4 {
         super(MinecraftClient.getInstance(), 0, 0, 0, ITEM_HEIGHT);
-        //?} else
-        /*super(MinecraftClient.getInstance(), 0, 0, 0, 0, ITEM_HEIGHT);*/
 
         this.parent = parent;
         this.ov = ov;

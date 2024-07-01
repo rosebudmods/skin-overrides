@@ -6,8 +6,6 @@ import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.util.UUIDTypeAdapter;
-import com.mojang.util.UndashedUuid;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.client.util.DefaultSkinHelper;
@@ -34,7 +32,7 @@ public class ProfileHelper {
             try {
                 // parse uuid
                 UUID uuid =
-                        /*? if >=1.20.2 {*/ UndashedUuid.fromStringLenient
+                        /*? if >=1.20.2 {*/ com.mojang.util.UndashedUuid.fromStringLenient
                         /*?} else >>*/ /*UUIDTypeAdapter.fromString*/ (id);
                 // convert uuid to profile (cached)
                 // if not in cache, fetch the profile (also cached)

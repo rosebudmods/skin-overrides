@@ -1,18 +1,11 @@
 package net.orifu.skin_overrides.screen;
 
-import net.minecraft.client.gui.screen.ScreenArea;
-import org.jetbrains.annotations.Nullable;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.GuiGraphics;
-//? if >=1.20.2 {
-import net.minecraft.client.gui.widget.list.AlwaysSelectedEntryListWidget;
-import net.minecraft.client.gui.widget.list.AlwaysSelectedEntryListWidget.Entry;
- //?} else {
-/*import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
-import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget.Entry;
-*///?}
 import net.minecraft.util.math.MathHelper;
+import net.orifu.skin_overrides.xplat.gui.widget.AlwaysSelectedEntryListWidget;
+import net.orifu.skin_overrides.xplat.gui.widget.AlwaysSelectedEntryListWidget.Entry;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class AlwaysSelectedEntryGridWidget<E extends Entry<E>> extends AlwaysSelectedEntryListWidget<E> {
     protected final int itemWidth;
@@ -20,10 +13,7 @@ public abstract class AlwaysSelectedEntryGridWidget<E extends Entry<E>> extends 
 
     public AlwaysSelectedEntryGridWidget(MinecraftClient client, int width, int height, int y, int itemWidth,
             int itemHeight, int xTiles) {
-        //? if >=1.20.4 {
         super(client, width, height, y, itemHeight);
-         //?} else
-        /*super(MinecraftClient.getInstance(), width, height, y, y + height, itemHeight);*/
 
         this.itemWidth = itemWidth;
         this.xTiles = xTiles;
@@ -48,8 +38,7 @@ public abstract class AlwaysSelectedEntryGridWidget<E extends Entry<E>> extends 
     }
 
     @Override
-    protected void /*? if >=1.20.6 {*/ method_25311 /*?} else >>*/ /*renderList*/
-            (GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    protected void renderList(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         int baseX = this.getRowLeft();
         int w = this.itemWidth;
         int h = this.itemHeight - 4;
@@ -142,37 +131,12 @@ public abstract class AlwaysSelectedEntryGridWidget<E extends Entry<E>> extends 
     }
 
     /*? if <1.20.4 {*/
-    /*public int getX() {
-        return this.left;
-    }
-
-    public int getXEnd() {
+    /*public int getXEnd() {
         return this.right;
-    }
-
-    public int getY() {
-        return this.top;
     }
 
     public int getYEnd() {
         return this.bottom;
-    }
-
-    public int getHeight() {
-        return this.height;
-    }
-
-    public int getWidth() {
-        return this.width;
-    }
-
-    public void moveTo(ScreenArea area) {
-        this.left = area.x();
-        this.right = area.right();
-        this.top = area.y();
-        this.bottom = area.bottom();
-        this.width = area.width();
-        this.height = area.height();
     }
     *//*?}*/
 }

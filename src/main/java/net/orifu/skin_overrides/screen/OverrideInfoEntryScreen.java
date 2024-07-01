@@ -2,29 +2,20 @@ package net.orifu.skin_overrides.screen;
 
 import java.util.function.Consumer;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.mojang.blaze3d.platform.InputUtil;
-
 import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-//? if >=1.20.2 {
-import net.minecraft.client.gui.widget.button.ButtonWidget;
-//?} else {
-/*import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.Selectable;
-import net.minecraft.client.gui.widget.ButtonWidget;
-*///?}
-import net.minecraft.client.gui.widget.layout.LinearLayoutWidget;
 import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.text.CommonTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
+import net.orifu.skin_overrides.xplat.gui.Screen;
+import net.orifu.skin_overrides.xplat.gui.widget.ButtonWidget;
+import net.orifu.skin_overrides.xplat.gui.widget.LinearLayoutWidget;
+import net.orifu.skin_overrides.xplat.gui.widget.TextFieldWidget;
+import org.jetbrains.annotations.Nullable;
 
 public class OverrideInfoEntryScreen extends Screen {
     private static final Text INPUT_MODEL = Text.translatable("skin_overrides.input.model");
@@ -121,7 +112,7 @@ public class OverrideInfoEntryScreen extends Screen {
             var nameInputWrapper = LinearLayoutWidget.createHorizontal();
             nameInputWrapper.setPosition((this.width - wrapperWidth) / 2, this.getNameInputY());
 
-            this.nameInput = nameInputWrapper.add(new TextFieldWidget(this.textRenderer, 120, 20, 0, 0,
+            this.nameInput = nameInputWrapper.add(new TextFieldWidget(this.textRenderer, 120, 20,
                     Text.translatable("skin_overrides.library.input.name")));
             this.nameInput.setText(this.defaultName);
             this.setFocusedChild(this.nameInput);
@@ -233,12 +224,6 @@ public class OverrideInfoEntryScreen extends Screen {
     public void closeScreen() {
         this.client.setScreen(this.parent);
     }
-
-    //? if <1.20.2 {
-    /*private <T extends Element & Drawable & Selectable> T addDrawableSelectableElement(T element) {
-        return this.addDrawableChild(element);
-    }
-    *///?}
 
     public interface OverrideInfoCallback {
         void receive(String name, PlayerSkin.Model model);

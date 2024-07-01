@@ -5,31 +5,14 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-import net.orifu.skin_overrides.Mod;
-import org.apache.commons.io.FilenameUtils;
-import org.jetbrains.annotations.Nullable;
-
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.layout.LinearLayoutWidget;
-//? if >=1.20.2 {
-import net.minecraft.client.gui.widget.button.ButtonWidget;
-import net.minecraft.client.gui.widget.layout.FrameWidget;
-import net.minecraft.client.gui.widget.layout.LayoutSettings;
-import net.minecraft.client.gui.widget.text.TextWidget;
-//?} else {
-/*import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.FrameWidget;
-import net.minecraft.client.gui.widget.container.LayoutSettings;
-import net.minecraft.client.gui.widget.TextWidget;
-*///?}
 import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.CommonTexts;
 import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Library.LibraryEntry;
+import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.override.Overridden;
 import net.orifu.skin_overrides.override.LibraryCapeOverride.CapeEntry;
 import net.orifu.skin_overrides.override.LibrarySkinOverride.SkinEntry;
@@ -39,6 +22,16 @@ import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.Util;
+import net.orifu.skin_overrides.xplat.gui.LayoutSettings;
+import net.orifu.skin_overrides.xplat.gui.Screen;
+import net.orifu.skin_overrides.xplat.gui.widget.ButtonWidget;
+import net.orifu.skin_overrides.xplat.gui.widget.FrameWidget;
+import net.orifu.skin_overrides.xplat.gui.widget.LinearLayoutWidget;
+import net.orifu.skin_overrides.xplat.gui.widget.ListWrapper;
+import net.orifu.skin_overrides.xplat.gui.widget.TextFieldWidget;
+import net.orifu.skin_overrides.xplat.gui.widget.TextWidget;
+import org.apache.commons.io.FilenameUtils;
+import org.jetbrains.annotations.Nullable;
 
 public class LibraryScreen extends Screen {
     private static final Text TITLE = Text.translatable("skin_overrides.library.title");
@@ -53,9 +46,6 @@ public class LibraryScreen extends Screen {
     private final Consumer<LibraryEntry> callback;
 
     private LibraryListWidget libraryList;
-    // use frame for list positioning
-    //? if <1.20.4
-    /*private FrameWidget libraryListFrame = new FrameWidget();*/
 
     private TextFieldWidget searchBox;
     @Nullable
@@ -93,7 +83,7 @@ public class LibraryScreen extends Screen {
         }
 
         if (this.searchBox == null) {
-            this.searchBox = new TextFieldWidget(this.textRenderer, 200, 20, 0, 0,
+            this.searchBox = new TextFieldWidget(this.textRenderer, 200, 20,
                     Text.translatable("skin_overrides.input.search"));
             this.searchBox.setHint(Text.translatable("skin_overrides.input.search.hint"));
             this.searchBox.setChangedListener(query -> {
@@ -104,12 +94,6 @@ public class LibraryScreen extends Screen {
         }
 
         int libraryListWidth = this.selectedEntry == null ? this.width : this.width - OPTIONS_WIDTH - OPTIONS_PAD;
-
-        //? if >=1.20.4 {
-        this.libraryList.setDimensions
-        //?} else
-        /*this.libraryListFrame.setMinDimensions*/
-                (libraryListWidth, this.height - 8 - 9 - 5 - 20 - 6 - 33);
 
         var root = LinearLayoutWidget.createVertical();
 
@@ -124,15 +108,8 @@ public class LibraryScreen extends Screen {
                 .width(60).build());
 
         var body = root.add(LinearLayoutWidget.createHorizontal());
-        //? if >1.20.2 {
-         body.add(this.libraryList); 
-        //?} else {
-        /*body.add(this.libraryListFrame);
-        //? if >=1.20.2 {
-        /^this.addSelectableElement(this.libraryList);
-         ^///?} else
-        this.addSelectableChild(this.libraryList);
-        *///?}
+        body.add(new ListWrapper<>(this.libraryList))
+                .setDimensions(libraryListWidth, this.height - 8 - 9 - 5 - 20 - 6 - 33);
 
         if (this.selectedEntry != null) {
             var controlsFrame = body.add(new FrameWidget(OPTIONS_WIDTH + OPTIONS_PAD, 0));
@@ -155,7 +132,7 @@ public class LibraryScreen extends Screen {
 
             // name input
             if (this.nameField == null) {
-                this.nameField = new TextFieldWidget(this.textRenderer, OPTIONS_WIDTH, 20, 0, 0,
+                this.nameField = new TextFieldWidget(this.textRenderer, OPTIONS_WIDTH, 20,
                         Text.translatable("skin_overrides.library.input.name"));
                 this.nameField.setMaxLength(32);
                 this.nameField.setChangedListener(this::renameEntry);
@@ -214,10 +191,7 @@ public class LibraryScreen extends Screen {
         var footer = root.add(new FrameWidget(this.width, 33));
         footer.add(ButtonWidget.builder(CommonTexts.BACK, btn -> this.closeScreen()).build());
 
-        //? if >=1.20.2 {
         root.visitWidgets(this::addDrawableSelectableElement);
-        //?} else
-        /*root.visitWidgets(this::addSelectableChild);*/
         root.arrangeElements();
         this.setFocusedChild(this.searchBox);
     }
@@ -225,11 +199,6 @@ public class LibraryScreen extends Screen {
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         super.render(graphics, mouseX, mouseY, delta);
-
-        //? if <1.20.4 {
-        /*this.libraryList.moveTo(this.libraryListFrame.getArea());
-        this.libraryList.render(graphics, mouseX, mouseY, delta);
-        *///?}
 
         if (this.selectedEntry != null) {
             if (this.selectedEntry.entry instanceof SkinEntry entry) {
