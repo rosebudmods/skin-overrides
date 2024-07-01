@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import net.orifu.skin_overrides.util.ProfileHelper;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,13 +19,24 @@ import net.minecraft.client.gui.tab.TabManager;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.HeaderBar;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.gui.widget.layout.HeaderFooterLayoutWidget;
+import net.minecraft.client.gui.widget.layout.LinearLayoutWidget;
+//? if >=1.20.2 {
 import net.minecraft.client.gui.widget.button.ButtonWidget;
 import net.minecraft.client.gui.widget.layout.FrameWidget;
 import net.minecraft.client.gui.widget.layout.GridWidget;
-import net.minecraft.client.gui.widget.layout.HeaderFooterLayoutWidget;
 import net.minecraft.client.gui.widget.layout.LayoutSettings;
-import net.minecraft.client.gui.widget.layout.LinearLayoutWidget;
 import net.minecraft.client.gui.widget.text.TextWidget;
+//?} else {
+/*import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.FrameWidget;
+import net.minecraft.client.gui.widget.GridWidget;
+import net.minecraft.client.gui.widget.container.LayoutSettings;
+import net.minecraft.client.gui.widget.TextWidget;
+import net.minecraft.client.gui.Drawable;
+import net.minecraft.client.gui.Element;
+import net.minecraft.client.gui.Selectable;
+*///?}
 import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.text.CommonTexts;
 import net.minecraft.text.Text;
@@ -110,7 +122,7 @@ public class SkinOverridesScreen extends Screen {
 
         if (this.playerList == null || this.playerList.ov != this.ov) {
             this.playerList = new PlayerListWidget(this, this.ov);
-            this.searchBox = new TextFieldWidget(this.textRenderer, 200, 20,
+            this.searchBox = new TextFieldWidget(this.textRenderer, 200, 20, 0, 0,
                     Text.translatable("skin_overrides.input.search"));
             this.searchBox.setChangedListener(this.playerList::filter);
         }
@@ -123,7 +135,10 @@ public class SkinOverridesScreen extends Screen {
          listWrapper.add(this.playerList); 
         //?} else {
         /*listWrapper.add(this.playerListFrame);
-        this.addSelectableElement(this.playerList);
+        //? if >=1.20.2 {
+        /^this.addSelectableElement(this.playerList);
+        ^///?} else
+        this.addSelectableChild(this.playerList);
         *///?}
 
         // add configuration
@@ -242,7 +257,7 @@ public class SkinOverridesScreen extends Screen {
     }
 
     public void pickedFromLibrary(LibraryEntry entry) {
-        var profile = this.selectedProfile != null ? this.selectedProfile : this.client.method_53462();
+        var profile = this.selectedProfile != null ? this.selectedProfile : ProfileHelper.user();
         this.ov.library().addOverride(profile, entry);
         this.clearAndInit();
     }
@@ -287,7 +302,7 @@ public class SkinOverridesScreen extends Screen {
             return;
         }
 
-        GameProfile profile = this.selectedProfile != null ? this.selectedProfile : this.client.method_53462();
+        GameProfile profile = this.selectedProfile != null ? this.selectedProfile : ProfileHelper.user();
 
         if (this.ov.skin()) {
             // open model selection screen
@@ -302,6 +317,12 @@ public class SkinOverridesScreen extends Screen {
             this.clearAndInit();
         }
     }
+
+    //? if <1.20.2 {
+    /*private <T extends Element & Drawable & Selectable> T addDrawableSelectableElement(T element) {
+        return this.addDrawableChild(element);
+    }
+    *///?}
 
     class DummyTab implements Tab {
         public final Text title;

@@ -2,7 +2,11 @@ package net.orifu.skin_overrides.screen;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.GuiGraphics;
+//? if >=1.20.2 {
 import net.minecraft.client.gui.widget.list.AlwaysSelectedEntryListWidget.Entry;
+ //?} else {
+/*import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget.Entry;
+*///?}
 import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.override.LibrarySkinOverride.SkinEntry;

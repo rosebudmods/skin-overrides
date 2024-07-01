@@ -10,7 +10,14 @@ import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+//? if >=1.20.2 {
 import net.minecraft.client.gui.widget.button.ButtonWidget;
+//?} else {
+/*import net.minecraft.client.gui.Drawable;
+import net.minecraft.client.gui.Element;
+import net.minecraft.client.gui.Selectable;
+import net.minecraft.client.gui.widget.ButtonWidget;
+*///?}
 import net.minecraft.client.gui.widget.layout.LinearLayoutWidget;
 import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.text.CommonTexts;
@@ -114,7 +121,7 @@ public class OverrideInfoEntryScreen extends Screen {
             var nameInputWrapper = LinearLayoutWidget.createHorizontal();
             nameInputWrapper.setPosition((this.width - wrapperWidth) / 2, this.getNameInputY());
 
-            this.nameInput = nameInputWrapper.add(new TextFieldWidget(this.textRenderer, 120, 20,
+            this.nameInput = nameInputWrapper.add(new TextFieldWidget(this.textRenderer, 120, 20, 0, 0,
                     Text.translatable("skin_overrides.library.input.name")));
             this.nameInput.setText(this.defaultName);
             this.setFocusedChild(this.nameInput);
@@ -226,6 +233,12 @@ public class OverrideInfoEntryScreen extends Screen {
     public void closeScreen() {
         this.client.setScreen(this.parent);
     }
+
+    //? if <1.20.2 {
+    /*private <T extends Element & Drawable & Selectable> T addDrawableSelectableElement(T element) {
+        return this.addDrawableChild(element);
+    }
+    *///?}
 
     public interface OverrideInfoCallback {
         void receive(String name, PlayerSkin.Model model);

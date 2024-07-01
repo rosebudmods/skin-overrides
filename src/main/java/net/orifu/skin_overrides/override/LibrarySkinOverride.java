@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
+import net.orifu.skin_overrides.util.ProfileHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +17,6 @@ import com.google.gson.JsonObject;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.PlayerSkin;
-import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.override.LibrarySkinOverride.SkinEntry;
@@ -81,7 +81,7 @@ public class LibrarySkinOverride extends AbstractLibraryOverride<SkinEntry, Libr
     @Override
     protected void loadFailed() {
         // add default player skins
-        for (var playerSkin : DefaultSkinHelper.DEFAULT_SKINS) {
+        for (var playerSkin : ProfileHelper.getDefaultSkins()) {
             String name = playerSkin.texture().getPath();
             name = name.substring(name.lastIndexOf('/') + 1);
             name = name.substring(0, 1).toUpperCase() + name.substring(1).replace(".png", "");

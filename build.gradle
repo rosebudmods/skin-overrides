@@ -7,9 +7,11 @@ base {
 	archivesName = project.archives_base_name
 }
 
-var minecraft_version = property("deps.minecraft")
-version = "${project.version}+${minecraft_version}"
+var mcVersion = property("deps.minecraft")
+version = "${project.version}+${mcVersion}"
 group = project.maven_group
+
+var awVersion = stonecutter.compare(mcVersion, "1.20.2") >= 0 ? "1.20.2" : "1.20.1";
 
 if (stonecutter.current.isActive) {
 	rootProject.tasks.register('client') {
@@ -51,11 +53,11 @@ loom {
 		}
 	}
 
-	accessWidenerPath = getRootProject().file("src/main/resources/skin_overrides.accesswidener")
+	accessWidenerPath = getRootProject().file("src/main/resources/${awVersion}.accesswidener")
 }
 
 dependencies {
-	minecraft "com.mojang:minecraft:${minecraft_version}"
+	minecraft "com.mojang:minecraft:${mcVersion}"
 	mappings "org.quiltmc:quilt-mappings:${property("deps.quilt_mappings")}:intermediary-v2"
 	modImplementation "org.quiltmc:quilt-loader:${property("deps.quilt_loader")}"
 
@@ -74,7 +76,10 @@ processResources {
 	inputs.properties 'version': version, 'group': project.group
 
 	filesMatching('quilt.mod.json') {
-		expand 'version': version, 'group': project.group, 'minecraft_version': minecraft_version
+		expand 'version': version,
+				'group': project.group,
+				'minecraft_version': mcVersion,
+				'access_widener': awVersion
 	}
 }
 

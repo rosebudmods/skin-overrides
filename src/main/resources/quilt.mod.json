@@ -38,7 +38,7 @@
 		]
 	},
 	"mixin": "skin_overrides.mixins.json",
-	"access_widener": "skin_overrides.accesswidener",
+	"access_widener": "${access_widener}.accesswidener",
 	"minecraft": {
 		"environment": "client"
 	}

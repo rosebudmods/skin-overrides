@@ -12,8 +12,10 @@ import net.orifu.skin_overrides.Mod;
 
 @Mixin(PlayerSkinProvider.class)
 public class PlayerSkinProviderMixin {
+    //? if >=1.20.2 {
     @ModifyReturnValue(method = "getSkin", at = @At("RETURN"))
     private PlayerSkin getSkin(PlayerSkin skin, GameProfile profile) {
         return Mod.overrideSkin(profile, skin);
     }
+    //?}
 }

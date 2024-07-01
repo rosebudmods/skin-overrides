@@ -14,6 +14,8 @@ import net.orifu.skin_overrides.override.LocalCapeOverride;
 import net.orifu.skin_overrides.override.LocalSkinOverride;
 import net.orifu.skin_overrides.override.Overridden;
 
+import java.util.concurrent.CompletableFuture;
+
 public class Mod {
 	public static final Logger LOGGER = LoggerFactory.getLogger("skin overrides");
 	public static final String MOD_ID = "skin_overrides";
@@ -37,7 +39,17 @@ public class Mod {
 	}
 
 	public static PlayerSkin getSkin(GameProfile profile) {
+		//? if >=1.20.2 {
 		return overrideSkin(profile, MinecraftClient.getInstance().getSkinProvider().getSkin(profile));
+		//?} else
+		/*return overrideSkin(profile, PlayerSkin.fromProfile(profile));*/
+	}
+
+	public static CompletableFuture<PlayerSkin> fetchSkin(GameProfile profile) {
+		//? if >=1.20.2 {
+		return MinecraftClient.getInstance().getSkinProvider().fetchSkin(profile);
+		//?} else
+		/*return null;*/
 	}
 
 	public static PlayerSkin overrideSkin(GameProfile profile, PlayerSkin skin) {

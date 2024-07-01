@@ -5,9 +5,13 @@ import com.mojang.authlib.GameProfile;
 import java.util.ArrayList;
 
 import net.minecraft.client.MinecraftClient;
+//? if >=1.20.2 {
 import net.minecraft.client.gui.widget.list.AlwaysSelectedEntryListWidget;
+//?} else
+/*import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;*/
 import net.orifu.skin_overrides.override.Overridden;
 import net.orifu.skin_overrides.screen.PlayerListEntry.Type;
+import net.orifu.skin_overrides.util.ProfileHelper;
 
 public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEntry> {
     private static final int PADDING = 8;
@@ -29,7 +33,7 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
         this.ov = ov;
 
         // add local player
-        GameProfile localPlayer = this.client.method_53462();
+        GameProfile localPlayer = ProfileHelper.user();
         this.tryAddEntry(localPlayer, Type.USER);
 
         // add online players
@@ -57,7 +61,7 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
         // special case when the user is unauthenticated and an actual player has their
         // username. because their uuids don't match, the authenticated account will
         // be listed separately to the current user otherwise.
-        if (this.client.method_53462().getName().equalsIgnoreCase(profile.getName())) {
+        if (ProfileHelper.user().getName().equalsIgnoreCase(profile.getName())) {
             return true;
         }
 

@@ -5,8 +5,13 @@ import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.GuiGraphics;
+//? if >=1.20.2 {
 import net.minecraft.client.gui.widget.list.AlwaysSelectedEntryListWidget;
 import net.minecraft.client.gui.widget.list.AlwaysSelectedEntryListWidget.Entry;
+ //?} else {
+/*import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
+import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget.Entry;
+*///?}
 import net.minecraft.util.math.MathHelper;
 
 public abstract class AlwaysSelectedEntryGridWidget<E extends Entry<E>> extends AlwaysSelectedEntryListWidget<E> {
@@ -86,7 +91,7 @@ public abstract class AlwaysSelectedEntryGridWidget<E extends Entry<E>> extends 
 
     @Override
     @Nullable
-    protected final E getEntryAtPosition(double x, double y) {
+    protected E getEntryAtPosition(double x, double y) {
         double relativeX = x - this.getRowLeft();
         double unscrolledRelativeY = y - this.getY() - this.headerHeight - 4;
         double relativeY = unscrolledRelativeY + this.getScrollAmount();
@@ -127,6 +132,13 @@ public abstract class AlwaysSelectedEntryGridWidget<E extends Entry<E>> extends 
             int borderColor, int fillColor) {
         // old bad method
         throw new UnsupportedOperationException();
+    }
+
+    protected int scrollbarWidth() {
+        //? if >=1.20.2 {
+        return SCROLLBAR_WIDTH;
+        //?} else
+        /*return 6;*/
     }
 
     /*? if <1.20.4 {*/

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
+import net.orifu.skin_overrides.Mod;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,11 +13,18 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.gui.widget.layout.LinearLayoutWidget;
+//? if >=1.20.2 {
 import net.minecraft.client.gui.widget.button.ButtonWidget;
 import net.minecraft.client.gui.widget.layout.FrameWidget;
 import net.minecraft.client.gui.widget.layout.LayoutSettings;
-import net.minecraft.client.gui.widget.layout.LinearLayoutWidget;
 import net.minecraft.client.gui.widget.text.TextWidget;
+//?} else {
+/*import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.FrameWidget;
+import net.minecraft.client.gui.widget.container.LayoutSettings;
+import net.minecraft.client.gui.widget.TextWidget;
+*///?}
 import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.CommonTexts;
@@ -85,7 +93,7 @@ public class LibraryScreen extends Screen {
         }
 
         if (this.searchBox == null) {
-            this.searchBox = new TextFieldWidget(this.textRenderer, 200, 20,
+            this.searchBox = new TextFieldWidget(this.textRenderer, 200, 20, 0, 0,
                     Text.translatable("skin_overrides.input.search"));
             this.searchBox.setHint(Text.translatable("skin_overrides.input.search.hint"));
             this.searchBox.setChangedListener(query -> {
@@ -120,7 +128,10 @@ public class LibraryScreen extends Screen {
          body.add(this.libraryList); 
         //?} else {
         /*body.add(this.libraryListFrame);
-        this.addSelectableElement(this.libraryList);
+        //? if >=1.20.2 {
+        /^this.addSelectableElement(this.libraryList);
+         ^///?} else
+        this.addSelectableChild(this.libraryList);
         *///?}
 
         if (this.selectedEntry != null) {
@@ -144,7 +155,7 @@ public class LibraryScreen extends Screen {
 
             // name input
             if (this.nameField == null) {
-                this.nameField = new TextFieldWidget(this.textRenderer, OPTIONS_WIDTH, 20,
+                this.nameField = new TextFieldWidget(this.textRenderer, OPTIONS_WIDTH, 20, 0, 0,
                         Text.translatable("skin_overrides.library.input.name"));
                 this.nameField.setMaxLength(32);
                 this.nameField.setChangedListener(this::renameEntry);
@@ -203,7 +214,10 @@ public class LibraryScreen extends Screen {
         var footer = root.add(new FrameWidget(this.width, 33));
         footer.add(ButtonWidget.builder(CommonTexts.BACK, btn -> this.closeScreen()).build());
 
+        //? if >=1.20.2 {
         root.visitWidgets(this::addDrawableSelectableElement);
+        //?} else
+        /*root.visitWidgets(this::addSelectableChild);*/
         root.arrangeElements();
         this.setFocusedChild(this.searchBox);
     }
@@ -320,7 +334,7 @@ public class LibraryScreen extends Screen {
                     Text.translatable("skin_overrides.no_profile.title", this.searchBox.getText()),
                     Text.translatable("skin_overrides.no_profile.description")));
         } else {
-            this.adding = this.client.getSkinProvider().fetchSkin(maybeProfile.get());
+            this.adding = Mod.fetchSkin(maybeProfile.get());
             this.addingName = maybeProfile.get().getName();
             this.searchBox.setText("");
         }

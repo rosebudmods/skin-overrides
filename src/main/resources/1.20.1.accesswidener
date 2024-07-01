@@ -1,0 +1,13 @@
+accessWidener v2 named
+
+accessible method net/minecraft/client/texture/PlayerSkinTexture loadTexture (Ljava/io/InputStream;)Lcom/mojang/blaze3d/texture/NativeImage;
+accessible method net/minecraft/client/texture/PlayerSkinTexture onTextureLoaded (Lcom/mojang/blaze3d/texture/NativeImage;)V
+
+accessible field net/minecraft/client/MinecraftClient authService Lcom/mojang/authlib/yggdrasil/YggdrasilAuthenticationService;
+
+accessible field net/minecraft/client/util/DefaultSkinHelper DEFAULT_SKINS [Lnet/minecraft/client/util/DefaultSkinHelper$DefaultSkin;
+accessible method net/minecraft/client/util/DefaultSkinHelper$DefaultSkin texture ()Lnet/minecraft/util/Identifier;
+accessible method net/minecraft/client/util/DefaultSkinHelper$DefaultSkin model ()Lnet/minecraft/client/util/DefaultSkinHelper$ModelType;
+accessible class net/minecraft/client/util/DefaultSkinHelper$ModelType
+
+extendable method net/minecraft/client/gui/widget/EntryListWidget getEntryAtPosition (DD)Lnet/minecraft/client/gui/widget/EntryListWidget$Entry;

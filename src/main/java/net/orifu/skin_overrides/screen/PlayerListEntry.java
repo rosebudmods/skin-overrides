@@ -5,7 +5,11 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.PlayerFaceRenderer;
+//? if >=1.20.2 {
 import net.minecraft.client.gui.widget.list.AlwaysSelectedEntryListWidget.Entry;
+//?} else {
+/*import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget.Entry;
+*///?}
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.orifu.skin_overrides.Mod;
@@ -34,7 +38,10 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
             int mouseY, boolean hovered, float tickDelta) {
         // draw player face/cape
         if (this.ov.skin()) {
+            //? if >=1.20.2 {
             PlayerFaceRenderer.draw(graphics, Mod.getSkin(this.profile), x, y, 32);
+            //?} else
+            /*PlayerFaceRenderer.draw(graphics, Mod.getSkin(this.profile).texture(), x, y, 32);*/
         } else {
             int capeX = x + (32 - PlayerCapeRenderer.WIDTH * 2) / 2;
             PlayerCapeRenderer.draw(graphics, Mod.getSkin(this.profile), capeX, y, 2);
