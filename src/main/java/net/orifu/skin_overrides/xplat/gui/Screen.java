@@ -10,11 +10,7 @@ public class Screen extends net.minecraft.client.gui.screen.Screen {
         super(title);
     }
 
-    //? if =1.20.2 {
-    /*protected <T extends Element & Drawable & Selectable> T addDrawableSelectableElement(T drawableElement) {
-        return this.addSelectableElement(drawableElement);
-    }
-    *///?} else if <=1.20.1 {
+    //? if <=1.20.1 {
     /*protected <T extends Element & Drawable & Selectable> T addDrawableSelectableElement(T drawableElement) {
         return this.addDrawableChild(drawableElement);
     }

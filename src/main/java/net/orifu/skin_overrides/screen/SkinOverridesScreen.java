@@ -115,8 +115,7 @@ public class SkinOverridesScreen extends Screen {
         var listWrapper = helper.add(LinearLayoutWidget.createVertical().setSpacing(6));
         listWrapper.add(this.searchBox, LayoutSettings.create().alignHorizontallyCenter().setTopPadding(5));
         this.setFocusedChild(this.searchBox);
-        this.playerList.add(listWrapper::add, this::addDrawable);
-        this.addDrawableSelectableElement(this.playerList);
+        this.playerList.add(listWrapper::add, this::addDrawableSelectableElement);
 
         // add configuration
         this.configFrame = helper.add(new FrameWidget());

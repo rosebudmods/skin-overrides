@@ -21,11 +21,11 @@ public class LinearLayoutWidget implements LayoutWidget {
     }
 
     public static LinearLayoutWidget createHorizontal() {
-        return new LinearLayoutWidget(Orientation.Horizontal);
+        return new LinearLayoutWidget(Orientation.HORIZONTAL);
     }
 
     public static LinearLayoutWidget createVertical() {
-        return new LinearLayoutWidget(Orientation.Vertical);
+        return new LinearLayoutWidget(Orientation.VERTICAL);
     }
 
     public <T extends Widget> T add(T widget) {
@@ -35,8 +35,8 @@ public class LinearLayoutWidget implements LayoutWidget {
     public <T extends Widget> T add(T widget, LayoutSettings layout) {
         int index = this.children++;
         return switch (this.orientation) {
-            case Horizontal -> grid.add(widget, 0, index, layout);
-            case Vertical -> grid.add(widget, index, 0, layout);
+            case HORIZONTAL -> grid.add(widget, 0, index, layout);
+            case VERTICAL -> grid.add(widget, index, 0, layout);
         };
     }
 
@@ -86,7 +86,7 @@ public class LinearLayoutWidget implements LayoutWidget {
     }
 
     public enum Orientation {
-        Horizontal,
-        Vertical
+        HORIZONTAL,
+        VERTICAL
     }
 }

@@ -24,12 +24,12 @@ public record PlayerSkin(
         var cape = textures.get(MinecraftProfileTexture.Type.CAPE);
         var elytra = textures.get(MinecraftProfileTexture.Type.ELYTRA);
 
-        var maybeSkinId = skin != null
+        var skinId = skin != null
                 ? provider.loadSkin(skin, MinecraftProfileTexture.Type.SKIN)
                 : DefaultSkinHelper.getTexture(profile.getId());
 
         return new PlayerSkin(
-                maybeSkinId,
+                skinId,
                 null,
                 cape != null ? provider.loadSkin(cape, MinecraftProfileTexture.Type.CAPE) : null,
                 elytra != null ? provider.loadSkin(elytra, MinecraftProfileTexture.Type.ELYTRA) : null,

@@ -22,6 +22,9 @@ public abstract class AlwaysSelectedEntryListWidget
         super(client, width, height, y, itemHeight);
         //?} else
         /*super(client, width, height, y, y + height, itemHeight);*/
+
+        //? if <1.20.2
+        /*this.setRenderHorizontalShadows(false);*/
     }
 
     @Override
@@ -73,16 +76,18 @@ public abstract class AlwaysSelectedEntryListWidget
         this.shim.setMinDimensions(width, height);
     }
 
-    public void setDimensionsAndPosition(int width, int height, int x, int y) {
+    *///?}
+
+    //? if <=1.20.4 {
+    /*public void setDimensionsAndPosition(int width, int height, int x, int y) {
         this.setDimensions(width, height);
         this.setX(x);
         this.setY(y);
     }
-
     *///?}
 
     public <T extends Element & Drawable & Selectable> void add(Consumer<Widget> add, Consumer<T> screen) {
-        //? if <1.20.2 {
+        //? if <=1.20.2 {
         /*add.accept(this.shim);
         screen.accept((T) this);
         *///?} else
