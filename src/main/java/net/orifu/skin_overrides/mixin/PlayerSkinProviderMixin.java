@@ -1,5 +1,6 @@
 package net.orifu.skin_overrides.mixin;
 
+import net.orifu.skin_overrides.Skin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -15,7 +16,7 @@ public class PlayerSkinProviderMixin {
     //? if >=1.20.2 {
     @ModifyReturnValue(method = "getSkin", at = @At("RETURN"))
     private PlayerSkin getSkin(PlayerSkin skin, GameProfile profile) {
-        return Mod.overrideSkin(profile, skin);
+        return Mod.overrideSkin(profile, Skin.fromPlayerSkin(skin)).toPlayerSkin();
     }
     //?}
 }

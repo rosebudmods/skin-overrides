@@ -1,17 +1,18 @@
 package net.orifu.skin_overrides.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.util.UUIDTypeAdapter;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.server.Services;
 import net.minecraft.util.UserCache;
 import net.minecraft.util.UuidUtil;
+import net.orifu.skin_overrides.Skin;
 
 public class ProfileHelper {
     public static final String UUID_REGEX = "[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{12}";
@@ -74,9 +75,9 @@ public class ProfileHelper {
         return Optional.of(profileResult /*? >=1.20.2 >>*/.profile() );
     }
 
-    public static PlayerSkin[] getDefaultSkins() {
+    public static Skin[] getDefaultSkins() {
         //? if >=1.20.2 {
-        return DefaultSkinHelper.DEFAULT_SKINS;
+        return Arrays.stream(DefaultSkinHelper.DEFAULT_SKINS).map(Skin::fromPlayerSkin).toArray(Skin[]::new);
         //?} else {
         /*ArrayList<PlayerSkin> skins = new ArrayList<>();
         for (var skin : DefaultSkinHelper.DEFAULT_SKINS) {

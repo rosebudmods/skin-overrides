@@ -5,10 +5,10 @@ import java.util.function.Consumer;
 import com.mojang.blaze3d.platform.InputUtil;
 import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.text.CommonTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.skin_overrides.xplat.gui.Screen;
@@ -42,7 +42,7 @@ public class OverrideInfoEntryScreen extends Screen {
 
     private final Identifier texture;
     @Nullable
-    private final PlayerSkin.Model model;
+    private final Skin.Model model;
 
     private final OverrideInfoCallback callback;
 
@@ -52,7 +52,7 @@ public class OverrideInfoEntryScreen extends Screen {
     private TextFieldWidget nameInput;
 
     private OverrideInfoEntryScreen(@Nullable Screen parent, boolean wantsModel, boolean wantsName, String defaultName,
-            Identifier texture, @Nullable PlayerSkin.Model model, OverrideInfoCallback callback) {
+            Identifier texture, @Nullable Skin.Model model, OverrideInfoCallback callback) {
         super(getMessageStatic(wantsName, wantsModel));
 
         this.parent = parent;
@@ -65,7 +65,7 @@ public class OverrideInfoEntryScreen extends Screen {
     }
 
     public static OverrideInfoEntryScreen getModel(@Nullable Screen parent, Identifier textureId,
-            Consumer<PlayerSkin.Model> callback) {
+            Consumer<Skin.Model> callback) {
         return new OverrideInfoEntryScreen(parent, true, false, "", textureId, null,
                 (name, model) -> callback.accept(model));
     }
@@ -76,7 +76,7 @@ public class OverrideInfoEntryScreen extends Screen {
                 (name, model) -> callback.accept(name));
     }
 
-    public static OverrideInfoEntryScreen getName(@Nullable Screen parent, Identifier textureId, PlayerSkin.Model model,
+    public static OverrideInfoEntryScreen getName(@Nullable Screen parent, Identifier textureId, Skin.Model model,
             String defaultName, Consumer<String> callback) {
         return new OverrideInfoEntryScreen(parent, false, true, defaultName, textureId, model,
                 (name, model2) -> callback.accept(name));
@@ -98,11 +98,11 @@ public class OverrideInfoEntryScreen extends Screen {
         int buttonY = this.getModelButtonY();
         if (this.wantsModel) {
             this.addDrawableSelectableElement(
-                    ButtonWidget.builder(MODEL_WIDE, btn -> this.select(PlayerSkin.Model.WIDE))
+                    ButtonWidget.builder(MODEL_WIDE, btn -> this.select(Skin.Model.WIDE))
                             .positionAndSize(this.width / 2 - 5 - MODEL_BUTTON_WIDTH, buttonY, MODEL_BUTTON_WIDTH, 20)
                             .build());
             this.addDrawableSelectableElement(
-                    ButtonWidget.builder(MODEL_SLIM, btn -> this.select(PlayerSkin.Model.SLIM))
+                    ButtonWidget.builder(MODEL_SLIM, btn -> this.select(Skin.Model.SLIM))
                             .positionAndSize(this.width / 2 + 5, buttonY, MODEL_BUTTON_WIDTH, 20).build());
         }
 
@@ -137,9 +137,9 @@ public class OverrideInfoEntryScreen extends Screen {
          /*this.message.render(graphics, this.width / 2, this.getMessageY());*/ 
 
         if (this.wantsModel) {
-            PlayerSkinRenderer.draw(graphics, this.texture, PlayerSkin.Model.WIDE,
+            PlayerSkinRenderer.draw(graphics, this.texture, Skin.Model.WIDE,
                     this.width / 2 - 5 - 10 - SKIN_WIDTH, this.getPreviewY(), SKIN_SCALE);
-            PlayerSkinRenderer.draw(graphics, this.texture, PlayerSkin.Model.SLIM,
+            PlayerSkinRenderer.draw(graphics, this.texture, Skin.Model.SLIM,
                     this.width / 2 + 5 + 10, this.getPreviewY(), SKIN_SCALE);
         } else if (this.model != null) {
             PlayerSkinRenderer.draw(graphics, this.texture, this.model,
@@ -163,7 +163,7 @@ public class OverrideInfoEntryScreen extends Screen {
         return false;
     }
 
-    private void select(PlayerSkin.Model model) {
+    private void select(Skin.Model model) {
         String name = this.wantsName ? this.nameInput.getText() : null;
         this.callback.receive(name, model);
         this.client.setScreen(this.parent);
@@ -226,6 +226,6 @@ public class OverrideInfoEntryScreen extends Screen {
     }
 
     public interface OverrideInfoCallback {
-        void receive(String name, PlayerSkin.Model model);
+        void receive(String name, Skin.Model model);
     }
 }

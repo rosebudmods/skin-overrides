@@ -1,6 +1,7 @@
 package net.orifu.skin_overrides.mixin;
 
 import net.minecraft.util.Identifier;
+import net.orifu.skin_overrides.Skin;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -23,7 +24,7 @@ public class PlayerListEntryMixin {
     @ModifyReturnValue(method = "getSkin", at = @At("RETURN"))
     private PlayerSkin getSkin(PlayerSkin skin) {
         // the return value of this method is otherwise memoised
-        return Mod.overrideSkin(this.profile, skin);
+        return Mod.overrideSkin(this.profile, Skin.fromPlayerSkin(skin)).toPlayerSkin();
     }
     //?} else {
     /*@ModifyReturnValue(method = "getSkinTexture", at = @At("RETURN"))

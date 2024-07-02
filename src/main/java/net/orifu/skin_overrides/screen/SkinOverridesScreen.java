@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import com.mojang.authlib.GameProfile;
+import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.xplat.gui.Screen;
 import net.minecraft.client.gui.GuiGraphics;
@@ -14,7 +15,6 @@ import net.minecraft.client.gui.tab.Tab;
 import net.minecraft.client.gui.tab.TabManager;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.HeaderBar;
-import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.text.CommonTexts;
 import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Mod;
@@ -164,7 +164,7 @@ public class SkinOverridesScreen extends Screen {
 
         if (this.selectedProfile != null) {
             // draw skin/cape preview
-            PlayerSkin skin = Mod.getSkin(this.selectedProfile);
+            Skin skin = Mod.getSkin(this.selectedProfile);
             if (this.ov.skin()) {
                 PlayerSkinRenderer.draw(graphics, skin, this.previewFrame.getX(), this.previewFrame.getY(),
                         PREVIEW_SCALE);

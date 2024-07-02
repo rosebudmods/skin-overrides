@@ -1,14 +1,14 @@
 package net.orifu.skin_overrides.override;
 
-import static net.orifu.skin_overrides.Mod.CAPE_OVERRIDES;
-
 import java.io.File;
 import java.util.Optional;
 
 import com.mojang.authlib.GameProfile;
-
 import net.orifu.skin_overrides.texture.LocalPlayerTexture;
 import net.orifu.skin_overrides.util.OverrideFiles.Validated;
+import net.orifu.skin_overrides.util.Util;
+
+import static net.orifu.skin_overrides.Mod.CAPE_OVERRIDES;
 
 public class LocalCapeOverride extends AbstractOverride<Void, LocalPlayerTexture> {
     public static final LocalCapeOverride INSTANCE = new LocalCapeOverride();
@@ -20,7 +20,7 @@ public class LocalCapeOverride extends AbstractOverride<Void, LocalPlayerTexture
 
     @Override
     protected String getFileName(GameProfile profile, Void data) {
-        return profile.getId() + ".png";
+        return Util.id(profile) + ".png";
     }
 
     @Override

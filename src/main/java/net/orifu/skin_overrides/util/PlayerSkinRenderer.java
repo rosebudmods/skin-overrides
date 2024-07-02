@@ -3,8 +3,8 @@ package net.orifu.skin_overrides.util;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.util.Identifier;
+import net.orifu.skin_overrides.Skin;
 
 public class PlayerSkinRenderer {
     public static final int HEAD_SIZE = 8;
@@ -64,13 +64,13 @@ public class PlayerSkinRenderer {
 
     public static final int LAYER_DOWNSCALE = 2;
 
-    public static void draw(GuiGraphics graphics, PlayerSkin skin, int x, int y, int scale) {
+    public static void draw(GuiGraphics graphics, Skin skin, int x, int y, int scale) {
         draw(graphics, skin.texture(), skin.model(), x, y, scale);
     }
 
-    public static void draw(GuiGraphics graphics, Identifier texture, PlayerSkin.Model model, int x, int y, int scale) {
-        int armWidth = model.equals(PlayerSkin.Model.WIDE) ? ARM_WIDE_WIDTH : ARM_SLIM_WIDTH;
-        int rightArmOffset = model.equals(PlayerSkin.Model.WIDE) ? 0 : 1;
+    public static void draw(GuiGraphics graphics, Identifier texture, Skin.Model model, int x, int y, int scale) {
+        int armWidth = model.equals(Skin.Model.WIDE) ? ARM_WIDE_WIDTH : ARM_SLIM_WIDTH;
+        int rightArmOffset = model.equals(Skin.Model.WIDE) ? 0 : 1;
 
         drawLeftArm(graphics, texture, x, y, scale, armWidth, false);
         drawRightArm(graphics, texture, x, y, scale, armWidth, rightArmOffset, false);
@@ -87,6 +87,17 @@ public class PlayerSkinRenderer {
 
         drawHead(graphics, texture, x, y, scale, false);
         drawHead(graphics, texture, x, y, scale, true);
+        RenderSystem.disableBlend();
+    }
+
+    public static void drawFace(GuiGraphics graphics, Skin skin, int x, int y, int scale) {
+        drawFace(graphics, skin.texture(), x, y, scale);
+    }
+
+    public static void drawFace(GuiGraphics graphics, Identifier texture, int x, int y, int scale) {
+        drawHead(graphics, texture, x - HEAD_X * scale, y - HEAD_Y * scale, scale, false);
+        RenderSystem.enableBlend();
+        drawHead(graphics, texture, x - HEAD_X * scale, y - HEAD_Y * scale, scale, true);
         RenderSystem.disableBlend();
     }
 

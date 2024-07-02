@@ -7,12 +7,12 @@ import java.util.function.Consumer;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.CommonTexts;
 import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.Mod;
+import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.override.Overridden;
 import net.orifu.skin_overrides.override.LibraryCapeOverride.CapeEntry;
 import net.orifu.skin_overrides.override.LibrarySkinOverride.SkinEntry;
@@ -59,7 +59,7 @@ public class LibraryScreen extends Screen {
     private int capeScale;
 
     @Nullable
-    private CompletableFuture<PlayerSkin> adding;
+    private CompletableFuture<Skin> adding;
     @Nullable
     private String addingName;
 

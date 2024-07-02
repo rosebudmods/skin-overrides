@@ -8,15 +8,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
-import net.orifu.skin_overrides.util.ProfileHelper;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.override.LibrarySkinOverride.SkinEntry;
@@ -24,6 +20,8 @@ import net.orifu.skin_overrides.texture.LibrarySkinTexture;
 import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.Util;
 import net.orifu.skin_overrides.util.OverrideFiles.Validated;
+import net.orifu.skin_overrides.util.ProfileHelper;
+import net.orifu.skin_overrides.Skin;
 
 public class LibrarySkinOverride extends AbstractLibraryOverride<SkinEntry, LibrarySkinTexture> {
     public static final LibrarySkinOverride INSTANCE = new LibrarySkinOverride();
@@ -59,8 +57,7 @@ public class LibrarySkinOverride extends AbstractLibraryOverride<SkinEntry, Libr
             var texture = Util.readString(GSON, obj, "texture");
 
             if (name.isPresent() && id.isPresent() && model.isPresent()) {
-                PlayerSkin.Model skinModel = model.get().equals("wide") ? PlayerSkin.Model.WIDE
-                        : model.get().equals("slim") ? PlayerSkin.Model.SLIM : null;
+                Skin.Model skinModel = Skin.Model.tryParse(model.get());
                 if (skinModel == null) {
                     return;
                 }
@@ -85,13 +82,13 @@ public class LibrarySkinOverride extends AbstractLibraryOverride<SkinEntry, Libr
             String name = playerSkin.texture().getPath();
             name = name.substring(name.lastIndexOf('/') + 1);
             name = name.substring(0, 1).toUpperCase() + name.substring(1).replace(".png", "");
-            name += playerSkin.model().equals(PlayerSkin.Model.WIDE) ? " (wide)" : " (slim)";
+            name += playerSkin.model().equals(Skin.Model.WIDE) ? " (wide)" : " (slim)";
             this.entries.add(new SkinEntry(name, Util.randomId(), playerSkin.texture(), playerSkin.model()));
         }
     }
 
     public static class SkinEntry extends LibraryEntry {
-        protected final PlayerSkin.Model model;
+        protected final Skin.Model model;
 
         protected final boolean isFile;
         @Nullable
@@ -99,7 +96,7 @@ public class LibrarySkinOverride extends AbstractLibraryOverride<SkinEntry, Libr
         @Nullable
         protected final Identifier texture;
 
-        public SkinEntry(String name, String id, @NotNull File file, PlayerSkin.Model model) {
+        public SkinEntry(String name, String id, @NotNull File file, Skin.Model model) {
             super(name, id);
 
             this.model = model;
@@ -108,7 +105,7 @@ public class LibrarySkinOverride extends AbstractLibraryOverride<SkinEntry, Libr
             this.texture = null;
         }
 
-        public SkinEntry(String name, String id, @NotNull Identifier texture, PlayerSkin.Model model) {
+        public SkinEntry(String name, String id, @NotNull Identifier texture, Skin.Model model) {
             super(name, id);
 
             this.model = model;
@@ -117,16 +114,16 @@ public class LibrarySkinOverride extends AbstractLibraryOverride<SkinEntry, Libr
             this.texture = texture;
         }
 
-        public static Optional<SkinEntry> create(String name, Path path, PlayerSkin.Model model) {
+        public static Optional<SkinEntry> create(String name, Path path, Skin.Model model) {
             return createInternal(name, null, path, model);
         }
 
-        public static Optional<SkinEntry> create(String name, Identifier texture, PlayerSkin.Model model) {
+        public static Optional<SkinEntry> create(String name, Identifier texture, Skin.Model model) {
             return createInternal(name, texture, null, model);
         }
 
         private static Optional<SkinEntry> createInternal(String name, Identifier texture, Path path,
-                PlayerSkin.Model model) {
+                Skin.Model model) {
             try {
                 String id = Util.randomId();
                 File file = new File(LibrarySkinOverride.INSTANCE.libraryFolder(), id + ".png");
@@ -146,7 +143,7 @@ public class LibrarySkinOverride extends AbstractLibraryOverride<SkinEntry, Libr
             }
         }
 
-        public PlayerSkin.Model getModel() {
+        public Skin.Model getModel() {
             return this.model;
         }
 
@@ -167,7 +164,7 @@ public class LibrarySkinOverride extends AbstractLibraryOverride<SkinEntry, Libr
             JsonObject obj = new JsonObject();
             obj.addProperty("name", this.name);
             obj.addProperty("id", this.id);
-            obj.addProperty("model", this.model.equals(PlayerSkin.Model.WIDE) ? "wide" : "slim");
+            obj.addProperty("model", this.model.id());
             if (this.isFile) {
                 obj.addProperty("file", this.file.getName());
             } else {

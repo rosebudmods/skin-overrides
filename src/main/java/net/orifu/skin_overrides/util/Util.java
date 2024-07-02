@@ -9,10 +9,11 @@ import java.util.UUID;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.texture.NativeImage;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.AbstractTexture;
+import net.minecraft.client.util.Session;
 import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Mod;
 
@@ -46,6 +47,12 @@ public class Util {
 
     public static String randomId() {
         return UUID.randomUUID().toString();
+    }
+
+    public static String id(GameProfile profile) {
+        return MinecraftClient.getInstance().getSession().getAccountType() == Session.AccountType.MSA
+                ? profile.getId().toString()
+                : profile.getName();
     }
 
     public static Identifier texture(AbstractTexture texture) {
