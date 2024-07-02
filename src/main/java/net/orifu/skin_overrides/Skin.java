@@ -1,9 +1,11 @@
 package net.orifu.skin_overrides;
 
 import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import net.minecraft.client.MinecraftClient;
 //? if >=1.20.2
 import net.minecraft.client.texture.PlayerSkin;
+import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,20 +30,44 @@ public record Skin(
                 ? provider.loadSkin(skin, MinecraftProfileTexture.Type.SKIN)
                 : DefaultSkinHelper.getTexture(profile.getId());
 
-        return new PlayerSkin(
+        return new Skin(
                 skinId,
                 cape != null ? provider.loadSkin(cape, MinecraftProfileTexture.Type.CAPE) : null,
                 elytra != null ? provider.loadSkin(elytra, MinecraftProfileTexture.Type.ELYTRA) : null,
                 skin != null ? Model.parse(skin.getMetadata("model")) : Model.parse(DefaultSkinHelper.getModel(profile.getId()))
         );
-        *///?} else {
+        *///?} else
         return fromPlayerSkin(provider.getSkin(profile));
-        //?}
+        
     }
 
-    public static CompletableFuture<Skin> fetchProfile(GameProfile profile) {
+    public static CompletableFuture<Skin> fetchSkin(GameProfile profile) {
         var provider = MinecraftClient.getInstance().getSkinProvider();
 
+        //? if <1.20.2 {
+        /*CompletableFuture<Skin> future = new CompletableFuture<>();
+        provider.loadSkin(profile, (ty, id, tx) -> {
+            if (ty.equals(MinecraftProfileTexture.Type.SKIN)) {
+                future.complete(new Skin(id, null, null, Model.parse(tx.getMetadata("model"))));
+            }
+        }, false);
+        return future;
+        *///?} else
+        return provider.fetchSkin(profile).thenApply(Skin::fromPlayerSkin);
+    }
+
+    public static CompletableFuture<Skin> fetchCape(GameProfile profile) {
+        var provider = MinecraftClient.getInstance().getSkinProvider();
+
+        //? if <1.20.2 {
+        /*CompletableFuture<Skin> future = new CompletableFuture<>();
+        provider.loadSkin(profile, (ty, id, tx) -> {
+            if (ty.equals(MinecraftProfileTexture.Type.CAPE)) {
+                future.complete(new Skin(null, id, null, null));
+            }
+        }, false);
+        return future;
+        *///?} else
         return provider.fetchSkin(profile).thenApply(Skin::fromPlayerSkin);
     }
 

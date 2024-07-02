@@ -1,10 +1,7 @@
 package net.orifu.skin_overrides;
 
-import java.util.concurrent.CompletableFuture;
-
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.override.LibraryCapeOverride;
 import net.orifu.skin_overrides.override.LibrarySkinOverride;
@@ -38,10 +35,6 @@ public class Mod {
 
 	public static Skin getSkin(GameProfile profile) {
 		return overrideSkin(profile, Skin.fromProfile(profile));
-	}
-
-	public static CompletableFuture<Skin> fetchSkin(GameProfile profile) {
-		return Skin.fetchProfile(profile);
 	}
 
 	public static Skin overrideSkin(GameProfile profile, Skin skin) {

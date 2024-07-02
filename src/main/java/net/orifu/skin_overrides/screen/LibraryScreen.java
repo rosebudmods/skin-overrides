@@ -304,7 +304,9 @@ public class LibraryScreen extends Screen {
                     Text.translatable("skin_overrides.no_profile.title", this.searchBox.getText()),
                     Text.translatable("skin_overrides.no_profile.description")));
         } else {
-            this.adding = Mod.fetchSkin(maybeProfile.get());
+            this.adding = this.ov.skin()
+                    ? Skin.fetchSkin(maybeProfile.get())
+                    : Skin.fetchCape(maybeProfile.get());
             this.addingName = maybeProfile.get().getName();
             this.searchBox.setText("");
         }

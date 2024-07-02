@@ -79,16 +79,14 @@ public class ProfileHelper {
         //? if >=1.20.2 {
         return Arrays.stream(DefaultSkinHelper.DEFAULT_SKINS).map(Skin::fromPlayerSkin).toArray(Skin[]::new);
         //?} else {
-        /*ArrayList<PlayerSkin> skins = new ArrayList<>();
+        /*ArrayList<Skin> skins = new ArrayList<>();
         for (var skin : DefaultSkinHelper.DEFAULT_SKINS) {
-            skins.add(new PlayerSkin(
-                    skin.texture(), null,
-                    null, null,
+            skins.add(new Skin(
+                    skin.texture(), null, null,
                     skin.model().equals(DefaultSkinHelper.ModelType.WIDE)
-                            ? PlayerSkin.Model.WIDE : PlayerSkin.Model.SLIM,
-                    false));
+                            ? Skin.Model.WIDE : Skin.Model.SLIM));
         }
-        return skins.toArray(PlayerSkin[]::new);
+        return skins.toArray(Skin[]::new);
         *///?}
     }
 
