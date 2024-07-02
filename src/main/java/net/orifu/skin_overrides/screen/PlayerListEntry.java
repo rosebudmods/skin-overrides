@@ -33,10 +33,10 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
             int mouseY, boolean hovered, float tickDelta) {
         // draw player face/cape
         if (this.ov.skin()) {
-            PlayerSkinRenderer.drawFace(graphics, Mod.getSkin(this.profile), x, y, 4);
+            PlayerSkinRenderer.drawFace(graphics, Mod.override(this.profile), x, y, 4);
         } else {
             int capeX = x + (32 - PlayerCapeRenderer.WIDTH * 2) / 2;
-            PlayerCapeRenderer.draw(graphics, Mod.getSkin(this.profile), capeX, y, 2);
+            PlayerCapeRenderer.draw(graphics, Mod.override(this.profile), capeX, y, 2);
         }
 
         // draw player name

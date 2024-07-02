@@ -6,6 +6,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
+//? if >=1.20.2
+import com.mojang.authlib.yggdrasil.ProfileResult;
 import com.mojang.util.UUIDTypeAdapter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.DefaultSkinHelper;
@@ -68,11 +70,10 @@ public class ProfileHelper {
                 /*? >=1.20.2 {*/ .fetchProfile(uuid, false);
                 /*?} else*/ /*.fillProfileProperties(new GameProfile(uuid, null), false);*/
 
-        if (profileResult == null) {
-            return Optional.empty();
-        }
-
-        return Optional.of(profileResult /*? >=1.20.2 >>*/.profile() );
+        //? if >=1.20.2 {
+        return Optional.ofNullable(profileResult).map(ProfileResult::profile);
+        //?} else
+        /*return profileResult.getName() != null ? Optional.of(profileResult) : Optional.empty();*/
     }
 
     public static Skin[] getDefaultSkins() {

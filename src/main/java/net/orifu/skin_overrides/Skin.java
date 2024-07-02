@@ -71,6 +71,14 @@ public record Skin(
         return provider.fetchSkin(profile).thenApply(Skin::fromPlayerSkin);
     }
 
+    public Skin withSkin(Identifier skin, Model model) {
+        return new Skin(skin, this.capeTexture, this.elytraTexture, model);
+    }
+
+    public Skin withCape(Identifier cape) {
+        return new Skin(this.texture, cape, null, this.model);
+    }
+
     //? if >=1.20.2 {
     public static Skin fromPlayerSkin(PlayerSkin skin) {
         return new Skin(skin.texture(), skin.capeTexture(), skin.elytraTexture(), Model.from(skin.model()));

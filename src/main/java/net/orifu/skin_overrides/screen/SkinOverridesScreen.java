@@ -164,7 +164,7 @@ public class SkinOverridesScreen extends Screen {
 
         if (this.selectedProfile != null) {
             // draw skin/cape preview
-            Skin skin = Mod.getSkin(this.selectedProfile);
+            Skin skin = Mod.override(this.selectedProfile);
             if (this.ov.skin()) {
                 PlayerSkinRenderer.draw(graphics, skin, this.previewFrame.getX(), this.previewFrame.getY(),
                         PREVIEW_SCALE);
@@ -232,7 +232,7 @@ public class SkinOverridesScreen extends Screen {
     protected void addToLibrary() {
         String guessedName = this.selectedProfile.getName();
 
-        var playerSkin = Mod.getSkin(this.selectedProfile);
+        Skin playerSkin = Mod.override(this.selectedProfile);
         var texture = this.ov.skin() ? playerSkin.texture() : playerSkin.capeTexture();
         Consumer<String> callback = name -> {
             // create the library entry
