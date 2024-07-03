@@ -1,15 +1,5 @@
 package net.orifu.skin_overrides.override;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -20,6 +10,16 @@ import net.orifu.skin_overrides.Library;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.util.Util;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractLibraryOverride<E extends LibraryEntry, T extends AbstractLibraryTexture>
         extends AbstractOverride<E, T> implements Library {

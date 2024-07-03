@@ -1,9 +1,9 @@
 package net.orifu.skin_overrides.screen;
 
-import java.util.ArrayList;
-
 import net.minecraft.client.MinecraftClient;
 import net.orifu.skin_overrides.override.Overridden;
+
+import java.util.ArrayList;
 
 public class LibraryListWidget extends AlwaysSelectedEntryGridWidget<LibraryListEntry> {
     private final LibraryScreen parent;

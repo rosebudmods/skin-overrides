@@ -11,6 +11,7 @@ var mcVersion = property("deps.minecraft")
 version = "${project.version}+${mcVersion}"
 group = project.maven_group
 
+var hasUi = stonecutter.compare(mcVersion, "1.19.4") >= 0;
 var awVersion =
 		stonecutter.compare(mcVersion, "1.20.2") >= 0
 				? "1.20.2"
@@ -45,13 +46,33 @@ repositories {
 	// }
 }
 
+sourceSets.create('override') {
+	compileClasspath += sourceSets.main.compileClasspath
+	runtimeClasspath += sourceSets.main.runtimeClasspath
+}
+
+sourceSets.create('ui') {
+	compileClasspath += sourceSets.main.compileClasspath + sourceSets.override.output
+	runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.override.output
+}
+
+sourceSets.main.compileClasspath += sourceSets.override.output
+sourceSets.main.runtimeClasspath += sourceSets.override.output
+
+if (hasUi) {
+	sourceSets.main.compileClasspath += sourceSets.ui.output
+	sourceSets.main.runtimeClasspath += sourceSets.ui.output
+}
+
 loom {
 	// Loom and Loader both use this block in order to gather more information about your mod.
 	mods {
 		// This should match your mod id.
 		"skin_overrides" {
 			// Tell Loom about each source set used by your mod here. This ensures that your mod's classes are properly transformed by Loader.
-			sourceSet("main")
+			sourceSet sourceSets.main
+			sourceSet sourceSets.ui
+
 			// If you shade (directly include classes, not JiJ) a dependency into your mod, include it here using one of these methods:
 			// dependency("com.example.shadowedmod:1.2.3")
 			// configuration("exampleShadedConfigurationName")

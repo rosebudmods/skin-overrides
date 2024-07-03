@@ -1,10 +1,5 @@
 package net.orifu.skin_overrides.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.UUID;
-
 import com.mojang.authlib.GameProfile;
 //? if >=1.20.2
 import com.mojang.authlib.yggdrasil.ProfileResult;
@@ -15,6 +10,11 @@ import net.minecraft.server.Services;
 import net.minecraft.util.UserCache;
 import net.minecraft.util.UuidUtil;
 import net.orifu.skin_overrides.Skin;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.UUID;
 
 public class ProfileHelper {
     public static final String UUID_REGEX = "[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{12}";

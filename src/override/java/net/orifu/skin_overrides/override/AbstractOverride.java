@@ -1,5 +1,10 @@
 package net.orifu.skin_overrides.override;
 
+import com.mojang.authlib.GameProfile;
+import net.orifu.skin_overrides.Mod;
+import net.orifu.skin_overrides.util.OverrideFiles;
+import net.orifu.skin_overrides.util.OverrideFiles.Validated;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -7,12 +12,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
-
-import com.mojang.authlib.GameProfile;
-
-import net.orifu.skin_overrides.Mod;
-import net.orifu.skin_overrides.util.OverrideFiles;
-import net.orifu.skin_overrides.util.OverrideFiles.Validated;
 
 public abstract class AbstractOverride<E, T> {
     public abstract String rootFolder();

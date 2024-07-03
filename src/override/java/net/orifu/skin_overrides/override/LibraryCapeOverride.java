@@ -1,19 +1,7 @@
 package net.orifu.skin_overrides.override;
 
-import static net.orifu.skin_overrides.Mod.CAPE_OVERRIDES;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Optional;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Mod;
@@ -22,6 +10,16 @@ import net.orifu.skin_overrides.texture.LibraryCapeTexture;
 import net.orifu.skin_overrides.texture.LocalPlayerTexture;
 import net.orifu.skin_overrides.util.OverrideFiles.Validated;
 import net.orifu.skin_overrides.util.Util;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Optional;
+
+import static net.orifu.skin_overrides.Mod.CAPE_OVERRIDES;
 
 public class LibraryCapeOverride extends AbstractLibraryOverride<CapeEntry, LibraryCapeTexture> {
     public static final LibraryCapeOverride INSTANCE = new LibraryCapeOverride();
