@@ -4,13 +4,13 @@ import java.util.function.Consumer;
 
 import com.mojang.blaze3d.platform.InputUtil;
 import net.minecraft.client.font.MultilineText;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.text.CommonTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
+import net.orifu.skin_overrides.xplat.CommonTexts;
+import net.orifu.skin_overrides.xplat.gui.GuiGraphics;
 import net.orifu.skin_overrides.xplat.gui.Screen;
 import net.orifu.skin_overrides.xplat.gui.widget.ButtonWidget;
 import net.orifu.skin_overrides.xplat.gui.widget.LinearLayoutWidget;
@@ -129,12 +129,18 @@ public class OverrideInfoEntryScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        super.render(graphics, mouseX, mouseY, delta);
+        //? if <1.20.2
+        /*this.renderBackground(graphics.portable());*/
+        this.renderSuper(graphics, mouseX, mouseY, delta);
 
-        //? if >=1.20.6 {
-        this.message.drawWithShadow(graphics, this.width / 2, this.getMessageY(), 8, 0xffffff);
-        //?} else
-         /*this.message.render(graphics, this.width / 2, this.getMessageY());*/ 
+        //? if =1.21 {
+        this.message.method_30889(graphics.portable(), this.width / 2, this.getMessageY(), 8, 0xffffff);
+        //?} else if =1.20.6 {
+        /*this.message.render(graphics.portable(), this.width / 2, this.getMessageY());
+        *///?} else if >=1.20.1 {
+        /*this.message.render(graphics.portable(), this.width / 2, this.getMessageY());
+        *///?} else
+        /*this.message.drawCenterWithShadow(graphics.portable(), this.width / 2, this.getMessageY());*/
 
         if (this.wantsModel) {
             PlayerSkinRenderer.draw(graphics, this.texture, Skin.Model.WIDE,

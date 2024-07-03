@@ -6,17 +6,14 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import com.mojang.authlib.GameProfile;
+import net.minecraft.client.gui.screen.ScreenArea;
+import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.util.ProfileHelper;
+import net.orifu.skin_overrides.xplat.CommonTexts;
+import net.orifu.skin_overrides.xplat.gui.GuiGraphics;
 import net.orifu.skin_overrides.xplat.gui.Screen;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screen.ScreenArea;
-import net.minecraft.client.gui.tab.Tab;
-import net.minecraft.client.gui.tab.TabManager;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.HeaderBar;
-import net.minecraft.text.CommonTexts;
-import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.override.Overridden;
@@ -26,10 +23,13 @@ import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.skin_overrides.util.Util;
+import net.orifu.skin_overrides.xplat.gui.tab.Tab;
+import net.orifu.skin_overrides.xplat.gui.tab.TabManager;
 import net.orifu.skin_overrides.xplat.gui.widget.ButtonWidget;
 import net.orifu.skin_overrides.xplat.gui.widget.FrameWidget;
 import net.orifu.skin_overrides.xplat.gui.widget.GridWidget;
 import net.orifu.skin_overrides.xplat.gui.LayoutSettings;
+import net.orifu.skin_overrides.xplat.gui.widget.HeaderBar;
 import net.orifu.skin_overrides.xplat.gui.widget.HeaderFooterLayoutWidget;
 import net.orifu.skin_overrides.xplat.gui.widget.LinearLayoutWidget;
 import net.orifu.skin_overrides.xplat.gui.widget.TextFieldWidget;
@@ -159,8 +159,8 @@ public class SkinOverridesScreen extends Screen {
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         //? if <1.20.2
-        /*this.renderBackground(graphics);*/
-        super.render(graphics, mouseX, mouseY, delta);
+        /*this.renderBackground(graphics.portable());*/
+        this.renderSuper(graphics, mouseX, mouseY, delta);
 
         if (this.selectedProfile != null) {
             // draw skin/cape preview

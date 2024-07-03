@@ -100,6 +100,6 @@ public class LibraryListWidget extends AlwaysSelectedEntryGridWidget<LibraryList
 
     @Override
     public int getScrollbarPositionX() {
-        return this.getXEnd() - this.scrollbarWidth();
+        return this.getXEnd() - SCROLLBAR_WIDTH;
     }
 }

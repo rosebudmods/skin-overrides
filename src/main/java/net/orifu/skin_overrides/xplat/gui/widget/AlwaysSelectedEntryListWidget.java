@@ -3,11 +3,12 @@ package net.orifu.skin_overrides.xplat.gui.widget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.ScreenArea;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.client.util.math.MatrixStack;
+import net.orifu.skin_overrides.xplat.gui.GuiGraphics;
 
 import java.util.function.Consumer;
 
@@ -15,6 +16,9 @@ public abstract class AlwaysSelectedEntryListWidget
         <E extends AlwaysSelectedEntryListWidget.Entry<E>>
         extends /*? if >=1.20.2 {*/ net.minecraft.client.gui.widget.list.AlwaysSelectedEntryListWidget<E>
         /*?} else >>*/ /*net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget<E>*/ {
+    //? if <1.20.2
+    /*public static final int SCROLLBAR_WIDTH = 6;*/
+
     private final ListWidgetShim shim = new ListWidgetShim();
 
     public AlwaysSelectedEntryListWidget(MinecraftClient client, int width, int height, int y, int itemHeight) {
@@ -38,8 +42,34 @@ public abstract class AlwaysSelectedEntryListWidget
     }
 
     @Override
-    protected void method_25311(GuiGraphics graphics, int i, int j, float f) {
-        this.renderList(graphics, i, j, f);
+    protected void method_25311(net.minecraft.client.gui.GuiGraphics graphics, int i, int j, float f) {
+        this.renderList(new GuiGraphics(graphics), i, j, f);
+    }
+    //?} else {
+    /*protected void renderList(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+        super.renderList(graphics.portable(), mouseX, mouseY, delta);
+    }
+    *///?}
+
+    protected void renderEntry(GuiGraphics graphics, int mouseX, int mouseY, float delta,
+                               int index, int x, int y, int width, int height) {
+        super.renderEntry(graphics.portable(), mouseX, mouseY, delta, index, x, y, width, height);
+    }
+
+    //? if <1.20.1 {
+    /*@Override
+    protected void renderList(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        this.renderList(new GuiGraphics(matrices), mouseX, mouseY, delta);
+    }
+
+    @Override
+    protected void renderEntry(MatrixStack matrices, int mouseX, int mouseY, float delta, int index, int x, int y, int width, int height) {
+        this.renderEntry(new GuiGraphics(matrices), mouseX, mouseY, delta, index, x, y, width, height);
+    }
+    *///?} else {
+    @Override
+    protected void renderEntry(net.minecraft.client.gui.GuiGraphics graphics, int mouseX, int mouseY, float delta, int index, int x, int y, int width, int height) {
+        this.renderEntry(new GuiGraphics(graphics), mouseX, mouseY, delta, index, x, y, width, height);
     }
     //?}
 
@@ -48,8 +78,16 @@ public abstract class AlwaysSelectedEntryListWidget
         return this.left;
     }
 
+    public int getXEnd() {
+        return this.right;
+    }
+
     public int getY() {
         return this.top;
+    }
+
+    public int getYEnd() {
+        return this.bottom;
     }
 
     public int getWidth() {
@@ -118,5 +156,21 @@ public abstract class AlwaysSelectedEntryListWidget
     public static abstract class Entry<E extends AlwaysSelectedEntryListWidget.Entry<E>>
             extends /*? if >=1.20.2 {*/ net.minecraft.client.gui.widget.list.AlwaysSelectedEntryListWidget.Entry<E>
             /*?} else >>*/ /*net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget.Entry<E>*/ {
+        public abstract void render(GuiGraphics graphics, int index, int y, int x, int entryWidth, int entryHeight, int mouseX,
+                int mouseY, boolean hovered, float tickDelta);
+
+        //? if <1.20.1 {
+        /*@Override
+        public final void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX,
+                int mouseY, boolean hovered, float tickDelta) {
+            this.render(new GuiGraphics(matrices), index, y, x, entryWidth, entryHeight, mouseX, mouseY, hovered, tickDelta);
+        }
+        *///?} else {
+        @Override
+        public final void render(net.minecraft.client.gui.GuiGraphics graphics, int index, int y, int x, int entryWidth, int entryHeight, int mouseX,
+                int mouseY, boolean hovered, float tickDelta) {
+            this.render(new GuiGraphics(graphics), index, y, x, entryWidth, entryHeight, mouseX, mouseY, hovered, tickDelta);
+        }
+        //?}
     }
 }

@@ -1,8 +1,8 @@
 package net.orifu.skin_overrides.screen;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.math.MathHelper;
+import net.orifu.skin_overrides.xplat.gui.GuiGraphics;
 import net.orifu.skin_overrides.xplat.gui.widget.AlwaysSelectedEntryListWidget;
 import net.orifu.skin_overrides.xplat.gui.widget.AlwaysSelectedEntryListWidget.Entry;
 import org.jetbrains.annotations.Nullable;
@@ -63,14 +63,14 @@ public abstract class AlwaysSelectedEntryGridWidget<E extends Entry<E>> extends 
         E entry = this.getEntry(index);
         boolean isHovered = this.getHoveredEntry() != null && this.getHoveredEntry().equals(entry);
 
-        entry.drawBorder(graphics, index, y, x, width, height, mouseX, mouseY, isHovered, delta);
+        entry.drawBorder(graphics.portable(), index, y, x, width, height, mouseX, mouseY, isHovered, delta);
 
         if (this.isSelectedEntry(index)) {
             int borderColor = this.isFocused() ? 0xff_ffffff : 0xff_808080;
             this.drawEntrySelectionHighlight(graphics, x, y, borderColor, 0xff_000000);
         }
 
-        entry.render(graphics, index, y, x, width, height, mouseX, mouseY, isHovered, delta);
+        entry.render(graphics.portable(), index, y, x, width, height, mouseX, mouseY, isHovered, delta);
     }
 
     protected void drawEntrySelectionHighlight(GuiGraphics graphics, int x, int y, int borderColor, int fillColor) {
@@ -122,21 +122,4 @@ public abstract class AlwaysSelectedEntryGridWidget<E extends Entry<E>> extends 
         // old bad method
         throw new UnsupportedOperationException();
     }
-
-    protected int scrollbarWidth() {
-        //? if >=1.20.2 {
-        return SCROLLBAR_WIDTH;
-        //?} else
-        /*return 6;*/
-    }
-
-    /*? if <1.20.4 {*/
-    /*public int getXEnd() {
-        return this.right;
-    }
-
-    public int getYEnd() {
-        return this.bottom;
-    }
-    *//*?}*/
 }

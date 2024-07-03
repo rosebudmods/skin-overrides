@@ -11,7 +11,12 @@ var mcVersion = property("deps.minecraft")
 version = "${project.version}+${mcVersion}"
 group = project.maven_group
 
-var awVersion = stonecutter.compare(mcVersion, "1.20.2") >= 0 ? "1.20.2" : "1.20.1";
+var awVersion =
+		stonecutter.compare(mcVersion, "1.20.2") >= 0
+				? "1.20.2"
+		: stonecutter.compare(mcVersion, "1.20.1") >= 0
+				? "1.20.1"
+				: "1.19.4";
 
 if (stonecutter.current.isActive) {
 	rootProject.tasks.register('client') {

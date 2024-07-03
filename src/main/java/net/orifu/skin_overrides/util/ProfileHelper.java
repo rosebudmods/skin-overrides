@@ -81,10 +81,10 @@ public class ProfileHelper {
         return Arrays.stream(DefaultSkinHelper.DEFAULT_SKINS).map(Skin::fromPlayerSkin).toArray(Skin[]::new);
         //?} else {
         /*ArrayList<Skin> skins = new ArrayList<>();
-        for (var skin : DefaultSkinHelper.DEFAULT_SKINS) {
+        for (var skin : DefaultSkinHelper. /^? if >=1.20.1 {^/ /^DEFAULT_SKINS ^//^?} else >>^/ field_41121 ) {
             skins.add(new Skin(
                     skin.texture(), null, null,
-                    skin.model().equals(DefaultSkinHelper.ModelType.WIDE)
+                    skin.model().equals(DefaultSkinHelper. /^? if >=1.20.1 {^/ /^ModelType ^//^?} else >>^/ C_pdcbqpco .WIDE)
                             ? Skin.Model.WIDE : Skin.Model.SLIM));
         }
         return skins.toArray(Skin[]::new);

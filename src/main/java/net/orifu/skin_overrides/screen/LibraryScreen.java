@@ -1,17 +1,9 @@
 package net.orifu.skin_overrides.screen;
 
-import java.nio.file.Path;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
-
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.toast.SystemToast;
-import net.minecraft.text.CommonTexts;
 import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Library.LibraryEntry;
-import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.override.Overridden;
 import net.orifu.skin_overrides.override.LibraryCapeOverride.CapeEntry;
@@ -22,6 +14,8 @@ import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.Util;
+import net.orifu.skin_overrides.xplat.CommonTexts;
+import net.orifu.skin_overrides.xplat.gui.GuiGraphics;
 import net.orifu.skin_overrides.xplat.gui.LayoutSettings;
 import net.orifu.skin_overrides.xplat.gui.Screen;
 import net.orifu.skin_overrides.xplat.gui.widget.ButtonWidget;
@@ -31,6 +25,11 @@ import net.orifu.skin_overrides.xplat.gui.widget.TextFieldWidget;
 import net.orifu.skin_overrides.xplat.gui.widget.TextWidget;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.Nullable;
+
+import java.nio.file.Path;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 public class LibraryScreen extends Screen {
     private static final Text TITLE = Text.translatable("skin_overrides.library.title");
@@ -198,8 +197,8 @@ public class LibraryScreen extends Screen {
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         //? if <1.20.2
-        /*this.renderBackground(graphics);*/
-        super.render(graphics, mouseX, mouseY, delta);
+        /*this.renderBackground(graphics.portable());*/
+        this.renderSuper(graphics, mouseX, mouseY, delta);
 
         if (this.selectedEntry != null) {
             if (this.selectedEntry.entry instanceof SkinEntry entry) {
