@@ -1,4 +1,4 @@
-package net.orifu.skin_overrides.xplat.gui;
+package net.orifu.xplat.gui;
 
 public class LayoutSettings {
     public static

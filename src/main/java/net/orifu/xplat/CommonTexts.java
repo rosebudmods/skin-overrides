@@ -1,4 +1,4 @@
-package net.orifu.skin_overrides.xplat;
+package net.orifu.xplat;
 
 public class CommonTexts extends
         /*? if >=1.20.1 {*/ net.minecraft.text.CommonTexts

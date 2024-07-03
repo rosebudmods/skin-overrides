@@ -9,12 +9,12 @@ import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
-import net.orifu.skin_overrides.xplat.CommonTexts;
-import net.orifu.skin_overrides.xplat.gui.GuiGraphics;
-import net.orifu.skin_overrides.xplat.gui.Screen;
-import net.orifu.skin_overrides.xplat.gui.widget.ButtonWidget;
-import net.orifu.skin_overrides.xplat.gui.widget.LinearLayoutWidget;
-import net.orifu.skin_overrides.xplat.gui.widget.TextFieldWidget;
+import net.orifu.xplat.CommonTexts;
+import net.orifu.xplat.gui.GuiGraphics;
+import net.orifu.xplat.gui.Screen;
+import net.orifu.xplat.gui.widget.ButtonWidget;
+import net.orifu.xplat.gui.widget.LinearLayoutWidget;
+import net.orifu.xplat.gui.widget.TextFieldWidget;
 import org.jetbrains.annotations.Nullable;
 
 public class OverrideInfoEntryScreen extends Screen {

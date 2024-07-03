@@ -1,4 +1,4 @@
-package net.orifu.skin_overrides.xplat.gui.tab;
+package net.orifu.xplat.gui.tab;
 
 import net.minecraft.client.gui.widget.ClickableWidget;
 

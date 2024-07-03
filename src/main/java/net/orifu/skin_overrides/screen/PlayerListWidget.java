@@ -7,7 +7,7 @@ import net.minecraft.client.MinecraftClient;
 import net.orifu.skin_overrides.override.Overridden;
 import net.orifu.skin_overrides.screen.PlayerListEntry.Type;
 import net.orifu.skin_overrides.util.ProfileHelper;
-import net.orifu.skin_overrides.xplat.gui.widget.AlwaysSelectedEntryListWidget;
+import net.orifu.xplat.gui.widget.AlwaysSelectedEntryListWidget;
 
 public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEntry> {
     private static final int PADDING = 8;

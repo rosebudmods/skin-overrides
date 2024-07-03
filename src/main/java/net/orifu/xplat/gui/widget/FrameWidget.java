@@ -1,4 +1,4 @@
-package net.orifu.skin_overrides.xplat.gui.widget;
+package net.orifu.xplat.gui.widget;
 
 public class FrameWidget extends
         /*? if >=1.20.2 {*/ net.minecraft.client.gui.widget.layout.FrameWidget

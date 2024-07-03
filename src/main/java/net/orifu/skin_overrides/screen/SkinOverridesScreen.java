@@ -1,41 +1,41 @@
 package net.orifu.skin_overrides.screen;
 
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
-
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.gui.screen.ScreenArea;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
-import net.orifu.skin_overrides.Skin;
-import net.orifu.skin_overrides.util.ProfileHelper;
-import net.orifu.skin_overrides.xplat.CommonTexts;
-import net.orifu.skin_overrides.xplat.gui.GuiGraphics;
-import net.orifu.skin_overrides.xplat.gui.Screen;
-import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Library.LibraryEntry;
+import net.orifu.skin_overrides.Mod;
+import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.override.Overridden;
 import net.orifu.skin_overrides.override.LibraryCapeOverride.CapeEntry;
 import net.orifu.skin_overrides.override.LibrarySkinOverride.SkinEntry;
 import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
+import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.Util;
-import net.orifu.skin_overrides.xplat.gui.tab.Tab;
-import net.orifu.skin_overrides.xplat.gui.tab.TabManager;
-import net.orifu.skin_overrides.xplat.gui.widget.ButtonWidget;
-import net.orifu.skin_overrides.xplat.gui.widget.FrameWidget;
-import net.orifu.skin_overrides.xplat.gui.widget.GridWidget;
-import net.orifu.skin_overrides.xplat.gui.LayoutSettings;
-import net.orifu.skin_overrides.xplat.gui.widget.HeaderBar;
-import net.orifu.skin_overrides.xplat.gui.widget.HeaderFooterLayoutWidget;
-import net.orifu.skin_overrides.xplat.gui.widget.LinearLayoutWidget;
-import net.orifu.skin_overrides.xplat.gui.widget.TextFieldWidget;
-import net.orifu.skin_overrides.xplat.gui.widget.TextWidget;
+import net.orifu.xplat.gui.tab.Tab;
+import net.orifu.xplat.gui.tab.TabManager;
+import net.orifu.xplat.gui.widget.ButtonWidget;
+import net.orifu.xplat.gui.widget.FrameWidget;
+import net.orifu.xplat.gui.widget.GridWidget;
+import net.orifu.xplat.gui.widget.HeaderBar;
+import net.orifu.xplat.gui.widget.HeaderFooterLayoutWidget;
+import net.orifu.xplat.gui.widget.LinearLayoutWidget;
+import net.orifu.xplat.gui.widget.TextFieldWidget;
+import net.orifu.xplat.gui.widget.TextWidget;
+import net.orifu.xplat.gui.GuiGraphics;
+import net.orifu.xplat.gui.LayoutSettings;
+import net.orifu.xplat.gui.Screen;
+import net.orifu.xplat.CommonTexts;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.Nullable;
+
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 public class SkinOverridesScreen extends Screen {
     private static final Text TITLE = Text.translatable("skin_overrides.title");

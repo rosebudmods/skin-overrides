@@ -9,9 +9,9 @@ import net.orifu.skin_overrides.override.Overridden;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.skin_overrides.util.ProfileHelper;
-import net.orifu.skin_overrides.xplat.TextUtil;
-import net.orifu.skin_overrides.xplat.gui.GuiGraphics;
-import net.orifu.skin_overrides.xplat.gui.widget.AlwaysSelectedEntryListWidget.Entry;
+import net.orifu.xplat.TextUtil;
+import net.orifu.xplat.gui.GuiGraphics;
+import net.orifu.xplat.gui.widget.AlwaysSelectedEntryListWidget.Entry;
 
 public class PlayerListEntry extends Entry<PlayerListEntry> {
     private final MinecraftClient client;

@@ -1,7 +1,7 @@
-package net.orifu.skin_overrides.xplat.gui.widget;
+package net.orifu.xplat.gui.widget;
 
-import net.orifu.skin_overrides.xplat.gui.tab.Tab;
-import net.orifu.skin_overrides.xplat.gui.tab.TabManager;
+import net.orifu.xplat.gui.tab.Tab;
+import net.orifu.xplat.gui.tab.TabManager;
 
 import java.util.ArrayList;
 import java.util.Collections;

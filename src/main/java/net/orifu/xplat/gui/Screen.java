@@ -1,4 +1,4 @@
-package net.orifu.skin_overrides.xplat.gui;
+package net.orifu.xplat.gui;
 
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;

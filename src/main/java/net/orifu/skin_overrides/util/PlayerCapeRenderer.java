@@ -2,7 +2,7 @@ package net.orifu.skin_overrides.util;
 
 import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Skin;
-import net.orifu.skin_overrides.xplat.gui.GuiGraphics;
+import net.orifu.xplat.gui.GuiGraphics;
 
 public class PlayerCapeRenderer {
     public static final int WIDTH = 10;

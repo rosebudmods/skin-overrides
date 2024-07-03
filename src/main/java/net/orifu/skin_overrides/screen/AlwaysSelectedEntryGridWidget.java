@@ -2,9 +2,9 @@ package net.orifu.skin_overrides.screen;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.math.MathHelper;
-import net.orifu.skin_overrides.xplat.gui.GuiGraphics;
-import net.orifu.skin_overrides.xplat.gui.widget.AlwaysSelectedEntryListWidget;
-import net.orifu.skin_overrides.xplat.gui.widget.AlwaysSelectedEntryListWidget.Entry;
+import net.orifu.xplat.gui.GuiGraphics;
+import net.orifu.xplat.gui.widget.AlwaysSelectedEntryListWidget;
+import net.orifu.xplat.gui.widget.AlwaysSelectedEntryListWidget.Entry;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class AlwaysSelectedEntryGridWidget<E extends Entry<E>> extends AlwaysSelectedEntryListWidget<E> {

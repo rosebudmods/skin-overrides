@@ -3,7 +3,7 @@ package net.orifu.skin_overrides.util;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Skin;
-import net.orifu.skin_overrides.xplat.gui.GuiGraphics;
+import net.orifu.xplat.gui.GuiGraphics;
 
 public class PlayerSkinRenderer {
     public static final int HEAD_SIZE = 8;

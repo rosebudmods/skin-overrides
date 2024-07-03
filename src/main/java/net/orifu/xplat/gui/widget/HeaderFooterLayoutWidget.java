@@ -1,4 +1,4 @@
-package net.orifu.skin_overrides.xplat.gui.widget;
+package net.orifu.xplat.gui.widget;
 
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;

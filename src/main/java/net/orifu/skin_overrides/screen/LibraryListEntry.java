@@ -6,8 +6,8 @@ import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.override.LibrarySkinOverride.SkinEntry;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
-import net.orifu.skin_overrides.xplat.gui.GuiGraphics;
-import net.orifu.skin_overrides.xplat.gui.widget.AlwaysSelectedEntryListWidget.Entry;
+import net.orifu.xplat.gui.GuiGraphics;
+import net.orifu.xplat.gui.widget.AlwaysSelectedEntryListWidget.Entry;
 
 public class LibraryListEntry extends Entry<LibraryListEntry> {
     public static final int SKIN_WIDTH = PlayerSkinRenderer.WIDTH * 2;

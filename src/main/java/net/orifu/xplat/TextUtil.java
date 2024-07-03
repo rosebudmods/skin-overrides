@@ -1,4 +1,4 @@
-package net.orifu.skin_overrides.xplat;
+package net.orifu.xplat;
 
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;

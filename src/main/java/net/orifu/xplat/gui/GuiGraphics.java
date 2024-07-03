@@ -1,4 +1,4 @@
-package net.orifu.skin_overrides.xplat.gui;
+package net.orifu.xplat.gui;
 
 //? if >=1.20.1 {
 import net.minecraft.client.MinecraftClient;
