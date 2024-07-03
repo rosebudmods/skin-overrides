@@ -9,6 +9,7 @@ import net.orifu.skin_overrides.override.Overridden;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.skin_overrides.util.ProfileHelper;
+import net.orifu.skin_overrides.xplat.TextUtil;
 import net.orifu.skin_overrides.xplat.gui.GuiGraphics;
 import net.orifu.skin_overrides.xplat.gui.widget.AlwaysSelectedEntryListWidget.Entry;
 
@@ -69,7 +70,7 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
 
         var skinOverride = this.ov.library().getOverride(this.profile);
         if (skinOverride.isPresent()) {
-            return Text.translatable("skin_overrides.override.library", skinOverride.get().name)
+            return TextUtil.translatable("skin_overrides.override.library", skinOverride.get().name)
                     .formatted(Formatting.GREEN);
         }
 
