@@ -79,7 +79,7 @@ public class ProfileHelper {
     public static Skin[] getDefaultSkins() {
         //? if >=1.20.2 {
         return Arrays.stream(DefaultSkinHelper.DEFAULT_SKINS).map(Skin::fromPlayerSkin).toArray(Skin[]::new);
-        //?} else if >=1.19.4 {
+        //?} else if >=1.19.3 {
         /*ArrayList<Skin> skins = new ArrayList<>();
         for (var skin : DefaultSkinHelper. /^? if >=1.20.1 {^/ /^DEFAULT_SKINS ^//^?} else >>^/ field_41121 ) {
             skins.add(new Skin(
