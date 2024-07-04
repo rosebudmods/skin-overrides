@@ -126,6 +126,10 @@ jar {
 	from('LICENSE') {
 		rename { "${it}_${base.archivesName.get()}" }
 	}
+
+	exclude {
+		it.name.endsWith('.accesswidener') && it.name != "${awVersion}.accesswidener"
+	}
 }
 
 // Configure the maven publication
