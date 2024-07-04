@@ -10,7 +10,10 @@ import java.util.UUID;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
+//? if >=1.19.2 {
 import com.mojang.blaze3d.texture.NativeImage;
+//?} else
+/*import net.minecraft.client.texture.NativeImage;*/
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.client.util.Session;
@@ -65,7 +68,8 @@ public class Util {
         MinecraftClient.getInstance().getTextureManager().bindTexture(texture);
         NativeImage img = new NativeImage(w, h, false);
         img.loadFromTextureImage(0, false);
-        img.writeFile(path);
+        /*? if >=1.19.2 {*/ img.writeFile(path);
+        /*?} else*/ /*img.writeTo(path);*/
         img.close();
     }
 }

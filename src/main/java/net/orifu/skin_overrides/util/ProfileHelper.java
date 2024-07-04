@@ -6,15 +6,22 @@ import com.mojang.authlib.yggdrasil.ProfileResult;
 import com.mojang.util.UUIDTypeAdapter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.DefaultSkinHelper;
+//? if >=1.19.2 {
 import net.minecraft.server.Services;
+//?} else
+/*import net.minecraft.util.ApiServices;*/
 import net.minecraft.util.UserCache;
-import net.minecraft.util.UuidUtil;
 import net.orifu.skin_overrides.Skin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
+
+//? if >=1.19.2 {
+import static net.minecraft.util.UuidUtil.getOfflinePlayerUuid;
+//?} else
+/*import static net.minecraft.util.dynamic.DynamicSerializableUuid.getOfflinePlayerUuid;*/
 
 public class ProfileHelper {
     public static final String UUID_REGEX = "[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{12}";
@@ -51,7 +58,7 @@ public class ProfileHelper {
         return profile.orElseGet(() ->
                 /*? if >=1.20.6 {*/ UuidUtil.createOfflinePlayerProfile(id)
                  /*?} else if =1.20.4 {*/ /*UuidUtil.method_54140(id)
-                *//*?} else*/ /*new GameProfile(UuidUtil.getOfflinePlayerUuid(id), id)*/
+                *//*?} else*/ /*new GameProfile(getOfflinePlayerUuid(id), id)*/
         );
     }
 
@@ -102,7 +109,11 @@ public class ProfileHelper {
         }
 
         MinecraftClient client = MinecraftClient.getInstance();
+        //? if >=1.19.2 {
         Services services = Services.create(client.authService, client.runDirectory);
+        //?} else {
+        /*ApiServices services = ApiServices.create(client.authenticationService, client.runDirectory);
+        *///?}
         userCache = services.userCache();
         return userCache;
     }

@@ -13,13 +13,10 @@ group = project.maven_group
 
 var hasUi = stonecutter.compare(mcVersion, "1.19.4") >= 0;
 var awVersion =
-		stonecutter.compare(mcVersion, "1.20.2") >= 0
-				? "1.20.2"
-		: stonecutter.compare(mcVersion, "1.20.1") >= 0
-				? "1.20.1"
-		: stonecutter.compare(mcVersion, "1.19.3") >= 0
-				? "1.19.3"
-				: "1.19.2";
+		stonecutter.compare(mcVersion, "1.20.2") >= 0 ? "1.20.2"
+		: stonecutter.compare(mcVersion, "1.20.1") >= 0 ? "1.20.1"
+		: stonecutter.compare(mcVersion, "1.19.3") >= 0 ? "1.19.3"
+		: stonecutter.compare(mcVersion, "1.19.2") >= 0 ? "1.19.2" : "1.19";
 
 if (stonecutter.current.isActive) {
 	rootProject.tasks.register('client') {
@@ -73,8 +70,13 @@ loom {
 
 dependencies {
 	minecraft "com.mojang:minecraft:${mcVersion}"
-	mappings "org.quiltmc:quilt-mappings:${property("deps.quilt_mappings")}:intermediary-v2"
 	modImplementation "org.quiltmc:quilt-loader:${property("deps.quilt_loader")}"
+
+	if (!property("deps.quilt_mappings").contains(":")) {
+		mappings "org.quiltmc:quilt-mappings:${property("deps.quilt_mappings")}:intermediary-v2"
+	} else {
+		mappings property("deps.quilt_mappings")
+	}
 
 	// QSL is not a complete API; You will need Quilted Fabric API to fill in the gaps.
 	// Quilted Fabric API will automatically pull in the correct QSL version.
