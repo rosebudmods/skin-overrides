@@ -48,10 +48,8 @@ repositories {
 	// }
 }
 
-sourceSets.main.java {
-	srcDirs += ['src/override/java']
-
-	if (hasUi) {
+if (hasUi) {
+	sourceSets.main.java {
 		srcDirs += ['src/ui/java']
 	}
 }
