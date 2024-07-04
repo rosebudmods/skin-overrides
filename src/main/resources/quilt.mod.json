@@ -11,7 +11,7 @@
 				"orifu": "owner"
 			},
 			"contact": {
-				"homepage": "https://lumity.dev/orifu/skin-overrides/wiki/home",
+				"homepage": "https://lumity.dev/orifu/skin-overrides/wiki/Home",
 				"sources": "https://lumity.dev/orifu/skin-overrides",
 				"issues": "https://github.com/orifu/skin-overrides/issues"
 			},
@@ -20,7 +20,7 @@
 		},
 		"intermediate_mappings": "net.fabricmc:intermediary",
 		"entrypoints": {
-			"modmenu": "net.orifu.skin_overrides.ModMenuEntrypoint"
+			"${modmenu_entrypoint}": "net.orifu.skin_overrides.ModMenuEntrypoint"
 		},
 		"depends": [
 			{

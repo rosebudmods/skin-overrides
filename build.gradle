@@ -17,7 +17,9 @@ var awVersion =
 				? "1.20.2"
 		: stonecutter.compare(mcVersion, "1.20.1") >= 0
 				? "1.20.1"
-				: "1.19.4";
+		: stonecutter.compare(mcVersion, "1.19.4") >= 0
+				? "1.19.4"
+				: "1.19.2";
 
 if (stonecutter.current.isActive) {
 	rootProject.tasks.register('client') {
@@ -46,22 +48,12 @@ repositories {
 	// }
 }
 
-sourceSets.create('override') {
-	compileClasspath += sourceSets.main.compileClasspath
-	runtimeClasspath += sourceSets.main.runtimeClasspath
-}
+sourceSets.main.java {
+	srcDirs += ['src/override/java']
 
-sourceSets.create('ui') {
-	compileClasspath += sourceSets.main.compileClasspath + sourceSets.override.output
-	runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.override.output
-}
-
-sourceSets.main.compileClasspath += sourceSets.override.output
-sourceSets.main.runtimeClasspath += sourceSets.override.output
-
-if (hasUi) {
-	sourceSets.main.compileClasspath += sourceSets.ui.output
-	sourceSets.main.runtimeClasspath += sourceSets.ui.output
+	if (hasUi) {
+		srcDirs += ['src/ui/java']
+	}
 }
 
 loom {
@@ -71,7 +63,6 @@ loom {
 		"skin_overrides" {
 			// Tell Loom about each source set used by your mod here. This ensures that your mod's classes are properly transformed by Loader.
 			sourceSet sourceSets.main
-			sourceSet sourceSets.ui
 
 			// If you shade (directly include classes, not JiJ) a dependency into your mod, include it here using one of these methods:
 			// dependency("com.example.shadowedmod:1.2.3")
@@ -105,7 +96,8 @@ processResources {
 		expand 'version': version,
 				'group': project.group,
 				'minecraft_version': mcVersion,
-				'access_widener': awVersion
+				'access_widener': awVersion,
+				'modmenu_entrypoint': hasUi ? 'modmenu' : ''
 	}
 }
 
@@ -122,7 +114,7 @@ java {
 
 	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task if it is present.
 	// If you remove this line, sources will not be generated.
-	withSourcesJar()
+	// withSourcesJar()
 
 	// If this mod is going to be a library, then it should also generate Javadocs in order to aid with development.
 	// Uncomment this line to generate them.
