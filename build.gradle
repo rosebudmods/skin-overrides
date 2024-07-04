@@ -17,7 +17,8 @@ var awVersion =
 		: stonecutter.compare(mcVersion, "1.20.1") >= 0 ? "1.20.1"
 		: stonecutter.compare(mcVersion, "1.19.4") >= 0 ? "1.19.4"
 		: stonecutter.compare(mcVersion, "1.19.3") >= 0 ? "1.19.3"
-		: stonecutter.compare(mcVersion, "1.19.2") >= 0 ? "1.19.2" : "1.19";
+		: stonecutter.compare(mcVersion, "1.19.2") >= 0 ? "1.19.2"
+		: stonecutter.compare(mcVersion, "1.19") >= 0 ? "1.19.0" : "1.18.1";
 
 if (stonecutter.current.isActive) {
 	rootProject.tasks.register('client') {
@@ -91,7 +92,11 @@ dependencies {
 }
 
 processResources {
-	inputs.properties 'version': version, 'group': project.group
+	inputs.properties 'version': version,
+			'group': project.group,
+			'minecraft_version': mcVersion,
+			'access_widener': awVersion,
+			'modmenu_entrypoint': hasUi ? 'modmenu' : ''
 
 	filesMatching('quilt.mod.json') {
 		expand 'version': version,

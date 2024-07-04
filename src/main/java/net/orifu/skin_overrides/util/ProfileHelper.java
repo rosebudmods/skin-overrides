@@ -3,16 +3,19 @@ package net.orifu.skin_overrides.util;
 import com.mojang.authlib.GameProfile;
 //? if >=1.20.2
 import com.mojang.authlib.yggdrasil.ProfileResult;
+import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.util.UUIDTypeAdapter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.DefaultSkinHelper;
 //? if >=1.19.2 {
 import net.minecraft.server.Services;
-//?} else
+//?} else if >=1.19
 /*import net.minecraft.util.ApiServices;*/
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.UserCache;
 import net.orifu.skin_overrides.Skin;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
@@ -20,8 +23,10 @@ import java.util.UUID;
 
 //? if >=1.19.2 {
 import static net.minecraft.util.UuidUtil.getOfflinePlayerUuid;
-//?} else
-/*import static net.minecraft.util.dynamic.DynamicSerializableUuid.getOfflinePlayerUuid;*/
+//?} else if >=1.19 {
+/*import static net.minecraft.util.dynamic.DynamicSerializableUuid.getOfflinePlayerUuid;
+*///?} else
+/*import static net.minecraft.entity.player.PlayerEntity.getOfflinePlayerUuid;*/
 
 public class ProfileHelper {
     public static final String UUID_REGEX = "[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{12}";
@@ -105,12 +110,17 @@ public class ProfileHelper {
         }
 
         MinecraftClient client = MinecraftClient.getInstance();
+        //? if >=1.19 {
         //? if >=1.19.2 {
         Services services = Services.create(client.authService, client.runDirectory);
         //?} else {
         /*ApiServices services = ApiServices.create(client.authenticationService, client.runDirectory);
         *///?}
         userCache = services.userCache();
+        //?} else {
+        /*var gameProfileRepository = new YggdrasilAuthenticationService(client.getNetworkProxy()).createProfileRepository();
+        userCache = new UserCache(gameProfileRepository, new File(client.runDirectory, MinecraftServer.USER_CACHE_FILE.getName()));
+        *///?}
         return userCache;
     }
 }
