@@ -15,6 +15,7 @@ var hasUi = stonecutter.compare(mcVersion, "1.19.4") >= 0;
 var awVersion =
 		stonecutter.compare(mcVersion, "1.20.2") >= 0 ? "1.20.2"
 		: stonecutter.compare(mcVersion, "1.20.1") >= 0 ? "1.20.1"
+		: stonecutter.compare(mcVersion, "1.19.4") >= 0 ? "1.19.4"
 		: stonecutter.compare(mcVersion, "1.19.3") >= 0 ? "1.19.3"
 		: stonecutter.compare(mcVersion, "1.19.2") >= 0 ? "1.19.2" : "1.19";
 
