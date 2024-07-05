@@ -3,7 +3,7 @@ package net.orifu.skin_overrides.screen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Library.LibraryEntry;
-import net.orifu.skin_overrides.override.LibrarySkinOverride.SkinEntry;
+import net.orifu.skin_overrides.library.SkinLibrary.SkinEntry;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.xplat.gui.GuiGraphics;

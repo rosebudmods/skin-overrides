@@ -20,6 +20,7 @@
 		},
 		"intermediate_mappings": "net.fabricmc:intermediary",
 		"entrypoints": {
+			"client": "net.orifu.skin_overrides.Mod",
 			"${modmenu_entrypoint}": "net.orifu.skin_overrides.ModMenuEntrypoint"
 		},
 		"depends": [
@@ -30,6 +31,9 @@
 			{
 				"id": "minecraft",
 				"versions": "^${minecraft_version}"
+			},
+			{
+				"id": "fabric-api"
 			},
 			{
 				"id": "modmenu",

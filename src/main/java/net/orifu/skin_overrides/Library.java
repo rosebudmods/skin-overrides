@@ -5,14 +5,18 @@ import java.util.Optional;
 
 import com.google.gson.JsonElement;
 
+import com.mojang.authlib.GameProfile;
 import net.minecraft.util.Identifier;
+import net.orifu.skin_overrides.override.LibraryOverrider;
 
 public interface Library {
+    List<LibraryEntry> entries();
+
     void save();
 
     void reload();
 
-    List<LibraryEntry> entries();
+    LibraryOverrider overrider();
 
     default Optional<LibraryEntry> get(String id) {
         for (var entry : this.entries()) {
@@ -30,7 +34,7 @@ public interface Library {
     }
 
     default void remove(int index) {
-        this.entries().remove(index).remove();
+        this.entries().remove(index).removeFiles();
         this.save();
     }
 
@@ -40,7 +44,7 @@ public interface Library {
     }
 
     default void rename(LibraryEntry entry, String newName) {
-        entry.name = newName;
+        this.get(entry.id).get().name = newName;
         this.save();
     }
 
@@ -65,6 +69,6 @@ public interface Library {
 
         public abstract JsonElement toJson();
 
-        public abstract void remove();
+        public abstract void removeFiles();
     }
 }

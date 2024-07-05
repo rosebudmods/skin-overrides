@@ -6,10 +6,11 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.Mod;
+import net.orifu.skin_overrides.OverrideManager;
 import net.orifu.skin_overrides.Skin;
-import net.orifu.skin_overrides.override.Overridden;
-import net.orifu.skin_overrides.override.LibraryCapeOverride.CapeEntry;
-import net.orifu.skin_overrides.override.LibrarySkinOverride.SkinEntry;
+import net.orifu.skin_overrides.library.CapeLibrary;
+import net.orifu.skin_overrides.library.SkinLibrary;
+import net.orifu.skin_overrides.override.LibraryOverrider.LibraryOverride;
 import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
@@ -60,7 +61,7 @@ public class SkinOverridesScreen extends Screen {
     @Nullable
     private FrameWidget previewFrame;
 
-    private Overridden ov = Mod.SKINS;
+    private OverrideManager ov = Mod.SKINS;
     @Nullable
     private GameProfile selectedProfile;
 
@@ -77,7 +78,7 @@ public class SkinOverridesScreen extends Screen {
                 HeaderBar.builder(this.tabManager, this.width)
                         .tabs(new DummyTab(Mod.SKINS), new DummyTab(Mod.CAPES))
                         .build());
-        this.header.setFocusedTab(this.ov.skin() ? 0 : 1, false);
+        this.header.setFocusedTab(this.ov.skin ? 0 : 1, false);
 
         // add main content
         this.layout = new HeaderFooterLayoutWidget(this);
@@ -134,7 +135,9 @@ public class SkinOverridesScreen extends Screen {
     }
 
     protected void initConfig(GridWidget config) {
-        config.add(new TextWidget(Text.translatable(this.ov.skin()
+        var override = this.ov.get(this.selectedProfile);
+
+        config.add(new TextWidget(Text.translatable(this.ov.skin
                 ? "skin_overrides.add_skin"
                 : "skin_overrides.add_cape"),
                 this.textRenderer), 0, 0);
@@ -147,13 +150,13 @@ public class SkinOverridesScreen extends Screen {
 
         // add to library button
         config.add(ButtonWidget.builder(Text.translatable("skin_overrides.library.add"), (btn) -> this.addToLibrary())
-                .width(120).build(), 2, 0).active = !this.ov.library().hasOverride(this.selectedProfile);
+                .width(120).build(), 2, 0).active = !override.map(ov -> ov instanceof LibraryOverride).orElse(false);
 
         // remove override button
         config.add(ButtonWidget
                 .builder(Text.translatable("skin_overrides.remove"), (btn) -> this.removeOverride())
                 .width(120)
-                .build(), 3, 0).active = this.ov.hasOverride(this.selectedProfile);
+                .build(), 3, 0).active = override.isPresent();
     }
 
     @Override
@@ -165,7 +168,7 @@ public class SkinOverridesScreen extends Screen {
         if (this.selectedProfile != null) {
             // draw skin/cape preview
             Skin skin = Mod.override(this.selectedProfile);
-            if (this.ov.skin()) {
+            if (this.ov.skin) {
                 PlayerSkinRenderer.draw(graphics, skin, this.previewFrame.getX(), this.previewFrame.getY(),
                         PREVIEW_SCALE);
             } else {
@@ -200,11 +203,11 @@ public class SkinOverridesScreen extends Screen {
         this.client.setScreen(this.parent);
     }
 
-    public Overridden overridden() {
+    public OverrideManager overrideManager() {
         return this.ov;
     }
 
-    public void setOverridden(Overridden ov) {
+    public void setOverrideManager(OverrideManager ov) {
         if (this.ov != ov) {
             this.ov = ov;
             this.selectedProfile = null;
@@ -225,7 +228,7 @@ public class SkinOverridesScreen extends Screen {
 
     public void pickedFromLibrary(LibraryEntry entry) {
         var profile = this.selectedProfile != null ? this.selectedProfile : ProfileHelper.user();
-        this.ov.library().addOverride(profile, entry);
+        this.ov.addOverride(profile, entry);
         this.clearAndInit();
     }
 
@@ -233,22 +236,22 @@ public class SkinOverridesScreen extends Screen {
         String guessedName = this.selectedProfile.getName();
 
         Skin playerSkin = Mod.override(this.selectedProfile);
-        var texture = this.ov.skin() ? playerSkin.texture() : playerSkin.capeTexture();
+        var texture = this.ov.skin ? playerSkin.texture() : playerSkin.capeTexture();
         Consumer<String> callback = name -> {
             // create the library entry
-            Optional<LibraryEntry> entry = this.ov.skin()
-                    ? SkinEntry.create(name, texture, playerSkin.model()).map(e -> (LibraryEntry) e)
-                    : CapeEntry.create(name, texture).map(e -> (LibraryEntry) e);
+            Optional<LibraryEntry> entry = this.ov.skin
+                    ? ((SkinLibrary) this.ov.library()).create(name, texture, playerSkin.model()).map(e -> (LibraryEntry) e)
+                    : ((CapeLibrary) this.ov.library()).create(name, texture).map(e -> (LibraryEntry) e);
 
             // if this is an override, replace it with the library version
-            if (this.ov.hasOverride(this.selectedProfile) && entry.isPresent()) {
+            if (this.ov.has(this.selectedProfile) && entry.isPresent()) {
                 this.ov.removeOverride(this.selectedProfile);
-                this.ov.library().addOverride(this.selectedProfile, entry.get());
+                this.ov.addOverride(this.selectedProfile, entry.get());
                 this.clearAndInit();
             }
         };
 
-        this.client.setScreen(this.ov.skin()
+        this.client.setScreen(this.ov.skin
                 ? OverrideInfoEntryScreen.getName(this, texture, playerSkin.model(), guessedName, callback)
                 : OverrideInfoEntryScreen.getName(this, texture, guessedName, callback));
     }
@@ -271,26 +274,26 @@ public class SkinOverridesScreen extends Screen {
 
         GameProfile profile = this.selectedProfile != null ? this.selectedProfile : ProfileHelper.user();
 
-        if (this.ov.skin()) {
+        if (this.ov.skin) {
             // open model selection screen
             this.client.setScreen(OverrideInfoEntryScreen.getModel(this,
                     Util.texture(new LocalSkinTexture(path.toFile())),
                     model -> {
-                        this.ov.local().copyOverride(profile, path, model);
+                        this.ov.copyOverride(profile, path, model);
                         this.clearAndInit();
                     }));
         } else {
-            this.ov.local().copyOverride(profile, path, null);
+            this.ov.copyOverride(profile, path, null);
             this.clearAndInit();
         }
     }
 
     class DummyTab implements Tab {
         public final Text title;
-        public final Overridden ov;
+        public final OverrideManager ov;
 
-        public DummyTab(Overridden ov) {
-            this.title = ov.skin() ? SKIN_TITLE : CAPE_TITLE;
+        public DummyTab(OverrideManager ov) {
+            this.title = ov.skin ? SKIN_TITLE : CAPE_TITLE;
             this.ov = ov;
         }
 
@@ -302,7 +305,7 @@ public class SkinOverridesScreen extends Screen {
         @Override
         public void visitChildren(Consumer<ClickableWidget> consumer) {
             // when selected
-            SkinOverridesScreen.this.setOverridden(this.ov);
+            SkinOverridesScreen.this.setOverrideManager(this.ov);
         }
 
         @Override

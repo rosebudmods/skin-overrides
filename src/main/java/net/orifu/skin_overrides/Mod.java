@@ -1,33 +1,43 @@
 package net.orifu.skin_overrides;
 
-import java.util.Optional;
-
 import com.mojang.authlib.GameProfile;
-import net.minecraft.client.MinecraftClient;
+import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
-import net.orifu.skin_overrides.override.LibraryCapeOverride;
-import net.orifu.skin_overrides.override.LibrarySkinOverride;
-import net.orifu.skin_overrides.override.LocalCapeOverride;
-import net.orifu.skin_overrides.override.LocalSkinOverride;
-import net.orifu.skin_overrides.override.Overridden;
+import net.orifu.skin_overrides.library.CapeLibrary;
+import net.orifu.skin_overrides.library.SkinLibrary;
+import net.orifu.skin_overrides.override.LocalCapeOverrider;
+import net.orifu.skin_overrides.override.LocalSkinOverrider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Mod {
+import java.util.Optional;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+@SuppressWarnings("deprecation")
+public class Mod implements ClientModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("skin overrides");
 	public static final String MOD_ID = "skin_overrides";
 
-	public static final String SKIN_OVERRIDES = "skin_overrides";
-	public static final String CAPE_OVERRIDES = "cape_overrides";
+	public static final String SKIN_OVERRIDES_PATH = "skin_overrides";
+	public static final String CAPE_OVERRIDES_PATH = "cape_overrides";
 
-	public static final LocalSkinOverride SKINS_LOCAL = LocalSkinOverride.INSTANCE;
-	public static final LibrarySkinOverride SKINS_LIBRARY = LibrarySkinOverride.INSTANCE;
-	public static final Overridden SKINS = new Overridden.SkinOverrides();
-	public static final LocalCapeOverride CAPES_LOCAL = LocalCapeOverride.INSTANCE;
-	public static final LibraryCapeOverride CAPES_LIBRARY = LibraryCapeOverride.INSTANCE;
-	public static final Overridden CAPES = new Overridden.CapeOverrides();
+	public static final OverrideManager SKINS = new OverrideManager(true, SKIN_OVERRIDES_PATH, SkinLibrary.INSTANCE,
+			new LocalSkinOverrider());
+	public static final OverrideManager CAPES = new OverrideManager(false, CAPE_OVERRIDES_PATH, CapeLibrary.INSTANCE,
+			new LocalCapeOverrider());
 
+	@Override
+	public void onInitializeClient() {
+		var scheduler = Executors.newScheduledThreadPool(1);
+		// reload override files every 500 ms
+		scheduler.scheduleAtFixedRate(SKINS::update, 0, 500, TimeUnit.MILLISECONDS);
+		scheduler.scheduleAtFixedRate(CAPES::update, 0, 500, TimeUnit.MILLISECONDS);
+		// reload library files every 2 seconds
+		scheduler.scheduleAtFixedRate(SKINS.library()::reload, 0, 2, TimeUnit.SECONDS);
+		scheduler.scheduleAtFixedRate(CAPES.library()::reload, 0, 2, TimeUnit.SECONDS);
+	}
 
 	public static Identifier id(String path) {
 		//? if >=1.21 {
@@ -55,53 +65,10 @@ public class Mod {
 	}
 
 	public static Optional<Pair<Identifier, Skin.Model>> overrideSkin(GameProfile profile) {
-		MinecraftClient client = MinecraftClient.getInstance();
-		Optional<Pair<Identifier, Skin.Model>> skin = Optional.empty();
-
-		// skin image overrides
-		var skinOverride = SKINS_LOCAL.getOverride(profile);
-		if (skinOverride.isPresent()) {
-			// register skin texture
-			var texture = skinOverride.get();
-			Identifier skinId = id("skin/" + profile.getId().toString());
-			client.getTextureManager().registerTexture(skinId, texture);
-			// update skin
-			skin = Optional.of(new Pair<>(skinId, texture.model));
-		}
-
-		// skin library overrides
-		var skinLibrary = SKINS_LIBRARY.getOverride(profile);
-		if (skinLibrary.isPresent()) {
-			var newSkin = skinLibrary.get();
-			skin = Optional.of(new Pair<>(newSkin.texture(), newSkin.model()));
-		}
-
-		return skin;
+		return SKINS.get(profile).map(ov -> new Pair<>(ov.texture(), ov.model()));
 	}
 
 	public static Optional<Identifier> overrideCape(GameProfile profile) {
-		MinecraftClient client = MinecraftClient.getInstance();
-		Optional<Identifier> cape = Optional.empty();
-
-		// cape image overrides
-		var capeFile = CAPES_LOCAL.getOverride(profile);
-		if (capeFile.isPresent()) {
-			// register cape texture
-			Identifier capeId = id("cape/" + profile.getId().toString());
-			client.getTextureManager().registerTexture(capeId, capeFile.get());
-			// update skin
-			// note: the elytra texture is a separate part of the record,
-			// but updating the cape still updates the elytra.
-			cape = Optional.of(capeId);
-		}
-
-		// cape library overrides
-		var capeLibrary = CAPES_LIBRARY.getOverride(profile);
-		if (capeLibrary.isPresent()) {
-			var newCape = capeLibrary.get();
-			cape = Optional.of(newCape.texture());
-		}
-
-		return cape;
+		return CAPES.get(profile).map(OverrideManager.Override::texture);
 	}
 }

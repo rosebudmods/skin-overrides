@@ -4,10 +4,11 @@ import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Library.LibraryEntry;
+import net.orifu.skin_overrides.OverrideManager;
 import net.orifu.skin_overrides.Skin;
-import net.orifu.skin_overrides.override.Overridden;
-import net.orifu.skin_overrides.override.LibraryCapeOverride.CapeEntry;
-import net.orifu.skin_overrides.override.LibrarySkinOverride.SkinEntry;
+import net.orifu.skin_overrides.library.CapeLibrary;
+import net.orifu.skin_overrides.library.SkinLibrary;
+import net.orifu.skin_overrides.library.SkinLibrary.SkinEntry;
 import net.orifu.skin_overrides.texture.LocalPlayerTexture;
 import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
@@ -37,7 +38,7 @@ public class LibraryScreen extends Screen {
     private static final int OPTIONS_PAD = 24;
     private static final int OPTIONS_WIDTH = 150;
 
-    public final Overridden ov;
+    public final OverrideManager ov;
     @Nullable
     private final Screen parent;
     @Nullable
@@ -62,7 +63,7 @@ public class LibraryScreen extends Screen {
     @Nullable
     private String addingName;
 
-    public LibraryScreen(Overridden ov, @Nullable Screen parent, @Nullable Consumer<LibraryEntry> callback) {
+    public LibraryScreen(OverrideManager ov, @Nullable Screen parent, @Nullable Consumer<LibraryEntry> callback) {
         super(TITLE);
 
         this.ov = ov;
@@ -70,7 +71,7 @@ public class LibraryScreen extends Screen {
         this.callback = callback;
     }
 
-    public LibraryScreen(Overridden ov, @Nullable Screen parent) {
+    public LibraryScreen(OverrideManager ov, @Nullable Screen parent) {
         this(ov, parent, null);
     }
 
@@ -117,10 +118,10 @@ public class LibraryScreen extends Screen {
 
             // library entry preview
             this.entryPreviewFrame = controls.add(new FrameWidget(
-                    this.ov.skin()
+                    this.ov.skin
                             ? PlayerSkinRenderer.WIDTH * this.skinScale
                             : PlayerCapeRenderer.WIDTH * this.capeScale,
-                    this.ov.skin()
+                    this.ov.skin
                             ? PlayerSkinRenderer.HEIGHT * this.skinScale
                             : PlayerCapeRenderer.HEIGHT * this.capeScale),
                     LayoutSettings.create().alignHorizontallyCenter());
@@ -223,10 +224,10 @@ public class LibraryScreen extends Screen {
         // the skin won't be properly loaded for a few frames
         if (this.adding != null && this.adding.isDone()) {
             var skin = this.adding.getNow(null);
-            if (this.ov.skin()) {
-                SkinEntry.create(this.addingName, skin.texture(), skin.model());
+            if (this.ov.skin) {
+                ((SkinLibrary) this.ov.library()).create(this.addingName, skin.texture(), skin.model());
             } else {
-                CapeEntry.create(this.addingName, skin.capeTexture());
+                ((CapeLibrary) this.ov.library()).create(this.addingName, skin.capeTexture());
             }
 
             this.adding = null;
@@ -269,13 +270,13 @@ public class LibraryScreen extends Screen {
         }
         String guessedName = path.toFile().getName().replace(".png", "").replace("_", " ");
 
-        if (this.ov.skin()) {
+        if (this.ov.skin) {
             // open name and model input screen
             this.client.setScreen(OverrideInfoEntryScreen.getNameAndModel(this,
                     Util.texture(new LocalSkinTexture(path.toFile())), guessedName,
                     (name, model) -> {
                         // add skin
-                        SkinEntry.create(name, path, model);
+                        ((SkinLibrary) this.ov.library()).create(name, path, model);
                         this.libraryList.reload();
                         this.clearAndInit();
                     }));
@@ -285,7 +286,7 @@ public class LibraryScreen extends Screen {
                     Util.texture(new LocalPlayerTexture(path.toFile())), guessedName,
                     name -> {
                         // add cape
-                        CapeEntry.create(name, path);
+                        ((CapeLibrary) this.ov.library()).create(name, path);
                         this.libraryList.reload();
                         this.clearAndInit();
                     }));
@@ -303,7 +304,7 @@ public class LibraryScreen extends Screen {
                     Text.translatable("skin_overrides.no_profile.title", this.searchBox.getText()),
                     Text.translatable("skin_overrides.no_profile.description")));
         } else {
-            this.adding = this.ov.skin()
+            this.adding = this.ov.skin
                     ? Skin.fetchSkin(maybeProfile.get())
                     : Skin.fetchCape(maybeProfile.get());
             this.addingName = maybeProfile.get().getName();

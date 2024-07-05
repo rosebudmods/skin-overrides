@@ -1,20 +1,20 @@
 package net.orifu.skin_overrides.screen;
 
 import net.minecraft.client.MinecraftClient;
-import net.orifu.skin_overrides.override.Overridden;
+import net.orifu.skin_overrides.OverrideManager;
 
 import java.util.ArrayList;
 
 public class LibraryListWidget extends AlwaysSelectedEntryGridWidget<LibraryListEntry> {
     private final LibraryScreen parent;
-    private final Overridden ov;
+    private final OverrideManager ov;
 
     private final ArrayList<LibraryListEntry> allEntries = new ArrayList<>();
     private String query = "";
 
-    public LibraryListWidget(LibraryScreen parent, Overridden ov) {
+    public LibraryListWidget(LibraryScreen parent, OverrideManager ov) {
         super(MinecraftClient.getInstance(), 0, 0, 0, LibraryListEntry.WIDTH,
-                ov.skin() ? LibraryListEntry.SKIN_ENTRY_HEIGHT : LibraryListEntry.CAPE_ENTRY_HEIGHT, 6);
+                ov.skin ? LibraryListEntry.SKIN_ENTRY_HEIGHT : LibraryListEntry.CAPE_ENTRY_HEIGHT, 6);
 
         this.parent = parent;
         this.ov = ov;

@@ -58,10 +58,14 @@ public class Util {
                 : profile.getName();
     }
 
-    public static Identifier texture(AbstractTexture texture) {
-        Identifier textureId = Mod.id("temp/" + Util.randomId());
+    public static Identifier texture(String id, AbstractTexture texture) {
+        Identifier textureId = Mod.id(id);
         MinecraftClient.getInstance().getTextureManager().registerTexture(textureId, texture);
         return textureId;
+    }
+
+    public static Identifier texture(AbstractTexture texture) {
+        return texture("temp/" + Util.randomId(), texture);
     }
 
     public static void saveTexture(Identifier texture, int w, int h, Path path) throws IOException {

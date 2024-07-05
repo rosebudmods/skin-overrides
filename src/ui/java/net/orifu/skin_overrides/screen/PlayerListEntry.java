@@ -5,11 +5,10 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.orifu.skin_overrides.Mod;
-import net.orifu.skin_overrides.override.Overridden;
+import net.orifu.skin_overrides.OverrideManager;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.skin_overrides.util.ProfileHelper;
-import net.orifu.xplat.TextUtil;
 import net.orifu.xplat.gui.GuiGraphics;
 import net.orifu.xplat.gui.widget.AlwaysSelectedEntryListWidget.Entry;
 
@@ -17,7 +16,7 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
     private final MinecraftClient client;
     public GameProfile profile;
     public final Type type;
-    public final Overridden ov;
+    public final OverrideManager ov;
 
     private final SkinOverridesScreen parent;
 
@@ -25,7 +24,7 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
         this.client = client;
         this.profile = profile;
         this.type = type;
-        this.ov = parent.overridden();
+        this.ov = parent.overrideManager();
         this.parent = parent;
     }
 
@@ -33,7 +32,7 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
     public void render(GuiGraphics graphics, int index, int y, int x, int entryWidth, int entryHeight, int mouseX,
             int mouseY, boolean hovered, float tickDelta) {
         // draw player face/cape
-        if (this.ov.skin()) {
+        if (this.ov.skin) {
             PlayerSkinRenderer.drawFace(graphics, Mod.override(this.profile), x, y, 4);
         } else {
             int capeX = x + (32 - PlayerCapeRenderer.WIDTH * 2) / 2;
@@ -64,17 +63,9 @@ public class PlayerListEntry extends Entry<PlayerListEntry> {
     }
 
     protected Text getOverrideStatus() {
-        if (this.ov.local().hasOverride(this.profile)) {
-            return Text.translatable("skin_overrides.override.local_image").formatted(Formatting.GREEN);
-        }
-
-        var skinOverride = this.ov.library().getOverride(this.profile);
-        if (skinOverride.isPresent()) {
-            return TextUtil.translatable("skin_overrides.override.library", skinOverride.get().name)
-                    .formatted(Formatting.GREEN);
-        }
-
-        return Text.translatable("skin_overrides.override.none").formatted(Formatting.GRAY);
+        return this.ov.get(this.profile)
+                .map(ov -> ov.info().copy().formatted(Formatting.GREEN))
+                .orElse(Text.translatable("skin_overrides.override.none").formatted(Formatting.GRAY));
     }
 
     @Override

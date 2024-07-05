@@ -93,8 +93,8 @@ public record Skin(
     //?}
 
     public enum Model {
-        SLIM("slim"),
-        WIDE("default");
+        WIDE("wide"),
+        SLIM("slim");
 
         private final String key;
 
