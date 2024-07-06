@@ -33,5 +33,6 @@
     "skin_overrides.library.input.move_back": "move left",
     "skin_overrides.library.input.move_next": "move right",
     "skin_overrides.no_profile.title": "%s not found",
-    "skin_overrides.no_profile.description": "no profile with that name/uuid exists"
+    "skin_overrides.no_profile.description": "no profile with that name/uuid exists",
+    "key.skin_overrides.open_screen": "open skin overrides"
 }

@@ -10,6 +10,14 @@ import net.orifu.skin_overrides.override.LocalCapeOverrider;
 import net.orifu.skin_overrides.override.LocalSkinOverrider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+//? if hasUi {
+import com.mojang.blaze3d.platform.InputUtil;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.client.option.KeyBind;
+import net.orifu.skin_overrides.screen.SkinOverridesScreen;
+import org.lwjgl.glfw.GLFW;
+//?}
 
 import java.util.Optional;
 import java.util.concurrent.Executors;
@@ -37,6 +45,19 @@ public class Mod implements ClientModInitializer {
 		// reload library files every 2 seconds
 		scheduler.scheduleAtFixedRate(SKINS.library()::reload, 0, 2, TimeUnit.SECONDS);
 		scheduler.scheduleAtFixedRate(CAPES.library()::reload, 0, 2, TimeUnit.SECONDS);
+
+		//? if hasUi {
+		KeyBind binding = KeyBindingHelper.registerKeyBinding(new KeyBind(
+				"key.skin_overrides.open_screen",
+				InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_O,
+				"key.categories.misc"));
+
+		ClientTickEvents.END_CLIENT_TICK.register(client -> {
+			while (binding.wasPressed()) {
+				client.setScreen(new SkinOverridesScreen(client.currentScreen));
+			}
+		});
+		//?}
 	}
 
 	public static Identifier id(String path) {

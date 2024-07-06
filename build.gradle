@@ -20,6 +20,8 @@ var awVersion =
 		: stonecutter.compare(mcVersion, "1.19.2") >= 0 ? "1.19.2"
 		: stonecutter.compare(mcVersion, "1.19") >= 0 ? "1.19.0" : "1.18.1";
 
+stonecutter.const("hasUi", hasUi)
+
 if (stonecutter.current.isActive) {
 	rootProject.tasks.register('client') {
 		group 'project'
@@ -86,8 +88,8 @@ dependencies {
 	// modImplementation libs.bundles.quilted.fabric.api // If you wish to use Fabric API's deprecated modules, you can replace the above line with this one
 
 	modImplementation "maven.modrinth:modmenu:${property("deps.modmenu")}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}"
 
-	modRuntimeOnly "net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}"
 	modRuntimeOnly "maven.modrinth:ears:${property("deps.ears")}"
 }
 
