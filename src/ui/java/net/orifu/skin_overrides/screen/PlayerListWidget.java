@@ -8,6 +8,7 @@ import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.xplat.gui.widget.AlwaysSelectedEntryListWidget;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEntry> {
     private static final int PADDING = 8;
@@ -41,7 +42,7 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
             this.tryAddEntry(profile, Type.OFFLINE);
         }
 
-        this.filter(this.query);
+        this.updateFilter();
     }
 
     protected void tryAddEntry(GameProfile profile, Type type) {
@@ -50,31 +51,52 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
         }
     }
 
+    public PlayerListEntry addEntry(GameProfile profile) {
+        return this.getOverrideFor(profile).orElseGet(() -> {
+            PlayerListEntry entry = new PlayerListEntry(this.client, profile, Type.OFFLINE, this.parent);
+            this.allEntries.add(entry);
+            this.updateFilter();
+            return entry;
+        });
+    }
+
     public boolean hasOverrideFor(GameProfile profile) {
+        return this.getOverrideFor(profile).isPresent();
+    }
+
+    protected Optional<PlayerListEntry> getOverrideFor(GameProfile profile) {
         // special case when the user is unauthenticated and an actual player has their
         // username. because their uuids don't match, the authenticated account will
         // be listed separately to the current user otherwise.
-        if (ProfileHelper.user().getName().equalsIgnoreCase(profile.getName())) {
-            return true;
+        if (!this.allEntries.isEmpty()
+                && ProfileHelper.user().getName().equalsIgnoreCase(profile.getName())) {
+            return Optional.of(this.allEntries.get(0));
         }
 
         for (var player : this.allEntries) {
             if (player.profile.equals(profile)) {
-                return true;
+                return Optional.of(player);
             }
         }
-        return false;
+        return Optional.empty();
     }
 
     public void filter(String query) {
         this.query = query.toLowerCase();
+        this.updateFilter();
+    }
 
+    public void updateFilter() {
         this.children().clear(); // clearEntries removes selection
         for (var entry : this.allEntries) {
             if (entry.profile.getName().toLowerCase().contains(this.query)) {
                 this.addEntry(entry);
             }
         }
+    }
+
+    public void ensureVisible(PlayerListEntry entry) {
+        super.ensureVisible(entry);
     }
 
     // pad left and right

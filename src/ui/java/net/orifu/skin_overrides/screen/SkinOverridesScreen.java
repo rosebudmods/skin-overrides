@@ -2,6 +2,7 @@ package net.orifu.skin_overrides.screen;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.gui.screen.ScreenArea;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Library.LibraryEntry;
@@ -114,9 +115,14 @@ public class SkinOverridesScreen extends Screen {
 
         // add player list
         var listWrapper = helper.add(LinearLayoutWidget.createVertical().setSpacing(6));
-        listWrapper.add(this.searchBox, LayoutSettings.create().alignHorizontallyCenter().setTopPadding(5));
+        var searchWrapper = listWrapper.add(LinearLayoutWidget.createHorizontal(), LayoutSettings.create().alignHorizontallyCenter().setTopPadding(5));
         this.setFocusedChild(this.searchBox);
         this.playerList.add(listWrapper::add, this::addDrawableSelectableElement);
+
+        searchWrapper.add(this.searchBox);
+        searchWrapper.add(ButtonWidget.builder(Text.literal("+"), btn -> this.addOverrideFromSearch())
+                .tooltip(Tooltip.create(Text.translatable("skin_overrides.add_override")))
+                .width(20).build());
 
         // add configuration
         this.configFrame = helper.add(new FrameWidget());
@@ -149,12 +155,12 @@ public class SkinOverridesScreen extends Screen {
                 .width(120).build(), 1, 0);
 
         // add to library button
-        config.add(ButtonWidget.builder(Text.translatable("skin_overrides.library.add"), (btn) -> this.addToLibrary())
+        config.add(ButtonWidget.builder(Text.translatable("skin_overrides.library.add"), btn -> this.addToLibrary())
                 .width(120).build(), 2, 0).active = !override.map(ov -> ov instanceof LibraryOverride).orElse(false);
 
         // remove override button
         config.add(ButtonWidget
-                .builder(Text.translatable("skin_overrides.remove"), (btn) -> this.removeOverride())
+                .builder(Text.translatable("skin_overrides.remove"), btn -> this.removeOverride())
                 .width(120)
                 .build(), 3, 0).active = override.isPresent();
     }
@@ -189,7 +195,7 @@ public class SkinOverridesScreen extends Screen {
         int height = this.height - hh - fh;
 
         // set main content size
-        this.searchBox.setWidth(Math.min(200, this.width / 2 - 16));
+        this.searchBox.setWidth(Math.min(200, this.width / 2 - 36));
         this.playerList.setDimensions(this.width / 2, height - 5 - 20 - 6);
         this.configFrame.setMinDimensions(this.width / 2, height);
 
@@ -217,7 +223,13 @@ public class SkinOverridesScreen extends Screen {
 
     public void selectPlayer(PlayerListEntry entry) {
         this.playerList.setSelected(entry);
+        this.playerList.ensureVisible(entry);
         this.selectedProfile = entry.profile;
+
+        if (!this.ov.has(this.selectedProfile)) {
+            this.upgradeProfile();
+        }
+
         this.clearAndInit();
     }
 
@@ -230,6 +242,16 @@ public class SkinOverridesScreen extends Screen {
         var profile = this.selectedProfile != null ? this.selectedProfile : ProfileHelper.user();
         this.ov.addOverride(profile, entry);
         this.clearAndInit();
+    }
+
+    protected void addOverrideFromSearch() {
+        if (this.searchBox.getText().isBlank()) {
+            return;
+        }
+
+        GameProfile profile = ProfileHelper.idToBasicProfile(this.searchBox.getText());
+        this.searchBox.setText("");
+        this.selectPlayer(this.playerList.addEntry(profile));
     }
 
     protected void addToLibrary() {
