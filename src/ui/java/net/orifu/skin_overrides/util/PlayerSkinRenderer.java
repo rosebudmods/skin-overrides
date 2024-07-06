@@ -94,77 +94,85 @@ public class PlayerSkinRenderer {
     }
 
     public static void drawFace(GuiGraphics graphics, Identifier texture, int x, int y, int scale) {
-        drawHead(graphics, texture, x - HEAD_X * scale, y - HEAD_Y * scale, scale, false);
+        int inflate = Math.max(scale / LAYER_DOWNSCALE, 1);
+        drawComponent(graphics, texture, x, y, scale, -inflate, false,
+                0, 0, HEAD_SIZE, HEAD_SIZE, HEAD_U, HEAD_V, HEAD_LAYER_U, HEAD_LAYER_V);
         RenderSystem.enableBlend();
-        drawHead(graphics, texture, x - HEAD_X * scale, y - HEAD_Y * scale, scale, true);
+        drawComponent(graphics, texture, x, y, scale, 0, true,
+                0, 0, HEAD_SIZE, HEAD_SIZE, HEAD_U, HEAD_V, HEAD_LAYER_U, HEAD_LAYER_V);
         RenderSystem.disableBlend();
     }
 
-    private static int offset(boolean isLayer, int scale) {
-        return isLayer ? Math.max(scale / LAYER_DOWNSCALE, 1) : 0;
+    private static void drawComponent(GuiGraphics graphics, Identifier texture,
+            int x, int y, int scale, int o, boolean isLayer,
+            int compX, int compY, int compW, int compH,
+            int u, int v, int uLayer, int vLayer) {
+        graphics.drawTexture(texture,
+                x + compX * scale - o, y + compY * scale - o,
+                compW * scale + o * 2, compH * scale + o * 2,
+                isLayer ? uLayer : u,
+                isLayer ? vLayer : v,
+                compW, compH, 64, 64);
+    }
+
+    private static void drawComponent(GuiGraphics graphics, Identifier texture,
+            int x, int y, int scale, boolean isLayer,
+            int compX, int compY, int compW, int compH,
+            int u, int v, int uLayer, int vLayer) {
+        int inflate = isLayer ? Math.max(scale / LAYER_DOWNSCALE, 1) : 0;
+        drawComponent(graphics, texture, x, y, scale, inflate, isLayer,
+                compX, compY, compW, compH, u, v, uLayer, vLayer);
     }
 
     private static void drawHead(GuiGraphics graphics, Identifier texture, int x, int y, int scale, boolean isLayer) {
-        int o = offset(isLayer, scale);
-        graphics.drawTexture(texture,
-                x + HEAD_X * scale - o, y + HEAD_Y * scale - o,
-                HEAD_SIZE * scale + o * 2, HEAD_SIZE * scale + o * 2,
-                isLayer ? HEAD_LAYER_U : HEAD_U,
-                isLayer ? HEAD_LAYER_V : HEAD_V,
-                HEAD_SIZE, HEAD_SIZE, 64, 64);
+        drawComponent(graphics, texture, x, y, scale, isLayer,
+                HEAD_X, HEAD_Y,
+                HEAD_SIZE, HEAD_SIZE,
+                HEAD_U, HEAD_V,
+                HEAD_LAYER_U, HEAD_LAYER_V);
     }
 
     private static void drawTorso(GuiGraphics graphics, Identifier texture, int x, int y, int scale, boolean isLayer) {
-        int o = offset(isLayer, scale);
-        graphics.drawTexture(texture,
-                x + TORSO_X * scale - o, y + TORSO_Y * scale - o,
-                TORSO_WIDTH * scale + o * 2, TORSO_HEIGHT * scale + o * 2,
-                isLayer ? TORSO_LAYER_U : TORSO_U,
-                isLayer ? TORSO_LAYER_V : TORSO_V,
-                TORSO_WIDTH, TORSO_HEIGHT, 64, 64);
+        drawComponent(graphics, texture, x, y, scale, isLayer,
+                TORSO_X, TORSO_Y,
+                TORSO_WIDTH, TORSO_HEIGHT,
+                TORSO_U, TORSO_V,
+                TORSO_LAYER_U, TORSO_LAYER_V);
     }
 
     private static void drawLeftArm(GuiGraphics graphics, Identifier texture, int x, int y, int scale, int armWidth,
             boolean isLayer) {
-        int o = offset(isLayer, scale);
-        graphics.drawTexture(texture,
-                x + ARM_LEFT_X * scale - o, y + ARM_LEFT_Y * scale - o,
-                armWidth * scale + o * 2, ARM_HEIGHT * scale + o * 2,
-                isLayer ? ARM_LEFT_LAYER_U : ARM_LEFT_U,
-                isLayer ? ARM_LEFT_LAYER_V : ARM_LEFT_V,
-                armWidth, ARM_HEIGHT, 64, 64);
+        drawComponent(graphics, texture, x, y, scale, isLayer,
+                ARM_LEFT_X, ARM_LEFT_Y,
+                armWidth, ARM_HEIGHT,
+                ARM_LEFT_U, ARM_LEFT_V,
+                ARM_LEFT_LAYER_U, ARM_LEFT_LAYER_V);
     }
 
     private static void drawRightArm(GuiGraphics graphics, Identifier texture, int x, int y, int scale, int armWidth,
             int rightArmOffset, boolean isLayer) {
-        int o = offset(isLayer, scale);
-        graphics.drawTexture(texture,
-                x + (ARM_RIGHT_X + rightArmOffset) * scale - o, y + ARM_RIGHT_Y * scale - o,
-                armWidth * scale + o * 2, ARM_HEIGHT * scale + o * 2,
-                isLayer ? ARM_RIGHT_LAYER_U : ARM_RIGHT_U,
-                isLayer ? ARM_RIGHT_LAYER_V : ARM_RIGHT_V,
-                armWidth, ARM_HEIGHT, 64, 64);
+        drawComponent(graphics, texture, x, y, scale, isLayer,
+                ARM_RIGHT_X + rightArmOffset, ARM_RIGHT_Y,
+                armWidth, ARM_HEIGHT,
+                ARM_RIGHT_U, ARM_RIGHT_V,
+                ARM_RIGHT_LAYER_U, ARM_RIGHT_LAYER_V);
     }
 
     private static void drawLeftLeg(GuiGraphics graphics, Identifier texture, int x, int y, int scale,
             boolean isLayer) {
-        int o = offset(isLayer, scale);
-        graphics.drawTexture(texture,
-                x + LEG_LEFT_X * scale - o, y + LEG_LEFT_Y * scale - o,
-                LEG_WIDTH * scale + o * 2, LEG_HEIGHT * scale + o * 2,
-                isLayer ? LEG_LEFT_LAYER_U : LEG_LEFT_U,
-                isLayer ? LEG_LEFT_LAYER_V : LEG_LEFT_V,
-                LEG_WIDTH, LEG_HEIGHT, 64, 64);
+        drawComponent(graphics, texture, x, y, scale, isLayer,
+                LEG_LEFT_X, LEG_LEFT_Y,
+                LEG_WIDTH, LEG_HEIGHT,
+                LEG_LEFT_U, LEG_LEFT_V,
+                LEG_LEFT_LAYER_U, LEG_LEFT_LAYER_V);
     }
 
     private static void drawRightLeg(GuiGraphics graphics, Identifier texture, int x, int y, int scale,
             boolean isLayer) {
-        int o = offset(isLayer, scale);
-        graphics.drawTexture(texture,
-                x + LEG_RIGHT_X * scale - o, y + LEG_RIGHT_Y * scale - o,
-                LEG_WIDTH * scale + o * 2, LEG_HEIGHT * scale + o * 2,
-                isLayer ? LEG_RIGHT_LAYER_U : LEG_RIGHT_U,
-                isLayer ? LEG_RIGHT_LAYER_V : LEG_RIGHT_V,
-                LEG_WIDTH, LEG_HEIGHT, 64, 64);
+        drawComponent(graphics, texture, x, y, scale, isLayer,
+                LEG_RIGHT_X, LEG_RIGHT_Y,
+                LEG_WIDTH, LEG_HEIGHT,
+                LEG_RIGHT_U, LEG_RIGHT_V,
+                LEG_RIGHT_LAYER_U, LEG_RIGHT_LAYER_V);
     }
 }
