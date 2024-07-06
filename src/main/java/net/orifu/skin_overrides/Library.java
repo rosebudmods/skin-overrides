@@ -44,7 +44,7 @@ public interface Library {
     }
 
     default void rename(LibraryEntry entry, String newName) {
-        this.get(entry.id).get().name = newName;
+        entry.name = this.get(entry.id).get().name = newName;
         this.save();
     }
 
