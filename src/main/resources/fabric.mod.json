@@ -1,0 +1,32 @@
+{
+    "schemaVersion": 1,
+    "id": "skin_overrides",
+    "version": "${version}",
+    "name": "skin overrides",
+    "description": "local overrides for player skins and capes.",
+    "authors": [
+        "orifu"
+    ],
+    "contact": {
+        "homepage": "https://lumity.dev/orifu/skin-overrides/wiki/Home",
+        "sources": "https://lumity.dev/orifu/skin-overrides",
+        "issues": "https://github.com/orifu/skin-overrides/issues"
+    },
+    "license": "MPL-2.0",
+    "icon": "assets/skin_overrides/icon.png",
+    "entrypoints": {
+        "client": ["net.orifu.skin_overrides.Mod"],
+        "${modmenu_entrypoint}": ["net.orifu.skin_overrides.ModMenuEntrypoint"]
+    },
+    "depends": {
+        "fabricloader": ">=0.15.11",
+        "minecraft": "^${minecraft_version}",
+        "fabric-api": "*"
+    },
+    "suggests": {
+        "modmenu": "*"
+    },
+    "mixins": ["skin_overrides.mixins.json"],
+    "accessWidener": "aw/${access_widener}.accesswidener",
+    "environment": "client"
+}

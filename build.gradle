@@ -69,7 +69,7 @@ loom {
 		}
 	}
 
-	accessWidenerPath = getRootProject().file("src/main/resources/${awVersion}.accesswidener")
+	accessWidenerPath = getRootProject().file("src/main/resources/aw/${awVersion}.accesswidener")
 }
 
 dependencies {
@@ -100,7 +100,7 @@ processResources {
 			'access_widener': awVersion,
 			'modmenu_entrypoint': hasUi ? 'modmenu' : ''
 
-	filesMatching('quilt.mod.json') {
+	filesMatching(['quilt.mod.json', 'fabric.mod.json']) {
 		expand 'version': version,
 				'group': project.group,
 				'minecraft_version': mcVersion,
@@ -129,11 +129,8 @@ java {
 	// withJavadocJar()
 }
 
-// If you plan to use a different file for the license, don't forget to change the file name here!
 jar {
-	from('LICENSE') {
-		rename { "${it}_${base.archivesName.get()}" }
-	}
+	from getRootProject().file('LICENSE')
 
 	exclude {
 		it.name.endsWith('.accesswidener') && it.name != "${awVersion}.accesswidener"
