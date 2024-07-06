@@ -26,6 +26,7 @@ import net.orifu.xplat.gui.widget.TextFieldWidget;
 import net.orifu.xplat.gui.widget.TextWidget;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.glfw.GLFW;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -232,13 +233,25 @@ public class LibraryScreen extends Screen {
 
             this.adding = null;
             this.libraryList.reload();
-            this.clearAndInit();
+            LibraryListEntry entry = this.libraryList.getFirstChild();
+            this.libraryList.setSelected(entry);
+            this.selectEntry(entry);
         }
     }
 
     @Override
     public void closeScreen() {
         this.client.setScreen(this.parent);
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (this.searchBox.isActive() && keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+            this.addFromSearch();
+            return true;
+        }
+
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     public void selectEntry(@Nullable LibraryListEntry entry) {

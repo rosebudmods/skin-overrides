@@ -33,6 +33,7 @@ import net.orifu.xplat.gui.Screen;
 import net.orifu.xplat.CommonTexts;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.glfw.GLFW;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -202,6 +203,16 @@ public class SkinOverridesScreen extends Screen {
         // reposition layout
         this.layout.setHeaderHeight(0);
         this.layout.arrangeElements();
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (this.searchBox.isActive() && keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+            this.addOverrideFromSearch();
+            return true;
+        }
+
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override
