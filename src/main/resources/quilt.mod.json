@@ -11,9 +11,9 @@
 				"orifu": "owner"
 			},
 			"contact": {
-				"homepage": "https://lumity.dev/orifu/skin-overrides/wiki/Home",
+				"homepage": "https://rosebud.dev/skin-overrides/",
 				"sources": "https://lumity.dev/orifu/skin-overrides",
-				"issues": "https://github.com/orifu/skin-overrides/issues"
+				"issues": "https://github.com/rosebudmods/skin-overrides/issues"
 			},
 			"license": "MPL-2.0",
 			"icon": "assets/skin_overrides/icon.png"
