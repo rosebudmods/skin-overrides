@@ -53,7 +53,10 @@ public class Util {
     }
 
     public static String id(GameProfile profile) {
-        return MinecraftClient.getInstance().getSession().getAccountType() != Session.AccountType.LEGACY
+        var session = MinecraftClient.getInstance().getSession();
+        return /*? if >=1.17.1 {*/ session.getAccountType()
+                /*?} else*/ /*session.accountType*/
+                != Session.AccountType.LEGACY
                 ? profile.getId().toString()
                 : profile.getName();
     }
@@ -72,7 +75,7 @@ public class Util {
         MinecraftClient.getInstance().getTextureManager().bindTexture(texture);
         NativeImage img = new NativeImage(w, h, false);
         img.loadFromTextureImage(0, false);
-        /*? if >=1.19.2 {*/ img.writeFile(path);
+        /*? if >=1.19.2 || <1.17.1 {*/ img.writeFile(path);
         /*?} else*/ /*img.writeTo(path);*/
         img.close();
     }

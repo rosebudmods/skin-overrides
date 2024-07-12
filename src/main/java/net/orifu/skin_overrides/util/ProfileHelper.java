@@ -51,13 +51,13 @@ public class ProfileHelper {
                         /*?} else >>*/ /*UUIDTypeAdapter.fromString*/ (id);
                 // convert uuid to profile (cached)
                 // if not in cache, fetch the profile (also cached)
-                profile = getUserCache().getByUuid(uuid).or(() -> uuidToProfile(uuid));
+                profile = optional(getUserCache().getByUuid(uuid)).or(() -> uuidToProfile(uuid));
             } catch (IllegalArgumentException e) {
             }
 
         } else {
             // convert player username to profile (cached)
-            profile = getUserCache().findByName(id);
+            profile = optional(getUserCache().findByName(id));
         }
 
         return profile.orElseGet(() -> new GameProfile(getOfflinePlayerUuid(id), id));
@@ -123,4 +123,14 @@ public class ProfileHelper {
         *///?}
         return userCache;
     }
+
+    //? if >=1.17.1 {
+    private static <T> Optional<T> optional(Optional<T> value) {
+        return value;
+    }
+    //?} else {
+    /*private static <T> Optional<T> optional(T value) {
+        return Optional.ofNullable(value);
+    }
+    *///?}
 }

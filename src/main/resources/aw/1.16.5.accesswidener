@@ -1,0 +1,9 @@
+accessWidener v2 named
+
+accessible method net/minecraft/client/texture/PlayerSkinTexture loadTexture (Ljava/io/InputStream;)Lnet/minecraft/client/texture/NativeImage;
+accessible method net/minecraft/client/texture/PlayerSkinTexture onTextureLoaded (Lnet/minecraft/client/texture/NativeImage;)V
+
+accessible field net/minecraft/client/util/DefaultSkinHelper STEVE_SKIN Lnet/minecraft/util/Identifier;
+accessible field net/minecraft/client/util/DefaultSkinHelper ALEX_SKIN Lnet/minecraft/util/Identifier;
+
+accessible field net/minecraft/client/util/Session accountType Lnet/minecraft/client/util/Session$AccountType;

@@ -8,8 +8,13 @@ import net.orifu.skin_overrides.library.CapeLibrary;
 import net.orifu.skin_overrides.library.SkinLibrary;
 import net.orifu.skin_overrides.override.LocalCapeOverrider;
 import net.orifu.skin_overrides.override.LocalSkinOverrider;
+//? if >=1.17.1 {
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+//?} else {
+/*import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+*///?}
 //? if hasUi {
 import com.mojang.blaze3d.platform.InputUtil;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -26,7 +31,8 @@ import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("deprecation")
 public class Mod implements ClientModInitializer {
-	public static final Logger LOGGER = LoggerFactory.getLogger("skin overrides");
+	public static final Logger LOGGER = /*? if >=1.17.1 {*/ LoggerFactory /*?} else >>*/ /*LogManager*/
+			.getLogger("skin overrides");
 	public static final String MOD_ID = "skin_overrides";
 
 	public static final String SKIN_OVERRIDES_PATH = "skin_overrides";
