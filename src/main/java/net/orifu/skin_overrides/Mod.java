@@ -19,6 +19,7 @@ import net.orifu.skin_overrides.screen.SkinOverridesScreen;
 import org.lwjgl.glfw.GLFW;
 //?}
 
+import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -62,9 +63,9 @@ public class Mod implements ClientModInitializer {
 
 	public static Identifier id(String path) {
 		//? if >=1.21 {
-		 return Identifier.of(MOD_ID, path); 
+		 return Identifier.of(MOD_ID, path.toLowerCase(Locale.ROOT));
 		//?} else
-		/*return new Identifier(MOD_ID, path);*/
+		/*return new Identifier(MOD_ID, path.toLowerCase(Locale.ROOT));*/
 	}
 
 	public static Skin override(GameProfile profile) {
