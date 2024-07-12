@@ -1,10 +1,8 @@
-the mod has had a major rework, which should reduce lag, especially when many players are in the game!
+this mod is now under [rosebud](https://modrinth.com/organization/rosebud/), and the wiki has been moved to [its website](https://rosebud.dev/skin-overrides/)! also check out our other mods :)
 
-other changes:
+- the mod is now compatible with [3D skin layers](https://modrinth.com/mod/zV5r3pPn)
 
-- new supported versions: 1.18.1 - 1.20.2!
-- the library is now reloaded every 2 seconds instead of only when the screen is opened
-- the player faces on the overrides screen now look nicer
-- added a button for conveniently adding new overrides
-- added a key to directly open the overrides screen (defaults to O)
-- pressing the enter key in the library search now acts like pressing the add button
+  if there are any other compatibility issues, please open an issue!
+
+- the mod now supports 1.14.4, 1.15.2, 1.16.5 and 1.17.1
+- fixed a crash that could happen in certain situations
