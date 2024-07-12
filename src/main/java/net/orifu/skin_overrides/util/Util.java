@@ -53,7 +53,7 @@ public class Util {
     }
 
     public static String id(GameProfile profile) {
-        return MinecraftClient.getInstance().getSession().getAccountType() == Session.AccountType.MSA
+        return MinecraftClient.getInstance().getSession().getAccountType() != Session.AccountType.LEGACY
                 ? profile.getId().toString()
                 : profile.getName();
     }

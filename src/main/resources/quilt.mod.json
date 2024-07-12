@@ -33,7 +33,7 @@
 				"versions": "^${minecraft_version}"
 			},
 			{
-				"id": "fabric-api"
+				"id": "fabric"
 			},
 			{
 				"id": "modmenu",
