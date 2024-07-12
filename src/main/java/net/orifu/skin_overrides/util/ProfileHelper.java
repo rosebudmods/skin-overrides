@@ -118,7 +118,8 @@ public class ProfileHelper {
         *///?}
         userCache = services.userCache();
         //?} else {
-        /*var gameProfileRepository = new YggdrasilAuthenticationService(client.getNetworkProxy()).createProfileRepository();
+        /*var gameProfileRepository = new YggdrasilAuthenticationService(client.getNetworkProxy()/^? if <1.16.5 {^/, null/^?}^/)
+                .createProfileRepository();
         userCache = new UserCache(gameProfileRepository, new File(client.runDirectory, MinecraftServer.USER_CACHE_FILE.getName()));
         *///?}
         return userCache;
