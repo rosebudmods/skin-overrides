@@ -22,9 +22,10 @@ body:
         - 1.19.4
         - 1.19.3
         - 1.19.2
-        - '1.19'
         - 1.18.2
-        - 1.18.1
+        - 1.17.1
+        - 1.16.5
+        - 1.15.2
         - another version
     validations:
       required: true
@@ -34,7 +35,8 @@ body:
       label: mod version
       description: which version of skin overrides are you using?
       options:
-        - 2.1.0 (beta)
+        - 2.1.1
+        - 2.1.0
         - 2.0.0
         - 1.0.0
     validations:
