@@ -89,10 +89,7 @@ public class OverrideInfoEntryScreen extends Screen {
 
     @Override
     protected void init() {
-        //? if =1.21 {
-         this.message = MultilineText.method_30890(this.textRenderer, this.getMessage(), this.width - 50); 
-        //?} else
-        /*this.message = MultilineText.create(this.textRenderer, this.getMessage(), this.width - 50);*/
+         this.message = MultilineText.create(this.textRenderer, this.getMessage(), this.width - 50);
 
         // add skin model selector buttons
         int buttonY = this.getModelButtonY();
@@ -133,8 +130,8 @@ public class OverrideInfoEntryScreen extends Screen {
         /*this.renderBackground(graphics.portable());*/
         this.renderSuper(graphics, mouseX, mouseY, delta);
 
-        //? if =1.21 {
-        this.message.method_30889(graphics.portable(), this.width / 2, this.getMessageY(), 8, 0xffffff);
+        //? if >=1.21 {
+        this.message.drawCenteredWithShadow(graphics.portable(), this.width / 2, this.getMessageY());
         //?} else if =1.20.6 {
         /*this.message.render(graphics.portable(), this.width / 2, this.getMessageY());
         *///?} else if >=1.20.1 {

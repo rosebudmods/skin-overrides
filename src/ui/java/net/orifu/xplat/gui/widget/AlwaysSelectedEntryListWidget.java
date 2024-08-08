@@ -36,9 +36,11 @@ public abstract class AlwaysSelectedEntryListWidget
     }
 
     protected void renderList(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        //? if >=1.20.6 {
-        super.method_25311(graphics, mouseX, mouseY, delta);
-        //?} else
+        //? if >=1.21 {
+        super.renderEntries(graphics, mouseX, mouseY, delta);
+        //?} else if >=1.20.6 {
+        /*super.method_25311(graphics, mouseX, mouseY, delta);
+        *///?} else
         /*super.renderList(graphics.portable(), mouseX, mouseY, delta);*/
     }
 
@@ -47,22 +49,18 @@ public abstract class AlwaysSelectedEntryListWidget
         super.renderEntry(graphics.portable(), mouseX, mouseY, delta, index, x, y, width, height);
     }
 
-    //? if >=1.20.6 {
     @Override
-    protected void method_25311(net.minecraft.client.gui.GuiGraphics graphics, int i, int j, float f) {
-        this.renderList(new GuiGraphics(graphics), i, j, f);
-    }
-    //?} else if >=1.20.1 {
-    /*@Override
-    protected void renderList(net.minecraft.client.gui.GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    //? if >=1.21 {
+    protected void renderEntries(net.minecraft.client.gui.GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    //?} if >=1.20.6 {
+    /*protected void method_25311(net.minecraft.client.gui.GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    *///?} else if >=1.20.1 {
+    /*protected void renderList(net.minecraft.client.gui.GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    *///?} else {
+    /*protected void renderList(MatrixStack graphics, int mouseX, int mouseY, float delta) {
+    *///?}
         this.renderList(new GuiGraphics(graphics), mouseX, mouseY, delta);
     }
-    *///?} else {
-    /*@Override
-    protected void renderList(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        this.renderList(new GuiGraphics(matrices), mouseX, mouseY, delta);
-    }
-    *///?}
 
     //? if >=1.20.1 {
     @Override
