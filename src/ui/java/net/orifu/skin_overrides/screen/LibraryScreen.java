@@ -1,6 +1,7 @@
 package net.orifu.skin_overrides.screen;
 
 import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Library.LibraryEntry;
@@ -9,6 +10,7 @@ import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.library.CapeLibrary;
 import net.orifu.skin_overrides.library.SkinLibrary;
 import net.orifu.skin_overrides.library.SkinLibrary.SkinEntry;
+import net.orifu.skin_overrides.screen.widget.SkinModelRendererWidget;
 import net.orifu.skin_overrides.texture.LocalPlayerTexture;
 import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
@@ -49,7 +51,7 @@ public class LibraryScreen extends Screen {
 
     private TextFieldWidget searchBox;
     @Nullable
-    private FrameWidget entryPreviewFrame;
+    private Widget entryPreview;
     @Nullable
     private TextFieldWidget nameField;
 
@@ -118,13 +120,11 @@ public class LibraryScreen extends Screen {
             this.capeScale = PlayerCapeRenderer.HEIGHT * 8 + 150 < this.height ? 8 : 6;
 
             // library entry preview
-            this.entryPreviewFrame = controls.add(new FrameWidget(
-                    this.ov.skin
-                            ? PlayerSkinRenderer.WIDTH * this.skinScale
-                            : PlayerCapeRenderer.WIDTH * this.capeScale,
-                    this.ov.skin
-                            ? PlayerSkinRenderer.HEIGHT * this.skinScale
-                            : PlayerCapeRenderer.HEIGHT * this.capeScale),
+            this.entryPreview = controls.add(this.ov.skin
+                            ? new SkinModelRendererWidget(null, this.skinScale, this.client)
+                            : new FrameWidget(
+                                    PlayerCapeRenderer.WIDTH * this.capeScale,
+                                    PlayerCapeRenderer.HEIGHT * this.capeScale),
                     LayoutSettings.create().alignHorizontallyCenter());
 
             // padding
@@ -204,14 +204,11 @@ public class LibraryScreen extends Screen {
 
         if (this.selectedEntry != null) {
             if (this.selectedEntry.entry instanceof SkinEntry entry) {
-                var texture = entry.getTexture();
-                var model = entry.getModel();
-                PlayerSkinRenderer.draw(graphics, texture, model,
-                        this.entryPreviewFrame.getX(), this.entryPreviewFrame.getY(), this.skinScale);
+                ((SkinModelRendererWidget) this.entryPreview).renderer.setSkin(entry.toSkin());
             } else {
                 var texture = this.selectedEntry.entry.getTexture();
                 PlayerCapeRenderer.draw(graphics, texture,
-                        this.entryPreviewFrame.getX(), this.entryPreviewFrame.getY(), this.capeScale);
+                        this.entryPreview.getX(), this.entryPreview.getY(), this.capeScale);
             }
         }
 

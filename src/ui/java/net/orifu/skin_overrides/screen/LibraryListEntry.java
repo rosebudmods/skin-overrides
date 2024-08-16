@@ -4,6 +4,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.library.SkinLibrary.SkinEntry;
+import net.orifu.skin_overrides.util.SkinModelRenderer;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.xplat.gui.GuiGraphics;
@@ -29,23 +30,34 @@ public class LibraryListEntry extends Entry<LibraryListEntry> {
     public LibraryEntry entry;
     public int index;
 
+    private SkinModelRenderer preview;
+
     public LibraryListEntry(LibraryEntry entry, int index, LibraryScreen parent) {
         this.parent = parent;
         this.client = MinecraftClient.getInstance();
 
         this.entry = entry;
         this.index = index;
+
+        if (this.entry instanceof SkinEntry skinEntry) {
+            this.preview = new SkinModelRenderer(skinEntry.toSkin(), 2, this.client);
+            this.preview.setPitchAndYaw(0, 0);
+        }
     }
 
     @Override
     public void render(GuiGraphics graphics, int index, int y, int x, int entryWidth, int entryHeight, int mouseX,
-            int mouseY, boolean hovered, float tickDelta) {
+            int mouseY, boolean hovered, float delta) {
         int textOffset;
-        if (this.entry instanceof SkinEntry entry) {
-            var texture = entry.getTexture();
-            var model = entry.getModel();
-            PlayerSkinRenderer.draw(graphics, texture, model, x + SKIN_OFFSET + PAD, y + PAD, 2);
+        if (this.entry instanceof SkinEntry) {
+            this.preview.draw(graphics.portable(), x + SKIN_OFFSET + PAD, y + PAD);
             textOffset = SKIN_HEIGHT;
+
+            if (this.isMouseOver(mouseX, mouseY)) {
+                this.preview.spin(delta);
+            } else {
+                this.preview.setYaw(0);
+            }
         } else {
             PlayerCapeRenderer.draw(graphics, entry.getTexture(), x + CAPE_OFFSET + PAD, y + PAD, 3);
             textOffset = CAPE_HEIGHT;

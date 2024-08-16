@@ -100,6 +100,10 @@ public class SkinLibrary extends AbstractLibrary {
             return Util.texture("skin/library/" + this.id, new LocalSkinTexture(this.file, this.model));
         }
 
+        public Skin toSkin() {
+            return new Skin(this.getTexture(), null, null, this.getModel());
+        }
+
         public Skin.Model getModel() {
             return this.model;
         }

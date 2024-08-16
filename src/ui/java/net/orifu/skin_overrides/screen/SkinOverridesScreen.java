@@ -12,9 +12,10 @@ import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.library.CapeLibrary;
 import net.orifu.skin_overrides.library.SkinLibrary;
 import net.orifu.skin_overrides.override.LibraryOverrider.LibraryOverride;
-import net.orifu.skin_overrides.texture.LocalSkinTexture;
+import net.orifu.skin_overrides.screen.widget.SkinModelRendererWidget;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
-import net.orifu.skin_overrides.util.PlayerSkinRenderer;
+import net.orifu.skin_overrides.util.SkinModelRenderer;
+import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.Util;
 import net.orifu.xplat.gui.tab.Tab;
@@ -134,10 +135,12 @@ public class SkinOverridesScreen extends Screen {
         } else {
             this.initConfig(config);
 
-            this.previewFrame = configCols.add(
-                    new FrameWidget(PlayerSkinRenderer.WIDTH * PREVIEW_SCALE,
-                            PlayerSkinRenderer.HEIGHT * PREVIEW_SCALE),
-                    LayoutSettings.create().alignHorizontallyRight().alignVerticallyCenter());
+            if (this.selectedProfile != null) {
+                var skinPreview = configCols.add(
+                        new SkinModelRendererWidget(Mod.override(this.selectedProfile), 3, this.client),
+                        LayoutSettings.create().alignHorizontallyRight().alignVerticallyCenter());
+                skinPreview.renderer.setYaw(-30);
+            }
         }
     }
 
@@ -175,10 +178,7 @@ public class SkinOverridesScreen extends Screen {
         if (this.selectedProfile != null) {
             // draw skin/cape preview
             Skin skin = Mod.override(this.selectedProfile);
-            if (this.ov.skin) {
-                PlayerSkinRenderer.draw(graphics, skin, this.previewFrame.getX(), this.previewFrame.getY(),
-                        PREVIEW_SCALE);
-            } else {
+            if (!this.ov.skin) {
                 PlayerCapeRenderer.draw(graphics, skin, this.previewFrame.getX(), this.previewFrame.getY(),
                         PREVIEW_SCALE);
             }
