@@ -75,7 +75,7 @@ public record Skin(
         return new Skin(skin, this.capeTexture, this.elytraTexture, model);
     }
 
-    public Skin withCape(Identifier cape) {
+    public Skin withCape(@Nullable Identifier cape) {
         return new Skin(this.texture, cape, null, this.model);
     }
 

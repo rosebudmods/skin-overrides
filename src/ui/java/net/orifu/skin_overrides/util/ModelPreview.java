@@ -5,6 +5,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.entity.model.ElytraEntityModel;
 import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.util.Identifier;
@@ -13,36 +14,54 @@ import net.minecraft.util.math.MathHelper;
 import net.orifu.skin_overrides.Skin;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class ModelPreview {
+import java.util.Optional;
+
+public class ModelPreview {
     @Nullable
-    protected Identifier texture;
+    protected Skin skin;
 
     protected final int scale;
 
     protected float pitch = -5;
-    protected float yaw = 30;
+    protected float yaw = -30;
 
     protected final PlayerEntityModel<?> wide;
     protected final PlayerEntityModel<?> slim;
+    protected final PlayerCapeModel<?> cape;
+    protected final ElytraEntityModel<?> elytra;
 
     // see PlayerSkinModelWidget
     protected static final float MODEL_HEIGHT = 2.125f;
     protected static final float MODEL_Y_OFFSET = 0.0625f;
     protected static final float MAX_PITCH = 50;
 
-    public ModelPreview(@Nullable Identifier texture, int scale, MinecraftClient client) {
-        this.texture = texture;
+    public ModelPreview(@Nullable Skin skin, int scale, MinecraftClient client) {
+        this.skin = skin;
         this.scale = scale;
 
         var modelLoader = client.getEntityModelLoader();
         this.wide = new PlayerEntityModel<>(modelLoader.getModelPart(EntityModelLayers.PLAYER), false);
         this.slim = new PlayerEntityModel<>(modelLoader.getModelPart(EntityModelLayers.PLAYER_SLIM), true);
+        this.cape = new PlayerCapeModel<>(PlayerCapeModel.getTexturedModelData().createModel());
+        this.elytra = new ElytraEntityModel<>(modelLoader.getModelPart(EntityModelLayers.ELYTRA));
+
+        // why is this the default??
         this.wide.child = false;
         this.slim.child = false;
+        this.cape.child = false;
+        this.elytra.child = false;
     }
 
-    public void setTexture(Identifier texture) {
-        this.texture = texture;
+    public void setSkin(Skin skin) {
+        this.skin = skin;
+    }
+
+    public void setCape(@Nullable Identifier texture) {
+        if (this.skin == null) {
+            this.skin = ProfileHelper.getDefaultSkins()[0];
+        }
+
+        this.skin = this.skin.withCape(texture);
     }
 
     public void setPitch(float pitch) {
@@ -51,6 +70,10 @@ public abstract class ModelPreview {
 
     public void setYaw(float yaw) {
         this.yaw = yaw;
+    }
+
+    public void turn(float angle) {
+        this.setYaw(this.yaw + angle);
     }
 
     public void setPitchAndYaw(float pitch, float yaw) {
@@ -75,7 +98,7 @@ public abstract class ModelPreview {
     }
 
     public void draw(GuiGraphics graphics, int x, int y) {
-        if (this.texture == null) return;
+        if (this.skin == null) return;
 
         graphics.getMatrices().push();
         graphics.getMatrices().translate(x + this.width() / 2.0, y + this.height(), 100);
@@ -98,42 +121,18 @@ public abstract class ModelPreview {
         graphics.getMatrices().pop();
     }
 
-    protected abstract void render(GuiGraphics graphics);
+    protected void render(GuiGraphics graphics) {
+        var model = this.skin.model().equals(Skin.Model.WIDE) ? this.wide : this.slim;
+        RenderLayer layer = model.getLayer(this.skin.texture());
+        model.method_60879(graphics.getMatrices(), graphics.getVertexConsumers().getBuffer(layer), 0xf000f0, OverlayTexture.DEFAULT_UV);
 
-    public static class SkinPreview extends ModelPreview {
-        @Nullable
-        protected Skin skin;
-
-        public SkinPreview(@Nullable Skin skin, int scale, MinecraftClient client) {
-            super(skin != null ? skin.texture() : null, scale, client);
-
-            this.skin = skin;
+        Identifier cape = this.skin.capeTexture();
+        if (cape != null) {
+            RenderLayer capeLayer = this.cape.getLayer(cape);
+            this.cape.method_60879(graphics.getMatrices(), graphics.getVertexConsumers().getBuffer(capeLayer), 0xf000f0, OverlayTexture.DEFAULT_UV);
         }
 
-        public void setSkin(Skin skin) {
-            this.skin = skin;
-            super.setTexture(skin.texture());
-        }
-
-        @Override
-        protected void render(GuiGraphics graphics) {
-            if (skin == null) return;
-
-            var model = this.skin.model().equals(Skin.Model.WIDE) ? this.wide : this.slim;
-            RenderLayer layer = model.getLayer(this.skin.texture());
-            model.method_60879(graphics.getMatrices(), graphics.getVertexConsumers().getBuffer(layer), 0xf000f0, OverlayTexture.DEFAULT_UV);
-        }
-    }
-
-    public static class CapePreview extends ModelPreview {
-        public CapePreview(@Nullable Identifier texture, int scale, MinecraftClient client) {
-            super(texture, scale, client);
-        }
-
-        @Override
-        protected void render(GuiGraphics graphics) {
-            RenderLayer layer = this.wide.getLayer(this.texture);
-            this.wide.renderCape(graphics.getMatrices(), graphics.getVertexConsumers().getBuffer(layer), 0xf000f0, OverlayTexture.DEFAULT_UV);
-        }
+        // RenderLayer elytraLayer = model.getLayer(Optional.ofNullable(this.skin.elytraTexture()).orElse(Identifier.ofDefault("textures/entity/elytra.png")));
+        // this.elytra.method_60879(graphics.getMatrices(), graphics.getVertexConsumers().getBuffer(elytraLayer), 0xf000f0, OverlayTexture.DEFAULT_UV);
     }
 }

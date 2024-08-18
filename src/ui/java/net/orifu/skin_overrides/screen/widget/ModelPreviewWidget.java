@@ -9,33 +9,26 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.util.ModelPreview;
-import net.orifu.skin_overrides.util.PlayerCapeRenderer;
-import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import org.jetbrains.annotations.Nullable;
 
 public class ModelPreviewWidget extends ClickableWidget {
     public final ModelPreview renderer;
 
-    protected ModelPreviewWidget(ModelPreview renderer, int width, int height) {
-        super(0, 0, width, height, Text.empty());
+    protected ModelPreviewWidget(ModelPreview renderer) {
+        super(0, 0, renderer.width(), renderer.height(), Text.empty());
 
         this.renderer = renderer;
     }
 
     public static ModelPreviewWidget skin(@Nullable Skin skin, int scale, MinecraftClient client) {
-        return new ModelPreviewWidget(
-                new ModelPreview.SkinPreview(skin, scale, client),
-                PlayerSkinRenderer.WIDTH * scale,
-                PlayerSkinRenderer.HEIGHT * scale
-        );
+        return new ModelPreviewWidget(new ModelPreview(skin, scale, client));
     }
 
     public static ModelPreviewWidget cape(@Nullable Identifier cape, int scale, MinecraftClient client) {
-        return new ModelPreviewWidget(
-                new ModelPreview.CapePreview(cape, scale, client),
-                PlayerCapeRenderer.WIDTH * scale,
-                PlayerCapeRenderer.HEIGHT * scale
-        );
+        var preview = new ModelPreview(null, scale, client);
+        if (cape != null) preview.setCape(cape);
+        preview.turn(180);
+        return new ModelPreviewWidget(preview);
     }
 
     @Override

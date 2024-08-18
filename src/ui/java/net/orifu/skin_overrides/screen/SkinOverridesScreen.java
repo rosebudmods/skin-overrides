@@ -138,7 +138,6 @@ public class SkinOverridesScreen extends Screen {
                         ? ModelPreviewWidget.skin(overriddenSkin, PREVIEW_SCALE, this.client)
                         : ModelPreviewWidget.cape(overriddenSkin.capeTexture(), PREVIEW_SCALE, this.client),
                         LayoutSettings.create().alignHorizontallyRight().alignVerticallyCenter());
-                skinPreview.renderer.setYaw(-30);
             }
         }
     }

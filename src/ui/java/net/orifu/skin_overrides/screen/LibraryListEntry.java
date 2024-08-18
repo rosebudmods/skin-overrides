@@ -5,7 +5,6 @@ import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.library.SkinLibrary.SkinEntry;
 import net.orifu.skin_overrides.util.ModelPreview;
-import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.xplat.gui.GuiGraphics;
 import net.orifu.xplat.gui.widget.AlwaysSelectedEntryListWidget.Entry;
@@ -15,14 +14,9 @@ public class LibraryListEntry extends Entry<LibraryListEntry> {
     public static final int SKIN_HEIGHT = PlayerSkinRenderer.HEIGHT * 2;
     public static final int SKIN_OFFSET = 16;
 
-    public static final int CAPE_WIDTH = PlayerCapeRenderer.WIDTH * 3;
-    public static final int CAPE_HEIGHT = PlayerCapeRenderer.HEIGHT * 3;
-    public static final int CAPE_OFFSET = SKIN_OFFSET + (SKIN_WIDTH - CAPE_WIDTH) / 2;
-
     public static final int PAD = 3;
     public static final int WIDTH = SKIN_WIDTH + SKIN_OFFSET * 2 + PAD * 2;
     public static final int SKIN_ENTRY_HEIGHT = SKIN_HEIGHT + 2 + 7 + PAD * 2;
-    public static final int CAPE_ENTRY_HEIGHT = CAPE_HEIGHT + 2 + 7 + PAD * 2;
 
     private final LibraryScreen parent;
     private final MinecraftClient client;
@@ -40,33 +34,28 @@ public class LibraryListEntry extends Entry<LibraryListEntry> {
         this.index = index;
 
         if (this.entry instanceof SkinEntry skinEntry) {
-            this.preview = new ModelPreview.SkinPreview(skinEntry.toSkin(), 2, this.client);
+            this.preview = new ModelPreview(skinEntry.toSkin(), 2, this.client);
+            this.preview.setPitchAndYaw(0, 0);
         } else {
-            this.preview = new ModelPreview.CapePreview(this.entry.getTexture(), 3, this.client);
+            this.preview = new ModelPreview(null, 2, this.client);
+            this.preview.setCape(this.entry.getTexture());
+            this.preview.setPitchAndYaw(0, 180);
         }
-        this.preview.setPitchAndYaw(0, 0);
     }
 
     @Override
     public void render(GuiGraphics graphics, int index, int y, int x, int entryWidth, int entryHeight, int mouseX,
             int mouseY, boolean hovered, float delta) {
-        int textOffset;
-        if (this.entry instanceof SkinEntry) {
-            this.preview.draw(graphics.portable(), x + SKIN_OFFSET + PAD, y + PAD);
-            textOffset = SKIN_HEIGHT;
-        } else {
-            this.preview.draw(graphics.portable(), x + SKIN_OFFSET + PAD, y + PAD);
-            textOffset = CAPE_HEIGHT;
-        }
+        this.preview.draw(graphics.portable(), x + SKIN_OFFSET + PAD, y + PAD);
 
         if (this.isMouseOver(mouseX, mouseY)) {
             this.preview.spin(delta);
         } else {
-            this.preview.setYaw(0);
+            this.preview.setYaw(this.parent.ov.skin ? 0 : 180);
         }
 
         graphics.drawCenteredShadowedText(this.client.textRenderer, Text.literal(this.entry.getName()),
-                x + WIDTH / 2, y + PAD + textOffset + 2, 0xffffff);
+                x + WIDTH / 2, y + PAD + SKIN_HEIGHT + 2, 0xffffff);
     }
 
     @Override
