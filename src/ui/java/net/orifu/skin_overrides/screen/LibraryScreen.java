@@ -10,9 +10,10 @@ import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.library.CapeLibrary;
 import net.orifu.skin_overrides.library.SkinLibrary;
 import net.orifu.skin_overrides.library.SkinLibrary.SkinEntry;
-import net.orifu.skin_overrides.screen.widget.SkinModelRendererWidget;
+import net.orifu.skin_overrides.screen.widget.ModelPreviewWidget;
 import net.orifu.skin_overrides.texture.LocalPlayerTexture;
 import net.orifu.skin_overrides.texture.LocalSkinTexture;
+import net.orifu.skin_overrides.util.ModelPreview;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.skin_overrides.util.ProfileHelper;
@@ -51,7 +52,7 @@ public class LibraryScreen extends Screen {
 
     private TextFieldWidget searchBox;
     @Nullable
-    private Widget entryPreview;
+    private ModelPreviewWidget entryPreview;
     @Nullable
     private TextFieldWidget nameField;
 
@@ -121,10 +122,8 @@ public class LibraryScreen extends Screen {
 
             // library entry preview
             this.entryPreview = controls.add(this.ov.skin
-                            ? new SkinModelRendererWidget(null, this.skinScale, this.client)
-                            : new FrameWidget(
-                                    PlayerCapeRenderer.WIDTH * this.capeScale,
-                                    PlayerCapeRenderer.HEIGHT * this.capeScale),
+                            ? ModelPreviewWidget.skin(null, this.skinScale, this.client)
+                            : ModelPreviewWidget.cape(null, this.capeScale, this.client),
                     LayoutSettings.create().alignHorizontallyCenter());
 
             // padding
@@ -204,11 +203,9 @@ public class LibraryScreen extends Screen {
 
         if (this.selectedEntry != null) {
             if (this.selectedEntry.entry instanceof SkinEntry entry) {
-                ((SkinModelRendererWidget) this.entryPreview).renderer.setSkin(entry.toSkin());
+                ((ModelPreview.SkinPreview) this.entryPreview.renderer).setSkin(entry.toSkin());
             } else {
-                var texture = this.selectedEntry.entry.getTexture();
-                PlayerCapeRenderer.draw(graphics, texture,
-                        this.entryPreview.getX(), this.entryPreview.getY(), this.capeScale);
+                this.entryPreview.renderer.setTexture(this.selectedEntry.entry.getTexture());
             }
         }
 

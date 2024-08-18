@@ -7,13 +7,15 @@ import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Axis;
 import net.minecraft.util.math.MathHelper;
 import net.orifu.skin_overrides.Skin;
 import org.jetbrains.annotations.Nullable;
 
-public class SkinModelRenderer {
-    protected Skin skin;
+public abstract class ModelPreview {
+    @Nullable
+    protected Identifier texture;
 
     protected final int scale;
 
@@ -28,8 +30,8 @@ public class SkinModelRenderer {
     protected static final float MODEL_Y_OFFSET = 0.0625f;
     protected static final float MAX_PITCH = 50;
 
-    public SkinModelRenderer(@Nullable Skin skin, int scale, MinecraftClient client) {
-        this.skin = skin;
+    public ModelPreview(@Nullable Identifier texture, int scale, MinecraftClient client) {
+        this.texture = texture;
         this.scale = scale;
 
         var modelLoader = client.getEntityModelLoader();
@@ -39,8 +41,8 @@ public class SkinModelRenderer {
         this.slim.child = false;
     }
 
-    public void setSkin(Skin skin) {
-        this.skin = skin;
+    public void setTexture(Identifier texture) {
+        this.texture = texture;
     }
 
     public void setPitch(float pitch) {
@@ -73,7 +75,7 @@ public class SkinModelRenderer {
     }
 
     public void draw(GuiGraphics graphics, int x, int y) {
-        if (this.skin == null) return;
+        if (this.texture == null) return;
 
         graphics.getMatrices().push();
         graphics.getMatrices().translate(x + this.width() / 2.0, y + this.height(), 100);
@@ -88,13 +90,50 @@ public class SkinModelRenderer {
         graphics.getMatrices().push();
         graphics.getMatrices().scale(1, 1, -1);
         graphics.getMatrices().translate(0, -1.5, 0);
-        var model = this.skin.model().equals(Skin.Model.WIDE) ? this.wide : this.slim;
-        RenderLayer layer = model.getLayer(this.skin.texture());
-        model.method_60879(graphics.getMatrices(), graphics.getVertexConsumers().getBuffer(layer), 0xf000f0, OverlayTexture.DEFAULT_UV);
+        this.render(graphics);
         graphics.getMatrices().pop();
         graphics.draw();
 
         DiffuseLighting.setup3DGuiLighting();
         graphics.getMatrices().pop();
+    }
+
+    protected abstract void render(GuiGraphics graphics);
+
+    public static class SkinPreview extends ModelPreview {
+        @Nullable
+        protected Skin skin;
+
+        public SkinPreview(@Nullable Skin skin, int scale, MinecraftClient client) {
+            super(skin != null ? skin.texture() : null, scale, client);
+
+            this.skin = skin;
+        }
+
+        public void setSkin(Skin skin) {
+            this.skin = skin;
+            super.setTexture(skin.texture());
+        }
+
+        @Override
+        protected void render(GuiGraphics graphics) {
+            if (skin == null) return;
+
+            var model = this.skin.model().equals(Skin.Model.WIDE) ? this.wide : this.slim;
+            RenderLayer layer = model.getLayer(this.skin.texture());
+            model.method_60879(graphics.getMatrices(), graphics.getVertexConsumers().getBuffer(layer), 0xf000f0, OverlayTexture.DEFAULT_UV);
+        }
+    }
+
+    public static class CapePreview extends ModelPreview {
+        public CapePreview(@Nullable Identifier texture, int scale, MinecraftClient client) {
+            super(texture, scale, client);
+        }
+
+        @Override
+        protected void render(GuiGraphics graphics) {
+            RenderLayer layer = this.wide.getLayer(this.texture);
+            this.wide.renderCape(graphics.getMatrices(), graphics.getVertexConsumers().getBuffer(layer), 0xf000f0, OverlayTexture.DEFAULT_UV);
+        }
     }
 }

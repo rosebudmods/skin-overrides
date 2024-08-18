@@ -12,9 +12,8 @@ import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.library.CapeLibrary;
 import net.orifu.skin_overrides.library.SkinLibrary;
 import net.orifu.skin_overrides.override.LibraryOverrider.LibraryOverride;
-import net.orifu.skin_overrides.screen.widget.SkinModelRendererWidget;
+import net.orifu.skin_overrides.screen.widget.ModelPreviewWidget;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
-import net.orifu.skin_overrides.util.SkinModelRenderer;
 import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.Util;
@@ -61,8 +60,6 @@ public class SkinOverridesScreen extends Screen {
     private TextFieldWidget searchBox;
 
     private FrameWidget configFrame;
-    @Nullable
-    private FrameWidget previewFrame;
 
     private OverrideManager ov = Mod.SKINS;
     @Nullable
@@ -135,9 +132,11 @@ public class SkinOverridesScreen extends Screen {
         } else {
             this.initConfig(config);
 
+            Skin overriddenSkin = Mod.override(this.selectedProfile);
             if (this.selectedProfile != null) {
-                var skinPreview = configCols.add(
-                        new SkinModelRendererWidget(Mod.override(this.selectedProfile), 3, this.client),
+                var skinPreview = configCols.add(this.ov.skin
+                        ? ModelPreviewWidget.skin(overriddenSkin, PREVIEW_SCALE, this.client)
+                        : ModelPreviewWidget.cape(overriddenSkin.capeTexture(), PREVIEW_SCALE, this.client),
                         LayoutSettings.create().alignHorizontallyRight().alignVerticallyCenter());
                 skinPreview.renderer.setYaw(-30);
             }
@@ -174,15 +173,6 @@ public class SkinOverridesScreen extends Screen {
         //? if <1.20.2
         /*this.renderBackground(graphics.portable());*/
         this.renderSuper(graphics, mouseX, mouseY, delta);
-
-        if (this.selectedProfile != null) {
-            // draw skin/cape preview
-            Skin skin = Mod.override(this.selectedProfile);
-            if (!this.ov.skin) {
-                PlayerCapeRenderer.draw(graphics, skin, this.previewFrame.getX(), this.previewFrame.getY(),
-                        PREVIEW_SCALE);
-            }
-        }
     }
 
     @Override

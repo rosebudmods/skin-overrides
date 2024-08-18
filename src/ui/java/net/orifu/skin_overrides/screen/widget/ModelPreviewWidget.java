@@ -6,18 +6,36 @@ import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.sound.SoundManager;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Skin;
+import net.orifu.skin_overrides.util.ModelPreview;
+import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
-import net.orifu.skin_overrides.util.SkinModelRenderer;
 import org.jetbrains.annotations.Nullable;
 
-public class SkinModelRendererWidget extends ClickableWidget {
-    public final SkinModelRenderer renderer;
+public class ModelPreviewWidget extends ClickableWidget {
+    public final ModelPreview renderer;
 
-    public SkinModelRendererWidget(@Nullable Skin skin, int scale, MinecraftClient client) {
-        super(0, 0, PlayerSkinRenderer.WIDTH * scale, PlayerSkinRenderer.HEIGHT * scale, Text.empty());
+    protected ModelPreviewWidget(ModelPreview renderer, int width, int height) {
+        super(0, 0, width, height, Text.empty());
 
-        this.renderer = new SkinModelRenderer(skin, scale, client);
+        this.renderer = renderer;
+    }
+
+    public static ModelPreviewWidget skin(@Nullable Skin skin, int scale, MinecraftClient client) {
+        return new ModelPreviewWidget(
+                new ModelPreview.SkinPreview(skin, scale, client),
+                PlayerSkinRenderer.WIDTH * scale,
+                PlayerSkinRenderer.HEIGHT * scale
+        );
+    }
+
+    public static ModelPreviewWidget cape(@Nullable Identifier cape, int scale, MinecraftClient client) {
+        return new ModelPreviewWidget(
+                new ModelPreview.CapePreview(cape, scale, client),
+                PlayerCapeRenderer.WIDTH * scale,
+                PlayerCapeRenderer.HEIGHT * scale
+        );
     }
 
     @Override

@@ -4,7 +4,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.library.SkinLibrary.SkinEntry;
-import net.orifu.skin_overrides.util.SkinModelRenderer;
+import net.orifu.skin_overrides.util.ModelPreview;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.xplat.gui.GuiGraphics;
@@ -30,7 +30,7 @@ public class LibraryListEntry extends Entry<LibraryListEntry> {
     public LibraryEntry entry;
     public int index;
 
-    private SkinModelRenderer preview;
+    private ModelPreview preview;
 
     public LibraryListEntry(LibraryEntry entry, int index, LibraryScreen parent) {
         this.parent = parent;
@@ -40,9 +40,11 @@ public class LibraryListEntry extends Entry<LibraryListEntry> {
         this.index = index;
 
         if (this.entry instanceof SkinEntry skinEntry) {
-            this.preview = new SkinModelRenderer(skinEntry.toSkin(), 2, this.client);
-            this.preview.setPitchAndYaw(0, 0);
+            this.preview = new ModelPreview.SkinPreview(skinEntry.toSkin(), 2, this.client);
+        } else {
+            this.preview = new ModelPreview.CapePreview(this.entry.getTexture(), 3, this.client);
         }
+        this.preview.setPitchAndYaw(0, 0);
     }
 
     @Override
@@ -52,15 +54,15 @@ public class LibraryListEntry extends Entry<LibraryListEntry> {
         if (this.entry instanceof SkinEntry) {
             this.preview.draw(graphics.portable(), x + SKIN_OFFSET + PAD, y + PAD);
             textOffset = SKIN_HEIGHT;
-
-            if (this.isMouseOver(mouseX, mouseY)) {
-                this.preview.spin(delta);
-            } else {
-                this.preview.setYaw(0);
-            }
         } else {
-            PlayerCapeRenderer.draw(graphics, entry.getTexture(), x + CAPE_OFFSET + PAD, y + PAD, 3);
+            this.preview.draw(graphics.portable(), x + SKIN_OFFSET + PAD, y + PAD);
             textOffset = CAPE_HEIGHT;
+        }
+
+        if (this.isMouseOver(mouseX, mouseY)) {
+            this.preview.spin(delta);
+        } else {
+            this.preview.setYaw(0);
         }
 
         graphics.drawCenteredShadowedText(this.client.textRenderer, Text.literal(this.entry.getName()),
