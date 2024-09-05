@@ -1,7 +1,6 @@
 package net.orifu.skin_overrides.screen.widget;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.sound.SoundManager;
@@ -9,6 +8,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.util.ModelPreview;
+import net.orifu.xplat.gui.GuiGraphics;
 import org.jetbrains.annotations.Nullable;
 
 public class ModelPreviewWidget extends ClickableWidget {
@@ -38,8 +38,11 @@ public class ModelPreviewWidget extends ClickableWidget {
     }
 
     @Override
-    protected void drawWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        this.renderer.draw(graphics, this.getX(), this.getY());
+    //? if >=1.20.1 {
+    protected void drawWidget(net.minecraft.client.gui.GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    //?} else
+    /*public void drawWidget(net.minecraft.client.util.math.MatrixStack graphics, int mouseX, int mouseY, float delta) {*/
+        this.renderer.draw(new GuiGraphics(graphics), this.getX(), this.getY());
     }
 
     @Override

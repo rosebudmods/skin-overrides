@@ -1,8 +1,6 @@
 package net.orifu.skin_overrides.screen;
 
 import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.CyclingButtonWidget;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Library.LibraryEntry;
@@ -22,6 +20,7 @@ import net.orifu.xplat.gui.GuiGraphics;
 import net.orifu.xplat.gui.LayoutSettings;
 import net.orifu.xplat.gui.Screen;
 import net.orifu.xplat.gui.widget.ButtonWidget;
+import net.orifu.xplat.gui.widget.CyclingButtonWidget;
 import net.orifu.xplat.gui.widget.FrameWidget;
 import net.orifu.xplat.gui.widget.LinearLayoutWidget;
 import net.orifu.xplat.gui.widget.TextFieldWidget;
@@ -197,6 +196,7 @@ public class LibraryScreen extends Screen {
                                 : Text.translatable("skin_overrides.model.elytra"))
                         .values(0, 1, 2).initially(this.showAttachment ? this.showElytra ? 2 : 1 : 0)
                         .build(
+                                0, 0, OPTIONS_WIDTH, 20,
                                 Text.translatable("skin_overrides.library.input.accessory"),
                                 (btn, opt) -> {
                                     this.showAttachment = !opt.equals(0);
@@ -207,6 +207,7 @@ public class LibraryScreen extends Screen {
                         .builder(option -> (Boolean) option ? CommonTexts.ON : CommonTexts.OFF)
                         .values(true, false).initially(this.showAttachment)
                         .build(
+                                0, 0, OPTIONS_WIDTH, 20,
                                 Text.translatable("skin_overrides.library.input.show_skin"),
                                 (btn, opt) -> this.showAttachment = (boolean) opt));
                 controls.add(CyclingButtonWidget
@@ -215,6 +216,7 @@ public class LibraryScreen extends Screen {
                                 : Text.translatable("skin_overrides.model.cape"))
                         .values(true, false).initially(this.showElytra)
                         .build(
+                                0, 0, OPTIONS_WIDTH, 20,
                                 Text.translatable("skin_overrides.library.input.model"),
                                 (btn, opt) -> this.showElytra = (boolean) opt));
             }

@@ -1,17 +1,19 @@
 package net.orifu.skin_overrides.util;
 
-import com.mojang.blaze3d.lighting.DiffuseLighting;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.entity.model.AnimalModel;
 import net.minecraft.client.render.entity.model.ElytraEntityModel;
 import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Axis;
 import net.minecraft.util.math.MathHelper;
+import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Skin;
+import net.orifu.xplat.DiffuseLighting;
+import net.orifu.xplat.gui.GuiGraphics;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -122,7 +124,10 @@ public class ModelPreview {
         graphics.getMatrices().scale(scale, scale, scale);
         graphics.getMatrices().translate(0, -MODEL_Y_OFFSET, 0);
         graphics.getMatrices().rotateAround(Axis.X_POSITIVE.rotationDegrees(this.pitch), 0, -MODEL_HEIGHT / 2, 0);
+        //? if >=1.20.6 {
         graphics.getMatrices().rotate(Axis.Y_POSITIVE.rotationDegrees(this.yaw));
+        //?} else
+        /*graphics.getMatrices().multiply(Axis.Y_POSITIVE.rotationDegrees(this.yaw));*/
         graphics.draw();
 
         DiffuseLighting.setupInventoryShaderLighting(Axis.X_POSITIVE.rotationDegrees(this.pitch));
@@ -142,19 +147,26 @@ public class ModelPreview {
 
         if (this.showSkin) {
             RenderLayer layer = model.getLayer(this.skin.texture());
-            model.method_60879(graphics.getMatrices(), graphics.getVertexConsumers().getBuffer(layer), 0xf000f0, OverlayTexture.DEFAULT_UV);
+            renderModel(model, layer, graphics);
         }
 
         Identifier cape = this.skin.capeTexture();
         if (cape != null && this.showCape && !this.showElytra) {
             RenderLayer capeLayer = this.cape.getLayer(cape);
-            this.cape.method_60879(graphics.getMatrices(), graphics.getVertexConsumers().getBuffer(capeLayer), 0xf000f0, OverlayTexture.DEFAULT_UV);
+            renderModel(this.cape, capeLayer, graphics);
         } else if (this.showElytra) {
             Identifier elytra = Optional.ofNullable(this.skin.elytraTexture())
                     .or(() -> Optional.ofNullable(this.skin.capeTexture()))
-                    .orElse(Identifier.ofDefault("textures/entity/elytra.png"));
+                    .orElse(Mod.defaultId("textures/entity/elytra.png"));
             RenderLayer elytraLayer = model.getLayer(elytra);
-            this.elytra.method_60879(graphics.getMatrices(), graphics.getVertexConsumers().getBuffer(elytraLayer), 0xf000f0, OverlayTexture.DEFAULT_UV);
+            renderModel(this.elytra, elytraLayer, graphics);
         }
+    }
+
+    private static void renderModel(AnimalModel<?> model, RenderLayer layer, GuiGraphics graphics) {
+        //? if >=1.21 {
+        model.method_60879(graphics.getMatrices(), graphics.getVertexConsumers().getBuffer(layer), 0xf000f0, OverlayTexture.DEFAULT_UV);
+        //?} else
+        /*model.render(graphics.getMatrices(), graphics.getVertexConsumers().getBuffer(layer), 0xf000f0, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);*/
     }
 }

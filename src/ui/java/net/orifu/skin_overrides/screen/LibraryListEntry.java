@@ -46,7 +46,7 @@ public class LibraryListEntry extends Entry<LibraryListEntry> {
     @Override
     public void render(GuiGraphics graphics, int index, int y, int x, int entryWidth, int entryHeight, int mouseX,
             int mouseY, boolean hovered, float delta) {
-        this.preview.draw(graphics.portable(), x + SKIN_OFFSET + PAD, y + PAD);
+        this.preview.draw(graphics, x + SKIN_OFFSET + PAD, y + PAD);
 
         if (this.isMouseOver(mouseX, mouseY)) {
             this.preview.spin(delta);

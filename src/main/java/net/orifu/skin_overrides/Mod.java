@@ -67,11 +67,19 @@ public class Mod implements ClientModInitializer {
 		//?}
 	}
 
-	public static Identifier id(String path) {
+	public static Identifier id(String namespace, String path) {
 		//? if >=1.21 {
-		 return Identifier.of(MOD_ID, path.toLowerCase(Locale.ROOT));
+		 return Identifier.of(namespace, path.toLowerCase(Locale.ROOT));
 		//?} else
-		/*return new Identifier(MOD_ID, path.toLowerCase(Locale.ROOT));*/
+		/*return new Identifier(namespace, path.toLowerCase(Locale.ROOT));*/
+	}
+
+	public static Identifier id(String path) {
+		return id(MOD_ID, path);
+	}
+
+	public static Identifier defaultId(String path) {
+		return id("minecraft", path);
 	}
 
 	public static Skin override(GameProfile profile) {
