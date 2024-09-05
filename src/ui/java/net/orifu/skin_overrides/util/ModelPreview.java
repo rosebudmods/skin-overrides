@@ -25,6 +25,10 @@ public class ModelPreview {
     protected float pitch = -5;
     protected float yaw = -30;
 
+    protected boolean showSkin = true;
+    protected boolean showCape = true;
+    protected boolean showElytra = false;
+
     protected final PlayerEntityModel<?> wide;
     protected final PlayerEntityModel<?> slim;
     protected final PlayerCapeModel<?> cape;
@@ -62,6 +66,18 @@ public class ModelPreview {
         }
 
         this.skin = this.skin.withCape(texture);
+    }
+
+    public void showSkin(boolean showSkin) {
+        this.showSkin = showSkin;
+    }
+
+    public void showCape(boolean showCape) {
+        this.showCape = showCape;
+    }
+
+    public void showElytra(boolean showElytra) {
+        this.showElytra = showElytra;
     }
 
     public void setPitch(float pitch) {
@@ -123,16 +139,22 @@ public class ModelPreview {
 
     protected void render(GuiGraphics graphics) {
         var model = this.skin.model().equals(Skin.Model.WIDE) ? this.wide : this.slim;
-        RenderLayer layer = model.getLayer(this.skin.texture());
-        model.method_60879(graphics.getMatrices(), graphics.getVertexConsumers().getBuffer(layer), 0xf000f0, OverlayTexture.DEFAULT_UV);
 
-        Identifier cape = this.skin.capeTexture();
-        if (cape != null) {
-            RenderLayer capeLayer = this.cape.getLayer(cape);
-            this.cape.method_60879(graphics.getMatrices(), graphics.getVertexConsumers().getBuffer(capeLayer), 0xf000f0, OverlayTexture.DEFAULT_UV);
+        if (this.showSkin) {
+            RenderLayer layer = model.getLayer(this.skin.texture());
+            model.method_60879(graphics.getMatrices(), graphics.getVertexConsumers().getBuffer(layer), 0xf000f0, OverlayTexture.DEFAULT_UV);
         }
 
-        // RenderLayer elytraLayer = model.getLayer(Optional.ofNullable(this.skin.elytraTexture()).orElse(Identifier.ofDefault("textures/entity/elytra.png")));
-        // this.elytra.method_60879(graphics.getMatrices(), graphics.getVertexConsumers().getBuffer(elytraLayer), 0xf000f0, OverlayTexture.DEFAULT_UV);
+        Identifier cape = this.skin.capeTexture();
+        if (cape != null && this.showCape && !this.showElytra) {
+            RenderLayer capeLayer = this.cape.getLayer(cape);
+            this.cape.method_60879(graphics.getMatrices(), graphics.getVertexConsumers().getBuffer(capeLayer), 0xf000f0, OverlayTexture.DEFAULT_UV);
+        } else if (this.showElytra) {
+            Identifier elytra = Optional.ofNullable(this.skin.elytraTexture())
+                    .or(() -> Optional.ofNullable(this.skin.capeTexture()))
+                    .orElse(Identifier.ofDefault("textures/entity/elytra.png"));
+            RenderLayer elytraLayer = model.getLayer(elytra);
+            this.elytra.method_60879(graphics.getMatrices(), graphics.getVertexConsumers().getBuffer(elytraLayer), 0xf000f0, OverlayTexture.DEFAULT_UV);
+        }
     }
 }

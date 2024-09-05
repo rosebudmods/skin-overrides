@@ -14,7 +14,6 @@ import net.orifu.skin_overrides.library.SkinLibrary.SkinEntry;
 import net.orifu.skin_overrides.screen.widget.ModelPreviewWidget;
 import net.orifu.skin_overrides.texture.LocalPlayerTexture;
 import net.orifu.skin_overrides.texture.LocalSkinTexture;
-import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.Util;
@@ -47,6 +46,8 @@ public class LibraryScreen extends Screen {
     private final Screen parent;
     @Nullable
     private final Consumer<LibraryEntry> callback;
+
+    protected final Skin userSkin = Skin.fromProfile(ProfileHelper.user());
 
     private LibraryListWidget libraryList;
 
@@ -194,7 +195,7 @@ public class LibraryScreen extends Screen {
                         .builder(option -> option.equals(0) ? CommonTexts.OFF : option.equals(1)
                                 ? Text.translatable("skin_overrides.model.cape")
                                 : Text.translatable("skin_overrides.model.elytra"))
-                        .values(0, 1, 2).initially(0)
+                        .values(0, 1, 2).initially(this.showAttachment ? this.showElytra ? 2 : 1 : 0)
                         .build(
                                 Text.translatable("skin_overrides.library.input.accessory"),
                                 (btn, opt) -> {
@@ -204,24 +205,18 @@ public class LibraryScreen extends Screen {
             } else {
                 controls.add(CyclingButtonWidget
                         .builder(option -> (Boolean) option ? CommonTexts.ON : CommonTexts.OFF)
-                        .values(true, false).initially(true)
+                        .values(true, false).initially(this.showAttachment)
                         .build(
                                 Text.translatable("skin_overrides.library.input.show_skin"),
-                                (btn, opt) -> {
-                                    System.out.println(opt);
-                                    this.showAttachment = (boolean) opt;
-                                }));
+                                (btn, opt) -> this.showAttachment = (boolean) opt));
                 controls.add(CyclingButtonWidget
                         .builder(option -> (Boolean) option
                                 ? Text.translatable("skin_overrides.model.elytra")
                                 : Text.translatable("skin_overrides.model.cape"))
-                        .values(true, false).initially(false)
+                        .values(true, false).initially(this.showElytra)
                         .build(
                                 Text.translatable("skin_overrides.library.input.model"),
-                                (btn, opt) -> {
-                                    System.out.println(opt);
-                                    this.showElytra = (boolean) opt;
-                                }));
+                                (btn, opt) -> this.showElytra = (boolean) opt));
             }
         }
 
@@ -242,9 +237,15 @@ public class LibraryScreen extends Screen {
         if (this.selectedEntry != null) {
             if (this.selectedEntry.entry instanceof SkinEntry entry) {
                 this.entryPreview.renderer.setSkin(entry.toSkin());
+                this.entryPreview.renderer.setCape(this.userSkin.capeTexture());
+                this.entryPreview.renderer.showCape(this.showAttachment);
             } else {
+                this.entryPreview.renderer.setSkin(this.userSkin);
                 this.entryPreview.renderer.setCape(this.selectedEntry.entry.getTexture());
+                this.entryPreview.renderer.showSkin(this.showAttachment);
             }
+
+            this.entryPreview.renderer.showElytra(this.showElytra);
         }
 
         // empty list text
