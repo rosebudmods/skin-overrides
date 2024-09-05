@@ -2,6 +2,7 @@ package net.orifu.skin_overrides.screen;
 
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.client.gui.widget.button.CyclingButtonWidget;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Library.LibraryEntry;
@@ -58,6 +59,9 @@ public class LibraryScreen extends Screen {
     @Nullable
     protected LibraryListEntry selectedEntry;
 
+    protected boolean showAttachment = true;
+    protected boolean showElytra = false;
+
     @Nullable
     private CompletableFuture<Skin> adding;
     @Nullable
@@ -113,7 +117,9 @@ public class LibraryScreen extends Screen {
         if (this.selectedEntry != null) {
             var controlsFrame = body.add(new FrameWidget(OPTIONS_WIDTH + OPTIONS_PAD, 0));
             var controls = controlsFrame.add(LinearLayoutWidget.createVertical().setSpacing(2));
-            int previewScale = PlayerSkinRenderer.HEIGHT * 4 + 150 < this.height ? 4 : 3;
+            int previewScale = PlayerSkinRenderer.HEIGHT * 5 + 180 < this.height ? 5
+                    : PlayerSkinRenderer.HEIGHT * 4 + 180 < this.height ? 4
+                    : PlayerSkinRenderer.HEIGHT * 3 + 180 < this.height ? 3 : 2;
 
             // library entry preview
             this.entryPreview = controls.add(this.ov.skin
@@ -180,6 +186,43 @@ public class LibraryScreen extends Screen {
                     btn -> this.libraryList.moveSelection(1))
                     .tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.next"))).width(20)
                     .build()).active = !isLast;
+
+            // preview options
+            controls.add(new FrameWidget(0, 4));
+            if (this.ov.skin) {
+                controls.add(CyclingButtonWidget
+                        .builder(option -> option.equals(0) ? CommonTexts.OFF : option.equals(1)
+                                ? Text.translatable("skin_overrides.model.cape")
+                                : Text.translatable("skin_overrides.model.elytra"))
+                        .values(0, 1, 2).initially(0)
+                        .build(
+                                Text.translatable("skin_overrides.library.input.accessory"),
+                                (btn, opt) -> {
+                                    this.showAttachment = !opt.equals(0);
+                                    this.showElytra = opt.equals(2);
+                                }));
+            } else {
+                controls.add(CyclingButtonWidget
+                        .builder(option -> (Boolean) option ? CommonTexts.ON : CommonTexts.OFF)
+                        .values(true, false).initially(true)
+                        .build(
+                                Text.translatable("skin_overrides.library.input.show_skin"),
+                                (btn, opt) -> {
+                                    System.out.println(opt);
+                                    this.showAttachment = (boolean) opt;
+                                }));
+                controls.add(CyclingButtonWidget
+                        .builder(option -> (Boolean) option
+                                ? Text.translatable("skin_overrides.model.elytra")
+                                : Text.translatable("skin_overrides.model.cape"))
+                        .values(true, false).initially(false)
+                        .build(
+                                Text.translatable("skin_overrides.library.input.model"),
+                                (btn, opt) -> {
+                                    System.out.println(opt);
+                                    this.showElytra = (boolean) opt;
+                                }));
+            }
         }
 
         var footer = root.add(new FrameWidget(this.width, 33));
