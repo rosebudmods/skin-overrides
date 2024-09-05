@@ -40,6 +40,10 @@ public class ProfileHelper {
         /*return MinecraftClient.getInstance().getSession().getProfile();*/
     }
 
+    public static boolean isBasic(GameProfile profile) {
+        return MinecraftClient.getInstance().getSessionService().getPackedTextures(profile) == null;
+    }
+
     public static GameProfile idToBasicProfile(String id) {
         // get the uuid
         Optional<GameProfile> profile = Optional.empty();
@@ -69,7 +73,7 @@ public class ProfileHelper {
     }
 
     public static GameProfile tryUpgradeBasicProfile(GameProfile basicProfile) {
-        return uuidToProfile(basicProfile.getId()).orElse(basicProfile);
+        return isBasic(basicProfile) ? uuidToProfile(basicProfile.getId()).orElse(basicProfile) : basicProfile;
     }
 
     public static Optional<GameProfile> uuidToProfile(UUID uuid) {

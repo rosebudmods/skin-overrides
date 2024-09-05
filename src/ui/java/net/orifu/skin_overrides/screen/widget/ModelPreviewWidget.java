@@ -31,6 +31,12 @@ public class ModelPreviewWidget extends ClickableWidget {
         return new ModelPreviewWidget(preview);
     }
 
+    public static ModelPreviewWidget capeWithSkin(@Nullable Skin skin, int scale, MinecraftClient client) {
+        var preview = new ModelPreview(skin, scale, client);
+        preview.turn(180);
+        return new ModelPreviewWidget(preview);
+    }
+
     @Override
     protected void drawWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         this.renderer.draw(graphics, this.getX(), this.getY());

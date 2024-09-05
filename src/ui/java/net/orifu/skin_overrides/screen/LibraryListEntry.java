@@ -37,7 +37,7 @@ public class LibraryListEntry extends Entry<LibraryListEntry> {
             this.preview = new ModelPreview(skinEntry.toSkin(), 2, this.client);
             this.preview.setPitchAndYaw(0, 0);
         } else {
-            this.preview = new ModelPreview(null, 2, this.client);
+            this.preview = new ModelPreview(parent.userSkin, 2, this.client);
             this.preview.setCape(this.entry.getTexture());
             this.preview.setPitchAndYaw(0, 180);
         }

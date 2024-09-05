@@ -59,6 +59,7 @@ public class SkinOverridesScreen extends Screen {
     private PlayerListWidget playerList;
     private TextFieldWidget searchBox;
 
+    private ModelPreviewWidget modelPreview;
     private FrameWidget configFrame;
 
     private OverrideManager ov = Mod.SKINS;
@@ -134,9 +135,9 @@ public class SkinOverridesScreen extends Screen {
 
             Skin overriddenSkin = Mod.override(this.selectedProfile);
             if (this.selectedProfile != null) {
-                var skinPreview = configCols.add(this.ov.skin
+                this.modelPreview = configCols.add(this.ov.skin
                         ? ModelPreviewWidget.skin(overriddenSkin, PREVIEW_SCALE, this.client)
-                        : ModelPreviewWidget.cape(overriddenSkin.capeTexture(), PREVIEW_SCALE, this.client),
+                        : ModelPreviewWidget.capeWithSkin(overriddenSkin, PREVIEW_SCALE, this.client),
                         LayoutSettings.create().alignHorizontallyRight().alignVerticallyCenter());
             }
         }
@@ -172,6 +173,11 @@ public class SkinOverridesScreen extends Screen {
         //? if <1.20.2
         /*this.renderBackground(graphics.portable());*/
         this.renderSuper(graphics, mouseX, mouseY, delta);
+
+        // ensure displayed skin is up to date (e.g. if just loaded)
+        if (this.selectedProfile != null) {
+            this.modelPreview.renderer.setSkin(Mod.override(this.selectedProfile));
+        }
     }
 
     @Override
@@ -226,8 +232,11 @@ public class SkinOverridesScreen extends Screen {
         this.playerList.ensureVisible(entry);
         this.selectedProfile = entry.profile;
 
-        if (!this.ov.has(this.selectedProfile)) {
+        // if we aren't overriding this player, or we're looking
+        // at capes, fetch this player's skin
+        if (!this.ov.has(this.selectedProfile) || !this.ov.skin) {
             this.upgradeProfile();
+            entry.profile = this.selectedProfile;
         }
 
         this.clearAndInit();

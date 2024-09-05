@@ -47,7 +47,7 @@ public class LibraryScreen extends Screen {
     @Nullable
     private final Consumer<LibraryEntry> callback;
 
-    protected final Skin userSkin = Skin.fromProfile(ProfileHelper.user());
+    public final Skin userSkin = Skin.fromProfile(ProfileHelper.user());
 
     private LibraryListWidget libraryList;
 
