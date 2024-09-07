@@ -132,7 +132,10 @@ public class ModelPreview {
 
         DiffuseLighting.setupInventoryShaderLighting(Axis.X_POSITIVE.rotationDegrees(this.pitch));
         graphics.getMatrices().push();
+        //? if >=1.20.6 {
         graphics.getMatrices().scale(1, 1, -1);
+        //?} else
+        /*graphics.getMatrices().multiplyMatrix(new org.joml.Matrix4f().scale(1, 1, -1));*/
         graphics.getMatrices().translate(0, -1.5, 0);
         this.render(graphics);
         graphics.getMatrices().pop();
