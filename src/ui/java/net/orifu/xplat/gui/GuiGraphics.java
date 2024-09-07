@@ -15,8 +15,10 @@ public class GuiGraphics extends net.minecraft.client.gui.GuiGraphics {
 //?} else {
 
 /*import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -30,6 +32,18 @@ public class GuiGraphics {
 
     public MatrixStack portable() {
         return this.stack;
+    }
+
+    public MatrixStack getMatrices() {
+        return this.stack;
+    }
+
+    public VertexConsumerProvider.Immediate getVertexConsumers() {
+        return MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+    }
+
+    public void draw() {
+        this.getVertexConsumers().draw();
     }
 
     public void drawTexture(Identifier texture, int x, int y, int w, int h, int u, int v, int uvW, int uvH, int txW, int txH) {

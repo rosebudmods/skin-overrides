@@ -20,6 +20,8 @@
     "skin_overrides.input.search.hint": "search...",
     "skin_overrides.model.wide": "wide",
     "skin_overrides.model.slim": "slim",
+    "skin_overrides.model.cape": "cape",
+    "skin_overrides.model.elytra": "elytra",
     "skin_overrides.library.title": "your library",
     "skin_overrides.library.empty": "there's nothing here.",
     "skin_overrides.library.open": "open library",
@@ -33,6 +35,9 @@
     "skin_overrides.library.input.next": "next",
     "skin_overrides.library.input.move_back": "move left",
     "skin_overrides.library.input.move_next": "move right",
+    "skin_overrides.library.input.accessory": "accessory",
+    "skin_overrides.library.input.show_skin": "show skin",
+    "skin_overrides.library.input.model": "model",
     "skin_overrides.no_profile.title": "%s not found",
     "skin_overrides.no_profile.description": "no profile with that name/uuid exists",
     "key.skin_overrides.open_screen": "open skin overrides"

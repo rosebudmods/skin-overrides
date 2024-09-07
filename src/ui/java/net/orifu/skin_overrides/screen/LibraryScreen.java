@@ -9,9 +9,9 @@ import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.library.CapeLibrary;
 import net.orifu.skin_overrides.library.SkinLibrary;
 import net.orifu.skin_overrides.library.SkinLibrary.SkinEntry;
+import net.orifu.skin_overrides.screen.widget.ModelPreviewWidget;
 import net.orifu.skin_overrides.texture.LocalPlayerTexture;
 import net.orifu.skin_overrides.texture.LocalSkinTexture;
-import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.Util;
@@ -20,6 +20,7 @@ import net.orifu.xplat.gui.GuiGraphics;
 import net.orifu.xplat.gui.LayoutSettings;
 import net.orifu.xplat.gui.Screen;
 import net.orifu.xplat.gui.widget.ButtonWidget;
+import net.orifu.xplat.gui.widget.CyclingButtonWidget;
 import net.orifu.xplat.gui.widget.FrameWidget;
 import net.orifu.xplat.gui.widget.LinearLayoutWidget;
 import net.orifu.xplat.gui.widget.TextFieldWidget;
@@ -45,19 +46,21 @@ public class LibraryScreen extends Screen {
     @Nullable
     private final Consumer<LibraryEntry> callback;
 
+    public final Skin userSkin = Skin.fromProfile(ProfileHelper.user());
+
     private LibraryListWidget libraryList;
 
     private TextFieldWidget searchBox;
     @Nullable
-    private FrameWidget entryPreviewFrame;
+    private ModelPreviewWidget entryPreview;
     @Nullable
     private TextFieldWidget nameField;
 
     @Nullable
     protected LibraryListEntry selectedEntry;
 
-    private int skinScale;
-    private int capeScale;
+    protected boolean showAttachment = true;
+    protected boolean showElytra = false;
 
     @Nullable
     private CompletableFuture<Skin> adding;
@@ -114,17 +117,14 @@ public class LibraryScreen extends Screen {
         if (this.selectedEntry != null) {
             var controlsFrame = body.add(new FrameWidget(OPTIONS_WIDTH + OPTIONS_PAD, 0));
             var controls = controlsFrame.add(LinearLayoutWidget.createVertical().setSpacing(2));
-            this.skinScale = PlayerSkinRenderer.HEIGHT * 4 + 150 < this.height ? 4 : 3;
-            this.capeScale = PlayerCapeRenderer.HEIGHT * 8 + 150 < this.height ? 8 : 6;
+            int previewScale = PlayerSkinRenderer.HEIGHT * 5 + 180 < this.height ? 5
+                    : PlayerSkinRenderer.HEIGHT * 4 + 180 < this.height ? 4
+                    : PlayerSkinRenderer.HEIGHT * 3 + 180 < this.height ? 3 : 2;
 
             // library entry preview
-            this.entryPreviewFrame = controls.add(new FrameWidget(
-                    this.ov.skin
-                            ? PlayerSkinRenderer.WIDTH * this.skinScale
-                            : PlayerCapeRenderer.WIDTH * this.capeScale,
-                    this.ov.skin
-                            ? PlayerSkinRenderer.HEIGHT * this.skinScale
-                            : PlayerCapeRenderer.HEIGHT * this.capeScale),
+            this.entryPreview = controls.add(this.ov.skin
+                            ? ModelPreviewWidget.skin(null, previewScale, this.client)
+                            : ModelPreviewWidget.cape(null, previewScale, this.client),
                     LayoutSettings.create().alignHorizontallyCenter());
 
             // padding
@@ -186,6 +186,40 @@ public class LibraryScreen extends Screen {
                     btn -> this.libraryList.moveSelection(1))
                     .tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.next"))).width(20)
                     .build()).active = !isLast;
+
+            // preview options
+            controls.add(new FrameWidget(0, 4));
+            if (this.ov.skin) {
+                controls.add(CyclingButtonWidget
+                        .builder(option -> option.equals(0) ? CommonTexts.OFF : option.equals(1)
+                                ? Text.translatable("skin_overrides.model.cape")
+                                : Text.translatable("skin_overrides.model.elytra"))
+                        .values(0, 1, 2).initially(this.showAttachment ? this.showElytra ? 2 : 1 : 0)
+                        .build(
+                                0, 0, OPTIONS_WIDTH, 20,
+                                Text.translatable("skin_overrides.library.input.accessory"),
+                                (btn, opt) -> {
+                                    this.showAttachment = !opt.equals(0);
+                                    this.showElytra = opt.equals(2);
+                                }));
+            } else {
+                controls.add(CyclingButtonWidget
+                        .builder(option -> (Boolean) option ? CommonTexts.ON : CommonTexts.OFF)
+                        .values(true, false).initially(this.showAttachment)
+                        .build(
+                                0, 0, OPTIONS_WIDTH, 20,
+                                Text.translatable("skin_overrides.library.input.show_skin"),
+                                (btn, opt) -> this.showAttachment = (boolean) opt));
+                controls.add(CyclingButtonWidget
+                        .builder(option -> (Boolean) option
+                                ? Text.translatable("skin_overrides.model.elytra")
+                                : Text.translatable("skin_overrides.model.cape"))
+                        .values(true, false).initially(this.showElytra)
+                        .build(
+                                0, 0, OPTIONS_WIDTH, 20,
+                                Text.translatable("skin_overrides.library.input.model"),
+                                (btn, opt) -> this.showElytra = (boolean) opt));
+            }
         }
 
         var footer = root.add(new FrameWidget(this.width, 33));
@@ -204,15 +238,16 @@ public class LibraryScreen extends Screen {
 
         if (this.selectedEntry != null) {
             if (this.selectedEntry.entry instanceof SkinEntry entry) {
-                var texture = entry.getTexture();
-                var model = entry.getModel();
-                PlayerSkinRenderer.draw(graphics, texture, model,
-                        this.entryPreviewFrame.getX(), this.entryPreviewFrame.getY(), this.skinScale);
+                this.entryPreview.renderer.setSkin(entry.toSkin());
+                this.entryPreview.renderer.setCape(this.userSkin.capeTexture());
+                this.entryPreview.renderer.showCape(this.showAttachment);
             } else {
-                var texture = this.selectedEntry.entry.getTexture();
-                PlayerCapeRenderer.draw(graphics, texture,
-                        this.entryPreviewFrame.getX(), this.entryPreviewFrame.getY(), this.capeScale);
+                this.entryPreview.renderer.setSkin(this.userSkin);
+                this.entryPreview.renderer.setCape(this.selectedEntry.entry.getTexture());
+                this.entryPreview.renderer.showSkin(this.showAttachment);
             }
+
+            this.entryPreview.renderer.showElytra(this.showElytra);
         }
 
         // empty list text

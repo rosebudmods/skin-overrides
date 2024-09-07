@@ -12,9 +12,9 @@ import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.library.CapeLibrary;
 import net.orifu.skin_overrides.library.SkinLibrary;
 import net.orifu.skin_overrides.override.LibraryOverrider.LibraryOverride;
-import net.orifu.skin_overrides.texture.LocalSkinTexture;
+import net.orifu.skin_overrides.screen.widget.ModelPreviewWidget;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
-import net.orifu.skin_overrides.util.PlayerSkinRenderer;
+import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.Util;
 import net.orifu.xplat.gui.tab.Tab;
@@ -59,9 +59,8 @@ public class SkinOverridesScreen extends Screen {
     private PlayerListWidget playerList;
     private TextFieldWidget searchBox;
 
+    private ModelPreviewWidget modelPreview;
     private FrameWidget configFrame;
-    @Nullable
-    private FrameWidget previewFrame;
 
     private OverrideManager ov = Mod.SKINS;
     @Nullable
@@ -134,10 +133,13 @@ public class SkinOverridesScreen extends Screen {
         } else {
             this.initConfig(config);
 
-            this.previewFrame = configCols.add(
-                    new FrameWidget(PlayerSkinRenderer.WIDTH * PREVIEW_SCALE,
-                            PlayerSkinRenderer.HEIGHT * PREVIEW_SCALE),
-                    LayoutSettings.create().alignHorizontallyRight().alignVerticallyCenter());
+            Skin overriddenSkin = Mod.override(this.selectedProfile);
+            if (this.selectedProfile != null) {
+                this.modelPreview = configCols.add(this.ov.skin
+                        ? ModelPreviewWidget.skin(overriddenSkin, PREVIEW_SCALE, this.client)
+                        : ModelPreviewWidget.capeWithSkin(overriddenSkin, PREVIEW_SCALE, this.client),
+                        LayoutSettings.create().alignHorizontallyRight().alignVerticallyCenter());
+            }
         }
     }
 
@@ -172,16 +174,9 @@ public class SkinOverridesScreen extends Screen {
         /*this.renderBackground(graphics.portable());*/
         this.renderSuper(graphics, mouseX, mouseY, delta);
 
+        // ensure displayed skin is up to date (e.g. if just loaded)
         if (this.selectedProfile != null) {
-            // draw skin/cape preview
-            Skin skin = Mod.override(this.selectedProfile);
-            if (this.ov.skin) {
-                PlayerSkinRenderer.draw(graphics, skin, this.previewFrame.getX(), this.previewFrame.getY(),
-                        PREVIEW_SCALE);
-            } else {
-                PlayerCapeRenderer.draw(graphics, skin, this.previewFrame.getX(), this.previewFrame.getY(),
-                        PREVIEW_SCALE);
-            }
+            this.modelPreview.renderer.setSkin(Mod.override(this.selectedProfile));
         }
     }
 
@@ -237,8 +232,11 @@ public class SkinOverridesScreen extends Screen {
         this.playerList.ensureVisible(entry);
         this.selectedProfile = entry.profile;
 
-        if (!this.ov.has(this.selectedProfile)) {
+        // if we aren't overriding this player, or we're looking
+        // at capes, fetch this player's skin
+        if (!this.ov.has(this.selectedProfile) || !this.ov.skin) {
             this.upgradeProfile();
+            entry.profile = this.selectedProfile;
         }
 
         this.clearAndInit();

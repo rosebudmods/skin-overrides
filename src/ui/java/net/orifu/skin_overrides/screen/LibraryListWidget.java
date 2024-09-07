@@ -13,8 +13,8 @@ public class LibraryListWidget extends AlwaysSelectedEntryGridWidget<LibraryList
     private String query = "";
 
     public LibraryListWidget(LibraryScreen parent, OverrideManager ov) {
-        super(MinecraftClient.getInstance(), 0, 0, 0, LibraryListEntry.WIDTH,
-                ov.skin ? LibraryListEntry.SKIN_ENTRY_HEIGHT : LibraryListEntry.CAPE_ENTRY_HEIGHT, 6);
+        super(MinecraftClient.getInstance(), 0, 0, 0,
+                LibraryListEntry.WIDTH, LibraryListEntry.SKIN_ENTRY_HEIGHT, 6);
 
         this.parent = parent;
         this.ov = ov;
