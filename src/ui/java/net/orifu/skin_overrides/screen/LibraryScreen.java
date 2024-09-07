@@ -3,6 +3,7 @@ package net.orifu.skin_overrides.screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.OverrideManager;
 import net.orifu.skin_overrides.Skin;
@@ -263,7 +264,15 @@ public class LibraryScreen extends Screen {
             if (this.ov.skin) {
                 ((SkinLibrary) this.ov.library()).create(this.addingName, skin.texture(), skin.model());
             } else {
-                ((CapeLibrary) this.ov.library()).create(this.addingName, skin.capeTexture());
+                Identifier cape = skin.capeTexture();
+                if (cape != null) {
+                    ((CapeLibrary) this.ov.library()).create(this.addingName, cape);
+                } else {
+                    this.toast(
+                            Text.translatable("skin_overrides.no_cape.title"),
+                            Text.translatable("skin_overrides.no_cape.description", this.addingName)
+                    );
+                }
             }
 
             this.adding = null;
@@ -344,13 +353,9 @@ public class LibraryScreen extends Screen {
     private void addFromSearch() {
         var maybeProfile = ProfileHelper.idToProfile(this.searchBox.getText());
         if (maybeProfile.isEmpty()) {
-            this.client.getToastManager().add(new SystemToast(
-                    SystemToast.
-                            /*? if >=1.20.6 {*/ Id.PACK_LOAD_FAILURE
-                            /*?} else if =1.20.4 {*/ /*C_ozahoshp.field_47585
-                            *//*?} else >>*/ /*Type.PACK_LOAD_FAILURE*/ ,
+            this.toast(
                     Text.translatable("skin_overrides.no_profile.title", this.searchBox.getText()),
-                    Text.translatable("skin_overrides.no_profile.description")));
+                    Text.translatable("skin_overrides.no_profile.description"));
         } else {
             this.adding = this.ov.skin
                     ? Skin.fetchSkin(maybeProfile.get())
@@ -358,5 +363,15 @@ public class LibraryScreen extends Screen {
             this.addingName = maybeProfile.get().getName();
             this.searchBox.setText("");
         }
+    }
+
+    private void toast(Text title, Text description) {
+        this.client.getToastManager().add(new SystemToast(
+                SystemToast.
+                        /*? if >=1.20.6 {*/ Id.PACK_LOAD_FAILURE
+                        /*?} else if =1.20.4 {*/ /*C_ozahoshp.field_47585
+                        *//*?} else >>*/ /*Type.PACK_LOAD_FAILURE*/ ,
+                title, description
+        ));
     }
 }

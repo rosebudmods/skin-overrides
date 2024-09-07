@@ -40,5 +40,7 @@
     "skin_overrides.library.input.model": "model",
     "skin_overrides.no_profile.title": "%s not found",
     "skin_overrides.no_profile.description": "no profile with that name/uuid exists",
+    "skin_overrides.no_cape.title": "no cape on profile",
+    "skin_overrides.no_cape.description": "%s does not have a cape",
     "key.skin_overrides.open_screen": "open skin overrides"
 }
