@@ -20,10 +20,8 @@ val awVersion =
 	else if (stonecutter.compare(mcVersion, "1.19.4") >= 0) "1.19.4"
 	else if (stonecutter.compare(mcVersion, "1.19.3") >= 0) "1.19.3"
 	else if (stonecutter.compare(mcVersion, "1.19.2") >= 0) "1.19.2"
-	else if (stonecutter.compare(mcVersion, "1.19") >= 0) "1.19.0"
 	else if (stonecutter.compare(mcVersion, "1.17.1") >= 0) "1.17.1"
-	else if (stonecutter.compare(mcVersion, "1.15.2") >= 0) "1.15.2"
-	else "1.14.4"
+	else "1.15.2"
 
 stonecutter.const("hasUi", hasUi)
 

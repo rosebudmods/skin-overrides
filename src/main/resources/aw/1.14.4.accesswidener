@@ -1,8 +1,0 @@
-accessWidener v2 named
-
-accessible field net/minecraft/client/texture/PlayerSkinTexture filter Lnet/minecraft/client/texture/ImageFilter;
-
-accessible field net/minecraft/client/util/DefaultSkinHelper STEVE_SKIN Lnet/minecraft/util/Identifier;
-accessible field net/minecraft/client/util/DefaultSkinHelper ALEX_SKIN Lnet/minecraft/util/Identifier;
-
-accessible field net/minecraft/client/util/Session accountType Lnet/minecraft/client/util/Session$AccountType;
