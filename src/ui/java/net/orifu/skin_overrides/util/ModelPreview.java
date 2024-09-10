@@ -3,8 +3,8 @@ package net.orifu.skin_overrides.util;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.entity.model.AnimalModel;
 import net.minecraft.client.render.entity.model.ElytraEntityModel;
+import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.util.Identifier;
@@ -31,10 +31,17 @@ public class ModelPreview {
     protected boolean showCape = true;
     protected boolean showElytra = false;
 
+    //? if >=1.21.2 {
+    /*protected final PlayerEntityModel wide;
+    protected final PlayerEntityModel slim;
+    protected final PlayerCapeModel cape;
+    protected final ElytraEntityModel elytra;
+    *///?} else {
     protected final PlayerEntityModel<?> wide;
     protected final PlayerEntityModel<?> slim;
     protected final PlayerCapeModel<?> cape;
     protected final ElytraEntityModel<?> elytra;
+    //?}
 
     // see PlayerSkinModelWidget
     protected static final float MODEL_HEIGHT = 2.125f;
@@ -46,6 +53,13 @@ public class ModelPreview {
         this.scale = scale;
 
         var modelLoader = client.getEntityModelLoader();
+
+        //? if >=1.21.2 {
+        /*this.wide = new PlayerEntityModel(modelLoader.getModelPart(EntityModelLayers.PLAYER), false);
+        this.slim = new PlayerEntityModel(modelLoader.getModelPart(EntityModelLayers.PLAYER_SLIM), true);
+        this.cape = new PlayerCapeModel(modelLoader.getModelPart(EntityModelLayers.field_52980));
+        this.elytra = new ElytraEntityModel(modelLoader.getModelPart(EntityModelLayers.ELYTRA));
+        *///?} else {
         this.wide = new PlayerEntityModel<>(modelLoader.getModelPart(EntityModelLayers.PLAYER), false);
         this.slim = new PlayerEntityModel<>(modelLoader.getModelPart(EntityModelLayers.PLAYER_SLIM), true);
         this.cape = new PlayerCapeModel<>(PlayerCapeModel.getTexturedModelData().createModel());
@@ -56,6 +70,7 @@ public class ModelPreview {
         this.slim.child = false;
         this.cape.child = false;
         this.elytra.child = false;
+        //?}
     }
 
     public void setSkin(Skin skin) {
@@ -166,7 +181,7 @@ public class ModelPreview {
         }
     }
 
-    private static void renderModel(AnimalModel<?> model, RenderLayer layer, GuiGraphics graphics) {
+    private static void renderModel(EntityModel<?> model, RenderLayer layer, GuiGraphics graphics) {
         //? if >=1.21 {
         model.method_60879(graphics.getMatrices(), graphics.getVertexConsumers().getBuffer(layer), 0xf000f0, OverlayTexture.DEFAULT_UV);
         //?} else

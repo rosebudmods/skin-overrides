@@ -2,6 +2,10 @@ package net.orifu.xplat.gui;
 
 //? if >=1.20.1 {
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.util.Identifier;
+
+import java.util.function.Function;
 
 public class GuiGraphics extends net.minecraft.client.gui.GuiGraphics {
     public GuiGraphics(net.minecraft.client.gui.GuiGraphics graphics) {
@@ -11,6 +15,17 @@ public class GuiGraphics extends net.minecraft.client.gui.GuiGraphics {
     public GuiGraphics portable() {
         return this;
     }
+
+    //? if >=1.21.2 {
+    /*public void drawTexture(
+            Identifier id,
+            int x, int y, int w, int h,
+            float u, float v, int uvW, int uvH,
+            int txW, int txH
+    ) {
+        this.method_25302(RenderLayer::getGuiTextured, id, x, y, u, v, w, h, uvW, uvH, txW, txH);
+    }
+    *///?}
 }
 //?} else {
 

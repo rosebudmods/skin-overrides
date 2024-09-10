@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
 //? if >=1.19.2 {
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.texture.NativeImage;
 //?} else
 /*import net.minecraft.client.texture.NativeImage;*/
@@ -72,6 +73,9 @@ public class Util {
     }
 
     public static void saveTexture(Identifier texture, int w, int h, Path path) throws IOException {
+        //? if >=1.21.2 {
+        /*RenderSystem.bindTexture(MinecraftClient.getInstance().getTextureManager().getTexture(texture).getGlId());
+        *///?} else
         MinecraftClient.getInstance().getTextureManager().bindTexture(texture);
         NativeImage img = new NativeImage(w, h, false);
         img.loadFromTextureImage(0, false);

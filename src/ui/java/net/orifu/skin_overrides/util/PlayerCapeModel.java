@@ -1,5 +1,18 @@
 package net.orifu.skin_overrides.util;
 
+//? if >=1.21.2 {
+/*import net.minecraft.client.model.ModelPart;
+import net.minecraft.unmapped.C_miillwpg;
+import net.minecraft.unmapped.C_pkqgufgx;
+
+public class PlayerCapeModel extends C_miillwpg<C_pkqgufgx> {
+    public PlayerCapeModel(ModelPart modelPart) {
+        super(modelPart);
+
+        this.setAngles(new C_pkqgufgx());
+    }
+}
+*///?} else {
 import net.minecraft.client.model.Dilation;
 import net.minecraft.client.model.ModelData;
 import net.minecraft.client.model.ModelPart;
@@ -57,3 +70,4 @@ public class PlayerCapeModel<T extends LivingEntity> extends BipedEntityModel<T>
         this.cape.setAngles(newVector.x, newVector.y, newVector.z);
     }
 }
+//?}

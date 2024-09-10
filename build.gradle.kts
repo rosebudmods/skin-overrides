@@ -10,17 +10,19 @@ base {
 
 val modVersion = property("mod.version").toString()
 val mcVersion = property("deps.minecraft").toString()
+val snapshot = property("mod.snapshot") != "false"
 version = "$modVersion+$mcVersion"
 group = property("maven_group").toString()
 
-val hasUi = stonecutter.compare(mcVersion, "1.19.4") >= 0
+val scVersion = stonecutter.current.version
+val hasUi = stonecutter.compare(scVersion, "1.19.4") >= 0
 val awVersion =
-	if (stonecutter.compare(mcVersion, "1.20.2") >= 0) "1.20.2"
-	else if (stonecutter.compare(mcVersion, "1.20.1") >= 0) "1.20.1"
-	else if (stonecutter.compare(mcVersion, "1.19.4") >= 0) "1.19.4"
-	else if (stonecutter.compare(mcVersion, "1.19.3") >= 0) "1.19.3"
-	else if (stonecutter.compare(mcVersion, "1.19.2") >= 0) "1.19.2"
-	else if (stonecutter.compare(mcVersion, "1.17.1") >= 0) "1.17.1"
+	if (stonecutter.compare(scVersion, "1.20.2") >= 0) "1.20.2"
+	else if (stonecutter.compare(scVersion, "1.20.1") >= 0) "1.20.1"
+	else if (stonecutter.compare(scVersion, "1.19.4") >= 0) "1.19.4"
+	else if (stonecutter.compare(scVersion, "1.19.3") >= 0) "1.19.3"
+	else if (stonecutter.compare(scVersion, "1.19.2") >= 0) "1.19.2"
+	else if (stonecutter.compare(scVersion, "1.17.1") >= 0) "1.17.1"
 	else "1.15.2"
 
 stonecutter.const("hasUi", hasUi)
@@ -90,14 +92,15 @@ dependencies {
 	modImplementation("maven.modrinth:modmenu:${property("deps.modmenu")}")
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
 
-	modRuntimeOnly("maven.modrinth:ears:${property("deps.ears")}")
+	if (property("deps.ears") != "none")
+		modRuntimeOnly("maven.modrinth:ears:${property("deps.ears")}")
 }
 
 tasks.processResources {
 	val map = mapOf(
 		"version" to version,
 		"group" to project.group,
-		"minecraft_version" to mcVersion,
+		"minecraft_version" to scVersion + if (snapshot) "-" else "",
 		"access_widener" to awVersion,
 		"modmenu_entrypoint" to if (hasUi) "modmenu" else ""
 	)
