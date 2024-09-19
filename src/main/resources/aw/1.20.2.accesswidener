@@ -10,3 +10,8 @@ accessible field net/minecraft/client/util/DefaultSkinHelper DEFAULT_SKINS [Lnet
 extendable method net/minecraft/client/gui/widget/list/EntryListWidget getEntryAtPosition (DD)Lnet/minecraft/client/gui/widget/list/EntryListWidget$Entry;
 
 accessible method net/minecraft/client/gui/widget/HeaderBar <init> (ILnet/minecraft/client/gui/tab/TabManager;Ljava/lang/Iterable;)V
+
+accessible field net/minecraft/server/world/ThreadedChunkManager entityTrackers Lit/unimi/dsi/fastutil/ints/Int2ObjectMap;
+accessible field net/minecraft/server/world/ThreadedChunkManager$EntityTracker listeners Ljava/util/Set;
+accessible field net/minecraft/server/world/ThreadedChunkManager$EntityTracker entry Lnet/minecraft/server/network/EntityTrackerEntry;
+
