@@ -144,6 +144,10 @@ public class SkinOverridesScreen extends Screen {
     }
 
     protected void initConfig(GridWidget config) {
+        // make sure the latest overrides are loaded before getting them
+        Mod.SKINS.update();
+        Mod.CAPES.update();
+
         var override = this.ov.get(this.selectedProfile);
 
         config.add(new TextWidget(Text.translatable(this.ov.skin
