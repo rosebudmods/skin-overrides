@@ -2,6 +2,7 @@ package net.orifu.skin_overrides.library;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Skin;
@@ -66,18 +67,28 @@ public class SkinLibrary extends AbstractLibrary {
     }
 
     public Optional<SkinEntry> create(String name, Path path, Skin.Model model) {
-        return this.createInternal(name, model, null, path);
+        return this.createInternal(name, model, null, path, null, null);
     }
 
     public Optional<SkinEntry> create(String name, Identifier texture, Skin.Model model) {
-        return this.createInternal(name, model, texture, null);
+        return this.createInternal(name, model, texture, null, null, null);
     }
 
-    private Optional<SkinEntry> createInternal(String name, Skin.Model model, Identifier texture, Path path) {
+    public Optional<SkinEntry> createSigned(
+            String name, Identifier texture, Skin.Model model,
+            GameProfile profile) {
+        var property = profile.getProperties().get("textures").stream().findAny().get();
+        return this.createInternal(name, model, texture, null, property.value(), property.signature());
+    }
+
+    private Optional<SkinEntry> createInternal(
+            String name, Skin.Model model,
+            Identifier texture, Path path,
+            String skinValue, String skinSignature) {
         try {
             String id = Util.randomId();
             File file = new File(this.libraryFolder, id + ".png");
-            var entry = new SkinEntry(name, id, model, file);
+            var entry = new SkinEntry(name, id, model, file, skinValue, skinSignature);
 
             if (path != null) {
                 Files.copy(path, file.toPath());
@@ -113,8 +124,11 @@ public class SkinLibrary extends AbstractLibrary {
             this.skinSignature = skinSignature;
         }
 
-        protected SkinEntry(String name, String id, Skin.Model model, @NotNull File file) {
-            this(name, id, model, file, null, null, null);
+        protected SkinEntry(
+                String name, String id, Skin.Model model,
+                @NotNull File file,
+                String skinValue, String skinSignature) {
+            this(name, id, model, file, null, skinValue, skinSignature);
         }
 
         protected SkinEntry(String name, String id, Skin.Model model, @NotNull Identifier textureId) {

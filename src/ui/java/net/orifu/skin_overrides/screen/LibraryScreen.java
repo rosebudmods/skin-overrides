@@ -1,5 +1,6 @@
 package net.orifu.skin_overrides.screen;
 
+import com.mojang.authlib.GameProfile;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.Text;
@@ -66,7 +67,7 @@ public class LibraryScreen extends Screen {
     @Nullable
     private CompletableFuture<Skin> adding;
     @Nullable
-    private String addingName;
+    private GameProfile addingProfile;
 
     public LibraryScreen(OverrideManager ov, @Nullable Screen parent, @Nullable Consumer<LibraryEntry> callback) {
         super(TITLE);
@@ -261,16 +262,17 @@ public class LibraryScreen extends Screen {
         // the skin won't be properly loaded for a few frames
         if (this.adding != null && this.adding.isDone()) {
             var skin = this.adding.getNow(null);
+            String name = this.addingProfile.getName();
             if (this.ov.skin) {
-                ((SkinLibrary) this.ov.library()).create(this.addingName, skin.texture(), skin.model());
+                ((SkinLibrary) this.ov.library()).createSigned(name, skin.texture(), skin.model(), this.addingProfile);
             } else {
                 Identifier cape = skin.capeTexture();
                 if (cape != null) {
-                    ((CapeLibrary) this.ov.library()).create(this.addingName, cape);
+                    ((CapeLibrary) this.ov.library()).create(name, cape);
                 } else {
                     this.toast(
                             Text.translatable("skin_overrides.no_cape.title"),
-                            Text.translatable("skin_overrides.no_cape.description", this.addingName)
+                            Text.translatable("skin_overrides.no_cape.description", name)
                     );
                 }
             }
@@ -360,7 +362,7 @@ public class LibraryScreen extends Screen {
             this.adding = this.ov.skin
                     ? Skin.fetchSkin(maybeProfile.get())
                     : Skin.fetchCape(maybeProfile.get());
-            this.addingName = maybeProfile.get().getName();
+            this.addingProfile = maybeProfile.get();
             this.searchBox.setText("");
         }
     }

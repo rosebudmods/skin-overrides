@@ -75,8 +75,8 @@ public class ProfileHelper {
     public static Optional<GameProfile> uuidToProfile(UUID uuid) {
         // get the full profile (cached)
         var profileResult = MinecraftClient.getInstance().getSessionService()
-                /*? >=1.20.2 {*/ .fetchProfile(uuid, false);
-                /*?} else*/ /*.fillProfileProperties(new GameProfile(uuid, null), false);*/
+                /*? >=1.20.2 {*/ .fetchProfile(uuid, true);
+                /*?} else*/ /*.fillProfileProperties(new GameProfile(uuid, null), true);*/
 
         //? if >=1.20.2 {
         return Optional.ofNullable(profileResult).map(ProfileResult::profile);
