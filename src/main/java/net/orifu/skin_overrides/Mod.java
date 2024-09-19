@@ -5,9 +5,13 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.orifu.skin_overrides.library.CapeLibrary;
 import net.orifu.skin_overrides.library.SkinLibrary;
+//? if hasNetworking
+import net.orifu.skin_overrides.networking.ModNetworking;
+import net.orifu.skin_overrides.override.LibraryOverrider;
 import net.orifu.skin_overrides.override.LocalCapeOverrider;
 import net.orifu.skin_overrides.override.LocalSkinOverrider;
 //? if >=1.17.1 {
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 //?} else {
@@ -70,5 +74,23 @@ public class Mod {
 
 	public static Optional<Identifier> overrideCape(GameProfile profile) {
 		return CAPES.get(profile).map(OverrideManager.Override::texture);
+	}
+
+	public static void onUserOverrideUpdate(
+			@Nullable OverrideManager.Override oldOverride,
+			@Nullable OverrideManager.Override newOverride) {
+		if (newOverride instanceof LibraryOverrider.LibraryOverride newLibrary
+				&& newLibrary.entry() instanceof SkinLibrary.SkinEntry skinEntry
+				&& skinEntry.skinValue != null && skinEntry.skinSignature != null) {
+			// switched to a signed library override
+			//? if hasNetworking
+			ModNetworking.updateSkinOnServer(skinEntry.skinValue, skinEntry.skinSignature);
+		} else if (oldOverride instanceof LibraryOverrider.LibraryOverride oldLibrary
+				&& oldLibrary.entry() instanceof SkinLibrary.SkinEntry skinEntry
+				&& skinEntry.skinValue != null && skinEntry.skinSignature != null) {
+			// remove signed library override
+			//? if hasNetworking
+			ModNetworking.clearSkinOverrideOnServer();
+		}
 	}
 }

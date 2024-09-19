@@ -1,14 +1,18 @@
 package net.orifu.skin_overrides.networking;
 
 import com.mojang.authlib.properties.Property;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.packet.s2c.PlayerRemovalS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.orifu.skin_overrides.util.ProfileHelper;
 
 import java.util.Collections;
+import java.util.Optional;
 
 public class ModNetworking {
     public static void init() {
@@ -25,9 +29,14 @@ public class ModNetworking {
             PlayerManager playerManager = ctx.server().getPlayerManager();
 
             // set skin
-            player.getGameProfile().getProperties().put(
-                    "textures",
-                    new Property("textures", payload.skinValue(), payload.signature()));
+            if (payload.skinValue().isPresent() && payload.signature().isPresent()) {
+                player.getGameProfile().getProperties().put("textures", new Property(
+                        "textures",
+                        payload.skinValue().get(),
+                        payload.signature().get()));
+            } else {
+                player.getGameProfile().getProperties().removeAll("textures");
+            }
 
             // remove and re-add player (updates skin in tab list)
             playerManager.sendToAll(new PlayerRemovalS2CPacket(Collections.singletonList(ctx.player().getUuid())));
@@ -37,5 +46,21 @@ public class ModNetworking {
             var tracker = player.getServerWorld().getChunkManager().delegate.entityTrackers.get(player.getId());
             tracker.listeners.forEach(listener -> tracker.entry.startTracking(listener.getPlayer()));
         });
+    }
+
+    public static void updateSkinOnServer(String skinValue, String signature) {
+        if (ClientPlayNetworking.canSend(SkinUpdatePayload.ID)) {
+            ClientPlayNetworking.send(new SkinUpdatePayload(Optional.ofNullable(skinValue), Optional.ofNullable(signature)));
+        }
+    }
+
+    public static void clearSkinOverrideOnServer() {
+        var profile = ProfileHelper.user();
+        var textures = MinecraftClient.getInstance().getSessionService().getPackedTextures(profile);
+        if (textures != null) {
+            updateSkinOnServer(textures.value(), textures.signature());
+        } else {
+            updateSkinOnServer(null, null);
+        }
     }
 }

@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class AbstractLibrary implements Library {
     protected static final Gson GSON = new Gson();
@@ -92,10 +93,10 @@ public abstract class AbstractLibrary implements Library {
     protected void tryLoadFromJsonElement(JsonElement el) {
         if (el.isJsonObject()) {
             var obj = el.getAsJsonObject();
-            var name = Util.readString(GSON, obj, "name");
-            var id = Util.readString(GSON, obj, "id");
-            var file = Util.readString(GSON, obj, "file");
-            var texture = Util.readString(GSON, obj, "texture");
+            var name = Util.readString(obj, "name");
+            var id = Util.readString(obj, "id");
+            var file = Util.readString(obj, "file");
+            var texture = Util.readString(obj, "texture");
 
             if (name.isPresent() && id.isPresent()) {
                 if (file.isPresent() && texture.isEmpty()
@@ -166,6 +167,13 @@ public abstract class AbstractLibrary implements Library {
             if (this.isFile) {
                 this.file.delete();
             }
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof AbstractLibraryEntry that)) return false;
+            return isFile == that.isFile && Objects.equals(file, that.file) && Objects.equals(textureId, that.textureId);
         }
     }
 }

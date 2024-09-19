@@ -41,7 +41,7 @@ public class Util {
         return Optional.empty();
     }
 
-    public static Optional<String> readString(Gson gson, JsonObject obj, String key) {
+    public static Optional<String> readString(JsonObject obj, String key) {
         if (obj == null || !obj.has(key)) {
             return Optional.empty();
         }

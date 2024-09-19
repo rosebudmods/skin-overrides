@@ -40,8 +40,16 @@ public class OverrideManager {
         this.findOverrides(ov -> newOverrides.put(ov.override.playerIdent().toLowerCase(Locale.ROOT), ov));
 
         synchronized (this.overrides) {
+            Optional<Override> oldUserOverride = this.get(ProfileHelper.user());
+
             this.overrides.clear();
             this.overrides.putAll(newOverrides);
+
+            Optional<Override> newUserOverride = this.get(ProfileHelper.user());
+
+            if (!oldUserOverride.equals(newUserOverride)) {
+                Mod.onUserOverrideUpdate(oldUserOverride.orElse(null), newUserOverride.orElse(null));
+            }
         }
     }
 
