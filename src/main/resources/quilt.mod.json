@@ -20,7 +20,8 @@
 		},
 		"intermediate_mappings": "net.fabricmc:intermediary",
 		"entrypoints": {
-			"client": "net.orifu.skin_overrides.Mod",
+			"main": "net.orifu.skin_overrides.ModInit",
+			"client": "net.orifu.skin_overrides.ModClient",
 			"${modmenu_entrypoint}": "net.orifu.skin_overrides.ModMenuEntrypoint"
 		},
 		"depends": [

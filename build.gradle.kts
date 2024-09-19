@@ -16,6 +16,7 @@ group = property("maven_group").toString()
 
 val scVersion = stonecutter.current.version
 val hasUi = stonecutter.compare(scVersion, "1.19.4") >= 0
+val hasNetworking = stonecutter.compare(scVersion, "1.20.6") >= 0
 val awVersion =
 	if (stonecutter.compare(scVersion, "1.20.2") >= 0) "1.20.2"
 	else if (stonecutter.compare(scVersion, "1.20.1") >= 0) "1.20.1"
@@ -26,6 +27,7 @@ val awVersion =
 	else "1.15.2"
 
 stonecutter.const("hasUi", hasUi)
+stonecutter.const("hasNetworking", hasNetworking)
 
 if (stonecutter.current.isActive) {
 	rootProject.tasks.register("client") {
@@ -54,6 +56,11 @@ repositories {
 if (hasUi) {
 	sourceSets["main"].java {
 		srcDir("src/ui/java")
+	}
+}
+if (hasNetworking) {
+	sourceSets["main"].java {
+		srcDir("src/networking/java")
 	}
 }
 

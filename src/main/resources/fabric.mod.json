@@ -15,7 +15,8 @@
     "license": "MPL-2.0",
     "icon": "assets/skin_overrides/icon.png",
     "entrypoints": {
-        "client": ["net.orifu.skin_overrides.Mod"],
+        "main": ["net.orifu.skin_overrides.ModInit"],
+        "client": ["net.orifu.skin_overrides.ModClient"],
         "${modmenu_entrypoint}": ["net.orifu.skin_overrides.ModMenuEntrypoint"]
     },
     "depends": {
