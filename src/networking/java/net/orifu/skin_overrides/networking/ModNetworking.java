@@ -54,10 +54,9 @@ public class ModNetworking {
         // send packet when joining (if applicable)
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             var override = Mod.SKINS.get(ProfileHelper.user()).orElse(null);
-            var sig = Mod.overrideSignature(override);
+            var maybeSig = Mod.overrideSignature(override);
 
-            sig.ifPresent(stringStringPair ->
-                    updateSkinOnServer(stringStringPair.getLeft(), stringStringPair.getRight()));
+            maybeSig.ifPresent(sig -> updateSkinOnServer(sig.value(), sig.signature()));
         });
     }
 

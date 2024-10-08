@@ -6,6 +6,8 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Skin;
+//? if hasNetworking
+import net.orifu.skin_overrides.networking.MineSkin;
 import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.Util;
@@ -34,20 +36,18 @@ public class SkinLibrary extends AbstractLibrary {
         if (model.isPresent()) {
             Skin.Model skinModel = Skin.Model.parse(model.get());
 
-            String skinValue = null;
-            String skinSignature = null;
+            Skin.Signature signature = null;
             if (object.has("signed") && object.get("signed").isJsonObject()) {
                 JsonObject signed = (JsonObject) object.get("signed");
                 var maybeSkinValue = Util.readString(signed, "value");
                 var maybeSkinSignature = Util.readString(signed, "signature");
 
                 if (maybeSkinValue.isPresent() && maybeSkinSignature.isPresent()) {
-                    skinValue = maybeSkinValue.get();
-                    skinSignature = maybeSkinSignature.get();
+                    signature = new Skin.Signature(maybeSkinValue.get(), maybeSkinSignature.get());
                 }
             }
 
-            this.entries.add(new SkinEntry(name, id, skinModel, file, textureId, skinValue, skinSignature));
+            this.entries.add(new SkinEntry(name, id, skinModel, file, textureId, signature));
             return true;
         }
 
@@ -67,28 +67,28 @@ public class SkinLibrary extends AbstractLibrary {
     }
 
     public Optional<SkinEntry> create(String name, Path path, Skin.Model model) {
-        return this.createInternal(name, model, null, path, null, null);
+        return this.createInternal(name, model, null, path, null);
     }
 
     public Optional<SkinEntry> create(String name, Identifier texture, Skin.Model model) {
-        return this.createInternal(name, model, texture, null, null, null);
+        return this.createInternal(name, model, texture, null, null);
     }
 
     public Optional<SkinEntry> createSigned(
             String name, Identifier texture, Skin.Model model,
             GameProfile profile) {
         var property = profile.getProperties().get("textures").stream().findAny().get();
-        return this.createInternal(name, model, texture, null, property.value(), property.signature());
+        return this.createInternal(name, model, texture, null, Skin.Signature.fromProperty(property));
     }
 
     private Optional<SkinEntry> createInternal(
             String name, Skin.Model model,
             Identifier texture, Path path,
-            String skinValue, String skinSignature) {
+            Skin.Signature signature) {
         try {
             String id = Util.randomId();
             File file = new File(this.libraryFolder, id + ".png");
-            var entry = new SkinEntry(name, id, model, file, skinValue, skinSignature);
+            var entry = new SkinEntry(name, id, model, file, signature);
 
             if (path != null) {
                 Files.copy(path, file.toPath());
@@ -108,31 +108,27 @@ public class SkinLibrary extends AbstractLibrary {
         protected final Skin.Model model;
 
         @Nullable
-        public final String skinValue;
-        @Nullable
-        public final String skinSignature;
+        public final Skin.Signature signature;
 
         protected SkinEntry(
                 String name, String id, Skin.Model model,
                 @Nullable File file, @Nullable Identifier textureId,
-                @Nullable String skinValue, @Nullable String skinSignature) {
+                @Nullable Skin.Signature signature) {
             super(name, id, file, textureId);
 
             this.model = model;
-
-            this.skinValue = skinValue;
-            this.skinSignature = skinSignature;
+            this.signature = signature;
         }
 
         protected SkinEntry(
                 String name, String id, Skin.Model model,
                 @NotNull File file,
-                String skinValue, String skinSignature) {
-            this(name, id, model, file, null, skinValue, skinSignature);
+                Skin.Signature signature) {
+            this(name, id, model, file, null, signature);
         }
 
         protected SkinEntry(String name, String id, Skin.Model model, @NotNull Identifier textureId) {
-            this(name, id, model, null, textureId, null, null);
+            this(name, id, model, null, textureId, null);
         }
 
         @Override
@@ -153,14 +149,26 @@ public class SkinLibrary extends AbstractLibrary {
             JsonObject obj = super.toJson().getAsJsonObject();
             obj.addProperty("model", this.model.id());
 
-            if (this.skinValue != null && this.skinSignature != null) {
+            if (this.signature != null) {
                 JsonObject signedSkin = new JsonObject();
-                signedSkin.addProperty("value", this.skinValue);
-                signedSkin.addProperty("signature", this.skinSignature);
+                signedSkin.addProperty("value", this.signature.value());
+                signedSkin.addProperty("signature", this.signature.signature());
                 obj.add("signed", signedSkin);
             }
 
             return obj;
+        }
+
+        public Optional<SkinEntry> signed() {
+            //? if hasNetworking {
+            if (this.signature != null) {
+                return Optional.of(this);
+            } else {
+                var signature = MineSkin.sign(this.getTexture());
+                return signature.map(sig -> new SkinEntry(this.name, this.id, this.model, this.file, this.textureId, sig));
+            }
+            //?} else
+            /*return Optional.empty();*/
         }
 
         @Override
@@ -168,7 +176,7 @@ public class SkinLibrary extends AbstractLibrary {
             if (this == o) return true;
             if (!(o instanceof SkinEntry skinEntry)) return false;
             if (!super.equals(o)) return false;
-            return model == skinEntry.model && Objects.equals(skinValue, skinEntry.skinValue) && Objects.equals(skinSignature, skinEntry.skinSignature);
+            return model == skinEntry.model && Objects.equals(signature, skinEntry.signature);
         }
     }
 }

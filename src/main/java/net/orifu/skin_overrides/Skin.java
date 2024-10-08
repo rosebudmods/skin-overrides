@@ -139,4 +139,10 @@ public record Skin(
         }
         //?}
     }
+
+    public record Signature(String value, String signature) {
+        public static Signature fromProperty(com.mojang.authlib.properties.Property property) {
+            return new Signature(property.value(), property.signature());
+        }
+    }
 }

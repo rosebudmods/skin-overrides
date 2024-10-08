@@ -26,6 +26,7 @@ public class Mod {
 	public static final Logger LOGGER = /*? if >=1.17.1 {*/ LoggerFactory /*?} else >>*/ /*LogManager*/
 			.getLogger("skin overrides");
 	public static final String MOD_ID = "skin_overrides";
+	public static final String MOD_VERSION = /*$ modVersion*/ "2.2.0-beta";
 
 	public static final String SKIN_OVERRIDES_PATH = "skin_overrides";
 	public static final String CAPE_OVERRIDES_PATH = "cape_overrides";
@@ -76,11 +77,11 @@ public class Mod {
 		return CAPES.get(profile).map(OverrideManager.Override::texture);
 	}
 
-	public static Optional<Pair<String, String>> overrideSignature(OverrideManager.Override override) {
+	public static Optional<Skin.Signature> overrideSignature(OverrideManager.Override override) {
 		if (override instanceof LibraryOverrider.LibraryOverride library
 				&& library.entry() instanceof SkinLibrary.SkinEntry skinEntry
-				&& skinEntry.skinValue != null && skinEntry.skinSignature != null) {
-			return Optional.of(new Pair<>(skinEntry.skinValue, skinEntry.skinSignature));
+				&& skinEntry.signature != null) {
+			return Optional.of(skinEntry.signature);
 		}
 		return Optional.empty();
 	}
@@ -92,7 +93,7 @@ public class Mod {
 		if (newSignature.isPresent()) {
 			// switched to a signed library override
 			//? if hasNetworking
-			ModNetworking.updateSkinOnServer(newSignature.get().getLeft(), newSignature.get().getRight());
+			ModNetworking.updateSkinOnServer(newSignature.get().value(), newSignature.get().signature());
 		} else if (overrideSignature(oldOverride).isPresent()) {
 			// remove signed library override
 			//? if hasNetworking

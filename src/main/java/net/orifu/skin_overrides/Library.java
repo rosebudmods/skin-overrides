@@ -33,6 +33,25 @@ public interface Library {
         this.save();
     }
 
+    default boolean replace(LibraryEntry from, LibraryEntry to) {
+        for (int i = 0; i < this.entries().size(); i++) {
+            var entry = this.entries().get(i);
+            if (entry.getId().equals(from.getId())) {
+                // remove files if IDs are different
+                if (!from.getId().equals(to.getId())) {
+                    from.removeFiles();
+                }
+
+                this.entries().remove(i);
+                this.entries().add(i, to);
+                this.save();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     default void remove(int index) {
         this.entries().remove(index).removeFiles();
         this.save();

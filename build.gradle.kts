@@ -26,8 +26,11 @@ val awVersion =
 	else if (stonecutter.compare(scVersion, "1.17.1") >= 0) "1.17.1"
 	else "1.15.2"
 
-stonecutter.const("hasUi", hasUi)
-stonecutter.const("hasNetworking", hasNetworking)
+stonecutter {
+	const("hasUi", hasUi)
+	const("hasNetworking", hasNetworking)
+	swap("modVersion", "\"$modVersion\";")
+}
 
 if (stonecutter.current.isActive) {
 	rootProject.tasks.register("client") {
@@ -53,7 +56,9 @@ repositories {
 	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
 	// for more information about repositories.
 
-	maven("https://api.modrinth.com/maven")
+	maven("https://api.modrinth.com/maven") { name = "Modrinth Maven" }
+
+	maven("https://repo.inventivetalent.org/repository/public/") { name = "inventive-repo" }
 
 	// for some reason using the terraformers maven version of
 	// modmenu breaks quilt loader.
@@ -111,6 +116,11 @@ dependencies {
 
 	if (property("deps.ears") != "none")
 		modRuntimeOnly("maven.modrinth:ears:${property("deps.ears")}")
+
+	if (hasNetworking) {
+		implementation("org.mineskin:java-client:2.1.1-SNAPSHOT")
+		implementation("org.mineskin:java-client-apache:2.1.1-SNAPSHOT")
+	}
 }
 
 tasks.processResources {
