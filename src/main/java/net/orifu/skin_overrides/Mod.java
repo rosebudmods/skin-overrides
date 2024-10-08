@@ -10,8 +10,8 @@ import net.orifu.skin_overrides.networking.ModNetworking;
 import net.orifu.skin_overrides.override.LibraryOverrider;
 import net.orifu.skin_overrides.override.LocalCapeOverrider;
 import net.orifu.skin_overrides.override.LocalSkinOverrider;
-//? if >=1.17.1 {
 import org.jetbrains.annotations.Nullable;
+//? if >=1.17.1 {
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 //?} else {
@@ -76,18 +76,24 @@ public class Mod {
 		return CAPES.get(profile).map(OverrideManager.Override::texture);
 	}
 
+	public static Optional<Pair<String, String>> overrideSignature(OverrideManager.Override override) {
+		if (override instanceof LibraryOverrider.LibraryOverride library
+				&& library.entry() instanceof SkinLibrary.SkinEntry skinEntry
+				&& skinEntry.skinValue != null && skinEntry.skinSignature != null) {
+			return Optional.of(new Pair<>(skinEntry.skinValue, skinEntry.skinSignature));
+		}
+		return Optional.empty();
+	}
+
 	public static void onUserOverrideUpdate(
 			@Nullable OverrideManager.Override oldOverride,
 			@Nullable OverrideManager.Override newOverride) {
-		if (newOverride instanceof LibraryOverrider.LibraryOverride newLibrary
-				&& newLibrary.entry() instanceof SkinLibrary.SkinEntry skinEntry
-				&& skinEntry.skinValue != null && skinEntry.skinSignature != null) {
+		var newSignature = overrideSignature(newOverride);
+		if (newSignature.isPresent()) {
 			// switched to a signed library override
 			//? if hasNetworking
-			ModNetworking.updateSkinOnServer(skinEntry.skinValue, skinEntry.skinSignature);
-		} else if (oldOverride instanceof LibraryOverrider.LibraryOverride oldLibrary
-				&& oldLibrary.entry() instanceof SkinLibrary.SkinEntry skinEntry
-				&& skinEntry.skinValue != null && skinEntry.skinSignature != null) {
+			ModNetworking.updateSkinOnServer(newSignature.get().getLeft(), newSignature.get().getRight());
+		} else if (overrideSignature(oldOverride).isPresent()) {
 			// remove signed library override
 			//? if hasNetworking
 			ModNetworking.clearSkinOverrideOnServer();

@@ -34,6 +34,16 @@ if (stonecutter.current.isActive) {
 		group = "project"
 		dependsOn(tasks.named("runClient"))
 	}
+
+	rootProject.tasks.register("server") {
+		group = "project"
+		dependsOn(tasks.named("runServer"))
+	}
+
+	rootProject.tasks.register("buildCurrent") {
+		group = "project"
+		dependsOn(tasks.named("build"))
+	}
 }
 
 repositories {

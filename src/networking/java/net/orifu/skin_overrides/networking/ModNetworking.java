@@ -1,6 +1,7 @@
 package net.orifu.skin_overrides.networking;
 
 import com.mojang.authlib.properties.Property;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -9,6 +10,7 @@ import net.minecraft.network.packet.s2c.PlayerRemovalS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.util.ProfileHelper;
 
 import java.util.Collections;
@@ -45,6 +47,17 @@ public class ModNetworking {
             // update skin for players that are tracking this player
             var tracker = player.getServerWorld().getChunkManager().delegate.entityTrackers.get(player.getId());
             tracker.listeners.forEach(listener -> tracker.entry.startTracking(listener.getPlayer()));
+        });
+    }
+
+    public static void initClient() {
+        // send packet when joining (if applicable)
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+            var override = Mod.SKINS.get(ProfileHelper.user()).orElse(null);
+            var sig = Mod.overrideSignature(override);
+
+            sig.ifPresent(stringStringPair ->
+                    updateSkinOnServer(stringStringPair.getLeft(), stringStringPair.getRight()));
         });
     }
 

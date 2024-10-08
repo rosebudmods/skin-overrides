@@ -28,6 +28,5 @@
         "modmenu": "*"
     },
     "mixins": ["skin_overrides.mixins.json"],
-    "accessWidener": "aw/${access_widener}.accesswidener",
-    "environment": "client"
+    "accessWidener": "aw/${access_widener}.accesswidener"
 }

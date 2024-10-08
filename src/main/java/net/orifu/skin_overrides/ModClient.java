@@ -9,6 +9,8 @@ import net.minecraft.client.option.KeyBind;
 import net.orifu.skin_overrides.screen.SkinOverridesScreen;
 import org.lwjgl.glfw.GLFW;
 //?}
+//? if hasNetworking
+import net.orifu.skin_overrides.networking.ModNetworking;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -40,5 +42,8 @@ public class ModClient implements ClientModInitializer {
             }
         });
         //?}
+
+        //? if hasNetworking
+        ModNetworking.initClient();
     }
 }
