@@ -182,7 +182,10 @@ public class ModelPreview {
     }
 
     private static void renderModel(EntityModel<?> model, RenderLayer layer, GuiGraphics graphics) {
-        //? if >=1.21 {
+        //? if >=1.21.2 {
+        /*graphics.method_64039(vertexConsumers ->
+            model.method_60879(graphics.getMatrices(), vertexConsumers.getBuffer(layer), 0xf000f0, OverlayTexture.DEFAULT_UV));
+        *///?} else if >=1.21 {
         model.method_60879(graphics.getMatrices(), graphics.getVertexConsumers().getBuffer(layer), 0xf000f0, OverlayTexture.DEFAULT_UV);
         //?} else
         /*model.render(graphics.getMatrices(), graphics.getVertexConsumers().getBuffer(layer), 0xf000f0, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);*/

@@ -18,7 +18,8 @@ val scVersion = stonecutter.current.version
 val hasUi = stonecutter.compare(scVersion, "1.19.4") >= 0
 val hasNetworking = stonecutter.compare(scVersion, "1.20.6") >= 0
 val awVersion =
-	if (stonecutter.compare(scVersion, "1.20.2") >= 0) "1.20.2"
+	if (stonecutter.compare(scVersion, "1.21.2") >= 0) "1.21.2"
+	else if (stonecutter.compare(scVersion, "1.20.2") >= 0) "1.20.2"
 	else if (stonecutter.compare(scVersion, "1.20.1") >= 0) "1.20.1"
 	else if (stonecutter.compare(scVersion, "1.19.4") >= 0) "1.19.4"
 	else if (stonecutter.compare(scVersion, "1.19.3") >= 0) "1.19.3"
@@ -29,6 +30,7 @@ val awVersion =
 stonecutter {
 	const("hasUi", hasUi)
 	const("hasNetworking", hasNetworking)
+	const("hasModMenu", property("deps.modmenu") != "none")
 	swap("modVersion", "\"$modVersion\";")
 }
 
@@ -111,8 +113,10 @@ dependencies {
 	// modImplementation libs.quilted.fabric.api
 	// modImplementation libs.bundles.quilted.fabric.api // If you wish to use Fabric API's deprecated modules, you can replace the above line with this one
 
-	modImplementation("maven.modrinth:modmenu:${property("deps.modmenu")}")
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
+
+	if (property("deps.modmenu") != "none")
+		modImplementation("maven.modrinth:modmenu:${property("deps.modmenu")}")
 
 	if (property("deps.ears") != "none")
 		modRuntimeOnly("maven.modrinth:ears:${property("deps.ears")}")

@@ -115,7 +115,7 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
 
     // pad top
     @Override
-    protected int getRowTop(int index) {
+    public int getRowTop(int index) {
         return super.getRowTop(index) - 4 + PADDING;
     }
 

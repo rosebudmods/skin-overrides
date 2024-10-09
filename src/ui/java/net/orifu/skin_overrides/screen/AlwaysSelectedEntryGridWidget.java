@@ -30,7 +30,7 @@ public abstract class AlwaysSelectedEntryGridWidget<E extends Entry<E>> extends 
     }
 
     @Override
-    protected int getRowTop(int index) {
+    public int getRowTop(int index) {
         // divide index by x tiles
         return this.getY() + 4 - (int) this.getScrollAmount()
                 + MathHelper.floorDiv(index, this.xTiles()) * this.itemHeight

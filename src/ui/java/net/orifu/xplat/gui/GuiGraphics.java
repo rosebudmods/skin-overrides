@@ -5,10 +5,11 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
 
-import java.util.function.Function;
-
 public class GuiGraphics extends net.minecraft.client.gui.GuiGraphics {
     public GuiGraphics(net.minecraft.client.gui.GuiGraphics graphics) {
+        //? if >=1.21.2 {
+        /*super(MinecraftClient.getInstance(), graphics.vertexConsumers);
+        *///?} else
         super(MinecraftClient.getInstance(), graphics.getVertexConsumers());
     }
 

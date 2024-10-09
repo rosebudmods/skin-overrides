@@ -142,7 +142,10 @@ public record Skin(
 
     public record Signature(String value, String signature) {
         public static Signature fromProperty(com.mojang.authlib.properties.Property property) {
+            //? if >=1.20.2 {
             return new Signature(property.value(), property.signature());
+            //?} else
+            /*return new Signature(property.getValue(), property.getSignature());*/
         }
     }
 }
