@@ -10,6 +10,7 @@ import net.orifu.skin_overrides.networking.ModNetworking;
 import net.orifu.skin_overrides.override.LibraryOverrider;
 import net.orifu.skin_overrides.override.LocalCapeOverrider;
 import net.orifu.skin_overrides.override.LocalSkinOverrider;
+import net.orifu.skin_overrides.override.SkinCopyOverrider;
 import org.jetbrains.annotations.Nullable;
 //? if >=1.17.1 {
 import org.slf4j.Logger;
@@ -32,7 +33,7 @@ public class Mod {
 	public static final String CAPE_OVERRIDES_PATH = "cape_overrides";
 
 	public static final OverrideManager SKINS = new OverrideManager(true, SKIN_OVERRIDES_PATH, SkinLibrary.INSTANCE,
-			new LocalSkinOverrider());
+			new LocalSkinOverrider(), new SkinCopyOverrider());
 	public static final OverrideManager CAPES = new OverrideManager(false, CAPE_OVERRIDES_PATH, CapeLibrary.INSTANCE,
 			new LocalCapeOverrider());
 

@@ -151,10 +151,5 @@ public class OverrideManager {
         default Skin.Model model() {
             return null;
         }
-
-        @Nullable
-        default String name() {
-            return null;
-        }
     }
 }

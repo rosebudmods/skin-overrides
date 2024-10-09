@@ -31,16 +31,6 @@ public class Util {
         }
     }
 
-    public static Optional<String> ensureLibraryIdentifier(String identifier) {
-        var maybeIdentifier = Identifier.tryParse(identifier);
-        if (maybeIdentifier != null) {
-            if (maybeIdentifier.getNamespace().equals(Mod.MOD_ID)) {
-                return Optional.of(maybeIdentifier.getPath());
-            }
-        }
-        return Optional.empty();
-    }
-
     public static Optional<String> readString(JsonObject obj, String key) {
         if (obj == null || !obj.has(key)) {
             return Optional.empty();

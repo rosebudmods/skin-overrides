@@ -37,9 +37,9 @@ public class LibraryOverrider implements OverrideManager.Overrider {
     public Optional<OverrideManager.Override> get(File file, String name, String ext) {
         if (ext.equals("txt")) {
             return Util.readFile(file)
-                    .flatMap(Util::ensureLibraryIdentifier)
-                    .flatMap(this.library::get)
-                    .map(entry -> new LibraryOverride(name, entry));
+                    .flatMap(id -> Optional.ofNullable(Identifier.tryParse(id)))
+                    .filter(id -> id.getNamespace().equals(Mod.MOD_ID))
+                    .flatMap(id -> this.library.get(id.getPath()).map(entry -> new LibraryOverride(name, entry)));
         }
 
         return Optional.empty();

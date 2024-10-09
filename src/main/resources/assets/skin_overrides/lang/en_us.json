@@ -12,6 +12,7 @@
     "skin_overrides.override.none": "No override",
     "skin_overrides.override.local_image": "Local image",
     "skin_overrides.override.library": "Using %s",
+    "skin_overrides.override.copy": "Copying from %s",
     "skin_overrides.remove": "Remove override",
     "skin_overrides.input.model": "Choose the correct model for the skin",
     "skin_overrides.input.name": "Enter a name",
