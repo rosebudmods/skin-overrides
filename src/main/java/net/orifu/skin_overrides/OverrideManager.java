@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class OverrideManager {
@@ -126,9 +127,15 @@ public class OverrideManager {
         }
     }
 
-    public List<GameProfile> profilesWithOverride() {
+    public List<CompletableFuture<GameProfile>> profilesWithOverride() {
         synchronized (this.overrides) {
             return this.overrides.keySet().stream().map(ProfileHelper::idToBasicProfile).toList();
+        }
+    }
+
+    public List<GameProfile> profilesWithOverrideSync() {
+        synchronized (this.overrides) {
+            return this.overrides.keySet().stream().map(ProfileHelper::idToBasicProfileSync).toList();
         }
     }
 

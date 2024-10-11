@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 //? if >=1.19.2 {
 import static net.minecraft.util.UuidUtil.getOfflinePlayerUuid;
@@ -40,7 +41,11 @@ public class ProfileHelper {
         /*return MinecraftClient.getInstance().getSession().getProfile();*/
     }
 
-    public static GameProfile idToBasicProfile(String id) {
+    public static CompletableFuture<GameProfile> idToBasicProfile(String id) {
+        return CompletableFuture.supplyAsync(() -> idToBasicProfileSync(id));
+    }
+
+    public static GameProfile idToBasicProfileSync(String id) {
         // get the uuid
         Optional<GameProfile> profile = Optional.empty();
         if (id.matches(UUID_REGEX)) {
@@ -73,9 +78,9 @@ public class ProfileHelper {
     }
 
     public static Optional<GameProfile> uuidToProfile(UUID uuid) {
-        // get the full profile (cached)
+        // get the full profile (cached if not secure)
         var profileResult = MinecraftClient.getInstance().getSessionService()
-                /*? >=1.20.2 {*/ .fetchProfile(uuid, true);
+                /*? >=1.20.2 {*/ .fetchProfile(uuid, false);
                 /*?} else*/ /*.fillProfileProperties(new GameProfile(uuid, null), true);*/
 
         //? if >=1.20.2 {

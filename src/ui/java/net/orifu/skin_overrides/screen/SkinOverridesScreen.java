@@ -262,7 +262,7 @@ public class SkinOverridesScreen extends Screen {
             return;
         }
 
-        GameProfile profile = ProfileHelper.idToBasicProfile(this.searchBox.getText());
+        GameProfile profile = ProfileHelper.idToBasicProfileSync(this.searchBox.getText());
         this.searchBox.setText("");
         this.selectPlayer(this.playerList.addEntry(profile));
     }

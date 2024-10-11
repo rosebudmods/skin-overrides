@@ -37,12 +37,15 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
             }
         }
 
-        // add offline players
-        for (GameProfile profile : this.ov.profilesWithOverride()) {
-            this.tryAddEntry(profile, Type.OFFLINE);
-        }
-
         this.updateFilter();
+
+        // add offline players
+        for (var futureProfile : this.ov.profilesWithOverride()) {
+            futureProfile.thenAccept(profile -> {
+                this.tryAddEntry(profile, Type.OFFLINE);
+                this.updateFilter();
+            });
+        }
     }
 
     protected void tryAddEntry(GameProfile profile, Type type) {
