@@ -78,9 +78,17 @@ public class ProfileHelper {
     }
 
     public static Optional<GameProfile> uuidToProfile(UUID uuid) {
+        return uuidToProfile(uuid, false);
+    }
+
+    public static Optional<GameProfile> uuidToSecureProfile(UUID uuid) {
+        return uuidToProfile(uuid, true);
+    }
+
+    protected static Optional<GameProfile> uuidToProfile(UUID uuid, boolean secure) {
         // get the full profile (cached if not secure)
         var profileResult = MinecraftClient.getInstance().getSessionService()
-                /*? >=1.20.2 {*/ .fetchProfile(uuid, false);
+                /*? >=1.20.2 {*/ .fetchProfile(uuid, secure);
                 /*?} else*/ /*.fillProfileProperties(new GameProfile(uuid, null), true);*/
 
         //? if >=1.20.2 {
