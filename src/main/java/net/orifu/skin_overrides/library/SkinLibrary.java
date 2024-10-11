@@ -77,8 +77,7 @@ public class SkinLibrary extends AbstractLibrary {
     public Optional<SkinEntry> createSigned(
             String name, Identifier texture, Skin.Model model,
             GameProfile profile) {
-        var secureProfile = ProfileHelper.uuidToSecureProfile(profile.getId());
-        var property = secureProfile.flatMap(p -> p.getProperties().get("textures").stream().findAny());
+        var property = profile.getProperties().get("textures").stream().findAny();
         return property.flatMap(prop -> this.createInternal(
                 name, model, texture, null,
                 Skin.Signature.fromProperty(prop)));

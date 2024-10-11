@@ -25,7 +25,7 @@ public class SkinCopyOverrider implements OverrideManager.Overrider {
             return Util.readFile(file)
                     .flatMap(id -> Optional.ofNullable(Identifier.tryParse(id)))
                     .filter(id -> id.getNamespace().equals(Identifier.DEFAULT_NAMESPACE))
-                    .flatMap(id -> ProfileHelper.idToProfile(id.getPath()))
+                    .flatMap(id -> ProfileHelper.idToProfileSync(id.getPath()))
                     .map(profile -> new SkinCopyOverride(name, profile, Skin.fetchSkin(profile)));
         }
 

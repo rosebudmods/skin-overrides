@@ -262,6 +262,7 @@ public class SkinOverridesScreen extends Screen {
             return;
         }
 
+        // i tried to make this  asynchronous and got ConcurrentModificationException
         GameProfile profile = ProfileHelper.idToBasicProfileSync(this.searchBox.getText());
         this.searchBox.setText("");
         this.selectPlayer(this.playerList.addEntry(profile));

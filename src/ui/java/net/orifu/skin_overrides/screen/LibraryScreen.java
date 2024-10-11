@@ -353,18 +353,23 @@ public class LibraryScreen extends Screen {
     }
 
     private void addFromSearch() {
-        var maybeProfile = ProfileHelper.idToProfile(this.searchBox.getText());
-        if (maybeProfile.isEmpty()) {
-            this.toast(
-                    Text.translatable("skin_overrides.no_profile.title", this.searchBox.getText()),
-                    Text.translatable("skin_overrides.no_profile.description"));
-        } else {
-            this.adding = this.ov.skin
-                    ? Skin.fetchSkin(maybeProfile.get())
-                    : Skin.fetchCape(maybeProfile.get());
-            this.addingProfile = maybeProfile.get();
-            this.searchBox.setText("");
-        }
+        String name = this.searchBox.getText();
+        this.searchBox.setText("");
+
+        ProfileHelper.idToSecureProfile(name).thenAccept(profile -> {
+            if (profile.isEmpty()) {
+                this.toast(
+                        Text.translatable("skin_overrides.no_profile.title", this.searchBox.getText()),
+                        Text.translatable("skin_overrides.no_profile.description"));
+            } else {
+                // i tried getting the skin asynchronously here... don't do that.
+                // i guess it needs to be on the render thread to be added?
+                this.adding = this.ov.skin
+                        ? Skin.fetchSkin(profile.get())
+                        : Skin.fetchCape(profile.get());
+                this.addingProfile = profile.get();
+            }
+        });
     }
 
     private void toast(Text title, Text description) {

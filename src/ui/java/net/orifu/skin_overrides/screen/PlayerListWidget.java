@@ -48,7 +48,7 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
         }
     }
 
-    protected void tryAddEntry(GameProfile profile, Type type) {
+    protected synchronized void tryAddEntry(GameProfile profile, Type type) {
         if (!this.hasOverrideFor(profile) || type.equals(Type.USER)) {
             this.allEntries.add(new PlayerListEntry(this.client, profile, type, this.parent));
         }

@@ -68,8 +68,16 @@ public class ProfileHelper {
         return profile.orElseGet(() -> new GameProfile(getOfflinePlayerUuid(id), id));
     }
 
-    public static Optional<GameProfile> idToProfile(String id) {
-        var basicProfile = idToBasicProfile(id);
+    public static CompletableFuture<Optional<GameProfile>> idToProfile(String id) {
+        return CompletableFuture.supplyAsync(() -> idToProfileSync(id));
+    }
+
+    public static CompletableFuture<Optional<GameProfile>> idToSecureProfile(String id) {
+        return idToBasicProfile(id).thenApplyAsync(profile -> uuidToSecureProfile(profile.getId()));
+    }
+
+    public static Optional<GameProfile> idToProfileSync(String id) {
+        var basicProfile = idToBasicProfileSync(id);
         return uuidToProfile(basicProfile.getId());
     }
 
