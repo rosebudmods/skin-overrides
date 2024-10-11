@@ -143,6 +143,7 @@ public class OverrideManager {
     public interface Override {
         String playerIdent();
 
+        @Nullable
         Identifier texture();
 
         Text info();

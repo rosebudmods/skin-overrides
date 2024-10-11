@@ -38,7 +38,6 @@ public record Skin(
         );
         *///?} else
         return fromPlayerSkin(provider.getSkin(profile));
-        
     }
 
     public static CompletableFuture<Skin> fetchSkin(GameProfile profile) {

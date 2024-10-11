@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public class SkinCopyOverrider implements OverrideManager.Overrider {
     @Override
@@ -25,16 +26,17 @@ public class SkinCopyOverrider implements OverrideManager.Overrider {
                     .flatMap(id -> Optional.ofNullable(Identifier.tryParse(id)))
                     .filter(id -> id.getNamespace().equals(Identifier.DEFAULT_NAMESPACE))
                     .flatMap(id -> ProfileHelper.idToProfile(id.getPath()))
-                    .map(profile -> new SkinCopyOverride(name, profile, Skin.fromProfile(profile)));
+                    .map(profile -> new SkinCopyOverride(name, profile, Skin.fetchSkin(profile)));
         }
 
         return Optional.empty();
     }
 
-    public record SkinCopyOverride(String playerIdent, GameProfile profile, Skin copyFrom) implements OverrideManager.Override {
+    public record SkinCopyOverride(String playerIdent, GameProfile profile, CompletableFuture<Skin> copyFrom) implements OverrideManager.Override {
         @Override
         public Identifier texture() {
-            return this.copyFrom.texture();
+            Skin skin = this.copyFrom.getNow(null);
+            return skin != null ? skin.texture() : null;
         }
 
         @Override
@@ -45,7 +47,8 @@ public class SkinCopyOverrider implements OverrideManager.Overrider {
         @Override
         @Nullable
         public Skin.Model model() {
-            return this.copyFrom.model();
+            Skin skin = this.copyFrom.getNow(null);
+            return skin != null ? skin.model() : null;
         }
     }
 }

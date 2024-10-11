@@ -71,7 +71,9 @@ public class Mod {
 	}
 
 	public static Optional<Pair<Identifier, Skin.Model>> overrideSkin(GameProfile profile) {
-		return SKINS.get(profile).map(ov -> new Pair<>(ov.texture(), ov.model()));
+		return SKINS.get(profile)
+				.filter(ov -> ov.texture() != null)
+				.map(ov -> new Pair<>(ov.texture(), ov.model()));
 	}
 
 	public static Optional<Identifier> overrideCape(GameProfile profile) {

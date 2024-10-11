@@ -24,8 +24,8 @@ public class ModClient implements ClientModInitializer {
     public void onInitializeClient() {
         var scheduler = Executors.newScheduledThreadPool(1);
         // reload override files every 500 ms
-        scheduler.scheduleAtFixedRate(SKINS::update, 0, 500, TimeUnit.MILLISECONDS);
-        scheduler.scheduleAtFixedRate(CAPES::update, 0, 500, TimeUnit.MILLISECONDS);
+        scheduler.scheduleAtFixedRate(SKINS::update, 1_000, 500, TimeUnit.MILLISECONDS);
+        scheduler.scheduleAtFixedRate(CAPES::update, 1_000, 500, TimeUnit.MILLISECONDS);
         // reload library files every 2 seconds
         scheduler.scheduleAtFixedRate(SKINS.library()::reload, 0, 2, TimeUnit.SECONDS);
         scheduler.scheduleAtFixedRate(CAPES.library()::reload, 0, 2, TimeUnit.SECONDS);
