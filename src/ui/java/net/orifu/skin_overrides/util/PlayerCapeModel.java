@@ -22,6 +22,7 @@ import net.minecraft.client.model.ModelTransform;
 import net.minecraft.client.model.TexturedModelData;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.entity.LivingEntity;
+import org.joml.Matrix3f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -49,7 +50,12 @@ public class PlayerCapeModel<T extends LivingEntity> extends BipedEntityModel<T>
         root.addChild("left_leg", clear1, clear2);
         root.addChild("right_leg", clear1, clear2);
 
-        body.addChild("cape", ModelPartBuilder.create().uv(0, 0).cuboid(-5f, 0f, 0f, 10f, 16f, 1f, Dilation.NONE, 1f, 0.5f), ModelTransform.of(0f, 0f, 3f, 0f, (float) Math.PI, 0f));
+        body.addChild(
+                "cape",
+                ModelPartBuilder.create()
+                        .uv(0, 0)
+                        .cuboid(-5f, 0f, -1f, 10f, 16f, 1f, Dilation.NONE, 1f, 0.5f),
+                ModelTransform.of(0f, 0f, 2f, 0f, (float) Math.PI, 0f));
         return TexturedModelData.of(data, 64, 64);
     }
 
@@ -60,13 +66,14 @@ public class PlayerCapeModel<T extends LivingEntity> extends BipedEntityModel<T>
         float pi = (float) Math.PI;
 
         var rotation = new Quaternionf()
+                .rotateY(-pi)
                 .rotateX((6 + capeLean / 2 + capeFlap) * pi / 180)
                 .rotateZ(capeLean2 / 2 * pi / 180)
-                .rotateY(-capeLean2 / 2 * pi / 180);
+                .rotateY((180 - capeLean2 / 2) * pi / 180);
 
-        var existing = new Quaternionf().rotateZYX(this.cape.roll, this.cape.yaw, this.cape.pitch);
-        var newRotation = existing.mul(rotation);
-        var newVector = newRotation.getEulerAnglesXYZ(new Vector3f());
+        var existing = new Matrix3f().rotateZYX(this.cape.roll, this.cape.yaw, this.cape.pitch);
+        var newRotation = existing.rotate(rotation);
+        var newVector = newRotation.getEulerAnglesZYX(new Vector3f());
         this.cape.setAngles(newVector.x, newVector.y, newVector.z);
     }
 }
