@@ -90,7 +90,7 @@ public class LibraryListWidget extends AlwaysSelectedEntryGridWidget<LibraryList
 
     @Override
     protected int xTiles() {
-        return this.width / this.itemWidth;
+        return Math.max(this.width / this.itemWidth, 1);
     }
 
     @Override

@@ -77,10 +77,6 @@ public class LibraryScreen extends Screen {
         this.callback = callback;
     }
 
-    public LibraryScreen(OverrideManager ov, @Nullable Screen parent) {
-        this(ov, parent, null);
-    }
-
     @Override
     protected void init() {
         if (this.libraryList == null) {
@@ -119,9 +115,12 @@ public class LibraryScreen extends Screen {
         if (this.selectedEntry != null) {
             var controlsFrame = body.add(new FrameWidget(OPTIONS_WIDTH + OPTIONS_PAD, 0));
             var controls = controlsFrame.add(LinearLayoutWidget.createVertical().setSpacing(2));
-            int previewScale = PlayerSkinRenderer.HEIGHT * 5 + 180 < this.height ? 5
-                    : PlayerSkinRenderer.HEIGHT * 4 + 180 < this.height ? 4
-                    : PlayerSkinRenderer.HEIGHT * 3 + 180 < this.height ? 3 : 2;
+
+            // believe me, "figure out a way to stop tiny player" is on my to-do
+            int previewScale = PlayerSkinRenderer.HEIGHT * 5 + 210 < this.height ? 5
+                    : PlayerSkinRenderer.HEIGHT * 4 + 210 < this.height ? 4
+                    : PlayerSkinRenderer.HEIGHT * 3 + 210 < this.height ? 3
+                    : PlayerSkinRenderer.HEIGHT * 2 + 210 < this.height ? 2 : 1;
 
             // library entry preview
             this.entryPreview = controls.add(this.ov.skin
@@ -132,61 +131,61 @@ public class LibraryScreen extends Screen {
             // padding
             controls.add(new FrameWidget(0, 4));
 
-            // name input
-            if (this.nameField == null) {
-                this.nameField = new TextFieldWidget(this.textRenderer, OPTIONS_WIDTH, 20,
-                        Text.translatable("skin_overrides.library.input.name"));
-                this.nameField.setMaxLength(32);
-                this.nameField.setChangedListener(this::renameEntry);
-                this.nameField.setText(this.selectedEntry.entry.getName());
-            }
-            controls.add(this.nameField, LayoutSettings.create().alignHorizontallyCenter());
-
+            // control layer 1
             var smallControls = controls.add(LinearLayoutWidget.createHorizontal());
 
             // previous entry
             int index = this.libraryList.indexOf(this.selectedEntry);
             boolean isFirst = index == 0;
             smallControls.add(ButtonWidget.builder(Text.literal("<"),
-                    btn -> this.libraryList.moveSelection(-1)).width(20)
+                            btn -> this.libraryList.moveSelection(-1)).width(20)
                     .tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.back")))
                     .build()).active = !isFirst;
+
+            // name input
+            if (this.nameField == null) {
+                this.nameField = new TextFieldWidget(this.textRenderer, OPTIONS_WIDTH - 20 * 2, 20,
+                        Text.translatable("skin_overrides.library.input.name"));
+                this.nameField.setMaxLength(32);
+                this.nameField.setChangedListener(this::renameEntry);
+                this.nameField.setText(this.selectedEntry.entry.getName());
+            }
+            smallControls.add(this.nameField, LayoutSettings.create().alignHorizontallyCenter());
+
+            // next entry
+            boolean isLast = index == this.libraryList.children().size() - 1;
+            smallControls.add(ButtonWidget.builder(Text.literal(">"),
+                            btn -> this.libraryList.moveSelection(1))
+                    .tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.next"))).width(20)
+                    .build()).active = !isLast;
+
+            // control layer 2
+            var otherControls = controls.add(LinearLayoutWidget.createHorizontal());
+
             // swap this and previous entry
-            smallControls.add(ButtonWidget.builder(Text.literal("<<"), btn -> {
+            otherControls.add(ButtonWidget.builder(Text.literal("<<"), btn -> {
                 this.libraryList.move(index, index - 1);
                 this.libraryList.ensureVisible(this.selectedEntry);
                 this.clearAndInit();
-            }).width(25).tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.move_back")))
+            }).width(20).tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.move_back")))
                     .build()).active = !isFirst;
 
             // use this entry
-            int mainControlWidth = (OPTIONS_WIDTH - 40 - 50) / 2;
-            smallControls.add(ButtonWidget.builder(Text.literal("+"), btn -> {
-                if (this.callback != null) {
-                    this.callback.accept(this.selectedEntry.entry);
-                }
-                this.client.setScreen(this.parent);
-            }).width(mainControlWidth).tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.use")))
-                    .build()).active = this.callback != null;
-
-            // remove this entry
-            smallControls.add(ButtonWidget.builder(Text.literal("-"), btn ->
-                    this.libraryList.removeFromLibrary()
-            ).width(mainControlWidth).tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.remove")))
+            otherControls.add(ButtonWidget.builder(Text.translatable("skin_overrides.library.input.use"), btn -> {
+                        if (this.callback != null) {
+                            this.callback.accept(this.selectedEntry.entry);
+                        }
+                        this.client.setScreen(this.parent);
+                    })
+                    .width(OPTIONS_WIDTH - 20 * 2)
                     .build()).active = this.callback != null;
 
             // swap this and next entry
-            boolean isLast = index == this.libraryList.children().size() - 1;
-            smallControls.add(ButtonWidget.builder(Text.literal(">>"), btn -> {
+            otherControls.add(ButtonWidget.builder(Text.literal(">>"), btn -> {
                 this.libraryList.move(index, index + 1);
                 this.libraryList.ensureVisible(this.selectedEntry);
                 this.clearAndInit();
-            }).tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.move_next"))).width(25)
-                    .build()).active = !isLast;
-            // next entry
-            smallControls.add(ButtonWidget.builder(Text.literal(">"),
-                    btn -> this.libraryList.moveSelection(1))
-                    .tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.next"))).width(20)
+            }).width(20).tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.move_next")))
                     .build()).active = !isLast;
 
             // preview options
@@ -222,6 +221,12 @@ public class LibraryScreen extends Screen {
                                 Text.translatable("skin_overrides.library.input.model"),
                                 (btn, opt) -> this.showElytra = (boolean) opt));
             }
+
+            // remove this entry
+            controls.add(new FrameWidget(0, 4));
+            controls.add(ButtonWidget.builder(Text.translatable("skin_overrides.library.input.delete"), btn ->
+                            this.libraryList.removeFromLibrary()
+                    ).width(OPTIONS_WIDTH).build()).active = this.callback != null;
         }
 
         var footer = root.add(new FrameWidget(this.width, 33));
