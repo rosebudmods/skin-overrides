@@ -1,6 +1,7 @@
 plugins {
 	id("maven-publish")
-	id("org.quiltmc.loom")
+	// id("org.quiltmc.loom")
+	id("fabric-loom")
 	id("me.modmuss50.mod-publish-plugin") version "0.5.2"
 }
 
@@ -58,6 +59,8 @@ repositories {
 	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
 	// for more information about repositories.
 
+	maven("https://maven.quiltmc.org/repository/release") { name = "Quilt" }
+
 	maven("https://api.modrinth.com/maven") { name = "Modrinth Maven" }
 
 	maven("https://repo.inventivetalent.org/repository/public/") { name = "inventive-repo" }
@@ -100,7 +103,8 @@ loom {
 
 dependencies {
 	minecraft("com.mojang:minecraft:$mcVersion")
-	modImplementation("org.quiltmc:quilt-loader:${property("deps.quilt_loader")}")
+	// modImplementation("org.quiltmc:quilt-loader:${property("deps.quilt_loader")}")
+	modImplementation("net.fabricmc:fabric-loader:0.16.7")
 
 	val qm = property("deps.quilt_mappings").toString()
 	if (!qm.contains(":"))
