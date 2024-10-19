@@ -4,15 +4,18 @@ import java.util.function.Consumer;
 
 import com.mojang.blaze3d.platform.InputUtil;
 import net.minecraft.client.font.MultilineText;
+import net.minecraft.client.gui.widget.layout.LayoutSettings;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Skin;
-import net.orifu.skin_overrides.util.PlayerCapeRenderer;
+import net.orifu.skin_overrides.screen.widget.ModelPreviewWidget;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
+import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.xplat.CommonTexts;
 import net.orifu.xplat.gui.GuiGraphics;
 import net.orifu.xplat.gui.Screen;
 import net.orifu.xplat.gui.widget.ButtonWidget;
+import net.orifu.xplat.gui.widget.GridWidget;
 import net.orifu.xplat.gui.widget.LinearLayoutWidget;
 import net.orifu.xplat.gui.widget.TextFieldWidget;
 import org.jetbrains.annotations.Nullable;
@@ -31,9 +34,6 @@ public class OverrideInfoEntryScreen extends Screen {
     private static final int SKIN_WIDTH = PlayerSkinRenderer.WIDTH * SKIN_SCALE;
     private static final int MODEL_BUTTON_WIDTH = SKIN_WIDTH + 20;
 
-    private static final int CAPE_SCALE = 6;
-    private static final int CAPE_WIDTH = PlayerCapeRenderer.WIDTH * CAPE_SCALE;
-
     @Nullable
     private final Screen parent;
     private final boolean wantsModel;
@@ -48,6 +48,8 @@ public class OverrideInfoEntryScreen extends Screen {
 
     private MultilineText message;
 
+    @Nullable
+    private LinearLayoutWidget root;
     @Nullable
     private TextFieldWidget nameInput;
 
@@ -91,23 +93,13 @@ public class OverrideInfoEntryScreen extends Screen {
     protected void init() {
          this.message = MultilineText.create(this.textRenderer, this.getMessage(), this.width - 50);
 
-        // add skin model selector buttons
-        int buttonY = this.getModelButtonY();
-        if (this.wantsModel) {
-            this.addDrawableSelectableElement(
-                    ButtonWidget.builder(MODEL_WIDE, btn -> this.select(Skin.Model.WIDE))
-                            .positionAndSize(this.width / 2 - 5 - MODEL_BUTTON_WIDTH, buttonY, MODEL_BUTTON_WIDTH, 20)
-                            .build());
-            this.addDrawableSelectableElement(
-                    ButtonWidget.builder(MODEL_SLIM, btn -> this.select(Skin.Model.SLIM))
-                            .positionAndSize(this.width / 2 + 5, buttonY, MODEL_BUTTON_WIDTH, 20).build());
-        }
+         this.root = LinearLayoutWidget.createVertical();
+         this.root.setSpacing(PAD);
 
         // add name input
         if (this.wantsName) {
-            int wrapperWidth = this.wantsModel ? 120 : 120 + 50;
-            var nameInputWrapper = LinearLayoutWidget.createHorizontal();
-            nameInputWrapper.setPosition((this.width - wrapperWidth) / 2, this.getNameInputY());
+            var nameInputWrapper = this.root.add(LinearLayoutWidget.createHorizontal(),
+                    LayoutSettings.create().alignHorizontallyCenter());
 
             this.nameInput = nameInputWrapper.add(new TextFieldWidget(this.textRenderer, 120, 20,
                     Text.translatable("skin_overrides.library.input.name")));
@@ -119,9 +111,51 @@ public class OverrideInfoEntryScreen extends Screen {
                         .width(50).build());
             }
 
-            nameInputWrapper.visitWidgets(this::addDrawableSelectableElement);
-            nameInputWrapper.arrangeElements();
+            // add player model widget
+            if (this.model != null) {
+                this.root.add(ModelPreviewWidget.skin(
+                                new Skin(this.texture, null, null, this.model),
+                                SKIN_SCALE, this.client),
+                        LayoutSettings.create().alignHorizontallyCenter());
+            }
         }
+
+        if (this.wantsModel) {
+            var grid = this.root.add(new GridWidget(), LayoutSettings.create().alignHorizontallyCenter());
+            grid.setSpacing(PAD);
+
+            // add player model widgets
+            grid.add(ModelPreviewWidget.skin(
+                            new Skin(this.texture, null, null, Skin.Model.WIDE),
+                            SKIN_SCALE, this.client),
+                    0, 0, LayoutSettings.create().alignHorizontallyCenter());
+            grid.add(ModelPreviewWidget.skin(
+                            new Skin(this.texture, null, null, Skin.Model.SLIM),
+                            SKIN_SCALE, this.client),
+                    0, 1, LayoutSettings.create().alignHorizontallyCenter());
+
+            // add selection buttons
+            grid.add(ButtonWidget.builder(MODEL_WIDE, btn -> this.select(Skin.Model.WIDE))
+                            .size(MODEL_BUTTON_WIDTH, 20).build(),
+                    1, 0);
+            grid.add(ButtonWidget.builder(MODEL_SLIM, btn -> this.select(Skin.Model.SLIM))
+                            .size(MODEL_BUTTON_WIDTH, 20).build(),
+                    1, 1);
+        }
+
+        if (!this.wantsModel && this.model == null) {
+            // add cape model widget
+            this.root.add(ModelPreviewWidget.capeWithSkin(
+                        Skin.fromProfile(ProfileHelper.user()).withCape(this.texture),
+                        SKIN_SCALE, this.client),
+                    LayoutSettings.create().alignHorizontallyCenter());
+        }
+
+        this.root.visitWidgets(this::addDrawableSelectableElement);
+        this.root.arrangeElements();
+
+        this.root.setX((this.width - root.getWidth()) / 2);
+        this.root.setY((this.height - this.getContentHeight()) / 2 + this.getContentOffset());
     }
 
     @Override
@@ -138,19 +172,6 @@ public class OverrideInfoEntryScreen extends Screen {
         /*this.message.render(graphics.portable(), this.width / 2, this.getMessageY());
         *///?} else
         /*this.message.drawCenterWithShadow(graphics.portable(), this.width / 2, this.getMessageY());*/
-
-        if (this.wantsModel) {
-            PlayerSkinRenderer.draw(graphics, this.texture, Skin.Model.WIDE,
-                    this.width / 2 - 5 - 10 - SKIN_WIDTH, this.getPreviewY(), SKIN_SCALE);
-            PlayerSkinRenderer.draw(graphics, this.texture, Skin.Model.SLIM,
-                    this.width / 2 + 5 + 10, this.getPreviewY(), SKIN_SCALE);
-        } else if (this.model != null) {
-            PlayerSkinRenderer.draw(graphics, this.texture, this.model,
-                    this.width / 2 - SKIN_WIDTH / 2, this.getPreviewY(), SKIN_SCALE);
-        } else {
-            PlayerCapeRenderer.draw(graphics, this.texture,
-                    this.width / 2 - CAPE_WIDTH / 2, this.getPreviewY(), CAPE_SCALE);
-        }
     }
 
     @Override
@@ -177,12 +198,6 @@ public class OverrideInfoEntryScreen extends Screen {
         this.client.setScreen(this.parent);
     }
 
-    private int getContentHeight() {
-        return this.getMessagesHeight() + PAD + this.getPreviewHeight()
-                + (this.wantsModel ? 20 + PAD : 0)
-                + (this.wantsName ? 20 + PAD : 0);
-    }
-
     protected static Text getMessageStatic(boolean wantsName, boolean wantsModel) {
         return wantsName && wantsModel
                 ? INPUT_NAME_AND_MODEL
@@ -195,14 +210,6 @@ public class OverrideInfoEntryScreen extends Screen {
         return getMessageStatic(this.wantsName, this.wantsModel);
     }
 
-    private int getPreviewHeight() {
-        if (this.wantsModel || this.model != null) {
-            return PlayerSkinRenderer.HEIGHT * SKIN_SCALE;
-        } else {
-            return PlayerCapeRenderer.HEIGHT * CAPE_SCALE;
-        }
-    }
-
     private int getMessagesHeight() {
         return this.message.count() * 9;
     }
@@ -211,16 +218,12 @@ public class OverrideInfoEntryScreen extends Screen {
         return (this.height - this.getContentHeight()) / 2;
     }
 
-    private int getNameInputY() {
-        return this.getMessageY() + this.getMessagesHeight() + PAD;
+    private int getContentOffset() {
+        return this.getMessagesHeight() + PAD;
     }
 
-    private int getPreviewY() {
-        return this.getNameInputY() + (this.wantsName ? 20 + PAD : 0);
-    }
-
-    private int getModelButtonY() {
-        return this.getPreviewY() + this.getPreviewHeight() + PAD;
+    private int getContentHeight() {
+        return this.getContentOffset() + root.getHeight();
     }
 
     @Override
