@@ -8,7 +8,7 @@ import net.minecraft.util.Identifier;
 public class GuiGraphics extends net.minecraft.client.gui.GuiGraphics {
     public GuiGraphics(net.minecraft.client.gui.GuiGraphics graphics) {
         //? if >=1.21.2 {
-        super(MinecraftClient.getInstance(), graphics.vertexConsumers);
+        super(MinecraftClient.getInstance(), MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers());
         //?} else
         /*super(MinecraftClient.getInstance(), graphics.getVertexConsumers());*/
     }
