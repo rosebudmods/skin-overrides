@@ -14,9 +14,10 @@ body:
       label: minecraft version
       description: on what version of minecraft did you encounter the bug?
       options:
-        - 1.21.1
-        - 1.20.6
-        - 1.20.4
+        - Bundles of Bravery (1.21.2)
+        - Tricky Trials (1.21.1)
+        - Armored Paws (1.20.6)
+        - Bats and Pots (1.20.4)
         - 1.20.2
         - 1.20.1
         - 1.19.4

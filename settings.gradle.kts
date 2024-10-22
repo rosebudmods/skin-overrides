@@ -29,7 +29,7 @@ extensions.configure<StonecutterSettings> {
 				"1.21.1", "1.21.2"
 		)
 
-		vcsVersion = "1.21.1"
+		vcsVersion = "1.21.2"
 	}
 
 	create(rootProject)

@@ -32,16 +32,16 @@ public class ModelPreview {
     protected boolean showElytra = false;
 
     //? if >=1.21.2 {
-    /*protected final PlayerEntityModel wide;
+    protected final PlayerEntityModel wide;
     protected final PlayerEntityModel slim;
     protected final PlayerCapeModel cape;
     protected final ElytraEntityModel elytra;
-    *///?} else {
-    protected final PlayerEntityModel<?> wide;
+    //?} else {
+    /*protected final PlayerEntityModel<?> wide;
     protected final PlayerEntityModel<?> slim;
     protected final PlayerCapeModel<?> cape;
     protected final ElytraEntityModel<?> elytra;
-    //?}
+    *///?}
 
     // see PlayerSkinModelWidget
     protected static final float MODEL_HEIGHT = 2.125f;
@@ -55,12 +55,12 @@ public class ModelPreview {
         var modelLoader = client.getEntityModelLoader();
 
         //? if >=1.21.2 {
-        /*this.wide = new PlayerEntityModel(modelLoader.getModelPart(EntityModelLayers.PLAYER), false);
+        this.wide = new PlayerEntityModel(modelLoader.getModelPart(EntityModelLayers.PLAYER), false);
         this.slim = new PlayerEntityModel(modelLoader.getModelPart(EntityModelLayers.PLAYER_SLIM), true);
         this.cape = new PlayerCapeModel(modelLoader.getModelPart(EntityModelLayers.field_52980));
         this.elytra = new ElytraEntityModel(modelLoader.getModelPart(EntityModelLayers.ELYTRA));
-        *///?} else {
-        this.wide = new PlayerEntityModel<>(modelLoader.getModelPart(EntityModelLayers.PLAYER), false);
+        //?} else {
+        /*this.wide = new PlayerEntityModel<>(modelLoader.getModelPart(EntityModelLayers.PLAYER), false);
         this.slim = new PlayerEntityModel<>(modelLoader.getModelPart(EntityModelLayers.PLAYER_SLIM), true);
         this.cape = new PlayerCapeModel<>(PlayerCapeModel.getTexturedModelData().createModel());
         this.elytra = new ElytraEntityModel<>(modelLoader.getModelPart(EntityModelLayers.ELYTRA));
@@ -70,7 +70,7 @@ public class ModelPreview {
         this.slim.child = false;
         this.cape.child = false;
         this.elytra.child = false;
-        //?}
+        *///?}
     }
 
     public void setSkin(Skin skin) {
@@ -183,11 +183,11 @@ public class ModelPreview {
 
     private static void renderModel(EntityModel<?> model, RenderLayer layer, GuiGraphics graphics) {
         //? if >=1.21.2 {
-        /*graphics.method_64039(vertexConsumers ->
+        graphics.method_64039(vertexConsumers ->
             model.method_60879(graphics.getMatrices(), vertexConsumers.getBuffer(layer), 0xf000f0, OverlayTexture.DEFAULT_UV));
-        *///?} else if >=1.21 {
-        model.method_60879(graphics.getMatrices(), graphics.getVertexConsumers().getBuffer(layer), 0xf000f0, OverlayTexture.DEFAULT_UV);
-        //?} else
+        //?} else if >=1.21 {
+        /*model.method_60879(graphics.getMatrices(), graphics.getVertexConsumers().getBuffer(layer), 0xf000f0, OverlayTexture.DEFAULT_UV);
+        *///?} else
         /*model.render(graphics.getMatrices(), graphics.getVertexConsumers().getBuffer(layer), 0xf000f0, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);*/
     }
 }

@@ -64,9 +64,9 @@ public class Util {
 
     public static void saveTexture(Identifier texture, int w, int h, Path path) throws IOException {
         //? if >=1.21.2 {
-        /*RenderSystem.bindTexture(MinecraftClient.getInstance().getTextureManager().getTexture(texture).getGlId());
-        *///?} else
-        MinecraftClient.getInstance().getTextureManager().bindTexture(texture);
+        RenderSystem.bindTexture(MinecraftClient.getInstance().getTextureManager().getTexture(texture).getGlId());
+        //?} else
+        /*MinecraftClient.getInstance().getTextureManager().bindTexture(texture);*/
         NativeImage img = new NativeImage(w, h, false);
         img.loadFromTextureImage(0, false);
         /*? if >=1.19.2 || <1.17.1 {*/ img.writeFile(path);

@@ -8,9 +8,9 @@ import net.minecraft.util.Identifier;
 public class GuiGraphics extends net.minecraft.client.gui.GuiGraphics {
     public GuiGraphics(net.minecraft.client.gui.GuiGraphics graphics) {
         //? if >=1.21.2 {
-        /*super(MinecraftClient.getInstance(), graphics.vertexConsumers);
-        *///?} else
-        super(MinecraftClient.getInstance(), graphics.getVertexConsumers());
+        super(MinecraftClient.getInstance(), graphics.vertexConsumers);
+        //?} else
+        /*super(MinecraftClient.getInstance(), graphics.getVertexConsumers());*/
     }
 
     public GuiGraphics portable() {
@@ -18,7 +18,7 @@ public class GuiGraphics extends net.minecraft.client.gui.GuiGraphics {
     }
 
     //? if >=1.21.2 {
-    /*public void drawTexture(
+    public void drawTexture(
             Identifier id,
             int x, int y, int w, int h,
             float u, float v, int uvW, int uvH,
@@ -26,7 +26,7 @@ public class GuiGraphics extends net.minecraft.client.gui.GuiGraphics {
     ) {
         this.method_25302(RenderLayer::getGuiTextured, id, x, y, u, v, w, h, uvW, uvH, txW, txH);
     }
-    *///?}
+    //?}
 }
 //?} else {
 

@@ -379,15 +379,15 @@ public class LibraryScreen extends Screen {
 
     private void toast(Text title, Text description) {
         //? if >=1.21.2 {
-        /*SystemToast.show(this.client.method_1566(), SystemToast.Id.PACK_LOAD_FAILURE, title, description);
-        *///?} else {
-        this.client.getToastManager().add(new SystemToast(
+        SystemToast.show(this.client.method_1566(), SystemToast.Id.PACK_LOAD_FAILURE, title, description);
+        //?} else {
+        /*this.client.getToastManager().add(new SystemToast(
                 SystemToast.
-                        /*? if >=1.20.6 {*/ Id.PACK_LOAD_FAILURE
-                        /*?} else if =1.20.4 {*/ /*C_ozahoshp.field_47585
-                        *//*?} else >>*/ /*Type.PACK_LOAD_FAILURE*/ ,
+                        /^? if >=1.20.6 {^/ Id.PACK_LOAD_FAILURE
+                        /^?} else if =1.20.4 {^/ /^C_ozahoshp.field_47585
+                        ^//^?} else >>^/ /^Type.PACK_LOAD_FAILURE^/ ,
                 title, description
         ));
-        //?}
+        *///?}
     }
 }
