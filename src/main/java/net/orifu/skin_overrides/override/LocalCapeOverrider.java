@@ -6,8 +6,8 @@ import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.OverrideManager;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.texture.LocalPlayerTexture;
-import net.orifu.skin_overrides.util.Util;
 import net.orifu.skin_overrides.util.TextUtil;
+import net.orifu.skin_overrides.util.Util;
 
 import java.io.File;
 import java.util.Optional;

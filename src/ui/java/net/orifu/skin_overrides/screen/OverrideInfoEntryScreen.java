@@ -4,7 +4,6 @@ import java.util.function.Consumer;
 
 import com.mojang.blaze3d.platform.InputUtil;
 import net.minecraft.client.font.MultilineText;
-import net.minecraft.client.gui.widget.layout.LayoutSettings;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Skin;
@@ -13,6 +12,7 @@ import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.xplat.CommonTexts;
 import net.orifu.xplat.gui.GuiGraphics;
+import net.orifu.xplat.gui.LayoutSettings;
 import net.orifu.xplat.gui.Screen;
 import net.orifu.xplat.gui.widget.ButtonWidget;
 import net.orifu.xplat.gui.widget.GridWidget;

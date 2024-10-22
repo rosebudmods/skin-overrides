@@ -6,6 +6,7 @@ import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.OverrideManager;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.util.ProfileHelper;
+import net.orifu.skin_overrides.util.TextUtil;
 import net.orifu.skin_overrides.util.Util;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +25,7 @@ public class SkinCopyOverrider implements OverrideManager.Overrider {
         if (ext.equals("txt")) {
             return Util.readFile(file)
                     .flatMap(id -> Optional.ofNullable(Identifier.tryParse(id)))
-                    .filter(id -> id.getNamespace().equals(Identifier.DEFAULT_NAMESPACE))
+                    .filter(id -> id.getNamespace().equals("minecraft"))
                     .flatMap(id -> ProfileHelper.idToProfileSync(id.getPath()))
                     .map(profile -> new SkinCopyOverride(name, profile, Skin.fetchSkin(profile)));
         }
@@ -41,7 +42,7 @@ public class SkinCopyOverrider implements OverrideManager.Overrider {
 
         @Override
         public Text info() {
-            return Text.translatable("skin_overrides.override.copy", this.profile.getName());
+            return TextUtil.translatable("skin_overrides.override.copy", this.profile.getName());
         }
 
         @Override
