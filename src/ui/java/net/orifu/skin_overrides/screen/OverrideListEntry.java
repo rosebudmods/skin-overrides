@@ -12,15 +12,15 @@ import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.xplat.gui.GuiGraphics;
 import net.orifu.xplat.gui.widget.AlwaysSelectedEntryListWidget.Entry;
 
-public class PlayerListEntry extends Entry<PlayerListEntry> {
+public class OverrideListEntry extends Entry<OverrideListEntry> {
     private final MinecraftClient client;
     public GameProfile profile;
     public final Type type;
     public final OverrideManager ov;
 
-    private final SkinOverridesScreen parent;
+    private final OverridesScreen parent;
 
-    public PlayerListEntry(MinecraftClient client, GameProfile profile, Type type, SkinOverridesScreen parent) {
+    public OverrideListEntry(MinecraftClient client, GameProfile profile, Type type, OverridesScreen parent) {
         this.client = client;
         this.profile = profile;
         this.type = type;

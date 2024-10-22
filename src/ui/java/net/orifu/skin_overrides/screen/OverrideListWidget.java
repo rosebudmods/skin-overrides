@@ -2,25 +2,29 @@ package net.orifu.skin_overrides.screen;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.GuiGraphics;
 import net.orifu.skin_overrides.OverrideManager;
-import net.orifu.skin_overrides.screen.PlayerListEntry.Type;
+import net.orifu.skin_overrides.screen.OverrideListEntry.Type;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.xplat.gui.widget.AlwaysSelectedEntryListWidget;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
-public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEntry> {
+public class OverrideListWidget extends AlwaysSelectedEntryListWidget<OverrideListEntry> {
     private static final int PADDING = 8;
     private static final int ITEM_HEIGHT = 36;
 
-    private final SkinOverridesScreen parent;
+    private final OverridesScreen parent;
     public final OverrideManager ov;
 
-    private final ArrayList<PlayerListEntry> allEntries = new ArrayList<>();
+    private final ArrayList<OverrideListEntry> allEntries = new ArrayList<>();
     private String query = "";
 
-    public PlayerListWidget(SkinOverridesScreen parent, OverrideManager ov) {
+    private final ArrayList<CompletableFuture<GameProfile>> loadingProfiles;
+
+    public OverrideListWidget(OverridesScreen parent, OverrideManager ov) {
         super(MinecraftClient.getInstance(), 0, 0, 0, ITEM_HEIGHT);
 
         this.parent = parent;
@@ -40,23 +44,31 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
         this.updateFilter();
 
         // add offline players
-        for (var futureProfile : this.ov.profilesWithOverride()) {
-            futureProfile.thenAccept(profile -> {
-                this.tryAddEntry(profile, Type.OFFLINE);
+        this.loadingProfiles = new ArrayList<>(this.ov.profilesWithOverride());
+    }
+
+    public void tick() {
+        // add loaded profiles to the list
+        this.loadingProfiles.removeIf(futureProfile -> {
+            if (futureProfile.isDone()) {
+                this.tryAddEntry(futureProfile.getNow(null), Type.OFFLINE);
                 this.updateFilter();
-            });
-        }
+                return true;
+            }
+
+            return false;
+        });
     }
 
-    protected synchronized void tryAddEntry(GameProfile profile, Type type) {
+    protected void tryAddEntry(GameProfile profile, Type type) {
         if (!this.hasOverrideFor(profile) || type.equals(Type.USER)) {
-            this.allEntries.add(new PlayerListEntry(this.client, profile, type, this.parent));
+            this.allEntries.add(new OverrideListEntry(this.client, profile, type, this.parent));
         }
     }
 
-    public PlayerListEntry addEntry(GameProfile profile) {
+    public OverrideListEntry addEntry(GameProfile profile) {
         return this.getOverrideFor(profile).orElseGet(() -> {
-            PlayerListEntry entry = new PlayerListEntry(this.client, profile, Type.OFFLINE, this.parent);
+            OverrideListEntry entry = new OverrideListEntry(this.client, profile, Type.OFFLINE, this.parent);
             this.allEntries.add(entry);
             this.updateFilter();
             return entry;
@@ -67,7 +79,7 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
         return this.getOverrideFor(profile).isPresent();
     }
 
-    protected Optional<PlayerListEntry> getOverrideFor(GameProfile profile) {
+    protected Optional<OverrideListEntry> getOverrideFor(GameProfile profile) {
         // special case when the user is unauthenticated and an actual player has their
         // username. because their uuids don't match, the authenticated account will
         // be listed separately to the current user otherwise.
@@ -98,7 +110,7 @@ public class PlayerListWidget extends AlwaysSelectedEntryListWidget<PlayerListEn
         }
     }
 
-    public void ensureVisible(PlayerListEntry entry) {
+    public void ensureVisible(OverrideListEntry entry) {
         super.ensureVisible(entry);
     }
 

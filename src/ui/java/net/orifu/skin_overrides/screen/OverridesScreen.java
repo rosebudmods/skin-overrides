@@ -13,7 +13,6 @@ import net.orifu.skin_overrides.library.CapeLibrary;
 import net.orifu.skin_overrides.library.SkinLibrary;
 import net.orifu.skin_overrides.override.LibraryOverrider.LibraryOverride;
 import net.orifu.skin_overrides.screen.widget.ModelPreviewWidget;
-import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.Util;
@@ -40,7 +39,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class SkinOverridesScreen extends Screen {
+public class OverridesScreen extends Screen {
     private static final Text TITLE = Text.translatable("skin_overrides.title");
     private static final Text SKIN_TITLE = Text.translatable("skin_overrides.title.skin");
     private static final Text CAPE_TITLE = Text.translatable("skin_overrides.title.cape");
@@ -56,7 +55,7 @@ public class SkinOverridesScreen extends Screen {
     private HeaderBar header;
     private GridWidget grid;
 
-    private PlayerListWidget playerList;
+    private OverrideListWidget overrideList;
     private TextFieldWidget searchBox;
 
     private ModelPreviewWidget modelPreview;
@@ -66,7 +65,7 @@ public class SkinOverridesScreen extends Screen {
     @Nullable
     private GameProfile selectedProfile;
 
-    public SkinOverridesScreen(@Nullable net.minecraft.client.gui.screen.Screen parent) {
+    public OverridesScreen(@Nullable net.minecraft.client.gui.screen.Screen parent) {
         super(TITLE);
 
         this.parent = parent;
@@ -106,18 +105,18 @@ public class SkinOverridesScreen extends Screen {
     protected void initContent() {
         var helper = this.grid.createAdditionHelper(2);
 
-        if (this.playerList == null || this.playerList.ov != this.ov) {
-            this.playerList = new PlayerListWidget(this, this.ov);
+        if (this.overrideList == null || this.overrideList.ov != this.ov) {
+            this.overrideList = new OverrideListWidget(this, this.ov);
             this.searchBox = new TextFieldWidget(this.textRenderer, 200, 20,
                     Text.translatable("skin_overrides.input.search"));
-            this.searchBox.setChangedListener(this.playerList::filter);
+            this.searchBox.setChangedListener(this.overrideList::filter);
         }
 
         // add player list
         var listWrapper = helper.add(LinearLayoutWidget.createVertical().setSpacing(6));
         var searchWrapper = listWrapper.add(LinearLayoutWidget.createHorizontal(), LayoutSettings.create().alignHorizontallyCenter().setTopPadding(5));
         this.setFocusedChild(this.searchBox);
-        this.playerList.add(listWrapper::add, this::addDrawableSelectableElement);
+        this.overrideList.add(listWrapper::add, this::addDrawableSelectableElement);
 
         searchWrapper.add(this.searchBox);
         searchWrapper.add(ButtonWidget.builder(Text.literal("+"), btn -> this.addOverrideFromSearch())
@@ -173,6 +172,13 @@ public class SkinOverridesScreen extends Screen {
     }
 
     @Override
+    public void tick() {
+        super.tick();
+
+        this.overrideList.tick();
+    }
+
+    @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         //? if <1.20.2
         /*this.renderBackground(graphics.portable());*/
@@ -196,7 +202,7 @@ public class SkinOverridesScreen extends Screen {
 
         // set main content size
         this.searchBox.setWidth(Math.min(200, this.width / 2 - 36));
-        this.playerList.setDimensions(this.width / 2, height - 5 - 20 - 6);
+        this.overrideList.setDimensions(this.width / 2, height - 5 - 20 - 6);
         this.configFrame.setMinDimensions(this.width / 2, height);
 
         // reposition layout
@@ -231,9 +237,9 @@ public class SkinOverridesScreen extends Screen {
         }
     }
 
-    public void selectPlayer(PlayerListEntry entry) {
-        this.playerList.setSelected(entry);
-        this.playerList.ensureVisible(entry);
+    public void selectPlayer(OverrideListEntry entry) {
+        this.overrideList.setSelected(entry);
+        this.overrideList.ensureVisible(entry);
         this.selectedProfile = entry.profile;
 
         // if we aren't overriding this player, or we're looking
@@ -248,7 +254,7 @@ public class SkinOverridesScreen extends Screen {
 
     protected void upgradeProfile() {
         // get the full profile so we have the player's skin/cape (if any)
-        this.selectedProfile = this.playerList.getSelectedOrNull().upgrade();
+        this.selectedProfile = this.overrideList.getSelectedOrNull().upgrade();
     }
 
     public void pickedFromLibrary(LibraryEntry entry) {
@@ -265,7 +271,7 @@ public class SkinOverridesScreen extends Screen {
         // i tried to make this asynchronous and got ConcurrentModificationException
         GameProfile profile = ProfileHelper.idToBasicProfileSync(this.searchBox.getText());
         this.searchBox.setText("");
-        this.selectPlayer(this.playerList.addEntry(profile));
+        this.selectPlayer(this.overrideList.addEntry(profile));
     }
 
     protected void addToLibrary() {
@@ -341,7 +347,7 @@ public class SkinOverridesScreen extends Screen {
         @Override
         public void visitChildren(Consumer<ClickableWidget> consumer) {
             // when selected
-            SkinOverridesScreen.this.setOverrideManager(this.ov);
+            OverridesScreen.this.setOverrideManager(this.ov);
         }
 
         @Override

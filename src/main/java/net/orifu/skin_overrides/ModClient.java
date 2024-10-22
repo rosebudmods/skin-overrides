@@ -6,7 +6,7 @@ import com.mojang.blaze3d.platform.InputUtil;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.option.KeyBind;
-import net.orifu.skin_overrides.screen.SkinOverridesScreen;
+import net.orifu.skin_overrides.screen.OverridesScreen;
 import org.lwjgl.glfw.GLFW;
 //?}
 //? if hasNetworking
@@ -38,7 +38,7 @@ public class ModClient implements ClientModInitializer {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (binding.wasPressed()) {
-                client.setScreen(new SkinOverridesScreen(client.currentScreen));
+                client.setScreen(new OverridesScreen(client.currentScreen));
             }
         });
         //?}
