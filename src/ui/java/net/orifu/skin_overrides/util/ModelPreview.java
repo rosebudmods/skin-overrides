@@ -31,7 +31,7 @@ public class ModelPreview {
     protected boolean showCape = true;
     protected boolean showElytra = false;
 
-    //? if >=1.21.2 {
+    //? if >=1.21.3 {
     protected final PlayerEntityModel wide;
     protected final PlayerEntityModel slim;
     protected final PlayerCapeModel cape;
@@ -54,7 +54,7 @@ public class ModelPreview {
 
         var modelLoader = client.getEntityModelLoader();
 
-        //? if >=1.21.2 {
+        //? if >=1.21.3 {
         this.wide = new PlayerEntityModel(modelLoader.getModelPart(EntityModelLayers.PLAYER), false);
         this.slim = new PlayerEntityModel(modelLoader.getModelPart(EntityModelLayers.PLAYER_SLIM), true);
         this.cape = new PlayerCapeModel(modelLoader.getModelPart(EntityModelLayers.field_52980));
@@ -182,7 +182,7 @@ public class ModelPreview {
     }
 
     private static void renderModel(EntityModel<?> model, RenderLayer layer, GuiGraphics graphics) {
-        //? if >=1.21.2 {
+        //? if >=1.21.3 {
         graphics.method_64039(vertexConsumers ->
             model.method_60879(graphics.getMatrices(), vertexConsumers.getBuffer(layer), 0xf000f0, OverlayTexture.DEFAULT_UV));
         //?} else if >=1.21 {

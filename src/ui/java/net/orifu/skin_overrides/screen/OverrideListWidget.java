@@ -2,7 +2,6 @@ package net.orifu.skin_overrides.screen;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.GuiGraphics;
 import net.orifu.skin_overrides.OverrideManager;
 import net.orifu.skin_overrides.screen.OverrideListEntry.Type;
 import net.orifu.skin_overrides.util.ProfileHelper;

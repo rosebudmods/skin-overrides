@@ -7,7 +7,7 @@ import net.minecraft.util.Identifier;
 
 public class GuiGraphics extends net.minecraft.client.gui.GuiGraphics {
     public GuiGraphics(net.minecraft.client.gui.GuiGraphics graphics) {
-        //? if >=1.21.2 {
+        //? if >=1.21.3 {
         super(MinecraftClient.getInstance(), MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers());
         //?} else
         /*super(MinecraftClient.getInstance(), graphics.getVertexConsumers());*/
@@ -17,7 +17,7 @@ public class GuiGraphics extends net.minecraft.client.gui.GuiGraphics {
         return this;
     }
 
-    //? if >=1.21.2 {
+    //? if >=1.21.3 {
     public void drawTexture(
             Identifier id,
             int x, int y, int w, int h,

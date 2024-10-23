@@ -1,6 +1,6 @@
 package net.orifu.skin_overrides.util;
 
-//? if >=1.21.2 {
+//? if >=1.21.3 {
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.unmapped.C_miillwpg;
 import net.minecraft.unmapped.C_pkqgufgx;

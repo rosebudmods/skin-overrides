@@ -378,7 +378,7 @@ public class LibraryScreen extends Screen {
     }
 
     private void toast(Text title, Text description) {
-        //? if >=1.21.2 {
+        //? if >=1.21.3 {
         SystemToast.show(this.client.method_1566(), SystemToast.Id.PACK_LOAD_FAILURE, title, description);
         //?} else {
         /*this.client.getToastManager().add(new SystemToast(

@@ -63,7 +63,7 @@ public class Util {
     }
 
     public static void saveTexture(Identifier texture, int w, int h, Path path) throws IOException {
-        //? if >=1.21.2 {
+        //? if >=1.21.3 {
         RenderSystem.bindTexture(MinecraftClient.getInstance().getTextureManager().getTexture(texture).getGlId());
         //?} else
         /*MinecraftClient.getInstance().getTextureManager().bindTexture(texture);*/
