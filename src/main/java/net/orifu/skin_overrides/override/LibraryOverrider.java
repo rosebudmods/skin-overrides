@@ -66,8 +66,8 @@ public class LibraryOverrider implements OverrideManager.Overrider {
         @Override
         @Nullable
         public Skin.Model model() {
-            if (this.entry instanceof SkinLibrary.SkinEntry entry) {
-                return entry.getModel();
+            if (this.entry instanceof SkinLibrary.SkinEntry skinEntry) {
+                return skinEntry.getModel();
             }
             return null;
         }
@@ -75,6 +75,25 @@ public class LibraryOverrider implements OverrideManager.Overrider {
         @Override
         public Text info() {
             return TextUtil.translatable("skin_overrides.override.library", this.entry.getName());
+        }
+
+        @Override
+        public Optional<Skin.Signature> signature() {
+            if (!(this.entry instanceof SkinLibrary.SkinEntry skinEntry)) {
+                return Optional.empty();
+            }
+
+            var signed = skinEntry.signed();
+
+            // it would be best to reassign `this.entry` here, but it's final, and i'm not
+            // bothered to make this class *not* be a record. we can rely on the fact that
+            // overrides are reloaded every 500ms (see `ModClient`) to know this instance of
+            // LibraryOverride with the outdated entry will be replaced with one that isn't
+            // out of date soon.
+            // if you're applying an unsigned library entry more often than every 500ms, kudos.
+            signed.ifPresent(newEntry -> SkinLibrary.INSTANCE.replace(this.entry, newEntry));
+
+            return signed.map(s -> s.signature);
         }
     }
 }

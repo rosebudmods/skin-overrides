@@ -178,7 +178,10 @@ public class SkinLibrary extends AbstractLibrary {
             if (this == o) return true;
             if (!(o instanceof SkinEntry skinEntry)) return false;
             if (!super.equals(o)) return false;
-            return model == skinEntry.model && Objects.equals(signature, skinEntry.signature);
+
+            // intentionally ignore the signature when comparing, as the skin doesn't change
+            // just because it's signed now
+            return model == skinEntry.model;
         }
     }
 }

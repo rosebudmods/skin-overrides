@@ -18,6 +18,7 @@ public class MineSkin {
     private static final MineSkinClient CLIENT = MineSkinClient.builder()
             .requestHandler(ApacheRequestHandler::new)
             .userAgent("skin-overrides/" + Mod.MOD_VERSION + " (github/rosebudmods)")
+            .apiKey("") // prevents a warning
             .build();
 
     public static Optional<Skin.Signature> sign(Identifier texture) {

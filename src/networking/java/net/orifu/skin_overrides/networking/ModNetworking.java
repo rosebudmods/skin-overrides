@@ -11,6 +11,7 @@ import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.orifu.skin_overrides.Mod;
+import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.util.ProfileHelper;
 
 import java.util.Collections;
@@ -54,15 +55,21 @@ public class ModNetworking {
         // send packet when joining (if applicable)
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             var override = Mod.SKINS.get(ProfileHelper.user()).orElse(null);
-            var maybeSig = Mod.overrideSignature(override);
 
-            maybeSig.ifPresent(sig -> updateSkinOnServer(sig.value(), sig.signature()));
+            if (override != null) updateSkinOnServer(override);
         });
     }
 
     public static void updateSkinOnServer(String skinValue, String signature) {
+        updateSkinOnServer(() -> Optional.of(new Skin.Signature(skinValue, signature)));
+    }
+
+    public static void updateSkinOnServer(Skin.Signature.Provider signatureProvider) {
         if (ClientPlayNetworking.canSend(SkinUpdatePayload.ID)) {
-            ClientPlayNetworking.send(new SkinUpdatePayload(Optional.ofNullable(skinValue), Optional.ofNullable(signature)));
+            signatureProvider.signature().ifPresent(sig ->
+                ClientPlayNetworking.send(new SkinUpdatePayload(
+                        Optional.ofNullable(sig.value()), Optional.ofNullable(sig.signature())))
+            );
         }
     }
 

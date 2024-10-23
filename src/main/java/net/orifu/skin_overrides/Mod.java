@@ -80,27 +80,18 @@ public class Mod {
 		return CAPES.get(profile).map(OverrideManager.Override::texture);
 	}
 
-	public static Optional<Skin.Signature> overrideSignature(OverrideManager.Override override) {
-		if (override instanceof LibraryOverrider.LibraryOverride library
-				&& library.entry() instanceof SkinLibrary.SkinEntry skinEntry
-				&& skinEntry.signature != null) {
-			return Optional.of(skinEntry.signature);
-		}
-		return Optional.empty();
-	}
-
 	public static void onUserOverrideUpdate(
 			@Nullable OverrideManager.Override oldOverride,
 			@Nullable OverrideManager.Override newOverride) {
-		var newSignature = overrideSignature(newOverride);
-		if (newSignature.isPresent()) {
-			// switched to a signed library override
-			//? if hasNetworking
-			ModNetworking.updateSkinOnServer(newSignature.get().value(), newSignature.get().signature());
-		} else if (overrideSignature(oldOverride).isPresent()) {
-			// remove signed library override
-			//? if hasNetworking
+		//? if hasNetworking {
+		if (newOverride != null) {
+			// switched to a possibly signed override
+			ModNetworking.updateSkinOnServer(newOverride);
+		} else if (oldOverride != null) {
+			// may have just removed signed override.
+			// clear skin just in case!
 			ModNetworking.clearSkinOverrideOnServer();
 		}
+		//?}
 	}
 }

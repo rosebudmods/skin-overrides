@@ -9,6 +9,7 @@ import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public record Skin(
@@ -145,6 +146,10 @@ public record Skin(
             return new Signature(property.value(), property.signature());
             //?} else
             /*return new Signature(property.getValue(), property.getSignature());*/
+        }
+
+        public interface Provider {
+            Optional<Signature> signature();
         }
     }
 }

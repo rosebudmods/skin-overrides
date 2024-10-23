@@ -147,7 +147,7 @@ public class OverrideManager {
 
     public record Overridden(File file, Override override) {}
 
-    public interface Override {
+    public interface Override extends Skin.Signature.Provider {
         String playerIdent();
 
         @Nullable
@@ -158,6 +158,11 @@ public class OverrideManager {
         @Nullable
         default Skin.Model model() {
             return null;
+        }
+
+        @java.lang.Override
+        default Optional<Skin.Signature> signature() {
+            return Optional.empty();
         }
     }
 }
