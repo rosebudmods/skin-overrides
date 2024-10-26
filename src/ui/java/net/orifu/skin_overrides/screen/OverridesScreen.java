@@ -135,8 +135,8 @@ public class OverridesScreen extends Screen {
             Skin overriddenSkin = Mod.override(this.selectedProfile);
             if (this.selectedProfile != null) {
                 this.modelPreview = configCols.add(this.ov.skin
-                        ? ModelPreviewWidget.skin(overriddenSkin, PREVIEW_SCALE, this.client)
-                        : ModelPreviewWidget.capeWithSkin(overriddenSkin, PREVIEW_SCALE, this.client),
+                                ? ModelPreviewWidget.skin(overriddenSkin, PREVIEW_SCALE, this.client)
+                                : ModelPreviewWidget.capeWithSkin(overriddenSkin, PREVIEW_SCALE, this.client),
                         LayoutSettings.create().alignHorizontallyRight().alignVerticallyCenter());
             }
         }
@@ -155,9 +155,8 @@ public class OverridesScreen extends Screen {
                 this.textRenderer), 0, 0);
 
         // pick from library button
-        config.add(ButtonWidget
-                .builder(Text.translatable("skin_overrides.library.pick"),
-                        (btn) -> this.client.setScreen(new LibraryScreen(this.ov, this, this::pickedFromLibrary)))
+        config.add(ButtonWidget.builder(Text.translatable("skin_overrides.library.pick"),
+                        btn -> this.client.setScreen(new LibraryScreen(this.ov, this, this::pickedFromLibrary)))
                 .width(120).build(), 1, 0);
 
         // add to library button
@@ -169,6 +168,13 @@ public class OverridesScreen extends Screen {
                 .builder(Text.translatable("skin_overrides.remove"), btn -> this.removeOverride())
                 .width(120)
                 .build(), 3, 0).active = override.isPresent();
+
+        // change skin button
+        if (this.selectedProfile.equals(ProfileHelper.user())) {
+            config.add(ButtonWidget.builder(Text.translatable("skin_overrides.change_skin"),
+                            btn -> this.client.setScreen(new SkinChangeInfoScreen(this)))
+                    .width(120).build(), 4, 0);
+        }
     }
 
     @Override
