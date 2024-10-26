@@ -94,4 +94,11 @@ public class Mod {
 		}
 		//?}
 	}
+
+	public static boolean isOnSkinOverridesServer() {
+		//? if hasNetworking {
+		return ModNetworking.isOnSkinOverridesServer();
+		//?} else
+		/*return false;*/
+	}
 }

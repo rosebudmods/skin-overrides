@@ -1,10 +1,12 @@
 package net.orifu.skin_overrides.screen;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.WarningScreen;
 import net.minecraft.client.gui.widget.layout.LayoutSettings;
 import net.minecraft.client.gui.widget.layout.LayoutWidget;
 import net.minecraft.text.Text;
+import net.orifu.skin_overrides.Mod;
 import net.orifu.xplat.CommonTexts;
 import net.orifu.xplat.gui.Screen;
 import net.orifu.xplat.gui.widget.ButtonWidget;
@@ -13,15 +15,22 @@ import net.orifu.xplat.gui.widget.LinearLayoutWidget;
 public class SkinChangeInfoScreen extends WarningScreen {
     private static final Text HEADER = Text.translatable("skin_overrides.change_skin.title");
     private static final Text MESSAGE = Text.translatable("skin_overrides.change_skin.message");
+    private static final Text MESSAGE_VANILLA = Text.translatable("skin_overrides.change_skin.message.vanilla");
+    private static final Text MESSAGE_MODDED = Text.translatable("skin_overrides.change_skin.message.modded");
 
     private static final String LEARN_MORE_URL = "https://rosebud.dev/skin-overrides/networking/";
 
     private final Screen parent;
 
     protected SkinChangeInfoScreen(Screen parent) {
-        super(HEADER, MESSAGE, MESSAGE);
+        super(HEADER, getMessage(), getMessage());
 
         this.parent = parent;
+    }
+
+    protected static Text getMessage() {
+        return MinecraftClient.getInstance().player == null ? MESSAGE
+                : Mod.isOnSkinOverridesServer() ? MESSAGE_MODDED : MESSAGE_VANILLA;
     }
 
     @Override
@@ -33,7 +42,7 @@ public class SkinChangeInfoScreen extends WarningScreen {
         buttons.add(ButtonWidget.builder(CommonTexts.CANCEL, btn -> this.closeScreen()).build());
 
         rows.add(ButtonWidget.builder(Text.translatable("mco.snapshotRealmsPopup.urlText"),
-                    ConfirmLinkScreen.createOpenAction(this, LEARN_MORE_URL)).build(),
+                        ConfirmLinkScreen.createOpenAction(this, LEARN_MORE_URL)).build(),
                 LayoutSettings.create().alignHorizontallyCenter());
 
         return rows;

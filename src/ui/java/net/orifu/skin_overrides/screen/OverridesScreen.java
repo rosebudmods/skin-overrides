@@ -125,7 +125,7 @@ public class OverridesScreen extends Screen {
 
         // add configuration
         this.configFrame = helper.add(new FrameWidget());
-        var configCols = configFrame.add(LinearLayoutWidget.createHorizontal()).setSpacing(8);
+        var configCols = configFrame.add(LinearLayoutWidget.createHorizontal()).setSpacing(12);
         GridWidget config = (GridWidget) configCols.add(new GridWidget()).setSpacing(4);
         if (this.selectedProfile == null) {
             this.configFrame.add(new TextWidget(Text.translatable("skin_overrides.no_selection"), this.textRenderer));
@@ -154,26 +154,26 @@ public class OverridesScreen extends Screen {
                 : "skin_overrides.add_cape"),
                 this.textRenderer), 0, 0);
 
-        // pick from library button
+        // override from library button
         config.add(ButtonWidget.builder(Text.translatable("skin_overrides.library.pick"),
                         btn -> this.client.setScreen(new LibraryScreen(this.ov, this, this::pickedFromLibrary)))
                 .width(120).build(), 1, 0);
-
-        // add to library button
-        config.add(ButtonWidget.builder(Text.translatable("skin_overrides.library.add"), btn -> this.addToLibrary())
-                .width(120).build(), 2, 0).active = !override.map(ov -> ov instanceof LibraryOverride).orElse(false);
 
         // remove override button
         config.add(ButtonWidget
                 .builder(Text.translatable("skin_overrides.remove"), btn -> this.removeOverride())
                 .width(120)
-                .build(), 3, 0).active = override.isPresent();
+                .build(), 2, 0).active = override.isPresent();
+
+        // add to library button
+        config.add(ButtonWidget.builder(Text.translatable("skin_overrides.library.add"), btn -> this.addToLibrary())
+                .width(120).build(), 4, 0).active = !override.map(ov -> ov instanceof LibraryOverride).orElse(false);
 
         // change skin button
         if (this.selectedProfile.equals(ProfileHelper.user())) {
             config.add(ButtonWidget.builder(Text.translatable("skin_overrides.change_skin"),
                             btn -> this.client.setScreen(new SkinChangeInfoScreen(this)))
-                    .width(120).build(), 4, 0);
+                    .width(120).build(), 5, 0);
         }
     }
 

@@ -54,9 +54,7 @@ public class ModNetworking {
     public static void initClient() {
         // send packet when joining (if applicable)
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-            var override = Mod.SKINS.get(ProfileHelper.user()).orElse(null);
-
-            if (override != null) updateSkinOnServer(override);
+            Mod.SKINS.get(ProfileHelper.user()).ifPresent(ModNetworking::updateSkinOnServer);
         });
     }
 
@@ -65,7 +63,7 @@ public class ModNetworking {
     }
 
     public static void updateSkinOnServer(Skin.Signature.Provider signatureProvider) {
-        if (ClientPlayNetworking.canSend(SkinUpdatePayload.ID)) {
+        if (isOnSkinOverridesServer()) {
             signatureProvider.signature().ifPresent(sig ->
                 ClientPlayNetworking.send(new SkinUpdatePayload(
                         Optional.ofNullable(sig.value()), Optional.ofNullable(sig.signature())))
@@ -81,5 +79,9 @@ public class ModNetworking {
         } else {
             updateSkinOnServer(null, null);
         }
+    }
+
+    public static boolean isOnSkinOverridesServer() {
+        return ClientPlayNetworking.canSend(SkinUpdatePayload.ID);
     }
 }
