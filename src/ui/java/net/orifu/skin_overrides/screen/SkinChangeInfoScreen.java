@@ -7,6 +7,7 @@ import net.minecraft.client.gui.widget.layout.LayoutSettings;
 import net.minecraft.client.gui.widget.layout.LayoutWidget;
 import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Mod;
+import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.xplat.CommonTexts;
 import net.orifu.xplat.gui.Screen;
 import net.orifu.xplat.gui.widget.ButtonWidget;
@@ -38,7 +39,7 @@ public class SkinChangeInfoScreen extends WarningScreen {
         var rows = LinearLayoutWidget.createVertical().setSpacing(8);
 
         var buttons = rows.add(LinearLayoutWidget.createHorizontal().setSpacing(8));
-        buttons.add(ButtonWidget.builder(CommonTexts.PROCEED, btn -> {}).build());
+        buttons.add(ButtonWidget.builder(CommonTexts.PROCEED, btn -> this.changeSkin()).build());
         buttons.add(ButtonWidget.builder(CommonTexts.CANCEL, btn -> this.closeScreen()).build());
 
         rows.add(ButtonWidget.builder(Text.translatable("mco.snapshotRealmsPopup.urlText"),
@@ -51,5 +52,13 @@ public class SkinChangeInfoScreen extends WarningScreen {
     @Override
     public void closeScreen() {
         this.client.setScreen(this.parent);
+    }
+
+    protected void changeSkin() {
+        var skin = Mod.override(ProfileHelper.user());
+        skin.setUserSkin();
+
+        // TODO: update local profile skin
+        // TODO: clear override
     }
 }

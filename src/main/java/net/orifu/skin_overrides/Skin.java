@@ -1,14 +1,28 @@
 package net.orifu.skin_overrides;
 
 import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.HttpAuthenticationService;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
+import com.mojang.authlib.yggdrasil.YggdrasilUserApiService;
 import net.minecraft.client.MinecraftClient;
 //? if >=1.20.2
 import net.minecraft.client.texture.PlayerSkin;
 import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.util.Identifier;
+import net.orifu.skin_overrides.mixin.YggdrasilServiceClientAccessor;
+import net.orifu.skin_overrides.mixin.YggdrasilUserApiServiceAccessor;
+import net.orifu.skin_overrides.util.Util;
+import org.apache.http.HttpHost;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -92,14 +106,57 @@ public record Skin(
     }
     //?}
 
+    public boolean setUserSkin() {
+        try {
+            var userApiService = (YggdrasilUserApiService) MinecraftClient.getInstance().userApiService;
+            var userApiServiceAccessor = (YggdrasilUserApiServiceAccessor) userApiService;
+            var serviceClient = userApiServiceAccessor.getMinecraftClient();
+            var serviceClientAccessor = (YggdrasilServiceClientAccessor) serviceClient;
+            var url = userApiServiceAccessor.getEnvironment().servicesHost() + "/minecraft/profile/skins";
+
+            File skin = File.createTempFile("skin-overrides_", "_temp-skin");
+            Util.saveTexture(this.texture, 64, 64, skin.toPath());
+
+            var post = new HttpPost(url);
+            post.setHeader("Authorization", "Bearer " + serviceClientAccessor.getAccessToken());
+            post.setEntity(MultipartEntityBuilder.create()
+                    .addTextBody("variant", this.model.apiName)
+                    .addBinaryBody("file", skin, ContentType.IMAGE_PNG, "skin.png")
+                    .build());
+
+            var client = HttpClients.createDefault();
+            var response = client.execute(post);
+            String body = EntityUtils.toString(response.getEntity(), "utf-8");
+            client.close();
+
+            if (response.getStatusLine().getStatusCode() / 100 != 2) {
+                Mod.LOGGER.error("failed to set skin, got API response:\n" + body);
+                return false;
+            }
+
+            System.out.println(body);
+        } catch (IOException e) {
+            System.out.println("something went wrong");
+            return false;
+        }
+
+        return true;
+    }
+
     public enum Model {
-        WIDE("wide"),
+        WIDE("wide", "classic"),
         SLIM("slim");
 
         private final String key;
+        private final String apiName;
 
         Model(String key) {
+            this(key, key);
+        }
+
+        Model(String key, String apiName) {
             this.key = key;
+            this.apiName = apiName;
         }
 
         public static Model parse(@Nullable String key) {
