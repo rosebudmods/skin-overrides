@@ -1,19 +1,15 @@
 package net.orifu.skin_overrides;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.HttpAuthenticationService;
-import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.authlib.yggdrasil.YggdrasilUserApiService;
 import net.minecraft.client.MinecraftClient;
-//? if >=1.20.2
-import net.minecraft.client.texture.PlayerSkin;
-import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
 import net.orifu.skin_overrides.mixin.YggdrasilServiceClientAccessor;
 import net.orifu.skin_overrides.mixin.YggdrasilUserApiServiceAccessor;
 import net.orifu.skin_overrides.util.Util;
-import org.apache.http.HttpHost;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
@@ -21,8 +17,16 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.Nullable;
 
+//? if >=1.20.2 {
+import net.minecraft.client.texture.PlayerSkin;
+//?} else {
+/*import net.minecraft.client.util.DefaultSkinHelper;
+import com.mojang.authlib.minecraft.MinecraftProfileTexture;
+*///?}
+
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -106,7 +110,7 @@ public record Skin(
     }
     //?}
 
-    public boolean setUserSkin() {
+    public Optional<Pair<String, Model>> setUserSkin() {
         try {
             var userApiService = (YggdrasilUserApiService) MinecraftClient.getInstance().userApiService;
             var userApiServiceAccessor = (YggdrasilUserApiServiceAccessor) userApiService;
@@ -131,16 +135,19 @@ public record Skin(
 
             if (response.getStatusLine().getStatusCode() / 100 != 2) {
                 Mod.LOGGER.error("failed to set skin, got API response:\n" + body);
-                return false;
+                return Optional.empty();
             }
 
-            System.out.println(body);
+            var jsonBody = new Gson().fromJson(body, JsonObject.class);
+            var skinInfo = jsonBody.getAsJsonArray("skins").get(0).getAsJsonObject();
+            String textureUrl = skinInfo.get("url").getAsString();
+            Model model = Model.parse(skinInfo.get("variant").getAsString());
+
+            return Optional.of(new Pair<>(textureUrl, model));
         } catch (IOException e) {
             System.out.println("something went wrong");
-            return false;
+            return Optional.empty();
         }
-
-        return true;
     }
 
     public enum Model {
@@ -168,9 +175,12 @@ public record Skin(
         public static Model tryParse(@Nullable String key) {
             if (key == null) {
                 return null;
-            } else if (key.equals(Model.WIDE.key)) {
+            }
+
+            key = key.toLowerCase(Locale.ROOT);
+            if (key.equals(Model.WIDE.key) || key.equals(Model.WIDE.apiName)) {
                 return Model.WIDE;
-            } else if (key.equals(Model.SLIM.key)) {
+            } else if (key.equals(Model.SLIM.key) || key.equals(Model.SLIM.apiName)) {
                 return Model.SLIM;
             }
             return null;

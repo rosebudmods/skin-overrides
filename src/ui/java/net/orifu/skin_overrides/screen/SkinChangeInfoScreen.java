@@ -56,9 +56,17 @@ public class SkinChangeInfoScreen extends WarningScreen {
 
     protected void changeSkin() {
         var skin = Mod.override(ProfileHelper.user());
-        skin.setUserSkin();
+        var newSkin = skin.setUserSkin();
 
-        // TODO: update local profile skin
+        if (newSkin.isPresent()) {
+            System.out.println("url: " + newSkin.get().getLeft());
+            System.out.println("model: " + newSkin.get().getRight());
+        }
+
+        // TODO: persistent user override with new skin
         // TODO: clear override
+        // TODO: update on server
+
+        this.closeScreen();
     }
 }
