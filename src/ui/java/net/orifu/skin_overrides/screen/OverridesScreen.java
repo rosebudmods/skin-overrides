@@ -173,7 +173,7 @@ public class OverridesScreen extends Screen {
         if (this.selectedProfile.equals(ProfileHelper.user())) {
             config.add(ButtonWidget.builder(Text.translatable("skin_overrides.change_skin"),
                             btn -> this.client.setScreen(new SkinChangeInfoScreen(this)))
-                    .width(120).build(), 5, 0);
+                    .width(120).build(), 5, 0).active = override.isPresent();
         }
     }
 
@@ -241,6 +241,10 @@ public class OverridesScreen extends Screen {
             this.selectedProfile = null;
             this.clearAndInit();
         }
+    }
+
+    public void reload() {
+        this.clearAndInit();
     }
 
     public void selectPlayer(OverrideListEntry entry) {

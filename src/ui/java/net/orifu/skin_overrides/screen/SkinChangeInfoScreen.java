@@ -22,9 +22,9 @@ public class SkinChangeInfoScreen extends WarningScreen {
 
     private static final String LEARN_MORE_URL = "https://rosebud.dev/skin-overrides/networking/";
 
-    private final Screen parent;
+    private final OverridesScreen parent;
 
-    protected SkinChangeInfoScreen(Screen parent) {
+    protected SkinChangeInfoScreen(OverridesScreen parent) {
         super(HEADER, getMessage(), getMessage());
 
         this.parent = parent;
@@ -66,6 +66,7 @@ public class SkinChangeInfoScreen extends WarningScreen {
 
             // remove existing override
             Mod.SKINS.removeOverride(userProfile);
+            this.parent.reload();
             // add new "override" for showing updated skin until restarting
             SkinChangeOverride.set(newSkin.get().getLeft(), newSkin.get().getRight());
 
