@@ -7,6 +7,7 @@ import net.minecraft.client.gui.widget.layout.LayoutSettings;
 import net.minecraft.client.gui.widget.layout.LayoutWidget;
 import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Mod;
+import net.orifu.skin_overrides.override.SkinChangeOverride;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.xplat.CommonTexts;
 import net.orifu.xplat.gui.Screen;
@@ -55,17 +56,23 @@ public class SkinChangeInfoScreen extends WarningScreen {
     }
 
     protected void changeSkin() {
-        var skin = Mod.override(ProfileHelper.user());
+        var userProfile = ProfileHelper.user();
+        var skin = Mod.override(userProfile);
         var newSkin = skin.setUserSkin();
 
         if (newSkin.isPresent()) {
             System.out.println("url: " + newSkin.get().getLeft());
             System.out.println("model: " + newSkin.get().getRight());
-        }
 
-        // TODO: persistent user override with new skin
-        // TODO: clear override
-        // TODO: update on server
+            // remove existing override
+            Mod.SKINS.removeOverride(userProfile);
+            // add new "override" for showing updated skin until restarting
+            SkinChangeOverride.set(newSkin.get().getLeft(), newSkin.get().getRight());
+
+            // TODO: update on server
+        } else {
+            // TODO: toast
+        }
 
         this.closeScreen();
     }

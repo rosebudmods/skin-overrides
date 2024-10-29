@@ -7,9 +7,9 @@ import net.orifu.skin_overrides.library.CapeLibrary;
 import net.orifu.skin_overrides.library.SkinLibrary;
 //? if hasNetworking
 import net.orifu.skin_overrides.networking.ModNetworking;
-import net.orifu.skin_overrides.override.LibraryOverrider;
 import net.orifu.skin_overrides.override.LocalCapeOverrider;
 import net.orifu.skin_overrides.override.LocalSkinOverrider;
+import net.orifu.skin_overrides.override.SkinChangeOverride;
 import net.orifu.skin_overrides.override.SkinCopyOverrider;
 import org.jetbrains.annotations.Nullable;
 //? if >=1.17.1 {
@@ -73,7 +73,8 @@ public class Mod {
 	public static Optional<Pair<Identifier, Skin.Model>> overrideSkin(GameProfile profile) {
 		return SKINS.get(profile)
 				.filter(ov -> ov.texture() != null)
-				.map(ov -> new Pair<>(ov.texture(), ov.model()));
+				.map(ov -> new Pair<>(ov.texture(), ov.model()))
+				.or(SkinChangeOverride::texture);
 	}
 
 	public static Optional<Identifier> overrideCape(GameProfile profile) {

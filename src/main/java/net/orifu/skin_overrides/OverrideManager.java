@@ -91,7 +91,7 @@ public class OverrideManager {
         return this.getData(ident).map(Overridden::override);
     }
 
-    public synchronized Optional<Overridden> getData(GameProfile profile) {
+    private synchronized Optional<Overridden> getData(GameProfile profile) {
         return this.getData(profile.getName()).or(() -> this.getData(profile.getId().toString()));
     }
 
