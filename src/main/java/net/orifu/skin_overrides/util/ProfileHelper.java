@@ -12,6 +12,7 @@ import net.minecraft.server.Services;
 //?} else if >=1.19
 /*import net.minecraft.util.ApiServices;*/
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.UserCache;
 import net.orifu.skin_overrides.Skin;
 
@@ -39,6 +40,13 @@ public class ProfileHelper {
         return MinecraftClient.getInstance().method_53462();
         //?} else
         /*return MinecraftClient.getInstance().getSession().getProfile();*/
+    }
+
+    public static Identifier userSkin() {
+        //? if >=1.20.2 {
+        return DefaultSkinHelper.getDefaultTexture();
+        //?} else
+        /*return DefaultSkinHelper.getTexture(user().getId());*/
     }
 
     public static CompletableFuture<GameProfile> idToBasicProfile(String id) {
@@ -139,7 +147,7 @@ public class ProfileHelper {
         *///?}
         userCache = services.userCache();
         //?} else {
-        /*var gameProfileRepository = new YggdrasilAuthenticationService(client.getNetworkProxy()/^? if <1.16.5 {^/, null/^?}^/)
+        /*var gameProfileRepository = new YggdrasilAuthenticationService(client.getNetworkProxy()/^? if <1.16.5 {^//^, null^//^?}^/)
                 .createProfileRepository();
         userCache = new UserCache(gameProfileRepository, new File(client.runDirectory, MinecraftServer.USER_CACHE_FILE.getName()));
         *///?}

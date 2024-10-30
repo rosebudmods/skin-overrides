@@ -27,6 +27,6 @@
     "suggests": {
         "modmenu": "*"
     },
-    "mixins": ["skin_overrides.mixins.json"],
+    "mixins": ["${mixin_file}"],
     "accessWidener": "aw/${access_widener}.accesswidener"
 }

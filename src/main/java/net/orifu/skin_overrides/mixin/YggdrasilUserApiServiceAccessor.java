@@ -1,5 +1,6 @@
 package net.orifu.skin_overrides.mixin;
 
+//? if >=1.19.4 {
 import com.mojang.authlib.Environment;
 import com.mojang.authlib.minecraft.client.MinecraftClient;
 import com.mojang.authlib.yggdrasil.YggdrasilUserApiService;
@@ -14,3 +15,6 @@ public interface YggdrasilUserApiServiceAccessor {
     @Accessor
     Environment getEnvironment();
 }
+//?} else {
+/*public interface YggdrasilUserApiServiceAccessor {}
+*///?}

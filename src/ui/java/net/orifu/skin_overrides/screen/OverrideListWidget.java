@@ -119,14 +119,14 @@ public class OverrideListWidget extends AlwaysSelectedEntryListWidget<OverrideLi
         return Math.min(this.width - PADDING * 2, 220);
     }
 
-    //? if >=1.20.4 {
-
     // fix scrollbar position
     @Override
     public int getScrollbarPositionX() {
         return this.getXEnd();
     }
 
+    //? if >=1.20.4 {
+    
     // pad top
     @Override
     public int getRowTop(int index) {

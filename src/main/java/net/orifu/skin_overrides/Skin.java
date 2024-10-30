@@ -1,20 +1,8 @@
 package net.orifu.skin_overrides;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.yggdrasil.YggdrasilUserApiService;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
-import net.orifu.skin_overrides.mixin.YggdrasilServiceClientAccessor;
-import net.orifu.skin_overrides.mixin.YggdrasilUserApiServiceAccessor;
-import net.orifu.skin_overrides.util.Util;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.Nullable;
 
 //? if >=1.20.2 {
@@ -24,8 +12,24 @@ import net.minecraft.client.texture.PlayerSkin;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 *///?}
 
+//? if >=1.19.4 {
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.mojang.authlib.yggdrasil.YggdrasilUserApiService;
+import net.minecraft.util.Pair;
+import net.orifu.skin_overrides.mixin.YggdrasilServiceClientAccessor;
+import net.orifu.skin_overrides.mixin.YggdrasilUserApiServiceAccessor;
+import net.orifu.skin_overrides.util.Util;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+
 import java.io.File;
 import java.io.IOException;
+//?}
+
 import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -110,13 +114,16 @@ public record Skin(
     }
     //?}
 
+    //? if >=1.19.4 {
     public Optional<Pair<String, Model>> setUserSkin() {
         try {
             var userApiService = (YggdrasilUserApiService) MinecraftClient.getInstance().userApiService;
             var userApiServiceAccessor = (YggdrasilUserApiServiceAccessor) userApiService;
             var serviceClient = userApiServiceAccessor.getMinecraftClient();
             var serviceClientAccessor = (YggdrasilServiceClientAccessor) serviceClient;
-            var url = userApiServiceAccessor.getEnvironment().servicesHost() + "/minecraft/profile/skins";
+            var servicesHost = /*? if >=1.20.2 {*/ userApiServiceAccessor.getEnvironment().servicesHost();
+                /*?} else*/ /*userApiServiceAccessor.getEnvironment().getServicesHost();*/
+            var url = servicesHost + "/minecraft/profile/skins";
 
             File skin = File.createTempFile("skin-overrides_", "_temp-skin");
             Util.saveTexture(this.texture, 64, 64, skin.toPath());
@@ -149,6 +156,7 @@ public record Skin(
             return Optional.empty();
         }
     }
+    //?}
 
     public enum Model {
         WIDE("wide", "classic"),

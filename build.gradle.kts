@@ -25,6 +25,9 @@ val awVersion =
 	else if (stonecutter.compare(scVersion, "1.19.2") >= 0) "1.19.2"
 	else if (stonecutter.compare(scVersion, "1.17.1") >= 0) "1.17.1"
 	else "1.15.2"
+val mixinFile =
+	if (stonecutter.compare(scVersion, "1.19.4") >= 0) "skin_overrides.mixins.json"
+	else "skin_overrides-old.mixins.json"
 
 stonecutter {
 	const("hasUi", hasUi)
@@ -121,8 +124,13 @@ dependencies {
 		modRuntimeOnly("maven.modrinth:ears:${property("deps.ears")}")
 
 	if (hasNetworking) {
-		implementation("org.mineskin:java-client:2.1.1-SNAPSHOT")
-		implementation("org.mineskin:java-client-apache:2.1.1-SNAPSHOT")
+		implementation("org.mineskin:java-client:2.1.1-SNAPSHOT")?.let { include(it) }
+		implementation("org.mineskin:java-client-apache:2.1.1-SNAPSHOT")?.let { include(it) }
+	}
+
+	// for versions with UI before 1.20.6, httpmime is missing
+	if (hasUi && stonecutter.compare(scVersion, "1.20.6") < 0) {
+		implementation("org.apache.httpcomponents:httpmime:4.5.14")?.let { include(it) }
 	}
 }
 
@@ -132,6 +140,7 @@ tasks.processResources {
 		"group" to project.group,
 		"minecraft_version" to scVersion + if (snapshot) "-" else "",
 		"access_widener" to awVersion,
+		"mixin_file" to mixinFile,
 		"modmenu_entrypoint" to if (hasUi) "modmenu" else ""
 	)
 

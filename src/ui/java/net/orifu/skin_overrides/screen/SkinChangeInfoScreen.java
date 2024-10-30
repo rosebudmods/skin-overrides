@@ -3,14 +3,14 @@ package net.orifu.skin_overrides.screen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.WarningScreen;
-import net.minecraft.client.gui.widget.layout.LayoutSettings;
+//? if >=1.20.6
 import net.minecraft.client.gui.widget.layout.LayoutWidget;
 import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.override.SkinChangeOverride;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.xplat.CommonTexts;
-import net.orifu.xplat.gui.Screen;
+import net.orifu.xplat.gui.LayoutSettings;
 import net.orifu.xplat.gui.widget.ButtonWidget;
 import net.orifu.xplat.gui.widget.LinearLayoutWidget;
 
@@ -36,18 +36,31 @@ public class SkinChangeInfoScreen extends WarningScreen {
     }
 
     @Override
-    protected LayoutWidget initContent() {
+    /*? if >=1.21 {*/ protected LayoutWidget initContent()
+    /*?} else if >=1.20.6 {*/ /*protected LayoutWidget method_57750()
+    *//*?} else*/ /*protected void initButtons(int textHeight)*/
+    {
         var rows = LinearLayoutWidget.createVertical().setSpacing(8);
 
         var buttons = rows.add(LinearLayoutWidget.createHorizontal().setSpacing(8));
         buttons.add(ButtonWidget.builder(CommonTexts.PROCEED, btn -> this.changeSkin()).build());
         buttons.add(ButtonWidget.builder(CommonTexts.CANCEL, btn -> this.closeScreen()).build());
 
-        rows.add(ButtonWidget.builder(Text.translatable("mco.snapshotRealmsPopup.urlText"),
-                        ConfirmLinkScreen.createOpenAction(this, LEARN_MORE_URL)).build(),
+        rows.add(ButtonWidget.builder(Text.translatable("skin_overrides.change_skin.learn_more"),
+                        /*? if >=1.21.1 {*/ ConfirmLinkScreen.createOpenAction(this, LEARN_MORE_URL)
+                        /*?} else if >=1.20.4 {*/ /*ConfirmLinkScreen.createPressAction(this, LEARN_MORE_URL)
+                        *//*?} else*/ /*ConfirmLinkScreen.createPressAction(LEARN_MORE_URL, this, true)*/
+                ).build(),
                 LayoutSettings.create().alignHorizontallyCenter());
 
+        //? if >=1.20.6 {
         return rows;
+        //?} else {
+        /*rows.setPosition((this.width - (150 * 2 + 8)) / 2, textHeight + 100);
+        /^? if >=1.20.2 {^//^rows.visitWidgets(this::addDrawableSelectableElement);
+        ^//^?} else^/ rows.visitWidgets(this::addDrawableChild);
+        rows.arrangeElements();
+        *///?}
     }
 
     @Override

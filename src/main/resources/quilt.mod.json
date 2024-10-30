@@ -42,6 +42,6 @@
 			}
 		]
 	},
-	"mixin": "skin_overrides.mixins.json",
+	"mixin": "${mixin_file}",
 	"access_widener": "aw/${access_widener}.accesswidener"
 }
