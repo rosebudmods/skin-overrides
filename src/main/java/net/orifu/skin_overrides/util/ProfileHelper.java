@@ -14,6 +14,7 @@ import net.minecraft.server.Services;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.UserCache;
+import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Skin;
 
 import java.io.File;
@@ -99,6 +100,38 @@ public class ProfileHelper {
 
     public static Optional<GameProfile> uuidToSecureProfile(UUID uuid) {
         return uuidToProfile(uuid, true);
+    }
+
+    public static CompletableFuture<Optional<GameProfile>> uuidToProfileExpectingSkinUrl(UUID uuid, String skinUrl) {
+        // when updating your skin, fetching the profile from the services may not be up to date.
+        // seems the best way to work around this is to just keep trying?
+        // here we try 4 times 5 seconds apart (giving up after 20 seconds).
+        // mineskin's api's source code seems to use 3 attempts 5 seconds apart (see getSkinDataWithRetry)
+        // https://github.com/MineSkin/api.mineskin.org/blob/master/src/generator/Generator.ts
+        // in the future it may be worth deferring this to mineskin if it fails often enough (sorry mineskin)
+
+        return CompletableFuture.supplyAsync(() -> {
+            for (int tries = 0; tries < 4; tries++) {
+                var profile = uuidToSecureProfile(uuid);
+                if (profile.isEmpty()) continue;
+
+                String receivedUrl = getProfileSkinUrl(profile.get());
+                if (receivedUrl.equals(skinUrl)) return profile;
+
+                Mod.LOGGER.debug("expected and received skin urls:\n" + skinUrl + "\n" + receivedUrl);
+
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException ignored) {}
+            }
+
+            return Optional.empty();
+        });
+    }
+
+    public static String getProfileSkinUrl(GameProfile profile) {
+        var packed = MinecraftClient.getInstance().getSessionService().getPackedTextures(profile);
+        return MinecraftClient.getInstance().getSessionService().unpackTextures(packed).skin().getUrl();
     }
 
     protected static Optional<GameProfile> uuidToProfile(UUID uuid, boolean secure) {

@@ -83,6 +83,18 @@ public class SkinChangeInfoScreen extends WarningScreen {
             // add new "override" for showing updated skin until restarting
             SkinChangeOverride.set(newSkin.get().getLeft(), newSkin.get().getRight());
 
+            var updatedProfile = ProfileHelper.uuidToProfileExpectingSkinUrl(userProfile.getId(), newSkin.get().getLeft());
+            updatedProfile.thenAccept(profile -> {
+                if (profile.isPresent()) {
+                    var property = this.client.getSessionService().getPackedTextures(profile.get());
+                    System.out.println("user textures properties:");
+                    System.out.println(" - " + property.value());
+                    System.out.println(" - " + property.signature());
+                } else {
+                    // TODO: toast
+                }
+            });
+
             // TODO: update on server
         } else {
             // TODO: toast
