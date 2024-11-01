@@ -18,28 +18,41 @@ import java.util.Collections;
 import java.util.Optional;
 
 public class ModNetworking {
+    public static final String DEFAULT_TEXTURES_KEY = "skin_overrides-default_textures";
+
     public static void init() {
         // register the skin update payload packet
         PayloadTypeRegistry.playC2S().register(SkinUpdatePayload.ID, SkinUpdatePayload.PACKET_CODEC);
 
         // listen for the packet
         ServerPlayNetworking.registerGlobalReceiver(SkinUpdatePayload.ID, (payload, ctx) -> {
-            System.out.println("player " + ctx.player().getProfileName() + " changed skin:");
-            System.out.println(" - value: " + payload.skinValue());
-            System.out.println(" - signt: " + payload.signature());
+            Mod.LOGGER.debug("player {} changed skin:\nval: {}\nsig: {}",
+                    ctx.player().getProfileName(),
+                    payload.skinValue(), payload.signature());
 
             ServerPlayerEntity player = ctx.player();
             PlayerManager playerManager = ctx.server().getPlayerManager();
 
+            // store default textures
+            var properties = player.getGameProfile().getProperties();
+            if (!properties.containsKey(DEFAULT_TEXTURES_KEY)) {
+                properties.put(DEFAULT_TEXTURES_KEY, properties.get("textures").stream().findFirst().orElseThrow());
+            }
+
             // set skin
+            player.getGameProfile().getProperties().removeAll("textures");
             if (payload.skinValue().isPresent() && payload.signature().isPresent()) {
                 player.getGameProfile().getProperties().put("textures", new Property(
                         "textures",
                         payload.skinValue().get(),
                         payload.signature().get()));
             } else {
-                player.getGameProfile().getProperties().removeAll("textures");
+                // restore default textures
+                properties.get(DEFAULT_TEXTURES_KEY).stream().findFirst().ifPresent(textures ->
+                    player.getGameProfile().getProperties().put("textures", textures));
             }
+
+            Mod.LOGGER.debug("profile textures: " + properties.get("textures"));
 
             // remove and re-add player (updates skin in tab list)
             playerManager.sendToAll(new PlayerRemovalS2CPacket(Collections.singletonList(ctx.player().getUuid())));
@@ -64,6 +77,8 @@ public class ModNetworking {
 
     public static void updateSkinOnServer(Skin.Signature.Provider signatureProvider) {
         if (isOnSkinOverridesServer()) {
+            Mod.LOGGER.debug("updating skin on server");
+
             signatureProvider.signature().ifPresent(sig ->
                 ClientPlayNetworking.send(new SkinUpdatePayload(
                         Optional.ofNullable(sig.value()), Optional.ofNullable(sig.signature())))

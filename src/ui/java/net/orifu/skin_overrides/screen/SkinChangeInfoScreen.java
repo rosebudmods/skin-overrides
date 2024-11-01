@@ -7,6 +7,8 @@ import net.minecraft.client.gui.screen.WarningScreen;
 import net.minecraft.client.gui.widget.layout.LayoutWidget;
 import net.minecraft.text.Text;
 import net.orifu.skin_overrides.Mod;
+//? if hasNetworking
+import net.orifu.skin_overrides.networking.ModNetworking;
 import net.orifu.skin_overrides.override.SkinChangeOverride;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.xplat.CommonTexts;
@@ -74,8 +76,8 @@ public class SkinChangeInfoScreen extends WarningScreen {
         var newSkin = skin.setUserSkin();
 
         if (newSkin.isPresent()) {
-            System.out.println("url: " + newSkin.get().getLeft());
-            System.out.println("model: " + newSkin.get().getRight());
+            Mod.LOGGER.debug("player has changed skin. api response:\nurl: {}\nmodel: {}",
+                    newSkin.get().getLeft(), newSkin.get().getRight());
 
             // remove existing override
             Mod.SKINS.removeOverride(userProfile);
@@ -87,15 +89,16 @@ public class SkinChangeInfoScreen extends WarningScreen {
             updatedProfile.thenAccept(profile -> {
                 if (profile.isPresent()) {
                     var property = this.client.getSessionService().getPackedTextures(profile.get());
-                    System.out.println("user textures properties:");
-                    System.out.println(" - " + property.value());
-                    System.out.println(" - " + property.signature());
+
+                    Mod.LOGGER.debug("received updated profile from services:\nval: {}\nsig: {}",
+                            property.value(), property.signature());
+
+                    //? if hasNetworking
+                    ModNetworking.updateSkinOnServer(property.value(), property.signature());
                 } else {
                     // TODO: toast
                 }
             });
-
-            // TODO: update on server
         } else {
             // TODO: toast
         }
