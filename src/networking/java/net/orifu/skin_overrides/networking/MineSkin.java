@@ -26,6 +26,7 @@ public class MineSkin {
             File skin = File.createTempFile("skin-overrides_", "_temp-skin");
             Util.saveTexture(texture, 64, 64, skin.toPath());
 
+            // TODO: skin model
             var resp = CLIENT.generateUpload(skin, GenerateOptions.create().visibility(Visibility.UNLISTED)).get();
             var signedTexture = resp.getSkin().data().texture();
             skin.delete();

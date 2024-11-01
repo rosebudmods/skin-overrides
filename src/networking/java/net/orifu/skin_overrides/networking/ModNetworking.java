@@ -26,7 +26,7 @@ public class ModNetworking {
 
         // listen for the packet
         ServerPlayNetworking.registerGlobalReceiver(SkinUpdatePayload.ID, (payload, ctx) -> {
-            Mod.LOGGER.debug("player {} changed skin:\nval: {}\nsig: {}",
+            Mod.LOGGER.debug("received packet; {} changed skin:\nval: {}\nsig: {}",
                     ctx.player().getProfileName(),
                     payload.skinValue(), payload.signature());
 
@@ -36,23 +36,26 @@ public class ModNetworking {
             // store default textures
             var properties = player.getGameProfile().getProperties();
             if (!properties.containsKey(DEFAULT_TEXTURES_KEY)) {
-                properties.put(DEFAULT_TEXTURES_KEY, properties.get("textures").stream().findFirst().orElseThrow());
+                var defaultTextures = properties.get("textures").stream().findFirst().orElseThrow();
+                properties.put(DEFAULT_TEXTURES_KEY, new Property(DEFAULT_TEXTURES_KEY,
+                        defaultTextures.value(), defaultTextures.signature()));
             }
 
             // set skin
-            player.getGameProfile().getProperties().removeAll("textures");
+            properties.removeAll("textures");
             if (payload.skinValue().isPresent() && payload.signature().isPresent()) {
-                player.getGameProfile().getProperties().put("textures", new Property(
-                        "textures",
-                        payload.skinValue().get(),
-                        payload.signature().get()));
+                Mod.LOGGER.debug("using new textures property");
+                properties.put("textures", new Property("textures",
+                        payload.skinValue().get(), payload.signature().get()));
             } else {
                 // restore default textures
                 properties.get(DEFAULT_TEXTURES_KEY).stream().findFirst().ifPresent(textures ->
-                    player.getGameProfile().getProperties().put("textures", textures));
+                    properties.put("textures", new Property("textures",
+                            textures.value(), textures.signature())));
             }
 
-            Mod.LOGGER.debug("profile textures: " + properties.get("textures"));
+            Mod.LOGGER.debug("texture properties:\nprofile textures:                        {}\ndefault textures: {}",
+                    properties.get("textures"), properties.get(DEFAULT_TEXTURES_KEY));
 
             // remove and re-add player (updates skin in tab list)
             playerManager.sendToAll(new PlayerRemovalS2CPacket(Collections.singletonList(ctx.player().getUuid())));
@@ -87,13 +90,7 @@ public class ModNetworking {
     }
 
     public static void clearSkinOverrideOnServer() {
-        var profile = ProfileHelper.user();
-        var textures = MinecraftClient.getInstance().getSessionService().getPackedTextures(profile);
-        if (textures != null) {
-            updateSkinOnServer(textures.value(), textures.signature());
-        } else {
-            updateSkinOnServer(null, null);
-        }
+        updateSkinOnServer(null, null);
     }
 
     public static boolean isOnSkinOverridesServer() {

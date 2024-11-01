@@ -285,6 +285,8 @@ public class OverridesScreen extends Screen {
     }
 
     protected void addToLibrary() {
+        // TODO: signed skins
+
         String guessedName = this.selectedProfile.getName();
 
         Skin playerSkin = Mod.override(this.selectedProfile);
