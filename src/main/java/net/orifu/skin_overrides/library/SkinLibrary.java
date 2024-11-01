@@ -166,7 +166,7 @@ public class SkinLibrary extends AbstractLibrary {
             if (this.signature != null) {
                 return Optional.of(this);
             } else {
-                var signature = MineSkin.sign(this.getTexture());
+                var signature = MineSkin.sign(this.getTexture(), this.model);
                 return signature.map(sig -> new SkinEntry(this.name, this.id, this.model, this.file, this.textureId, sig));
             }
             //?} else

@@ -7,6 +7,7 @@ import net.orifu.skin_overrides.util.Util;
 import org.mineskin.ApacheRequestHandler;
 import org.mineskin.GenerateOptions;
 import org.mineskin.MineSkinClient;
+import org.mineskin.data.Variant;
 import org.mineskin.data.Visibility;
 
 import java.io.File;
@@ -21,13 +22,15 @@ public class MineSkin {
             .apiKey("") // prevents a warning
             .build();
 
-    public static Optional<Skin.Signature> sign(Identifier texture) {
+    public static Optional<Skin.Signature> sign(Identifier texture, Skin.Model model) {
         try {
             File skin = File.createTempFile("skin-overrides_", "_temp-skin");
             Util.saveTexture(texture, 64, 64, skin.toPath());
 
-            // TODO: skin model
-            var resp = CLIENT.generateUpload(skin, GenerateOptions.create().visibility(Visibility.UNLISTED)).get();
+            var variant = model.equals(Skin.Model.WIDE) ? Variant.CLASSIC : Variant.SLIM;
+
+            var resp = CLIENT.generateUpload(skin, GenerateOptions.create()
+                    .visibility(Visibility.UNLISTED).variant(variant)).get();
             var signedTexture = resp.getSkin().data().texture();
             skin.delete();
 
