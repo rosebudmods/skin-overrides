@@ -383,9 +383,9 @@ public class LibraryScreen extends Screen {
         //?} else {
         /*this.client.getToastManager().add(new SystemToast(
                 SystemToast.
-                        /^? if >=1.20.6 {^/ Id.PACK_LOAD_FAILURE
-                        /^?} else if =1.20.4 {^/ /^C_ozahoshp.field_47585
-                        ^//^?} else >>^/ /^Type.PACK_LOAD_FAILURE^/ ,
+                        /^? if >=1.20.6 {^/ /^Id.PACK_LOAD_FAILURE
+                        ^//^?} else if =1.20.4 {^/ /^C_ozahoshp.field_47585
+                        ^//^?} else >>^/ Type.PACK_LOAD_FAILURE ,
                 title, description
         ));
         *///?}

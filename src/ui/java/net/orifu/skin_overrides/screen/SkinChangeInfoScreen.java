@@ -88,13 +88,13 @@ public class SkinChangeInfoScreen extends WarningScreen {
             var updatedProfile = ProfileHelper.uuidToProfileExpectingSkinUrl(userProfile.getId(), newSkin.get().getLeft());
             updatedProfile.thenAccept(profile -> {
                 if (profile.isPresent()) {
-                    var property = this.client.getSessionService().getPackedTextures(profile.get());
+                    var signedSkin = ProfileHelper.getProfileSkinSignature(profile.get());
 
                     Mod.LOGGER.debug("received updated profile from services:\nval: {}\nsig: {}",
-                            property.value(), property.signature());
+                            signedSkin.value(), signedSkin.signature());
 
                     //? if hasNetworking
-                    ModNetworking.updateSkinOnServer(property.value(), property.signature());
+                    ModNetworking.updateSkinOnServer(signedSkin.value(), signedSkin.signature());
                 } else {
                     // TODO: toast
                 }

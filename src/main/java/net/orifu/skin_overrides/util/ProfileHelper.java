@@ -1,24 +1,31 @@
 package net.orifu.skin_overrides.util;
 
 import com.mojang.authlib.GameProfile;
+//? if <1.20.4
+/*import com.mojang.authlib.minecraft.MinecraftProfileTexture;*/
 //? if >=1.20.2
 import com.mojang.authlib.yggdrasil.ProfileResult;
-import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
-import com.mojang.util.UUIDTypeAdapter;
+//? if <1.19
+/*import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;*/
+//? if <1.20.2
+/*import com.mojang.util.UUIDTypeAdapter;*/
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.DefaultSkinHelper;
 //? if >=1.19.2 {
 import net.minecraft.server.Services;
-//?} else if >=1.19
+//?} else if >=1.19 {
 /*import net.minecraft.util.ApiServices;*/
-import net.minecraft.server.MinecraftServer;
+//?} else
+/*import net.minecraft.server.MinecraftServer;*/
 import net.minecraft.util.Identifier;
 import net.minecraft.util.UserCache;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Skin;
 
-import java.io.File;
-import java.util.ArrayList;
+//? if <1.19
+/*import java.io.File;*/
+//? if >=1.19.3 <1.20.2
+/*import java.util.ArrayList;*/
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
@@ -130,8 +137,24 @@ public class ProfileHelper {
     }
 
     public static String getProfileSkinUrl(GameProfile profile) {
+        //? if >=1.20.4 {
         var packed = MinecraftClient.getInstance().getSessionService().getPackedTextures(profile);
         return MinecraftClient.getInstance().getSessionService().unpackTextures(packed).skin().getUrl();
+        //?} else {
+        /*return MinecraftClient.getInstance().getSessionService().getTextures(profile, false)
+                .get(MinecraftProfileTexture.Type.SKIN).getUrl();
+        *///?}
+    }
+
+    public static Skin.Signature getProfileSkinSignature(GameProfile profile) {
+        //? if >=1.20.4 {
+        var packed = MinecraftClient.getInstance().getSessionService().getPackedTextures(profile);
+        return new Skin.Signature(packed.value(), packed.signature());
+        //?} else {
+        /*var property = profile.getProperties().get("textures").stream().findFirst().orElseThrow();
+        /^? if >=1.20.2 {^/ return new Skin.Signature(property.value(), property.signature());
+        /^?} else^/ return new Skin.Signature(property.getValue(), property.getSignature());
+        *///?}
     }
 
     protected static Optional<GameProfile> uuidToProfile(UUID uuid, boolean secure) {
