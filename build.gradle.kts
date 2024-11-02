@@ -170,6 +170,7 @@ tasks.jar {
 
 	exclude {
 		it.name.endsWith(".accesswidener") && it.name != "$awVersion.accesswidener"
+				|| it.name.endsWith(".mixins.json") && it.name != mixinFile
 	}
 }
 
