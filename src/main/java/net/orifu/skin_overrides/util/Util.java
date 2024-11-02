@@ -6,12 +6,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
-//? if >=1.19.2 {
 import com.mojang.blaze3d.systems.RenderSystem;
+//? if >=1.19.2 {
 import com.mojang.blaze3d.texture.NativeImage;
 //?} else
 /*import net.minecraft.client.texture.NativeImage;*/
@@ -62,16 +62,30 @@ public class Util {
         return texture("temp/" + Util.randomId(), texture);
     }
 
-    public static void saveTexture(Identifier texture, int w, int h, Path path) throws IOException {
-        // TODO: ensure this runs on render thread
-        //? if >=1.21.3 {
-        RenderSystem.bindTexture(MinecraftClient.getInstance().getTextureManager().getTexture(texture).getGlId());
-        //?} else
-        /*MinecraftClient.getInstance().getTextureManager().bindTexture(texture);*/
-        NativeImage img = new NativeImage(w, h, false);
-        img.loadFromTextureImage(0, false);
-        /*? if >=1.19.2 || <1.17.1 {*/ img.writeFile(path);
-        /*?} else*/ /*img.writeTo(path);*/
-        img.close();
+    public static void saveTexture(Identifier texture, int w, int h, Path path) {
+        var future = new CompletableFuture<Path>();
+        Runnable runnable = () -> {
+            try {
+                //? if >=1.21.3 {
+                RenderSystem.bindTexture(MinecraftClient.getInstance().getTextureManager().getTexture(texture).getGlId());
+                //?} else
+                /*MinecraftClient.getInstance().getTextureManager().bindTexture(texture);*/
+                NativeImage img = new NativeImage(w, h, false);
+                img.loadFromTextureImage(0, false);
+                /*? if >=1.19.2 || <1.17.1 {*/ img.writeFile(path);
+                /*?} else*/ /*img.writeTo(path);*/
+                img.close();
+                future.complete(path);
+            } catch (IOException e) {
+                future.completeExceptionally(e);
+            }
+        };
+
+        if (RenderSystem.isOnRenderThread()) {
+            runnable.run();
+        } else {
+            MinecraftClient.getInstance().renderTaskQueue.add(runnable);
+            future.join();
+        }
     }
 }
