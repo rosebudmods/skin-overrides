@@ -17,6 +17,8 @@ extendable method net/minecraft/client/gui/widget/list/EntryListWidget getEntryA
 
 accessible method net/minecraft/client/gui/widget/HeaderBar <init> (ILnet/minecraft/client/gui/tab/TabManager;Ljava/lang/Iterable;)V
 
+accessible field net/minecraft/client/gui/GuiGraphics vertexConsumers Lnet/minecraft/client/render/VertexConsumerProvider$Immediate;
+
 accessible field net/minecraft/server/world/ThreadedChunkManager entityTrackers Lit/unimi/dsi/fastutil/ints/Int2ObjectMap;
 accessible field net/minecraft/server/world/ThreadedChunkManager$EntityTracker listeners Ljava/util/Set;
 accessible field net/minecraft/server/world/ThreadedChunkManager$EntityTracker entry Lnet/minecraft/server/network/EntityTrackerEntry;

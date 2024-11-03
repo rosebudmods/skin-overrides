@@ -15,3 +15,5 @@ accessible class net/minecraft/client/util/DefaultSkinHelper$ModelType
 extendable method net/minecraft/client/gui/widget/EntryListWidget getEntryAtPosition (DD)Lnet/minecraft/client/gui/widget/EntryListWidget$Entry;
 
 accessible method net/minecraft/client/gui/widget/HeaderBar <init> (ILnet/minecraft/client/gui/tab/TabManager;Ljava/lang/Iterable;)V
+
+accessible field net/minecraft/client/gui/GuiGraphics vertexConsumers Lnet/minecraft/client/render/VertexConsumerProvider$Immediate;
