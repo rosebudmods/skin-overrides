@@ -95,14 +95,15 @@ public class ModNetworking {
     }
 
     public static void removeUserNetworkOverride() {
-        // if a player leaves a server with an override, they will keep
+        // if a player leaves a local server with an override, they will keep
         // their modified GameProfile. we can reset it to the default when
         // overrides are cleared.
         var properties = ProfileHelper.user().getProperties();
-        properties.removeAll("textures");
-        properties.get(DEFAULT_TEXTURES_KEY).stream().findFirst().ifPresent(textures ->
-                properties.put("textures", new Property("textures",
-                        textures.value(), textures.signature())));
+        properties.get(DEFAULT_TEXTURES_KEY).stream().findFirst().ifPresent(textures -> {
+            properties.removeAll("textures");
+            properties.put("textures", new Property("textures",
+                    textures.value(), textures.signature()));
+        });
     }
 
     public static boolean isOnSkinOverridesServer() {
