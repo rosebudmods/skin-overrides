@@ -216,11 +216,11 @@ public record Skin(
     }
 
     public record Signature(String value, String signature) {
-        public static Signature fromProperty(com.mojang.authlib.properties.Property property) {
+        public static Optional<Signature> fromProperty(com.mojang.authlib.properties.Property property) {
             //? if >=1.20.2 {
-            return new Signature(property.value(), property.signature());
+            return property.signature() != null ? Optional.of(new Signature(property.value(), property.signature())) : Optional.empty();
             //?} else
-            /*return new Signature(property.getValue(), property.getSignature());*/
+            /*return property.getSignature() != null ? Optional.of(new Signature(property.getValue(), property.getSignature())) : Optional.empty();*/
         }
 
         public interface Provider {

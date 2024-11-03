@@ -285,17 +285,23 @@ public class OverridesScreen extends Screen {
     }
 
     protected void addToLibrary() {
-        // TODO: signed skins
-
         String guessedName = this.selectedProfile.getName();
 
         Skin playerSkin = Mod.override(this.selectedProfile);
         var texture = this.ov.skin ? playerSkin.texture() : playerSkin.capeTexture();
+        boolean hasOverride = Mod.overrideSkin(this.selectedProfile).isPresent();
         Consumer<String> callback = name -> {
+            // get secure profile if we're adding a skin with no override
+            Optional<GameProfile> maybeSecureProfile = this.ov.skin && !hasOverride
+                    ? ProfileHelper.uuidToSecureProfile(this.selectedProfile.getId())
+                    : Optional.empty();
+
             // create the library entry
-            Optional<LibraryEntry> entry = this.ov.skin
-                    ? ((SkinLibrary) this.ov.library()).create(name, texture, playerSkin.model()).map(e -> (LibraryEntry) e)
-                    : ((CapeLibrary) this.ov.library()).create(name, texture).map(e -> (LibraryEntry) e);
+            Optional<LibraryEntry> entry = maybeSecureProfile
+                    .map(profile -> ((SkinLibrary) this.ov.library()).createSigned(name, texture, playerSkin.model(), profile).map(e -> (LibraryEntry) e))
+                    .orElseGet(() -> this.ov.skin
+                            ? ((SkinLibrary) this.ov.library()).create(name, texture, playerSkin.model()).map(e -> e)
+                            : ((CapeLibrary) this.ov.library()).create(name, texture).map(e -> e));
 
             // if this is an override, replace it with the library version
             if (this.ov.has(this.selectedProfile) && entry.isPresent()) {

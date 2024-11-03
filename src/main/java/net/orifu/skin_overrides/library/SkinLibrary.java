@@ -78,9 +78,8 @@ public class SkinLibrary extends AbstractLibrary {
             String name, Identifier texture, Skin.Model model,
             GameProfile profile) {
         var property = profile.getProperties().get("textures").stream().findAny();
-        return property.flatMap(prop -> this.createInternal(
-                name, model, texture, null,
-                Skin.Signature.fromProperty(prop)));
+        return property.flatMap(Skin.Signature::fromProperty).flatMap(sig ->
+                this.createInternal(name, model, texture, null, sig));
     }
 
     private Optional<SkinEntry> createInternal(
