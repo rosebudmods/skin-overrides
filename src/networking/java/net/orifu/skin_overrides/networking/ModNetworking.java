@@ -69,7 +69,7 @@ public class ModNetworking {
 
     public static void initClient() {
         // send packet when joining (if applicable)
-        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+        ClientPlayConnectionEvents.INIT.register((handler, client) -> {
             Mod.SKINS.get(ProfileHelper.user()).ifPresent(ModNetworking::updateSkinOnServer);
         });
     }
