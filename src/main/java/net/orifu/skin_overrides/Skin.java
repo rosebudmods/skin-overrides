@@ -2,7 +2,10 @@ package net.orifu.skin_overrides;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.texture.PlayerSkinProvider;
 import net.minecraft.util.Identifier;
+//? if hasNetworking
+import net.orifu.skin_overrides.networking.ModNetworking;
 import org.jetbrains.annotations.Nullable;
 
 //? if >=1.20.2 {
@@ -99,6 +102,24 @@ public record Skin(
 
     public Skin withCape(@Nullable Identifier cape) {
         return new Skin(this.texture, cape, null, this.model);
+    }
+
+    public Skin withDefaultCape(GameProfile profile) {
+        //? if hasNetworking {
+        if (profile.getProperties().containsKey(ModNetworking.DEFAULT_TEXTURES_KEY)) {
+            // get the default textures
+            var provider = MinecraftClient.getInstance().getSkinProvider();
+            var property = profile.getProperties().get(ModNetworking.DEFAULT_TEXTURES_KEY).stream().findFirst().orElseThrow();
+            // get the skin from the default textures
+            var skinFuture = provider.skinCache.getUnchecked(new PlayerSkinProvider.CacheKey(profile.getId(), property));
+
+            // if we have the default skin, use its cape. otherwise, use what we currently have.
+            return Optional.ofNullable(skinFuture.getNow(null)).map(Skin::fromPlayerSkin)
+                    .map(sk -> this.withCape(sk.capeTexture())).orElse(this);
+        }
+        //?}
+
+        return this;
     }
 
     //? if >=1.20.2 {

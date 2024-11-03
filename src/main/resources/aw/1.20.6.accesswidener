@@ -1,0 +1,22 @@
+accessWidener v2 named
+
+accessible method net/minecraft/client/texture/PlayerSkinTexture loadTexture (Ljava/io/InputStream;)Lcom/mojang/blaze3d/texture/NativeImage;
+accessible method net/minecraft/client/texture/PlayerSkinTexture onTextureLoaded (Lcom/mojang/blaze3d/texture/NativeImage;)V
+
+accessible field net/minecraft/client/MinecraftClient authService Lcom/mojang/authlib/yggdrasil/YggdrasilAuthenticationService;
+accessible field net/minecraft/client/MinecraftClient userApiService Lcom/mojang/authlib/minecraft/UserApiService;
+accessible field net/minecraft/client/MinecraftClient renderTaskQueue Ljava/util/Queue;
+
+accessible field net/minecraft/client/util/DefaultSkinHelper DEFAULT_SKINS [Lnet/minecraft/client/texture/PlayerSkin;
+
+accessible field net/minecraft/client/texture/PlayerSkinProvider skinCache Lcom/google/common/cache/LoadingCache;
+accessible class net/minecraft/client/texture/PlayerSkinProvider$CacheKey
+accessible method net/minecraft/client/texture/PlayerSkinProvider$CacheKey <init> (Ljava/util/UUID;Lcom/mojang/authlib/properties/Property;)V
+
+extendable method net/minecraft/client/gui/widget/list/EntryListWidget getEntryAtPosition (DD)Lnet/minecraft/client/gui/widget/list/EntryListWidget$Entry;
+
+accessible method net/minecraft/client/gui/widget/HeaderBar <init> (ILnet/minecraft/client/gui/tab/TabManager;Ljava/lang/Iterable;)V
+
+accessible field net/minecraft/server/world/ThreadedChunkManager entityTrackers Lit/unimi/dsi/fastutil/ints/Int2ObjectMap;
+accessible field net/minecraft/server/world/ThreadedChunkManager$EntityTracker listeners Ljava/util/Set;
+accessible field net/minecraft/server/world/ThreadedChunkManager$EntityTracker entry Lnet/minecraft/server/network/EntityTrackerEntry;

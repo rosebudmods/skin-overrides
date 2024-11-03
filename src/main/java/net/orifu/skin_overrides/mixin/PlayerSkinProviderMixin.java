@@ -15,7 +15,7 @@ public class PlayerSkinProviderMixin {
     //? if >=1.20.2 {
     @ModifyReturnValue(method = "getSkin", at = @At("RETURN"))
     private PlayerSkin getSkin(PlayerSkin skin, GameProfile profile) {
-        return Mod.override(profile, Skin.fromPlayerSkin(skin)).toPlayerSkin();
+        return Mod.override(profile, Skin.fromPlayerSkin(skin).withDefaultCape(profile)).toPlayerSkin();
     }
     //?}
 }

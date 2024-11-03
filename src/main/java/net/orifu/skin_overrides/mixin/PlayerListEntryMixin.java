@@ -25,7 +25,7 @@ public class PlayerListEntryMixin {
     @ModifyReturnValue(method = "getSkin", at = @At("RETURN"))
     private PlayerSkin getSkin(PlayerSkin skin) {
         // the return value of this method is otherwise memoised
-        return Mod.override(this.profile, Skin.fromPlayerSkin(skin)).toPlayerSkin();
+        return Mod.override(this.profile, Skin.fromPlayerSkin(skin).withDefaultCape(this.profile)).toPlayerSkin();
     }
     
     //?} else {
