@@ -2,7 +2,6 @@ package net.orifu.skin_overrides.screen;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.orifu.skin_overrides.Library.LibraryEntry;
@@ -16,6 +15,7 @@ import net.orifu.skin_overrides.texture.LocalPlayerTexture;
 import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.skin_overrides.util.ProfileHelper;
+import net.orifu.skin_overrides.util.Toast;
 import net.orifu.skin_overrides.util.Util;
 import net.orifu.xplat.CommonTexts;
 import net.orifu.xplat.gui.GuiGraphics;
@@ -275,10 +275,8 @@ public class LibraryScreen extends Screen {
                 if (cape != null) {
                     ((CapeLibrary) this.ov.library()).create(name, cape);
                 } else {
-                    this.toast(
-                            Text.translatable("skin_overrides.no_cape.title"),
-                            Text.translatable("skin_overrides.no_cape.description", name)
-                    );
+                    Toast.show(Text.translatable("skin_overrides.no_cape.title"),
+                            Text.translatable("skin_overrides.no_cape.description", name));
                 }
             }
 
@@ -363,8 +361,7 @@ public class LibraryScreen extends Screen {
 
         ProfileHelper.idToSecureProfile(name).thenAccept(profile -> {
             if (profile.isEmpty()) {
-                this.toast(
-                        Text.translatable("skin_overrides.no_profile.title", this.searchBox.getText()),
+                Toast.show(Text.translatable("skin_overrides.no_profile.title", this.searchBox.getText()),
                         Text.translatable("skin_overrides.no_profile.description"));
             } else {
                 // i tried getting the skin asynchronously here... don't do that.
@@ -375,19 +372,5 @@ public class LibraryScreen extends Screen {
                 this.addingProfile = profile.get();
             }
         });
-    }
-
-    private void toast(Text title, Text description) {
-        //? if >=1.21.3 {
-        SystemToast.show(this.client.method_1566(), SystemToast.Id.PACK_LOAD_FAILURE, title, description);
-        //?} else {
-        /*this.client.getToastManager().add(new SystemToast(
-                SystemToast.
-                        /^? if >=1.20.6 {^/ /^Id.PACK_LOAD_FAILURE
-                        ^//^?} else if =1.20.4 {^/ /^C_ozahoshp.field_47585
-                        ^//^?} else >>^/ Type.PACK_LOAD_FAILURE ,
-                title, description
-        ));
-        *///?}
     }
 }

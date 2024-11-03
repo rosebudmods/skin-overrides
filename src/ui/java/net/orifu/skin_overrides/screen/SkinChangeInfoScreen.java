@@ -11,6 +11,7 @@ import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.networking.ModNetworking;
 import net.orifu.skin_overrides.override.SkinChangeOverride;
 import net.orifu.skin_overrides.util.ProfileHelper;
+import net.orifu.skin_overrides.util.Toast;
 import net.orifu.xplat.CommonTexts;
 import net.orifu.xplat.gui.LayoutSettings;
 import net.orifu.xplat.gui.widget.ButtonWidget;
@@ -96,11 +97,13 @@ public class SkinChangeInfoScreen extends WarningScreen {
                     //? if hasNetworking
                     ModNetworking.updateSkinOnServer(signedSkin.value(), signedSkin.signature());
                 } else {
-                    // TODO: toast
+                    Toast.show(Text.translatable("skin_overrides.change_skin.reload_fail.title"),
+                            Text.translatable("skin_overrides.change_skin.reload_fail.description"));
                 }
             });
         } else {
-            // TODO: toast
+            Toast.show(Text.translatable("skin_overrides.change_skin.fail.title"),
+                    Text.translatable("skin_overrides.change_skin.fail.description"));
         }
 
         this.closeScreen();
