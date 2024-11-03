@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.apache.logging.log4j.Logger;
 *///?}
 
-import java.util.Locale;
 import java.util.Optional;
 
 public class Mod {
@@ -39,9 +38,9 @@ public class Mod {
 
 	public static Identifier id(String namespace, String path) {
 		//? if >=1.21 {
-		 return Identifier.of(namespace, path.toLowerCase(Locale.ROOT));
+		 return Identifier.of(namespace, path);
 		//?} else
-		/*return new Identifier(namespace, path.toLowerCase(Locale.ROOT));*/
+		/*return new Identifier(namespace, path);*/
 	}
 
 	public static Identifier id(String path) {

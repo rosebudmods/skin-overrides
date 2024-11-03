@@ -10,6 +10,7 @@ import net.orifu.skin_overrides.util.TextUtil;
 import net.orifu.skin_overrides.util.Util;
 
 import java.io.File;
+import java.util.Locale;
 import java.util.Optional;
 
 public class LocalSkinOverrider implements OverrideManager.Overrider {
@@ -25,11 +26,11 @@ public class LocalSkinOverrider implements OverrideManager.Overrider {
             Skin.Model maybeModel = Skin.Model.tryParse(parts[1]);
             if (ext.equals("png") && maybeModel != null) {
                 LocalSkinTexture texture = new LocalSkinTexture(file, maybeModel);
-                return Optional.of(new LocalSkinOverride(parts[0], texture, maybeModel));
+                return Optional.of(new LocalSkinOverride(parts[0].toLowerCase(Locale.ROOT), texture, maybeModel));
             }
         } else if (ext.equals("png")) {
             LocalSkinTexture texture = new LocalSkinTexture(file, Skin.Model.WIDE);
-            return Optional.of(new LocalSkinOverride(name, texture, Skin.Model.WIDE));
+            return Optional.of(new LocalSkinOverride(name.toLowerCase(Locale.ROOT), texture, Skin.Model.WIDE));
         }
 
         return Optional.empty();

@@ -1,6 +1,7 @@
 package net.orifu.skin_overrides;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import com.google.gson.JsonElement;
@@ -73,7 +74,7 @@ public interface Library {
 
         public LibraryEntry(String name, String id) {
             this.name = name;
-            this.id = id;
+            this.id = id.toLowerCase(Locale.ROOT);
         }
 
         public String getId() {

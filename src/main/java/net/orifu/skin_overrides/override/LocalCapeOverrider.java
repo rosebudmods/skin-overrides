@@ -10,6 +10,7 @@ import net.orifu.skin_overrides.util.TextUtil;
 import net.orifu.skin_overrides.util.Util;
 
 import java.io.File;
+import java.util.Locale;
 import java.util.Optional;
 
 public class LocalCapeOverrider implements OverrideManager.Overrider {
@@ -21,7 +22,7 @@ public class LocalCapeOverrider implements OverrideManager.Overrider {
     @Override
     public Optional<OverrideManager.Override> get(File file, String name, String ext) {
         if (ext.equals("png")) {
-            return Optional.of(new LocalCapeOverride(name, new LocalPlayerTexture(file)));
+            return Optional.of(new LocalCapeOverride(name.toLowerCase(Locale.ROOT), new LocalPlayerTexture(file)));
         }
 
         return Optional.empty();
