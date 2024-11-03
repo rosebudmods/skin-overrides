@@ -35,7 +35,7 @@ public class ModNetworking {
 
             // store default textures
             var properties = player.getGameProfile().getProperties();
-            if (!properties.containsKey(DEFAULT_TEXTURES_KEY)) {
+            if (!properties.containsKey(DEFAULT_TEXTURES_KEY) && properties.containsKey("textures")) {
                 var defaultTextures = properties.get("textures").stream().findFirst().orElseThrow();
                 properties.put(DEFAULT_TEXTURES_KEY, new Property(DEFAULT_TEXTURES_KEY,
                         defaultTextures.value(), defaultTextures.signature()));
