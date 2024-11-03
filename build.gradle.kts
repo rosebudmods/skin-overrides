@@ -129,8 +129,8 @@ dependencies {
 		implementation("org.mineskin:java-client-apache:2.1.1-SNAPSHOT")?.let { include(it) }
 	}
 
-	// for versions with UI before 1.20.6, httpmime is missing
-	if (hasUi && stonecutter.compare(scVersion, "1.20.6") < 0) {
+	// include httpmime (it will show up in a dev environment, but don't believe its lies)
+	if (hasUi) {
 		implementation("org.apache.httpcomponents:httpmime:4.5.14")?.let { include(it) }
 	}
 }
