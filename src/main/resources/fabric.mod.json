@@ -3,10 +3,8 @@
     "id": "skin_overrides",
     "version": "${version}",
     "name": "skin overrides",
-    "description": "local overrides for player skins and capes.",
-    "authors": [
-        "orifu"
-    ],
+    "description": "a powerful mod for changing skins and capes!",
+    "authors": ["rosebud", "orifu"],
     "contact": {
         "homepage": "https://rosebud.dev/skin-overrides/",
         "sources": "https://lumity.dev/orifu/skin-overrides",

@@ -27,7 +27,6 @@ body:
         - 1.17.1
         - 1.16.5
         - 1.15.2
-        - 24w35a
         - another version
     validations:
       required: true
@@ -37,11 +36,11 @@ body:
       label: mod version
       description: which version of skin overrides are you using?
       options:
+        - 2.2.0
         - 2.1.1
         - 2.1.0
         - 2.0.0
         - 1.0.0
-        - 2.2.0-beta
     validations:
       required: true
   - type: dropdown
