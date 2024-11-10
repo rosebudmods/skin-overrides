@@ -173,7 +173,7 @@ public record Skin(
 
             return Optional.of(new Pair<>(textureUrl, model));
         } catch (IOException e) {
-            System.out.println("something went wrong");
+            Mod.LOGGER.error("failed to set skin, got IO error:", e);
             return Optional.empty();
         }
     }
