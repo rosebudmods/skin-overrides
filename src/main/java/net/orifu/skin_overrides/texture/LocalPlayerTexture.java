@@ -1,19 +1,19 @@
 package net.orifu.skin_overrides.texture;
 
 //? if >=1.19.2 {
-import com.mojang.blaze3d.texture.NativeImage;
+import com.mojang.blaze3d.platform.NativeImage;
 //?} else
 /*import net.minecraft.client.texture.NativeImage;*/
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.texture.PlayerSkinTexture;
-import net.minecraft.resource.ResourceManager;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.HttpTexture;
+import net.minecraft.server.packs.resources.ResourceManager;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Objects;
 
-public class LocalPlayerTexture extends PlayerSkinTexture {
+public class LocalPlayerTexture extends HttpTexture {
     private final File textureFile;
 
     public LocalPlayerTexture(File textureFile, boolean isSkin) {
@@ -28,10 +28,10 @@ public class LocalPlayerTexture extends PlayerSkinTexture {
 
     @Override
     public void load(ResourceManager manager) {
-        MinecraftClient.getInstance().execute(() -> {
+        Minecraft.getInstance().execute(() -> {
             try {
-                NativeImage texture = this.loadTexture(new FileInputStream(this.textureFile));
-                this.onTextureLoaded(Objects.requireNonNull(texture));
+                NativeImage texture = this.load(new FileInputStream(this.textureFile));
+                this.loadCallback(Objects.requireNonNull(texture));
             } catch (NullPointerException | IOException e) {
                 // shouldn't happen
             }

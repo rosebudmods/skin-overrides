@@ -5,8 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import net.minecraft.client.texture.AbstractTexture;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Library;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.override.LibraryOverrider;
@@ -103,8 +102,8 @@ public abstract class AbstractLibrary implements Library {
                         && this.tryLoadFromJson(obj, name.get(), id.get(), new File(this.libraryFolder, file.get()), null)) {
                     return;
                 } else if (texture.isPresent() && file.isEmpty()) {
-                    Identifier textureId = Identifier.tryParse(texture.get());
-                    if (textureId != null && this.tryLoadFromJson(obj, name.get(), id.get(), null, textureId)) {
+                    ResourceLocation textureLoc = ResourceLocation.tryParse(texture.get());
+                    if (textureLoc != null && this.tryLoadFromJson(obj, name.get(), id.get(), null, textureLoc)) {
                         return;
                     }
                 }
@@ -114,7 +113,7 @@ public abstract class AbstractLibrary implements Library {
         Mod.LOGGER.warn("failed to load library entry {}", el);
     }
 
-    protected abstract boolean tryLoadFromJson(JsonObject object, String name, String id, @Nullable File file, @Nullable Identifier textureId);
+    protected abstract boolean tryLoadFromJson(JsonObject object, String name, String id, @Nullable File file, @Nullable ResourceLocation textureLoc);
 
     protected void addDefaultEntries() {}
 
@@ -123,29 +122,29 @@ public abstract class AbstractLibrary implements Library {
         @Nullable
         protected final File file;
         @Nullable
-        protected final Identifier textureId;
+        protected final ResourceLocation textureLoc;
 
-        protected AbstractLibraryEntry(String name, String id, @Nullable File file, @Nullable Identifier textureId) {
+        protected AbstractLibraryEntry(String name, String id, @Nullable File file, @Nullable ResourceLocation textureLoc) {
             super(name, id);
             this.isFile = file != null;
             this.file = file;
-            this.textureId = textureId;
+            this.textureLoc = textureLoc;
         }
 
         public AbstractLibraryEntry(String name, String id, @NotNull File file) {
             this(name, id, file, null);
         }
 
-        public AbstractLibraryEntry(String name, String id, @NotNull Identifier textureId) {
+        public AbstractLibraryEntry(String name, String id, @NotNull ResourceLocation textureId) {
             this(name, id, null, textureId);
         }
 
         @Override
-        public Identifier getTexture() {
-            return this.isFile ? this.getTextureFromFile() : this.textureId;
+        public ResourceLocation getTexture() {
+            return this.isFile ? this.getTextureFromFile() : this.textureLoc;
         }
 
-        protected abstract Identifier getTextureFromFile();
+        protected abstract ResourceLocation getTextureFromFile();
 
         @Override
         public JsonElement toJson() {
@@ -156,7 +155,7 @@ public abstract class AbstractLibrary implements Library {
             if (this.isFile) {
                 obj.addProperty("file", this.file.getName());
             } else {
-                obj.addProperty("texture", this.textureId.toString());
+                obj.addProperty("texture", this.textureLoc.toString());
             }
 
             return obj;
@@ -173,7 +172,7 @@ public abstract class AbstractLibrary implements Library {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (!(o instanceof AbstractLibraryEntry that)) return false;
-            return isFile == that.isFile && Objects.equals(file, that.file) && Objects.equals(textureId, that.textureId);
+            return isFile == that.isFile && Objects.equals(file, that.file) && Objects.equals(textureLoc, that.textureLoc);
         }
     }
 }

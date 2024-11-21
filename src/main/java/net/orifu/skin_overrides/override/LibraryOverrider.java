@@ -1,15 +1,15 @@
 package net.orifu.skin_overrides.override;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Library;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.OverrideManager;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.library.SkinLibrary;
 import net.orifu.skin_overrides.util.Util;
-import net.orifu.skin_overrides.util.TextUtil;
+import net.orifu.skin_overrides.util.ComponentUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -37,9 +37,9 @@ public class LibraryOverrider implements OverrideManager.Overrider {
     public Optional<OverrideManager.Override> get(File file, String name, String ext) {
         if (ext.equals("txt")) {
             return Util.readFile(file)
-                    .flatMap(id -> Optional.ofNullable(Identifier.tryParse(id)))
-                    .filter(id -> id.getNamespace().equals(Mod.MOD_ID))
-                    .flatMap(id -> this.library.get(id.getPath()).map(entry -> new LibraryOverride(name, entry)));
+                    .flatMap(loc -> Optional.ofNullable(ResourceLocation.tryParse(loc)))
+                    .filter(loc -> loc.getNamespace().equals(Mod.MOD_ID))
+                    .flatMap(loc -> this.library.get(loc.getPath()).map(entry -> new LibraryOverride(name, entry)));
         }
 
         return Optional.empty();
@@ -50,7 +50,7 @@ public class LibraryOverrider implements OverrideManager.Overrider {
 
         try {
             var writer = Files.newBufferedWriter(outputPath, StandardCharsets.UTF_8);
-            writer.write(Mod.id(entry.getId()).toString());
+            writer.write(Mod.res(entry.getId()).toString());
             writer.close();
         } catch (IOException e) {
             Mod.LOGGER.error("failed to save library entry with id {} to file", entry.getId(), e);
@@ -59,7 +59,7 @@ public class LibraryOverrider implements OverrideManager.Overrider {
 
     public record LibraryOverride(String playerIdent, Library.LibraryEntry entry) implements OverrideManager.Override {
         @Override
-        public Identifier texture() {
+        public ResourceLocation texture() {
             return this.entry.getTexture();
         }
 
@@ -73,8 +73,8 @@ public class LibraryOverrider implements OverrideManager.Overrider {
         }
 
         @Override
-        public Text info() {
-            return TextUtil.translatable("skin_overrides.override.library", this.entry.getName());
+        public Component info() {
+            return ComponentUtil.translatable("skin_overrides.override.library", this.entry.getName());
         }
 
         @Override

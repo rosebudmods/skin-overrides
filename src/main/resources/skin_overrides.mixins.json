@@ -8,8 +8,8 @@
 		"YggdrasilServiceClientAccessor"
 	],
 	"client": [
-		"PlayerSkinProviderMixin",
-		"PlayerListEntryMixin"
+		"SkinManagerMixin",
+        "PlayerInfoMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

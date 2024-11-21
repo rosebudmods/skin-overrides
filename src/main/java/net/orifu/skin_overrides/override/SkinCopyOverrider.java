@@ -1,12 +1,12 @@
 package net.orifu.skin_overrides.override;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.OverrideManager;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.util.ProfileHelper;
-import net.orifu.skin_overrides.util.TextUtil;
+import net.orifu.skin_overrides.util.ComponentUtil;
 import net.orifu.skin_overrides.util.Util;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,9 +24,9 @@ public class SkinCopyOverrider implements OverrideManager.Overrider {
     public Optional<OverrideManager.Override> get(File file, String name, String ext) {
         if (ext.equals("txt")) {
             return Util.readFile(file)
-                    .flatMap(id -> Optional.ofNullable(Identifier.tryParse(id)))
-                    .filter(id -> id.getNamespace().equals("minecraft"))
-                    .flatMap(id -> ProfileHelper.idToProfileSync(id.getPath()))
+                    .flatMap(loc -> Optional.ofNullable(ResourceLocation.tryParse(loc)))
+                    .filter(loc -> loc.getNamespace().equals("minecraft"))
+                    .flatMap(loc -> ProfileHelper.idToProfileSync(loc.getPath()))
                     .map(profile -> new SkinCopyOverride(name, profile, Skin.fetchSkin(profile)));
         }
 
@@ -35,14 +35,14 @@ public class SkinCopyOverrider implements OverrideManager.Overrider {
 
     public record SkinCopyOverride(String playerIdent, GameProfile profile, CompletableFuture<Skin> copyFrom) implements OverrideManager.Override {
         @Override
-        public Identifier texture() {
+        public ResourceLocation texture() {
             Skin skin = this.copyFrom.getNow(null);
             return skin != null ? skin.texture() : null;
         }
 
         @Override
-        public Text info() {
-            return TextUtil.translatable("skin_overrides.override.copy", this.profile.getName());
+        public Component info() {
+            return ComponentUtil.translatable("skin_overrides.override.copy", this.profile.getName());
         }
 
         @Override

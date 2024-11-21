@@ -1,8 +1,8 @@
 package net.orifu.skin_overrides;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.Nullable;
@@ -151,9 +151,9 @@ public class OverrideManager {
         String playerIdent();
 
         @Nullable
-        Identifier texture();
+        ResourceLocation texture();
 
-        Text info();
+        Component info();
 
         @Nullable
         default Skin.Model model() {

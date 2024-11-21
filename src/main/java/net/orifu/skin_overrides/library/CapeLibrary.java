@@ -1,9 +1,8 @@
 package net.orifu.skin_overrides.library;
 
 import com.google.gson.JsonObject;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Mod;
-import net.orifu.skin_overrides.override.LibraryOverrider;
 import net.orifu.skin_overrides.texture.LocalPlayerTexture;
 import net.orifu.skin_overrides.util.Util;
 import org.jetbrains.annotations.NotNull;
@@ -25,25 +24,25 @@ public class CapeLibrary extends AbstractLibrary {
     }
 
     @Override
-    protected boolean tryLoadFromJson(JsonObject object, String name, String id, @Nullable File file, @Nullable Identifier textureId) {
-        this.entries.add(new CapeEntry(name, id, file, textureId));
+    protected boolean tryLoadFromJson(JsonObject object, String name, String id, @Nullable File file, @Nullable ResourceLocation textureLoc) {
+        this.entries.add(new CapeEntry(name, id, file, textureLoc));
         return true;
     }
 
     @Override
     protected void addDefaultEntries() {
-        this.entries.add(new CapeEntry("skin overrides", "skin_overrides", Mod.id("cape.png")));
+        this.entries.add(new CapeEntry("skin overrides", "skin_overrides", Mod.res("cape.png")));
     }
 
     public Optional<CapeEntry> create(String name, Path path) {
         return this.createInternal(name, null, path);
     }
 
-    public Optional<CapeEntry> create(String name, Identifier texture) {
+    public Optional<CapeEntry> create(String name, ResourceLocation texture) {
         return this.createInternal(name, texture, null);
     }
 
-    private Optional<CapeEntry> createInternal(String name, Identifier texture, Path path) {
+    private Optional<CapeEntry> createInternal(String name, ResourceLocation texture, Path path) {
         try {
             String id = Util.randomId();
             File file = new File(this.libraryFolder, id + ".png");
@@ -64,20 +63,20 @@ public class CapeLibrary extends AbstractLibrary {
     }
 
     public static class CapeEntry extends AbstractLibraryEntry {
-        protected CapeEntry(String name, String id, @Nullable File file, @Nullable Identifier textureId) {
-            super(name, id, file, textureId);
+        protected CapeEntry(String name, String id, @Nullable File file, @Nullable ResourceLocation textureLoc) {
+            super(name, id, file, textureLoc);
         }
 
         protected CapeEntry(String name, String id, @NotNull File file) {
             super(name, id, file);
         }
 
-        protected CapeEntry(String name, String id, @NotNull Identifier textureId) {
-            super(name, id, textureId);
+        protected CapeEntry(String name, String id, @NotNull ResourceLocation textureLoc) {
+            super(name, id, textureLoc);
         }
 
         @Override
-        protected Identifier getTextureFromFile() {
+        protected ResourceLocation getTextureFromFile() {
             return Util.texture("cape/library/" + this.id, new LocalPlayerTexture(this.file));
         }
     }

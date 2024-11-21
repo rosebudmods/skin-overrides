@@ -1,9 +1,9 @@
 package net.orifu.skin_overrides.override;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.texture.PlayerSkinTexture;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.HttpTexture;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Tuple;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.util.ProfileHelper;
@@ -15,9 +15,9 @@ import java.util.Optional;
 
 public class SkinChangeOverride {
     @Nullable
-    protected static Pair<Identifier, Skin.Model> override;
+    protected static Tuple<ResourceLocation, Skin.Model> override;
 
-    public static Optional<Pair<Identifier, Skin.Model>> texture() {
+    public static Optional<Tuple<ResourceLocation, Skin.Model>> texture() {
         return Optional.ofNullable(override);
     }
 
@@ -26,11 +26,11 @@ public class SkinChangeOverride {
             File file = File.createTempFile("skin-overrides_", "_user-change");
             file.delete();
 
-            var identifier = Mod.id("skin/user-change");
-            var texture = new PlayerSkinTexture(file, url, ProfileHelper.userSkin(), true,
-                    () -> override = new Pair<>(identifier, model));
+            var identifier = Mod.res("skin/user-change");
+            var texture = new HttpTexture(file, url, ProfileHelper.userSkin(), true,
+                    () -> override = new Tuple<>(identifier, model));
 
-            MinecraftClient.getInstance().getTextureManager().registerTexture(identifier, texture);
+            Minecraft.getInstance().getTextureManager().register(identifier, texture);
         } catch (IOException e) {
             Mod.LOGGER.error("failed to set player skin locally", e);
         }

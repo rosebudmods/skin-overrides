@@ -3,11 +3,11 @@ package net.orifu.skin_overrides.library;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Skin;
 //? if hasNetworking
-import net.orifu.skin_overrides.networking.MineSkin;
+/*import net.orifu.skin_overrides.networking.MineSkin;*/
 import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.Util;
@@ -18,7 +18,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
 import java.util.Optional;
 
 import static net.orifu.skin_overrides.Mod.SKIN_OVERRIDES_PATH;
@@ -31,7 +30,7 @@ public class SkinLibrary extends AbstractLibrary {
     }
 
     @Override
-    protected boolean tryLoadFromJson(JsonObject object, String name, String id, @Nullable File file, @Nullable Identifier textureId) {
+    protected boolean tryLoadFromJson(JsonObject object, String name, String id, @Nullable File file, @Nullable ResourceLocation textureLoc) {
         var model = Util.readString(object, "model");
         if (model.isPresent()) {
             Skin.Model skinModel = Skin.Model.parse(model.get());
@@ -47,7 +46,7 @@ public class SkinLibrary extends AbstractLibrary {
                 }
             }
 
-            this.entries.add(new SkinEntry(name, id, skinModel, file, textureId, signature));
+            this.entries.add(new SkinEntry(name, id, skinModel, file, textureLoc, signature));
             return true;
         }
 
@@ -70,12 +69,12 @@ public class SkinLibrary extends AbstractLibrary {
         return this.createInternal(name, model, null, path, null);
     }
 
-    public Optional<SkinEntry> create(String name, Identifier texture, Skin.Model model) {
+    public Optional<SkinEntry> create(String name, ResourceLocation texture, Skin.Model model) {
         return this.createInternal(name, model, texture, null, null);
     }
 
     public Optional<SkinEntry> createSigned(
-            String name, Identifier texture, Skin.Model model,
+            String name, ResourceLocation texture, Skin.Model model,
             GameProfile profile) {
         var property = profile.getProperties().get("textures").stream().findAny();
         return property.flatMap(Skin.Signature::fromProperty).flatMap(sig ->
@@ -84,7 +83,7 @@ public class SkinLibrary extends AbstractLibrary {
 
     private Optional<SkinEntry> createInternal(
             String name, Skin.Model model,
-            Identifier texture, Path path,
+            ResourceLocation texture, Path path,
             Skin.Signature signature) {
         try {
             String id = Util.randomId();
@@ -113,9 +112,9 @@ public class SkinLibrary extends AbstractLibrary {
 
         protected SkinEntry(
                 String name, String id, Skin.Model model,
-                @Nullable File file, @Nullable Identifier textureId,
+                @Nullable File file, @Nullable ResourceLocation textureLoc,
                 @Nullable Skin.Signature signature) {
-            super(name, id, file, textureId);
+            super(name, id, file, textureLoc);
 
             this.model = model;
             this.signature = signature;
@@ -128,12 +127,12 @@ public class SkinLibrary extends AbstractLibrary {
             this(name, id, model, file, null, signature);
         }
 
-        protected SkinEntry(String name, String id, Skin.Model model, @NotNull Identifier textureId) {
-            this(name, id, model, null, textureId, null);
+        protected SkinEntry(String name, String id, Skin.Model model, @NotNull ResourceLocation textureLoc) {
+            this(name, id, model, null, textureLoc, null);
         }
 
         @Override
-        protected Identifier getTextureFromFile() {
+        protected ResourceLocation getTextureFromFile() {
             return Util.texture("skin/library/" + this.id, new LocalSkinTexture(this.file, this.model));
         }
 
@@ -162,14 +161,14 @@ public class SkinLibrary extends AbstractLibrary {
 
         public Optional<SkinEntry> signed() {
             //? if hasNetworking {
-            if (this.signature != null) {
+            /*if (this.signature != null) {
                 return Optional.of(this);
             } else {
                 var signature = MineSkin.sign(this.getTexture(), this.model);
-                return signature.map(sig -> new SkinEntry(this.name, this.id, this.model, this.file, this.textureId, sig));
+                return signature.map(sig -> new SkinEntry(this.name, this.id, this.model, this.file, this.textureLoc, sig));
             }
-            //?} else
-            /*return Optional.empty();*/
+            *///?} else
+            return Optional.empty();
         }
 
         @Override

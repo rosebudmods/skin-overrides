@@ -2,11 +2,9 @@ package net.orifu.skin_overrides.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.mojang.authlib.GameProfile;
-import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.client.multiplayer.PlayerInfo;
 //? if >=1.20.2
-import net.minecraft.client.texture.PlayerSkin;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
+import net.minecraft.client.resources.PlayerSkin;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Skin;
 import org.spongepowered.asm.mixin.Final;
@@ -14,8 +12,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 
-@Mixin(PlayerListEntry.class)
-public class PlayerListEntryMixin {
+@Mixin(PlayerInfo.class)
+public class PlayerInfoMixin {
     @Shadow
     @Final
     private GameProfile profile;

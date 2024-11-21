@@ -1,25 +1,25 @@
 package net.orifu.skin_overrides;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.texture.PlayerSkinProvider;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.SkinManager;
+import net.minecraft.resources.ResourceLocation;
 //? if hasNetworking
-import net.orifu.skin_overrides.networking.ModNetworking;
+/*import net.orifu.skin_overrides.networking.ModNetworking;*/
 import org.jetbrains.annotations.Nullable;
 
 //? if >=1.20.2 {
-import net.minecraft.client.texture.PlayerSkin;
+import net.minecraft.client.resources.PlayerSkin;
 //?} else {
 /*import net.minecraft.client.util.DefaultSkinHelper;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 *///?}
 
-//? if >=1.19.4 {
-import com.google.gson.Gson;
+//? if hasUi {
+/*import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.yggdrasil.YggdrasilUserApiService;
-import net.minecraft.util.Pair;
+import net.minecraft.util.Tuple;
 import net.orifu.skin_overrides.mixin.YggdrasilServiceClientAccessor;
 import net.orifu.skin_overrides.mixin.YggdrasilUserApiServiceAccessor;
 import net.orifu.skin_overrides.util.Util;
@@ -31,20 +31,20 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.File;
 import java.io.IOException;
-//?}
+*///?}
 
 import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public record Skin(
-        Identifier texture,
-        @Nullable Identifier capeTexture,
-        @Nullable Identifier elytraTexture,
+        ResourceLocation texture,
+        @Nullable ResourceLocation capeTexture,
+        @Nullable ResourceLocation elytraTexture,
         Model model
 ) {
     public static Skin fromProfile(GameProfile profile) {
-        var provider = MinecraftClient.getInstance().getSkinProvider();
+        var manager = Minecraft.getInstance().getSkinManager();
 
         //? if <1.20.2 {
         /*var textures = provider.getTextures(profile);
@@ -63,11 +63,11 @@ public record Skin(
                 skin != null ? Model.parse(skin.getMetadata("model")) : Model.parse(DefaultSkinHelper.getModel(profile.getId()))
         );
         *///?} else
-        return fromPlayerSkin(provider.getSkin(profile));
+        return fromPlayerSkin(manager.getInsecureSkin(profile));
     }
 
     public static CompletableFuture<Skin> fetchSkin(GameProfile profile) {
-        var provider = MinecraftClient.getInstance().getSkinProvider();
+        var manager = Minecraft.getInstance().getSkinManager();
 
         //? if <1.20.2 {
         /*CompletableFuture<Skin> future = new CompletableFuture<>();
@@ -78,11 +78,11 @@ public record Skin(
         }, false);
         return future;
         *///?} else
-        return provider.fetchSkin(profile).thenApply(Skin::fromPlayerSkin);
+        return manager.getOrLoad(profile).thenApply(Skin::fromPlayerSkin);
     }
 
     public static CompletableFuture<Skin> fetchCape(GameProfile profile) {
-        var provider = MinecraftClient.getInstance().getSkinProvider();
+        var manager = Minecraft.getInstance().getSkinManager();
 
         //? if <1.20.2 {
         /*CompletableFuture<Skin> future = new CompletableFuture<>();
@@ -93,31 +93,31 @@ public record Skin(
         }, false);
         return future;
         *///?} else
-        return provider.fetchSkin(profile).thenApply(Skin::fromPlayerSkin);
+        return manager.getOrLoad(profile).thenApply(Skin::fromPlayerSkin);
     }
 
-    public Skin withSkin(Identifier skin, Model model) {
+    public Skin withSkin(ResourceLocation skin, Model model) {
         return new Skin(skin, this.capeTexture, this.elytraTexture, model);
     }
 
-    public Skin withCape(@Nullable Identifier cape) {
+    public Skin withCape(@Nullable ResourceLocation cape) {
         return new Skin(this.texture, cape, null, this.model);
     }
 
     public Skin withDefaultCape(GameProfile profile) {
         //? if hasNetworking {
-        if (profile.getProperties().containsKey(ModNetworking.DEFAULT_TEXTURES_KEY)) {
+        /*if (profile.getProperties().containsKey(ModNetworking.DEFAULT_TEXTURES_KEY)) {
             // get the default textures
-            var provider = MinecraftClient.getInstance().getSkinProvider();
+            var manager = Minecraft.getInstance().getSkinManager();
             var property = profile.getProperties().get(ModNetworking.DEFAULT_TEXTURES_KEY).stream().findFirst().orElseThrow();
             // get the skin from the default textures
-            var skinFuture = provider.skinCache.getUnchecked(new PlayerSkinProvider.CacheKey(profile.getId(), property));
+            var skinFuture = manager.skinCache.getUnchecked(new SkinManager.CacheKey(profile.getId(), property));
 
             // if we have the default skin, use its cape. otherwise, use what we currently have.
             return Optional.ofNullable(skinFuture.getNow(null)).map(Skin::fromPlayerSkin)
                     .map(sk -> this.withCape(sk.capeTexture())).orElse(this);
         }
-        //?}
+        *///?}
 
         return this;
     }
@@ -135,15 +135,15 @@ public record Skin(
     }
     //?}
 
-    //? if >=1.19.4 {
-    public Optional<Pair<String, Model>> setUserSkin() {
+    //? if hasUi {
+    /*public Optional<Tuple<String, Model>> setUserSkin() {
         try {
-            var userApiService = (YggdrasilUserApiService) MinecraftClient.getInstance().userApiService;
+            var userApiService = (YggdrasilUserApiService) Minecraft.getInstance().userApiService;
             var userApiServiceAccessor = (YggdrasilUserApiServiceAccessor) userApiService;
             var serviceClient = userApiServiceAccessor.getMinecraftClient();
             var serviceClientAccessor = (YggdrasilServiceClientAccessor) serviceClient;
-            var servicesHost = /*? if >=1.20.2 {*/ userApiServiceAccessor.getEnvironment().servicesHost();
-                /*?} else*/ /*userApiServiceAccessor.getEnvironment().getServicesHost();*/
+            var servicesHost = /^? if >=1.20.2 {^/ userApiServiceAccessor.getEnvironment().servicesHost();
+                /^?} else^/ /^userApiServiceAccessor.getEnvironment().getServicesHost();^/
             var url = servicesHost + "/minecraft/profile/skins";
 
             File skin = File.createTempFile("skin-overrides_", "_temp-skin");
@@ -171,13 +171,13 @@ public record Skin(
             String textureUrl = skinInfo.get("url").getAsString();
             Model model = Model.parse(skinInfo.get("variant").getAsString());
 
-            return Optional.of(new Pair<>(textureUrl, model));
+            return Optional.of(new Tuple<>(textureUrl, model));
         } catch (IOException e) {
             Mod.LOGGER.error("failed to set skin, got IO error:", e);
             return Optional.empty();
         }
     }
-    //?}
+    *///?}
 
     public enum Model {
         WIDE("wide", "classic"),

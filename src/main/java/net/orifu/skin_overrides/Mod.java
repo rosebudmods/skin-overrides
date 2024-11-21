@@ -1,12 +1,12 @@
 package net.orifu.skin_overrides;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Tuple;
 import net.orifu.skin_overrides.library.CapeLibrary;
 import net.orifu.skin_overrides.library.SkinLibrary;
 //? if hasNetworking
-import net.orifu.skin_overrides.networking.ModNetworking;
+/*import net.orifu.skin_overrides.networking.ModNetworking;*/
 import net.orifu.skin_overrides.override.LocalCapeOverrider;
 import net.orifu.skin_overrides.override.LocalSkinOverrider;
 import net.orifu.skin_overrides.override.SkinChangeOverride;
@@ -26,7 +26,7 @@ public class Mod {
 	public static final Logger LOGGER = /*? if >=1.17.1 {*/ LoggerFactory /*?} else >>*/ /*LogManager*/
 			.getLogger("skin overrides");
 	public static final String MOD_ID = "skin_overrides";
-	public static final String MOD_VERSION = /*$ modVersion*/ "2.2.1";
+	public static final String MOD_VERSION = /*$ modVersion*/ "2.2.2-beta";
 
 	public static final String SKIN_OVERRIDES_PATH = "skin_overrides";
 	public static final String CAPE_OVERRIDES_PATH = "cape_overrides";
@@ -36,19 +36,19 @@ public class Mod {
 	public static final OverrideManager CAPES = new OverrideManager(false, CAPE_OVERRIDES_PATH, CapeLibrary.INSTANCE,
 			new LocalCapeOverrider());
 
-	public static Identifier id(String namespace, String path) {
+	public static ResourceLocation res(String namespace, String path) {
 		//? if >=1.21 {
-		 return Identifier.of(namespace, path);
+		 return ResourceLocation.fromNamespaceAndPath(namespace, path);
 		//?} else
-		/*return new Identifier(namespace, path);*/
+		/*return new ResourceLocation(namespace, path);*/
 	}
 
-	public static Identifier id(String path) {
-		return id(MOD_ID, path);
+	public static ResourceLocation res(String path) {
+		return res(MOD_ID, path);
 	}
 
-	public static Identifier defaultId(String path) {
-		return id("minecraft", path);
+	public static ResourceLocation defaultId(String path) {
+		return res("minecraft", path);
 	}
 
 	public static Skin override(GameProfile profile) {
@@ -59,7 +59,7 @@ public class Mod {
 		// override skin
 		var ovSkin = overrideSkin(profile);
 		if (ovSkin.isPresent())
-			skin = skin.withSkin(ovSkin.get().getLeft(), ovSkin.get().getRight());
+			skin = skin.withSkin(ovSkin.get().getA(), ovSkin.get().getB());
 
 		// override cape
 		var ovCape = overrideCape(profile);
@@ -69,14 +69,14 @@ public class Mod {
 		return skin;
 	}
 
-	public static Optional<Pair<Identifier, Skin.Model>> overrideSkin(GameProfile profile) {
+	public static Optional<Tuple<ResourceLocation, Skin.Model>> overrideSkin(GameProfile profile) {
 		return SKINS.get(profile)
 				.filter(ov -> ov.texture() != null)
-				.map(ov -> new Pair<>(ov.texture(), ov.model()))
+				.map(ov -> new Tuple<>(ov.texture(), ov.model()))
 				.or(SkinChangeOverride::texture);
 	}
 
-	public static Optional<Identifier> overrideCape(GameProfile profile) {
+	public static Optional<ResourceLocation> overrideCape(GameProfile profile) {
 		return CAPES.get(profile).map(OverrideManager.Override::texture);
 	}
 
@@ -84,7 +84,7 @@ public class Mod {
 			@Nullable OverrideManager.Override oldOverride,
 			@Nullable OverrideManager.Override newOverride) {
 		//? if hasNetworking {
-		if (newOverride != null) {
+		/*if (newOverride != null) {
 			// switched to a possibly signed override
 			ModNetworking.updateSkinOnServer(newOverride);
 		} else if (oldOverride != null) {
@@ -92,13 +92,13 @@ public class Mod {
 			// clear skin just in case!
 			ModNetworking.clearSkinOverrideOnServer();
 		}
-		//?}
+		*///?}
 	}
 
 	public static boolean isOnSkinOverridesServer() {
 		//? if hasNetworking {
-		return ModNetworking.isOnSkinOverridesServer();
-		//?} else
-		/*return false;*/
+		/*return ModNetworking.isOnSkinOverridesServer();
+		*///?} else
+		return false;
 	}
 }

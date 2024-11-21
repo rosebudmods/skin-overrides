@@ -12,13 +12,13 @@ import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.systems.RenderSystem;
 //? if >=1.19.2 {
-import com.mojang.blaze3d.texture.NativeImage;
+import com.mojang.blaze3d.platform.NativeImage;
 //?} else
 /*import net.minecraft.client.texture.NativeImage;*/
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.texture.AbstractTexture;
-import net.minecraft.client.util.Session;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.User;
+import net.minecraft.client.renderer.texture.AbstractTexture;
+import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Mod;
 
 public class Util {
@@ -44,36 +44,35 @@ public class Util {
     }
 
     public static String id(GameProfile profile) {
-        var session = MinecraftClient.getInstance().getSession();
-        return /*? if >=1.17.1 {*/ session.getAccountType()
-                /*?} else*/ /*session.accountType*/
-                != Session.AccountType.LEGACY
+        var user = Minecraft.getInstance().getUser();
+        return /*? if >=1.17.1 {*/ user.getType()
+                /*?} else*/ /*user.accountType*/
+                != User.Type.LEGACY
                 ? profile.getId().toString()
                 : profile.getName();
     }
 
-    public static Identifier texture(String id, AbstractTexture texture) {
-        Identifier textureId = Mod.id(id);
-        MinecraftClient.getInstance().getTextureManager().registerTexture(textureId, texture);
-        return textureId;
+    public static ResourceLocation texture(String res, AbstractTexture texture) {
+        ResourceLocation textureLoc = Mod.res(res);
+        Minecraft.getInstance().getTextureManager().register(textureLoc, texture);
+        return textureLoc;
     }
 
-    public static Identifier texture(AbstractTexture texture) {
+    public static ResourceLocation texture(AbstractTexture texture) {
         return texture("temp/" + Util.randomId(), texture);
     }
 
-    public static void saveTexture(Identifier texture, int w, int h, Path path) {
+    public static void saveTexture(ResourceLocation texture, int w, int h, Path path) {
         var future = new CompletableFuture<Path>();
         Runnable runnable = () -> {
             try {
                 //? if >=1.21.3 {
-                RenderSystem.bindTexture(MinecraftClient.getInstance().getTextureManager().getTexture(texture).getGlId());
+                RenderSystem.bindTexture(Minecraft.getInstance().getTextureManager().getTexture(texture).getId());
                 //?} else
                 /*MinecraftClient.getInstance().getTextureManager().bindTexture(texture);*/
                 NativeImage img = new NativeImage(w, h, false);
-                img.loadFromTextureImage(0, false);
-                /*? if >=1.19.2 || <1.17.1 {*/ img.writeFile(path);
-                /*?} else*/ /*img.writeTo(path);*/
+                img.downloadTexture(0, false);
+                img.writeToFile(path);
                 img.close();
                 future.complete(path);
             } catch (IOException e) {
@@ -84,7 +83,7 @@ public class Util {
         if (RenderSystem.isOnRenderThread()) {
             runnable.run();
         } else {
-            MinecraftClient.getInstance().renderTaskQueue.add(runnable);
+            Minecraft.getInstance().progressTasks.add(runnable);
             future.join();
         }
     }

@@ -15,8 +15,8 @@ version = "$modVersion+$mcVersion"
 group = property("maven_group").toString()
 
 val scVersion = stonecutter.current.version
-val hasUi = stonecutter.compare(scVersion, "1.19.4") >= 0
-val hasNetworking = stonecutter.compare(scVersion, "1.20.6") >= 0
+val hasUi = false // stonecutter.compare(scVersion, "1.19.4") >= 0
+val hasNetworking = false // stonecutter.compare(scVersion, "1.20.6") >= 0
 val awVersion =
 	if (stonecutter.compare(scVersion, "1.20.6") >= 0) "1.20.6"
 	else if (stonecutter.compare(scVersion, "1.20.2") >= 0) "1.20.2"
@@ -63,6 +63,8 @@ repositories {
 
 	maven("https://api.modrinth.com/maven") { name = "Modrinth Maven" }
 
+	maven("https://maven.parchmentmc.org/") { name = "ParchmentMC" }
+
 	maven("https://repo.inventivetalent.org/repository/public/") { name = "inventive-repo" }
 
 	// for some reason using the terraformers maven version of
@@ -105,11 +107,12 @@ dependencies {
 	minecraft("com.mojang:minecraft:$mcVersion")
 	modImplementation("org.quiltmc:quilt-loader:${property("deps.quilt_loader")}")
 
-	val qm = property("deps.quilt_mappings").toString()
-	if (!qm.contains(":"))
-		mappings("org.quiltmc:quilt-mappings:$qm:intermediary-v2")
-	else
-		mappings(qm)
+	mappings(loom.layered {
+		if (property("deps.parchment") != "none")
+			parchment("org.parchmentmc.data:parchment-${property("deps.parchment")}@zip")
+
+		officialMojangMappings()
+	})
 
 	// QSL is not a complete API; You will need Quilted Fabric API to fill in the gaps.
 	// Quilted Fabric API will automatically pull in the correct QSL version.

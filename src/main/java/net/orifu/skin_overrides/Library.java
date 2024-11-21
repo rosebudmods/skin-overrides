@@ -6,8 +6,7 @@ import java.util.Optional;
 
 import com.google.gson.JsonElement;
 
-import com.mojang.authlib.GameProfile;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.override.LibraryOverrider;
 
 public interface Library {
@@ -85,7 +84,7 @@ public interface Library {
             return this.name;
         }
 
-        public abstract Identifier getTexture();
+        public abstract ResourceLocation getTexture();
 
         public abstract JsonElement toJson();
 
