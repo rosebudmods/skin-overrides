@@ -1,15 +1,15 @@
-package net.orifu.skin_overrides.screen;
+package net.orifu.skin_overrides.gui;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.library.SkinLibrary.SkinEntry;
 import net.orifu.skin_overrides.util.ModelPreview;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.xplat.gui.GuiGraphics;
-import net.orifu.xplat.gui.widget.AlwaysSelectedEntryListWidget.Entry;
+import net.orifu.xplat.gui.components.ObjectSelectionList;
 
-public class LibraryListEntry extends Entry<LibraryListEntry> {
+public class LibraryListEntry extends ObjectSelectionList.Entry<LibraryListEntry> {
     public static final int SKIN_WIDTH = PlayerSkinRenderer.WIDTH * 2;
     public static final int SKIN_HEIGHT = PlayerSkinRenderer.HEIGHT * 2;
     public static final int SKIN_OFFSET = 16;
@@ -19,7 +19,7 @@ public class LibraryListEntry extends Entry<LibraryListEntry> {
     public static final int SKIN_ENTRY_HEIGHT = SKIN_HEIGHT + 2 + 7 + PAD * 2;
 
     private final LibraryScreen parent;
-    private final MinecraftClient client;
+    private final Minecraft client;
 
     public LibraryEntry entry;
     public int index;
@@ -28,7 +28,7 @@ public class LibraryListEntry extends Entry<LibraryListEntry> {
 
     public LibraryListEntry(LibraryEntry entry, int index, LibraryScreen parent) {
         this.parent = parent;
-        this.client = MinecraftClient.getInstance();
+        this.client = Minecraft.getInstance();
 
         this.entry = entry;
         this.index = index;
@@ -54,13 +54,13 @@ public class LibraryListEntry extends Entry<LibraryListEntry> {
             this.preview.setYaw(this.parent.ov.skin ? 0 : 180);
         }
 
-        graphics.drawCenteredShadowedText(this.client.textRenderer, Text.literal(this.entry.getName()),
+        graphics.drawCenteredString(this.client.font, Component.literal(this.entry.getName()),
                 x + WIDTH / 2, y + PAD + SKIN_HEIGHT + 2, 0xffffff);
     }
 
     @Override
-    public Text getNarration() {
-        return Text.translatable("narrator.select", this.entry.getName());
+    public Component getNarration() {
+        return Component.translatable("narrator.select", this.entry.getName());
     }
 
     @Override

@@ -1,10 +1,22 @@
-package net.orifu.skin_overrides.screen;
+package net.orifu.skin_overrides.gui;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.client.gui.screen.ScreenArea;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.tabs.Tab;
+import net.minecraft.client.gui.components.tabs.TabManager;
+import net.minecraft.client.gui.components.tabs.TabNavigationBar;
+import net.minecraft.client.gui.layouts.FrameLayout;
+import net.minecraft.client.gui.layouts.GridLayout;
+import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
+import net.minecraft.client.gui.layouts.LayoutSettings;
+import net.minecraft.client.gui.layouts.LinearLayout;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.OverrideManager;
@@ -12,24 +24,12 @@ import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.library.CapeLibrary;
 import net.orifu.skin_overrides.library.SkinLibrary;
 import net.orifu.skin_overrides.override.LibraryOverrider.LibraryOverride;
-import net.orifu.skin_overrides.screen.widget.ModelPreviewWidget;
+import net.orifu.skin_overrides.gui.components.ModelPreview;
 import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.Util;
-import net.orifu.xplat.gui.tab.Tab;
-import net.orifu.xplat.gui.tab.TabManager;
-import net.orifu.xplat.gui.widget.ButtonWidget;
-import net.orifu.xplat.gui.widget.FrameWidget;
-import net.orifu.xplat.gui.widget.GridWidget;
-import net.orifu.xplat.gui.widget.HeaderBar;
-import net.orifu.xplat.gui.widget.HeaderFooterLayoutWidget;
-import net.orifu.xplat.gui.widget.LinearLayoutWidget;
-import net.orifu.xplat.gui.widget.TextFieldWidget;
-import net.orifu.xplat.gui.widget.TextWidget;
 import net.orifu.xplat.gui.GuiGraphics;
-import net.orifu.xplat.gui.LayoutSettings;
 import net.orifu.xplat.gui.Screen;
-import net.orifu.xplat.CommonTexts;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
@@ -40,32 +40,32 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 public class OverridesScreen extends Screen {
-    private static final Text TITLE = Text.translatable("skin_overrides.title");
-    private static final Text SKIN_TITLE = Text.translatable("skin_overrides.title.skin");
-    private static final Text CAPE_TITLE = Text.translatable("skin_overrides.title.cape");
+    private static final Component TITLE = Component.translatable("skin_overrides.title");
+    private static final Component SKIN_TITLE = Component.translatable("skin_overrides.title.skin");
+    private static final Component CAPE_TITLE = Component.translatable("skin_overrides.title.cape");
 
     private static final int PREVIEW_SCALE = 3;
 
-    private final TabManager tabManager = new TabManager(this::addDrawableSelectableElement, this::remove);
+    private final TabManager tabManager = new TabManager(this::addRenderableWidget, this::removeWidget);
 
     @Nullable
-    private final net.minecraft.client.gui.screen.Screen parent;
+    private final net.minecraft.client.gui.screens.Screen parent;
 
-    private HeaderFooterLayoutWidget layout;
-    private HeaderBar header;
-    private GridWidget grid;
+    private HeaderAndFooterLayout layout;
+    private TabNavigationBar header;
+    private GridLayout grid;
 
-    private OverrideListWidget overrideList;
-    private TextFieldWidget searchBox;
+    private OverridesSelectionList overrideList;
+    private EditBox searchBox;
 
-    private ModelPreviewWidget modelPreview;
-    private FrameWidget configFrame;
+    private ModelPreview modelPreview;
+    private FrameLayout configFrame;
 
     private OverrideManager ov = Mod.SKINS;
     @Nullable
     private GameProfile selectedProfile;
 
-    public OverridesScreen(@Nullable net.minecraft.client.gui.screen.Screen parent) {
+    public OverridesScreen(@Nullable net.minecraft.client.gui.screens.Screen parent) {
         super(TITLE);
 
         this.parent = parent;
@@ -74,105 +74,101 @@ public class OverridesScreen extends Screen {
     @Override
     protected void init() {
         // add tabs header
-        this.header = this.addDrawableSelectableElement(
-                HeaderBar.builder(this.tabManager, this.width)
-                        .tabs(new DummyTab(Mod.SKINS), new DummyTab(Mod.CAPES))
+        this.header = this.addRenderableWidget(
+                TabNavigationBar.builder(this.tabManager, this.width)
+                        .addTabs(new DummyTab(Mod.SKINS), new DummyTab(Mod.CAPES))
                         .build());
-        this.header.setFocusedTab(this.ov.skin ? 0 : 1, false);
+        this.header.selectTab(this.ov.skin ? 0 : 1, false);
 
         // add main content
-        this.layout = new HeaderFooterLayoutWidget(this);
-        this.grid = this.layout.addToContents(new GridWidget());
+        this.layout = new HeaderAndFooterLayout(this);
+        this.grid = this.layout.addToContents(new GridLayout());
         this.initContent();
 
         // add footer
-        var footer = this.layout.addToFooter(LinearLayoutWidget.createHorizontal().setSpacing(8));
+        var footer = this.layout.addToFooter(LinearLayout.horizontal().spacing(8));
 
         // library button
-        footer.add(ButtonWidget
-                .builder(Text.translatable("skin_overrides.library.open"),
-                        (btn) -> this.client.setScreen(new LibraryScreen(this.ov, this, this::pickedFromLibrary)))
-                .build());
+        footer.addChild(Button.builder(Component.translatable("skin_overrides.library.open"),
+                        (btn) -> this.minecraft.setScreen(new LibraryScreen(this.ov, this, this::pickedFromLibrary))).build());
 
         // done button
-        footer.add(ButtonWidget.builder(CommonTexts.DONE, (btn) -> this.closeScreen()).build());
+        footer.addChild(Button.builder(CommonComponents.GUI_DONE, (btn) -> this.onClose()).build());
 
         // finish
-        this.layout.visitWidgets(this::addDrawableSelectableElement);
+        this.layout.visitWidgets(this::addRenderableWidget);
         this.repositionElements();
     }
 
     protected void initContent() {
-        var helper = this.grid.createAdditionHelper(2);
+        var helper = this.grid.createRowHelper(2);
 
         if (this.overrideList == null || this.overrideList.ov != this.ov) {
-            this.overrideList = new OverrideListWidget(this, this.ov);
-            this.searchBox = new TextFieldWidget(this.textRenderer, 200, 20,
-                    Text.translatable("skin_overrides.input.search"));
-            this.searchBox.setChangedListener(this.overrideList::filter);
+            this.overrideList = new OverridesSelectionList(this, this.ov);
+            this.searchBox = new EditBox(this.font, 200, 20,
+                    Component.translatable("skin_overrides.input.search"));
+            this.searchBox.setResponder(this.overrideList::filter);
         }
 
         // add player list
-        var listWrapper = helper.add(LinearLayoutWidget.createVertical().setSpacing(6));
-        var searchWrapper = listWrapper.add(LinearLayoutWidget.createHorizontal(), LayoutSettings.create().alignHorizontallyCenter().setTopPadding(5));
-        this.setFocusedChild(this.searchBox);
-        this.overrideList.add(listWrapper::add, this::addDrawableSelectableElement);
+        var listWrapper = helper.addChild(LinearLayout.vertical().spacing(6));
+        var searchWrapper = listWrapper.addChild(LinearLayout.horizontal(), LayoutSettings.defaults().alignHorizontallyCenter().paddingTop(5));
+        this.setFocused(this.searchBox);
+        this.overrideList.addEntry(listWrapper::addChild, this::addRenderableWidget);
 
-        searchWrapper.add(this.searchBox);
-        searchWrapper.add(ButtonWidget.builder(Text.literal("+"), btn -> this.addOverrideFromSearch())
-                .tooltip(Tooltip.create(Text.translatable("skin_overrides.add_override")))
+        searchWrapper.addChild(this.searchBox);
+        searchWrapper.addChild(Button.builder(Component.literal("+"), btn -> this.addOverrideFromSearch())
+                .tooltip(Tooltip.create(Component.translatable("skin_overrides.add_override")))
                 .width(20).build());
 
         // add configuration
-        this.configFrame = helper.add(new FrameWidget());
-        var configCols = configFrame.add(LinearLayoutWidget.createHorizontal()).setSpacing(12);
-        GridWidget config = (GridWidget) configCols.add(new GridWidget()).setSpacing(4);
+        this.configFrame = helper.addChild(new FrameLayout());
+        var configCols = configFrame.addChild(LinearLayout.horizontal().spacing(12));
+        GridLayout config = configCols.addChild(new GridLayout().spacing(4));
         if (this.selectedProfile == null) {
-            this.configFrame.add(new TextWidget(Text.translatable("skin_overrides.no_selection"), this.textRenderer));
+            this.configFrame.addChild(new StringWidget(Component.translatable("skin_overrides.no_selection"), this.font));
         } else {
             this.initConfig(config);
 
             Skin overriddenSkin = Mod.override(this.selectedProfile);
             if (this.selectedProfile != null) {
-                this.modelPreview = configCols.add(this.ov.skin
-                                ? ModelPreviewWidget.skin(overriddenSkin, PREVIEW_SCALE, this.client)
-                                : ModelPreviewWidget.capeWithSkin(overriddenSkin, PREVIEW_SCALE, this.client),
-                        LayoutSettings.create().alignHorizontallyRight().alignVerticallyCenter());
+                this.modelPreview = configCols.addChild(this.ov.skin
+                                ? ModelPreview.skin(overriddenSkin, PREVIEW_SCALE, this.minecraft)
+                                : ModelPreview.capeWithSkin(overriddenSkin, PREVIEW_SCALE, this.minecraft),
+                        LayoutSettings.defaults().alignHorizontallyRight().alignVerticallyMiddle());
             }
         }
     }
 
-    protected void initConfig(GridWidget config) {
+    protected void initConfig(GridLayout config) {
         // make sure the latest overrides are loaded before getting them
         Mod.SKINS.update();
         Mod.CAPES.update();
 
         var override = this.ov.get(this.selectedProfile);
 
-        config.add(new TextWidget(Text.translatable(this.ov.skin
+        config.addChild(new StringWidget(Component.translatable(this.ov.skin
                 ? "skin_overrides.add_skin"
                 : "skin_overrides.add_cape"),
-                this.textRenderer), 0, 0);
+                this.font), 0, 0);
 
         // override from library button
-        config.add(ButtonWidget.builder(Text.translatable("skin_overrides.library.pick"),
-                        btn -> this.client.setScreen(new LibraryScreen(this.ov, this, this::pickedFromLibrary)))
+        config.addChild(Button.builder(Component.translatable("skin_overrides.library.pick"),
+                        btn -> this.minecraft.setScreen(new LibraryScreen(this.ov, this, this::pickedFromLibrary)))
                 .width(120).build(), 1, 0);
 
         // remove override button
-        config.add(ButtonWidget
-                .builder(Text.translatable("skin_overrides.remove"), btn -> this.removeOverride())
-                .width(120)
-                .build(), 2, 0).active = override.isPresent();
+        config.addChild(Button.builder(Component.translatable("skin_overrides.remove"), btn -> this.removeOverride())
+                .width(120).build(), 2, 0).active = override.isPresent();
 
         // add to library button
-        config.add(ButtonWidget.builder(Text.translatable("skin_overrides.library.add"), btn -> this.addToLibrary())
+        config.addChild(Button.builder(Component.translatable("skin_overrides.library.add"), btn -> this.addToLibrary())
                 .width(120).build(), 4, 0).active = !override.map(ov -> ov instanceof LibraryOverride).orElse(false);
 
         // change skin button
         if (this.selectedProfile.equals(ProfileHelper.user())) {
-            config.add(ButtonWidget.builder(Text.translatable("skin_overrides.change_skin"),
-                            btn -> this.client.setScreen(new SkinChangeInfoScreen(this)))
+            config.addChild(Button.builder(Component.translatable("skin_overrides.change_skin"),
+                            btn -> this.minecraft.setScreen(new SkinChangeInfoScreen(this)))
                     .width(120).build(), 5, 0).active = override.isPresent();
         }
     }
@@ -202,13 +198,13 @@ public class OverridesScreen extends Screen {
         this.header.setWidth(this.width);
         this.header.arrangeElements();
 
-        int hh = this.header.getArea().bottom();
+        int hh = this.header.getRectangle().bottom();
         int fh = this.layout.getFooterHeight();
         int height = this.height - hh - fh;
 
         // set main content size
         this.searchBox.setWidth(Math.min(200, this.width / 2 - 36));
-        this.overrideList.setDimensions(this.width / 2, height - 5 - 20 - 6);
+        this.overrideList.setSize(this.width / 2, height - 5 - 20 - 6);
         this.configFrame.setMinDimensions(this.width / 2, height);
 
         // reposition layout
@@ -227,8 +223,8 @@ public class OverridesScreen extends Screen {
     }
 
     @Override
-    public void closeScreen() {
-        this.client.setScreen(this.parent);
+    public void onClose() {
+        this.minecraft.setScreen(this.parent);
     }
 
     public OverrideManager overrideManager() {
@@ -239,12 +235,12 @@ public class OverridesScreen extends Screen {
         if (this.ov != ov) {
             this.ov = ov;
             this.selectedProfile = null;
-            this.clearAndInit();
+            this.rebuildWidgets();
         }
     }
 
     public void reload() {
-        this.clearAndInit();
+        this.rebuildWidgets();
     }
 
     public void selectPlayer(OverrideListEntry entry) {
@@ -259,28 +255,28 @@ public class OverridesScreen extends Screen {
             entry.profile = this.selectedProfile;
         }
 
-        this.clearAndInit();
+        this.rebuildWidgets();
     }
 
     protected void upgradeProfile() {
         // get the full profile so we have the player's skin/cape (if any)
-        this.selectedProfile = this.overrideList.getSelectedOrNull().upgrade();
+        this.selectedProfile = this.overrideList.getSelected().upgrade();
     }
 
     public void pickedFromLibrary(LibraryEntry entry) {
         var profile = this.selectedProfile != null ? this.selectedProfile : ProfileHelper.user();
         this.ov.addOverride(profile, entry);
-        this.clearAndInit();
+        this.rebuildWidgets();
     }
 
     protected void addOverrideFromSearch() {
-        if (this.searchBox.getText().isBlank()) {
+        if (this.searchBox.getValue().isBlank()) {
             return;
         }
 
         // i tried to make this asynchronous and got ConcurrentModificationException
-        GameProfile profile = ProfileHelper.idToBasicProfileSync(this.searchBox.getText());
-        this.searchBox.setText("");
+        GameProfile profile = ProfileHelper.idToBasicProfileSync(this.searchBox.getValue());
+        this.searchBox.setValue("");
         this.selectPlayer(this.overrideList.addEntry(profile));
     }
 
@@ -307,11 +303,11 @@ public class OverridesScreen extends Screen {
             if (this.ov.has(this.selectedProfile) && entry.isPresent()) {
                 this.ov.removeOverride(this.selectedProfile);
                 this.ov.addOverride(this.selectedProfile, entry.get());
-                this.clearAndInit();
+                this.rebuildWidgets();
             }
         };
 
-        this.client.setScreen(this.ov.skin
+        this.minecraft.setScreen(this.ov.skin
                 ? OverrideInfoEntryScreen.getName(this, texture, playerSkin.model(), guessedName, callback)
                 : OverrideInfoEntryScreen.getName(this, texture, guessedName, callback));
     }
@@ -319,11 +315,11 @@ public class OverridesScreen extends Screen {
     public void removeOverride() {
         this.ov.removeOverride(this.selectedProfile);
         this.upgradeProfile(); // get player's actual skin/cape
-        this.clearAndInit(); // update remove buttons
+        this.rebuildWidgets(); // update remove buttons
     }
 
     @Override
-    public void filesDragged(List<Path> paths) {
+    public void onFilesDrop(List<Path> paths) {
         if (paths.isEmpty()) {
             return;
         }
@@ -336,20 +332,20 @@ public class OverridesScreen extends Screen {
 
         if (this.ov.skin) {
             // open model selection screen
-            this.client.setScreen(OverrideInfoEntryScreen.getModel(this,
+            this.minecraft.setScreen(OverrideInfoEntryScreen.getModel(this,
                     Util.texture(new LocalSkinTexture(path.toFile())),
                     model -> {
                         this.ov.copyOverride(profile, path, model);
-                        this.clearAndInit();
+                        this.rebuildWidgets();
                     }));
         } else {
             this.ov.copyOverride(profile, path, null);
-            this.clearAndInit();
+            this.rebuildWidgets();
         }
     }
 
     class DummyTab implements Tab {
-        public final Text title;
+        public final Component title;
         public final OverrideManager ov;
 
         public DummyTab(OverrideManager ov) {
@@ -358,18 +354,17 @@ public class OverridesScreen extends Screen {
         }
 
         @Override
-        public Text getTitle() {
+        public Component getTabTitle() {
             return this.title;
         }
 
         @Override
-        public void visitChildren(Consumer<ClickableWidget> consumer) {
+        public void visitChildren(Consumer<AbstractWidget> consumer) {
             // when selected
             OverridesScreen.this.setOverrideManager(this.ov);
         }
 
         @Override
-        public void refreshLayout(ScreenArea area) {
-        }
+        public void doLayout(ScreenRectangle rect) {}
     }
 }

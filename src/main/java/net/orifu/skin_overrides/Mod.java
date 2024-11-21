@@ -6,7 +6,7 @@ import net.minecraft.util.Tuple;
 import net.orifu.skin_overrides.library.CapeLibrary;
 import net.orifu.skin_overrides.library.SkinLibrary;
 //? if hasNetworking
-/*import net.orifu.skin_overrides.networking.ModNetworking;*/
+import net.orifu.skin_overrides.networking.ModNetworking;
 import net.orifu.skin_overrides.override.LocalCapeOverrider;
 import net.orifu.skin_overrides.override.LocalSkinOverrider;
 import net.orifu.skin_overrides.override.SkinChangeOverride;
@@ -84,7 +84,7 @@ public class Mod {
 			@Nullable OverrideManager.Override oldOverride,
 			@Nullable OverrideManager.Override newOverride) {
 		//? if hasNetworking {
-		/*if (newOverride != null) {
+		if (newOverride != null) {
 			// switched to a possibly signed override
 			ModNetworking.updateSkinOnServer(newOverride);
 		} else if (oldOverride != null) {
@@ -92,13 +92,13 @@ public class Mod {
 			// clear skin just in case!
 			ModNetworking.clearSkinOverrideOnServer();
 		}
-		*///?}
+		//?}
 	}
 
 	public static boolean isOnSkinOverridesServer() {
 		//? if hasNetworking {
-		/*return ModNetworking.isOnSkinOverridesServer();
-		*///?} else
-		return false;
+		return ModNetworking.isOnSkinOverridesServer();
+		//?} else
+		/*return false;*/
 	}
 }

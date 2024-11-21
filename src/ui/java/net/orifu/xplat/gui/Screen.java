@@ -1,13 +1,9 @@
 package net.orifu.xplat.gui;
 
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.Selectable;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
-public abstract class Screen extends net.minecraft.client.gui.screen.Screen {
-    protected Screen(Text title) {
+public abstract class Screen extends net.minecraft.client.gui.screens.Screen {
+    protected Screen(Component title) {
         super(title);
     }
 

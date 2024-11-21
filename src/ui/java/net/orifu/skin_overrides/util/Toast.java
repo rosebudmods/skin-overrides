@@ -1,13 +1,14 @@
 package net.orifu.skin_overrides.util;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.toast.SystemToast;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.toasts.SystemToast;
+import net.minecraft.client.gui.components.toasts.SystemToast.SystemToastId;
+import net.minecraft.network.chat.Component;
 
 public class Toast {
-    public static void show(Text title, Text description) {
+    public static void show(Component title, Component description) {
         //? if >=1.21.3 {
-        SystemToast.show(MinecraftClient.getInstance().method_1566(), SystemToast.Id.PACK_LOAD_FAILURE, title, description);
+        SystemToast.addOrUpdate(Minecraft.getInstance().getToastManager(), SystemToastId.PACK_LOAD_FAILURE, title, description);
         //?} else {
         /*MinecraftClient.getInstance().getToastManager().add(new SystemToast(
                 SystemToast.

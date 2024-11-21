@@ -1,17 +1,16 @@
-package net.orifu.skin_overrides.screen;
+package net.orifu.skin_overrides.gui;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.Mth;
 import net.orifu.xplat.gui.GuiGraphics;
-import net.orifu.xplat.gui.widget.AlwaysSelectedEntryListWidget;
-import net.orifu.xplat.gui.widget.AlwaysSelectedEntryListWidget.Entry;
+import net.orifu.xplat.gui.components.ObjectSelectionList;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AlwaysSelectedEntryGridWidget<E extends Entry<E>> extends AlwaysSelectedEntryListWidget<E> {
+public abstract class ObjectSelectionGrid<E extends ObjectSelectionList.Entry<E>> extends ObjectSelectionList<E> {
     protected final int itemWidth;
     protected int xTiles;
 
-    public AlwaysSelectedEntryGridWidget(MinecraftClient client, int width, int height, int y, int itemWidth,
+    public ObjectSelectionGrid(Minecraft client, int width, int height, int y, int itemWidth,
             int itemHeight, int xTiles) {
         super(client, width, height, y, itemHeight);
 
@@ -26,54 +25,54 @@ public abstract class AlwaysSelectedEntryGridWidget<E extends Entry<E>> extends 
     @Override
     protected int getMaxPosition() {
         // divide entry count by x tiles
-        return this.headerHeight + MathHelper.ceilDiv(this.getEntryCount(), this.xTiles()) * this.itemHeight + 4;
+        return this.headerHeight + Mth.positiveCeilDiv(this.getItemCount(), this.xTiles()) * this.itemHeight + 4;
     }
 
     @Override
     public int getRowTop(int index) {
         // divide index by x tiles
         return this.getY() + 4 - (int) this.getScrollAmount()
-                + MathHelper.floorDiv(index, this.xTiles()) * this.itemHeight
+                + Mth.floorDiv(index, this.xTiles()) * this.itemHeight
                 + this.headerHeight;
     }
 
     @Override
-    protected void renderList(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    protected void renderListItems(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         int baseX = this.getRowLeft();
         int w = this.itemWidth;
         int h = this.itemHeight - 4;
 
-        for (int i = 0; i < this.getEntryCount(); ++i) {
+        for (int i = 0; i < this.getItemCount(); ++i) {
             // get X and Y accounting for the x tiles
             int x = baseX + i % this.xTiles() * this.itemWidth;
             int y = this.getRowTop(i);
             int y2 = this.getRowBottom(i);
 
-            if (y2 >= this.getY() && y <= this.getYEnd()) {
-                this.renderEntry(graphics, mouseX, mouseY, delta, i, x, y, w, h);
+            if (y2 >= this.getY() && y <= this.getBottom()) {
+                this.renderItem(graphics, mouseX, mouseY, delta, i, x, y, w, h);
             }
         }
     }
 
     @Override
-    protected void renderEntry(GuiGraphics graphics, int mouseX, int mouseY, float delta, int index, int x, int y,
+    protected void renderItem(GuiGraphics graphics, int mouseX, int mouseY, float delta, int index, int x, int y,
             int width, int height) {
         // changed to use the new drawEntrySelectionHighlight method
 
         E entry = this.getEntry(index);
-        boolean isHovered = this.getHoveredEntry() != null && this.getHoveredEntry().equals(entry);
+        boolean isHovered = this.getHovered() != null && this.getHovered().equals(entry);
 
-        entry.drawBorder(graphics.portable(), index, y, x, width, height, mouseX, mouseY, isHovered, delta);
+        entry.renderBack(graphics.portable(), index, y, x, width, height, mouseX, mouseY, isHovered, delta);
 
-        if (this.isSelectedEntry(index)) {
+        if (this.isSelectedItem(index)) {
             int borderColor = this.isFocused() ? 0xff_ffffff : 0xff_808080;
-            this.drawEntrySelectionHighlight(graphics, x, y, borderColor, 0xff_000000);
+            this.renderSelection(graphics, x, y, borderColor, 0xff_000000);
         }
 
         entry.render(graphics.portable(), index, y, x, width, height, mouseX, mouseY, isHovered, delta);
     }
 
-    protected void drawEntrySelectionHighlight(GuiGraphics graphics, int x, int y, int borderColor, int fillColor) {
+    protected void renderSelection(GuiGraphics graphics, int x, int y, int borderColor, int fillColor) {
         graphics.fill(x - 2, y - 2, x + this.itemWidth + 2, y + this.itemHeight + 2, borderColor);
         graphics.fill(x - 1, y - 1, x + this.itemWidth + 1, y + this.itemHeight + 1, fillColor);
     }
@@ -91,7 +90,7 @@ public abstract class AlwaysSelectedEntryGridWidget<E extends Entry<E>> extends 
             return null;
         }
         // ensure the position is not on the scroll bar
-        if (x > this.getScrollbarPositionX()) {
+        if (x > this.getScrollbarPosition()) {
             return null;
         }
 
@@ -100,7 +99,7 @@ public abstract class AlwaysSelectedEntryGridWidget<E extends Entry<E>> extends 
         int entryY = (int) relativeY / this.itemHeight;
         int i = entryY * this.xTiles() + entryX;
 
-        return i < this.getEntryCount() ? this.getEntry(i) : null;
+        return i < this.getItemCount() ? this.getEntry(i) : null;
     }
 
     @Override
@@ -111,13 +110,13 @@ public abstract class AlwaysSelectedEntryGridWidget<E extends Entry<E>> extends 
 
         if (top < this.getY()) {
             this.setScrollAmount(top - this.getRowTop(0));
-        } else if (bottom > this.getYEnd()) {
+        } else if (bottom > this.getBottom()) {
             this.setScrollAmount(bottom - this.height - this.getRowTop(0) + 4 + 4);
         }
     }
 
     @Deprecated
-    protected void drawEntrySelectionHighlight(GuiGraphics graphics, int y, int entryWidth, int entryHeight,
+    protected void renderSelection(GuiGraphics graphics, int y, int entryWidth, int entryHeight,
             int borderColor, int fillColor) {
         // old bad method
         throw new UnsupportedOperationException();

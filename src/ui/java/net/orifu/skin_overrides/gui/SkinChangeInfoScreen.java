@@ -1,0 +1,106 @@
+package net.orifu.skin_overrides.gui;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.layouts.Layout;
+import net.minecraft.client.gui.layouts.LayoutSettings;
+import net.minecraft.client.gui.layouts.LinearLayout;
+import net.minecraft.client.gui.screens.ConfirmLinkScreen;
+import net.minecraft.client.gui.screens.multiplayer.WarningScreen;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.orifu.skin_overrides.Mod;
+import net.orifu.skin_overrides.override.SkinChangeOverride;
+import net.orifu.skin_overrides.util.ProfileHelper;
+import net.orifu.skin_overrides.util.Toast;
+
+//? if hasNetworking
+import net.orifu.skin_overrides.networking.ModNetworking;
+
+public class SkinChangeInfoScreen extends WarningScreen {
+    private static final Component HEADER = Component.translatable("skin_overrides.change_skin.title");
+    private static final Component MESSAGE = Component.translatable("skin_overrides.change_skin.message");
+    private static final Component MESSAGE_VANILLA = Component.translatable("skin_overrides.change_skin.message.vanilla");
+    private static final Component MESSAGE_MODDED = Component.translatable("skin_overrides.change_skin.message.modded");
+
+    private static final String LEARN_MORE_URL = "https://rosebud.dev/skin-overrides/networking/";
+
+    private final OverridesScreen parent;
+
+    protected SkinChangeInfoScreen(OverridesScreen parent) {
+        super(HEADER, getMessage(), getMessage());
+
+        this.parent = parent;
+    }
+
+    protected static Component getMessage() {
+        return Minecraft.getInstance().player == null ? MESSAGE
+                : Mod.isOnSkinOverridesServer() ? MESSAGE_MODDED : MESSAGE_VANILLA;
+    }
+
+    @Override
+    protected Layout addFooterButtons()
+    {
+        var rows = LinearLayout.vertical().spacing(8);
+
+        var buttons = rows.addChild(LinearLayout.horizontal().spacing(8));
+        buttons.addChild(Button.builder(CommonComponents.GUI_PROCEED, btn -> this.changeSkin()).build());
+        buttons.addChild(Button.builder(CommonComponents.GUI_CANCEL, btn -> this.onClose()).build());
+
+        rows.addChild(Button.builder(Component.translatable("skin_overrides.change_skin.learn_more"),
+                        ConfirmLinkScreen.confirmLink(this, LEARN_MORE_URL)).build(),
+                LayoutSettings.defaults().alignHorizontallyCenter());
+
+        //? if >=1.20.6 {
+        return rows;
+        //?} else {
+        /*rows.setPosition((this.width - (150 * 2 + 8)) / 2, textHeight + 100);
+        /^? if >=1.20.2 {^//^rows.visitWidgets(this::addDrawableSelectableElement);
+        ^//^?} else^/ rows.visitWidgets(this::addDrawableChild);
+        rows.arrangeElements();
+        *///?}
+    }
+
+    @Override
+    public void onClose() {
+        this.minecraft.setScreen(this.parent);
+    }
+
+    protected void changeSkin() {
+        var userProfile = ProfileHelper.user();
+        var skin = Mod.override(userProfile);
+        var newSkin = skin.setUserSkin();
+
+        if (newSkin.isPresent()) {
+            Mod.LOGGER.debug("player has changed skin. api response:\nurl: {}\nmodel: {}",
+                    newSkin.get().getA(), newSkin.get().getB());
+
+            // remove existing override
+            Mod.SKINS.removeOverride(userProfile);
+            this.parent.reload();
+            // add new "override" for showing updated skin until restarting
+            SkinChangeOverride.set(newSkin.get().getA(), newSkin.get().getB());
+
+            var updatedProfile = ProfileHelper.uuidToProfileExpectingSkinUrl(userProfile.getId(), newSkin.get().getA());
+            updatedProfile.thenAccept(profile -> {
+                if (profile.isPresent()) {
+                    var signedSkin = ProfileHelper.getProfileSkinSignature(profile.get());
+
+                    Mod.LOGGER.debug("received updated profile from services:\nval: {}\nsig: {}",
+                            signedSkin.value(), signedSkin.signature());
+
+                    //? if hasNetworking
+                    ModNetworking.updateSkinOnServer(signedSkin.value(), signedSkin.signature());
+                } else {
+                    Toast.show(Component.translatable("skin_overrides.change_skin.reload_fail.title"),
+                            Component.translatable("skin_overrides.change_skin.reload_fail.description"));
+                }
+            });
+        } else {
+            Toast.show(Component.translatable("skin_overrides.change_skin.fail.title"),
+                    Component.translatable("skin_overrides.change_skin.fail.description"));
+        }
+
+        this.onClose();
+    }
+}

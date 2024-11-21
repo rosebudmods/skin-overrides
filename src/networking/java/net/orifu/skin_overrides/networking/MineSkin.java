@@ -1,6 +1,6 @@
 package net.orifu.skin_overrides.networking;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.util.Util;
@@ -22,7 +22,7 @@ public class MineSkin {
             .apiKey("") // prevents a warning
             .build();
 
-    public static Optional<Skin.Signature> sign(Identifier texture, Skin.Model model) {
+    public static Optional<Skin.Signature> sign(ResourceLocation texture, Skin.Model model) {
         try {
             File skin = File.createTempFile("skin-overrides_", "_temp-skin");
             Util.saveTexture(texture, 64, 64, skin.toPath());

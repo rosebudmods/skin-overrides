@@ -1,13 +1,13 @@
 package net.orifu.xplat.gui;
 
 //? if >=1.20.1 {
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 
 public class GuiGraphics extends net.minecraft.client.gui.GuiGraphics {
     public GuiGraphics(net.minecraft.client.gui.GuiGraphics graphics) {
-        super(MinecraftClient.getInstance(), graphics.vertexConsumers);
+        super(Minecraft.getInstance(), graphics.bufferSource);
     }
 
     public GuiGraphics portable() {
@@ -15,13 +15,13 @@ public class GuiGraphics extends net.minecraft.client.gui.GuiGraphics {
     }
 
     //? if >=1.21.3 {
-    public void drawTexture(
-            Identifier id,
+    public void blit(
+            ResourceLocation id,
             int x, int y, int w, int h,
             float u, float v, int uvW, int uvH,
             int txW, int txH
     ) {
-        this.method_25302(RenderLayer::getGuiTextured, id, x, y, u, v, w, h, uvW, uvH, txW, txH);
+        this.blit(RenderType::guiTextured, id, x, y, u, v, w, h, uvW, uvH, txW, txH);
     }
     //?}
 }

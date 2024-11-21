@@ -1,18 +1,18 @@
 package net.orifu.skin_overrides.util;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.entity.model.ElytraEntityModel;
-import net.minecraft.client.render.entity.model.EntityModel;
-import net.minecraft.client.render.entity.model.EntityModelLayers;
-import net.minecraft.client.render.entity.model.PlayerEntityModel;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Axis;
-import net.minecraft.util.math.MathHelper;
+import com.mojang.math.Axis;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ElytraModel;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.PlayerModel;
+import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Skin;
-import net.orifu.xplat.DiffuseLighting;
+import net.orifu.xplat.Lighting;
 import net.orifu.xplat.gui.GuiGraphics;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,10 +32,10 @@ public class ModelPreview {
     protected boolean showElytra = false;
 
     //? if >=1.21.3 {
-    protected final PlayerEntityModel wide;
-    protected final PlayerEntityModel slim;
+    protected final PlayerModel wide;
+    protected final PlayerModel slim;
     protected final PlayerCapeModel cape;
-    protected final ElytraEntityModel elytra;
+    protected final ElytraModel elytra;
     //?} else {
     /*protected final PlayerEntityModel<?> wide;
     protected final PlayerEntityModel<?> slim;
@@ -48,22 +48,22 @@ public class ModelPreview {
     protected static final float MODEL_Y_OFFSET = 0.0625f;
     protected static final float MAX_PITCH = 50;
 
-    public ModelPreview(@Nullable Skin skin, int scale, MinecraftClient client) {
+    public ModelPreview(@Nullable Skin skin, int scale, Minecraft client) {
         this.skin = skin;
         this.scale = scale;
 
-        var modelLoader = client.getEntityModelLoader();
+        var models = client.getEntityModels();
 
         //? if >=1.21.3 {
-        this.wide = new PlayerEntityModel(modelLoader.getModelPart(EntityModelLayers.PLAYER), false);
-        this.slim = new PlayerEntityModel(modelLoader.getModelPart(EntityModelLayers.PLAYER_SLIM), true);
-        this.cape = new PlayerCapeModel(modelLoader.getModelPart(EntityModelLayers.field_52980));
-        this.elytra = new ElytraEntityModel(modelLoader.getModelPart(EntityModelLayers.ELYTRA));
+        this.wide = new PlayerModel(models.bakeLayer(ModelLayers.PLAYER), false);
+        this.slim = new PlayerModel(models.bakeLayer(ModelLayers.PLAYER_SLIM), true);
+        this.cape = new PlayerCapeModel(models.bakeLayer(ModelLayers.PLAYER_CAPE));
+        this.elytra = new ElytraModel(models.bakeLayer(ModelLayers.ELYTRA));
         //?} else {
-        /*this.wide = new PlayerEntityModel<>(modelLoader.getModelPart(EntityModelLayers.PLAYER), false);
-        this.slim = new PlayerEntityModel<>(modelLoader.getModelPart(EntityModelLayers.PLAYER_SLIM), true);
+        /*this.wide = new PlayerEntityModel<>(models.getModelPart(EntityModelLayers.PLAYER), false);
+        this.slim = new PlayerEntityModel<>(models.getModelPart(EntityModelLayers.PLAYER_SLIM), true);
         this.cape = new PlayerCapeModel<>(PlayerCapeModel.getTexturedModelData().createModel());
-        this.elytra = new ElytraEntityModel<>(modelLoader.getModelPart(EntityModelLayers.ELYTRA));
+        this.elytra = new ElytraEntityModel<>(models.getModelPart(EntityModelLayers.ELYTRA));
 
         // why is this the default??
         this.wide.child = false;
@@ -77,7 +77,7 @@ public class ModelPreview {
         this.skin = skin;
     }
 
-    public void setCape(@Nullable Identifier texture) {
+    public void setCape(@Nullable ResourceLocation texture) {
         if (this.skin == null) {
             this.skin = ProfileHelper.getDefaultSkins()[0];
         }
@@ -98,7 +98,7 @@ public class ModelPreview {
     }
 
     public void setPitch(float pitch) {
-        this.pitch = MathHelper.clamp(pitch, -MAX_PITCH, MAX_PITCH);
+        this.pitch = Mth.clamp(pitch, -MAX_PITCH, MAX_PITCH);
     }
 
     public void setYaw(float yaw) {
@@ -133,58 +133,58 @@ public class ModelPreview {
     public void draw(GuiGraphics graphics, int x, int y) {
         if (this.skin == null) return;
 
-        graphics.getMatrices().push();
-        graphics.getMatrices().translate(x + this.width() / 2.0, y + this.height(), 100);
+        graphics.pose().pushPose();
+        graphics.pose().translate(x + this.width() / 2.0, y + this.height(), 100);
         float scale = this.height() / MODEL_HEIGHT;
-        graphics.getMatrices().scale(scale, scale, scale);
-        graphics.getMatrices().translate(0, -MODEL_Y_OFFSET, 0);
-        graphics.getMatrices().rotateAround(Axis.X_POSITIVE.rotationDegrees(this.pitch), 0, -MODEL_HEIGHT / 2, 0);
+        graphics.pose().scale(scale, scale, scale);
+        graphics.pose().translate(0, -MODEL_Y_OFFSET, 0);
+        graphics.pose().rotateAround(Axis.XP.rotationDegrees(this.pitch), 0, -MODEL_HEIGHT / 2, 0);
         //? if >=1.20.6 {
-        graphics.getMatrices().rotate(Axis.Y_POSITIVE.rotationDegrees(this.yaw));
+        graphics.pose().mulPose(Axis.YP.rotationDegrees(this.yaw));
         //?} else
         /*graphics.getMatrices().multiply(Axis.Y_POSITIVE.rotationDegrees(this.yaw));*/
-        graphics.draw();
+        graphics.flush();
 
-        DiffuseLighting.setupInventoryShaderLighting(Axis.X_POSITIVE.rotationDegrees(this.pitch));
-        graphics.getMatrices().push();
+        Lighting.setupForEntityInInventory(Axis.XP.rotationDegrees(this.pitch));
+        graphics.pose().pushPose();
         //? if >=1.20.6 {
-        graphics.getMatrices().scale(1, 1, -1);
+        graphics.pose().scale(1, 1, -1);
         //?} else
         /*graphics.getMatrices().multiplyMatrix(new org.joml.Matrix4f().scale(1, 1, -1));*/
-        graphics.getMatrices().translate(0, -1.5, 0);
+        graphics.pose().translate(0, -1.5, 0);
         this.render(graphics);
-        graphics.getMatrices().pop();
-        graphics.draw();
+        graphics.pose().popPose();
+        graphics.flush();
 
-        DiffuseLighting.setup3DGuiLighting();
-        graphics.getMatrices().pop();
+        Lighting.setupFor3DItems();
+        graphics.pose().popPose();
     }
 
     protected void render(GuiGraphics graphics) {
         var model = this.skin.model().equals(Skin.Model.WIDE) ? this.wide : this.slim;
 
         if (this.showSkin) {
-            RenderLayer layer = model.getLayer(this.skin.texture());
-            renderModel(model, layer, graphics);
+            RenderType type = model.renderType(this.skin.texture());
+            renderModel(model, type, graphics);
         }
 
-        Identifier cape = this.skin.capeTexture();
+        ResourceLocation cape = this.skin.capeTexture();
         if (cape != null && this.showCape && !this.showElytra) {
-            RenderLayer capeLayer = this.cape.getLayer(cape);
-            renderModel(this.cape, capeLayer, graphics);
+            RenderType capeType = this.cape.renderType(cape);
+            renderModel(this.cape, capeType, graphics);
         } else if (this.showElytra) {
-            Identifier elytra = Optional.ofNullable(this.skin.elytraTexture())
+            ResourceLocation elytra = Optional.ofNullable(this.skin.elytraTexture())
                     .or(() -> Optional.ofNullable(this.skin.capeTexture()))
                     .orElse(Mod.defaultId("textures/entity/elytra.png"));
-            RenderLayer elytraLayer = model.getLayer(elytra);
-            renderModel(this.elytra, elytraLayer, graphics);
+            RenderType elytraType = model.renderType(elytra);
+            renderModel(this.elytra, elytraType, graphics);
         }
     }
 
-    private static void renderModel(EntityModel<?> model, RenderLayer layer, GuiGraphics graphics) {
+    private static void renderModel(EntityModel<?> model, RenderType type, GuiGraphics graphics) {
         //? if >=1.21.3 {
-        graphics.method_64039(vertexConsumers ->
-            model.method_60879(graphics.getMatrices(), vertexConsumers.getBuffer(layer), 0xf000f0, OverlayTexture.DEFAULT_UV));
+        graphics.drawSpecial(bufferSource ->
+            model.renderToBuffer(graphics.pose(), bufferSource.getBuffer(type), 0xf000f0, OverlayTexture.NO_OVERLAY));
         //?} else if >=1.21 {
         /*model.method_60879(graphics.getMatrices(), graphics.getVertexConsumers().getBuffer(layer), 0xf000f0, OverlayTexture.DEFAULT_UV);
         *///?} else

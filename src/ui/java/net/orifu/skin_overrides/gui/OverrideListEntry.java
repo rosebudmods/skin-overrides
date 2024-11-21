@@ -1,26 +1,27 @@
-package net.orifu.skin_overrides.screen;
+package net.orifu.skin_overrides.gui;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.OverrideManager;
 import net.orifu.skin_overrides.util.PlayerCapeRenderer;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.xplat.gui.GuiGraphics;
-import net.orifu.xplat.gui.widget.AlwaysSelectedEntryListWidget.Entry;
+import net.orifu.xplat.gui.components.ObjectSelectionList;
+import org.jetbrains.annotations.NotNull;
 
-public class OverrideListEntry extends Entry<OverrideListEntry> {
-    private final MinecraftClient client;
+public class OverrideListEntry extends ObjectSelectionList.Entry<OverrideListEntry> {
+    private final Minecraft client;
     public GameProfile profile;
     public final Type type;
     public final OverrideManager ov;
 
     private final OverridesScreen parent;
 
-    public OverrideListEntry(MinecraftClient client, GameProfile profile, Type type, OverridesScreen parent) {
+    public OverrideListEntry(Minecraft client, GameProfile profile, Type type, OverridesScreen parent) {
         this.client = client;
         this.profile = profile;
         this.type = type;
@@ -33,16 +34,16 @@ public class OverrideListEntry extends Entry<OverrideListEntry> {
             int mouseY, boolean hovered, float tickDelta) {
         // draw player face/cape
         if (this.ov.skin) {
-            PlayerSkinRenderer.drawFace(graphics, Mod.override(this.profile), x, y, 4);
+            PlayerSkinRenderer.blitFace(graphics, Mod.override(this.profile), x, y, 4);
         } else {
             int capeX = x + (32 - PlayerCapeRenderer.WIDTH * 2) / 2;
             PlayerCapeRenderer.draw(graphics, Mod.override(this.profile), capeX, y, 2);
         }
 
         // draw player name
-        graphics.drawShadowedText(this.client.textRenderer, this.getPlayerName(), x + 32 + 2, y + 1, 0);
+        graphics.drawString(this.client.font, this.getPlayerName(), x + 32 + 2, y + 1, 0);
         // draw override status
-        graphics.drawShadowedText(this.client.textRenderer, this.getOverrideStatus(), x + 32 + 2, y + 12, 0);
+        graphics.drawString(this.client.font, this.getOverrideStatus(), x + 32 + 2, y + 12, 0);
     }
 
     public GameProfile upgrade() {
@@ -50,27 +51,28 @@ public class OverrideListEntry extends Entry<OverrideListEntry> {
         return this.profile;
     }
 
-    protected Text getPlayerName() {
-        Text name = Text.literal(this.profile.getName()).formatted(Formatting.WHITE);
+    protected Component getPlayerName() {
+        Component name = Component.literal(this.profile.getName()).withStyle(ChatFormatting.WHITE);
         return switch (this.type) {
             case USER ->
-                    Text.translatable("skin_overrides.player.you", name).formatted(Formatting.GRAY);
+                    Component.translatable("skin_overrides.player.you", name).withStyle(ChatFormatting.GRAY);
             case ONLINE ->
-                    Text.translatable("skin_overrides.player.online", name).formatted(Formatting.GRAY);
+                    Component.translatable("skin_overrides.player.online", name).withStyle(ChatFormatting.GRAY);
             case OFFLINE ->
-                    Text.translatable("skin_overrides.player.offline", name).formatted(Formatting.GRAY);
+                    Component.translatable("skin_overrides.player.offline", name).withStyle(ChatFormatting.GRAY);
         };
     }
 
-    protected Text getOverrideStatus() {
+    protected Component getOverrideStatus() {
         return this.ov.get(this.profile)
-                .map(ov -> ov.info().copy().formatted(Formatting.GREEN))
-                .orElse(Text.translatable("skin_overrides.override.none").formatted(Formatting.GRAY));
+                .map(ov -> ov.info().copy().withStyle(ChatFormatting.GREEN))
+                .orElse(Component.translatable("skin_overrides.override.none").withStyle(ChatFormatting.GRAY));
     }
 
     @Override
-    public Text getNarration() {
-        return Text.translatable("narrator.select", this.profile.getName());
+    @NotNull
+    public Component getNarration() {
+        return Component.translatable("narrator.select", this.profile.getName());
     }
 
     @Override

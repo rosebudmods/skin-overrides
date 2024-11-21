@@ -15,8 +15,8 @@ version = "$modVersion+$mcVersion"
 group = property("maven_group").toString()
 
 val scVersion = stonecutter.current.version
-val hasUi = false // stonecutter.compare(scVersion, "1.19.4") >= 0
-val hasNetworking = false // stonecutter.compare(scVersion, "1.20.6") >= 0
+val hasUi = stonecutter.compare(scVersion, "1.19.4") >= 0
+val hasNetworking = stonecutter.compare(scVersion, "1.20.6") >= 0
 val awVersion =
 	if (stonecutter.compare(scVersion, "1.20.6") >= 0) "1.20.6"
 	else if (stonecutter.compare(scVersion, "1.20.2") >= 0) "1.20.2"
@@ -128,8 +128,8 @@ dependencies {
 		modRuntimeOnly("maven.modrinth:ears:${property("deps.ears")}")
 
 	if (hasNetworking) {
-		implementation("org.mineskin:java-client:2.1.1-SNAPSHOT")?.let { include(it) }
-		implementation("org.mineskin:java-client-apache:2.1.1-SNAPSHOT")?.let { include(it) }
+		implementation("org.mineskin:java-client:3.0.0-SNAPSHOT")?.let { include(it) }
+		implementation("org.mineskin:java-client-apache:3.0.0-SNAPSHOT")?.let { include(it) }
 	}
 
 	// include httpmime (it will show up in a dev environment, but don't believe its lies)

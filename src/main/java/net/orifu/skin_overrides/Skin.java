@@ -5,7 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.SkinManager;
 import net.minecraft.resources.ResourceLocation;
 //? if hasNetworking
-/*import net.orifu.skin_overrides.networking.ModNetworking;*/
+import net.orifu.skin_overrides.networking.ModNetworking;
 import org.jetbrains.annotations.Nullable;
 
 //? if >=1.20.2 {
@@ -16,7 +16,7 @@ import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 *///?}
 
 //? if hasUi {
-/*import com.google.gson.Gson;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.yggdrasil.YggdrasilUserApiService;
 import net.minecraft.util.Tuple;
@@ -31,7 +31,7 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.File;
 import java.io.IOException;
-*///?}
+//?}
 
 import java.util.Locale;
 import java.util.Optional;
@@ -106,7 +106,7 @@ public record Skin(
 
     public Skin withDefaultCape(GameProfile profile) {
         //? if hasNetworking {
-        /*if (profile.getProperties().containsKey(ModNetworking.DEFAULT_TEXTURES_KEY)) {
+        if (profile.getProperties().containsKey(ModNetworking.DEFAULT_TEXTURES_KEY)) {
             // get the default textures
             var manager = Minecraft.getInstance().getSkinManager();
             var property = profile.getProperties().get(ModNetworking.DEFAULT_TEXTURES_KEY).stream().findFirst().orElseThrow();
@@ -117,7 +117,7 @@ public record Skin(
             return Optional.ofNullable(skinFuture.getNow(null)).map(Skin::fromPlayerSkin)
                     .map(sk -> this.withCape(sk.capeTexture())).orElse(this);
         }
-        *///?}
+        //?}
 
         return this;
     }
@@ -136,14 +136,14 @@ public record Skin(
     //?}
 
     //? if hasUi {
-    /*public Optional<Tuple<String, Model>> setUserSkin() {
+    public Optional<Tuple<String, Model>> setUserSkin() {
         try {
             var userApiService = (YggdrasilUserApiService) Minecraft.getInstance().userApiService;
             var userApiServiceAccessor = (YggdrasilUserApiServiceAccessor) userApiService;
             var serviceClient = userApiServiceAccessor.getMinecraftClient();
             var serviceClientAccessor = (YggdrasilServiceClientAccessor) serviceClient;
-            var servicesHost = /^? if >=1.20.2 {^/ userApiServiceAccessor.getEnvironment().servicesHost();
-                /^?} else^/ /^userApiServiceAccessor.getEnvironment().getServicesHost();^/
+            var servicesHost = /*? if >=1.20.2 {*/ userApiServiceAccessor.getEnvironment().servicesHost();
+                /*?} else*/ /*userApiServiceAccessor.getEnvironment().getServicesHost();*/
             var url = servicesHost + "/minecraft/profile/skins";
 
             File skin = File.createTempFile("skin-overrides_", "_temp-skin");
@@ -177,7 +177,7 @@ public record Skin(
             return Optional.empty();
         }
     }
-    *///?}
+    //?}
 
     public enum Model {
         WIDE("wide", "classic"),

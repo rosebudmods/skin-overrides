@@ -5,11 +5,10 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.packet.s2c.PlayerRemovalS2CPacket;
-import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
-import net.minecraft.server.PlayerManager;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.PlayerList;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.util.ProfileHelper;
@@ -22,16 +21,16 @@ public class ModNetworking {
 
     public static void init() {
         // register the skin update payload packet
-        PayloadTypeRegistry.playC2S().register(SkinUpdatePayload.ID, SkinUpdatePayload.PACKET_CODEC);
+        PayloadTypeRegistry.playC2S().register(SkinUpdatePayload.TYPE, SkinUpdatePayload.PACKET_CODEC);
 
         // listen for the packet
-        ServerPlayNetworking.registerGlobalReceiver(SkinUpdatePayload.ID, (payload, ctx) -> {
+        ServerPlayNetworking.registerGlobalReceiver(SkinUpdatePayload.TYPE, (payload, ctx) -> {
             Mod.LOGGER.debug("received packet; {} changed skin:\nval: {}\nsig: {}",
-                    ctx.player().getProfileName(),
+                    ctx.player().getGameProfile().getName(),
                     payload.skinValue(), payload.signature());
 
-            ServerPlayerEntity player = ctx.player();
-            PlayerManager playerManager = ctx.server().getPlayerManager();
+            ServerPlayer player = ctx.player();
+            PlayerList playerList = ctx.server().getPlayerList();
 
             // store default textures
             var properties = player.getGameProfile().getProperties();
@@ -58,12 +57,12 @@ public class ModNetworking {
                     properties.get("textures"), properties.get(DEFAULT_TEXTURES_KEY));
 
             // remove and re-add player (updates skin in tab list)
-            playerManager.sendToAll(new PlayerRemovalS2CPacket(Collections.singletonList(ctx.player().getUuid())));
-            playerManager.sendToAll(PlayerListS2CPacket.create(Collections.singleton(player)));
+            playerList.broadcastAll(new ClientboundPlayerInfoRemovePacket(Collections.singletonList(ctx.player().getUUID())));
+            playerList.broadcastAll(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(Collections.singleton(player)));
 
             // update skin for players that are tracking this player
-            var tracker = player.getServerWorld().getChunkManager().delegate.entityTrackers.get(player.getId());
-            tracker.listeners.forEach(listener -> tracker.entry.startTracking(listener.getPlayer()));
+            var tracker = player.serverLevel().getChunkSource().chunkMap.entityMap.get(player.getId());
+            tracker.seenBy.forEach(listener -> tracker.serverEntity.addPairing(listener.getPlayer()));
         });
     }
 
@@ -107,6 +106,6 @@ public class ModNetworking {
     }
 
     public static boolean isOnSkinOverridesServer() {
-        return ClientPlayNetworking.canSend(SkinUpdatePayload.ID);
+        return ClientPlayNetworking.canSend(SkinUpdatePayload.TYPE);
     }
 }

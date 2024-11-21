@@ -1,19 +1,19 @@
-package net.orifu.skin_overrides.screen;
+package net.orifu.skin_overrides.gui;
 
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import net.orifu.skin_overrides.OverrideManager;
 
 import java.util.ArrayList;
 
-public class LibraryListWidget extends AlwaysSelectedEntryGridWidget<LibraryListEntry> {
+public class LibrarySelectionGrid extends ObjectSelectionGrid<LibraryListEntry> {
     private final LibraryScreen parent;
     private final OverrideManager ov;
 
     private final ArrayList<LibraryListEntry> allEntries = new ArrayList<>();
     private String query = "";
 
-    public LibraryListWidget(LibraryScreen parent, OverrideManager ov) {
-        super(MinecraftClient.getInstance(), 0, 0, 0,
+    public LibrarySelectionGrid(LibraryScreen parent, OverrideManager ov) {
+        super(Minecraft.getInstance(), 0, 0, 0,
                 LibraryListEntry.WIDTH, LibraryListEntry.SKIN_ENTRY_HEIGHT, 6);
 
         this.parent = parent;
@@ -51,8 +51,8 @@ public class LibraryListWidget extends AlwaysSelectedEntryGridWidget<LibraryList
     }
 
     public void removeFromLibrary() {
-        int index = this.getSelectedOrNull().index;
-        int childIndex = this.indexOf(this.getSelectedOrNull());
+        int index = this.getSelected().index;
+        int childIndex = this.indexOf(this.getSelected());
         int newIndex = childIndex == this.children().size() - 1 ? childIndex - 1 : childIndex;
 
         // remove from library
@@ -72,7 +72,7 @@ public class LibraryListWidget extends AlwaysSelectedEntryGridWidget<LibraryList
     }
 
     public void moveSelection(int amount) {
-        var newSelected = this.getEntry(this.indexOf(this.getSelectedOrNull()) + amount);
+        var newSelected = this.getEntry(this.indexOf(this.getSelected()) + amount);
         this.setSelected(newSelected);
         this.parent.selectEntry(newSelected);
     }
@@ -99,7 +99,7 @@ public class LibraryListWidget extends AlwaysSelectedEntryGridWidget<LibraryList
     }
 
     @Override
-    public int getScrollbarPositionX() {
-        return this.getXEnd() - SCROLLBAR_WIDTH;
+    public int getScrollbarPosition() {
+        return this.getRight() - SCROLLBAR_WIDTH;
     }
 }

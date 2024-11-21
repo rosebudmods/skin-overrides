@@ -1,17 +1,17 @@
-package net.orifu.skin_overrides.screen;
+package net.orifu.skin_overrides.gui;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import net.orifu.skin_overrides.OverrideManager;
-import net.orifu.skin_overrides.screen.OverrideListEntry.Type;
+import net.orifu.skin_overrides.gui.OverrideListEntry.Type;
 import net.orifu.skin_overrides.util.ProfileHelper;
-import net.orifu.xplat.gui.widget.AlwaysSelectedEntryListWidget;
+import net.orifu.xplat.gui.components.ObjectSelectionList;
 
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-public class OverrideListWidget extends AlwaysSelectedEntryListWidget<OverrideListEntry> {
+public class OverridesSelectionList extends ObjectSelectionList<OverrideListEntry> {
     private static final int PADDING = 8;
     private static final int ITEM_HEIGHT = 36;
 
@@ -23,8 +23,8 @@ public class OverrideListWidget extends AlwaysSelectedEntryListWidget<OverrideLi
 
     private final ArrayList<CompletableFuture<GameProfile>> loadingProfiles;
 
-    public OverrideListWidget(OverridesScreen parent, OverrideManager ov) {
-        super(MinecraftClient.getInstance(), 0, 0, 0, ITEM_HEIGHT);
+    public OverridesSelectionList(OverridesScreen parent, OverrideManager ov) {
+        super(Minecraft.getInstance(), 0, 0, 0, ITEM_HEIGHT);
 
         this.parent = parent;
         this.ov = ov;
@@ -34,8 +34,8 @@ public class OverrideListWidget extends AlwaysSelectedEntryListWidget<OverrideLi
         this.tryAddEntry(localPlayer, Type.USER);
 
         // add online players
-        if (this.client.player != null) {
-            for (var player : this.client.player.networkHandler.getPlayerList()) {
+        if (this.minecraft.player != null) {
+            for (var player : this.minecraft.player.connection.getOnlinePlayers()) {
                 this.tryAddEntry(player.getProfile(), Type.ONLINE);
             }
         }
@@ -61,13 +61,13 @@ public class OverrideListWidget extends AlwaysSelectedEntryListWidget<OverrideLi
 
     protected void tryAddEntry(GameProfile profile, Type type) {
         if (!this.hasOverrideFor(profile) || type.equals(Type.USER)) {
-            this.allEntries.add(new OverrideListEntry(this.client, profile, type, this.parent));
+            this.allEntries.add(new OverrideListEntry(this.minecraft, profile, type, this.parent));
         }
     }
 
     public OverrideListEntry addEntry(GameProfile profile) {
         return this.getOverrideFor(profile).orElseGet(() -> {
-            OverrideListEntry entry = new OverrideListEntry(this.client, profile, Type.OFFLINE, this.parent);
+            OverrideListEntry entry = new OverrideListEntry(this.minecraft, profile, Type.OFFLINE, this.parent);
             this.allEntries.add(entry);
             this.updateFilter();
             return entry;
@@ -121,8 +121,8 @@ public class OverrideListWidget extends AlwaysSelectedEntryListWidget<OverrideLi
 
     // fix scrollbar position
     @Override
-    public int getScrollbarPositionX() {
-        return this.getXEnd();
+    public int getScrollbarPosition() {
+        return this.getRight();
     }
 
     //? if >=1.20.4 {

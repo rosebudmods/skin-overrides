@@ -3,16 +3,16 @@ package net.orifu.skin_overrides;
 import net.fabricmc.api.ClientModInitializer;
 
 //? if hasUi {
-/*import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
-import net.orifu.skin_overrides.screen.OverridesScreen;
+import net.orifu.skin_overrides.gui.OverridesScreen;
 import org.lwjgl.glfw.GLFW;
-*///?}
+//?}
 
 //? if hasNetworking
-/*import net.orifu.skin_overrides.networking.ModNetworking;*/
+import net.orifu.skin_overrides.networking.ModNetworking;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -33,7 +33,7 @@ public class ModClient implements ClientModInitializer {
         scheduler.scheduleAtFixedRate(CAPES.library()::reload, 0, 2, TimeUnit.SECONDS);
 
         //? if hasUi {
-        /*KeyMapping keyMap = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+        KeyMapping keyMap = KeyBindingHelper.registerKeyBinding(new KeyMapping(
                 "key.skin_overrides.open_screen",
                 InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_O,
                 "key.categories.misc"));
@@ -43,9 +43,9 @@ public class ModClient implements ClientModInitializer {
                 client.setScreen(new OverridesScreen(client.screen));
             }
         });
-        *///?}
+        //?}
 
         //? if hasNetworking
-        /*ModNetworking.initClient();*/
+        ModNetworking.initClient();
     }
 }

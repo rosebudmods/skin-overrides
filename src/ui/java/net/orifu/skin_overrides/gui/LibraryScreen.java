@@ -1,32 +1,32 @@
-package net.orifu.skin_overrides.screen;
+package net.orifu.skin_overrides.gui;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.CycleButton;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.layouts.FrameLayout;
+import net.minecraft.client.gui.layouts.LayoutSettings;
+import net.minecraft.client.gui.layouts.LinearLayout;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.OverrideManager;
 import net.orifu.skin_overrides.Skin;
+import net.orifu.skin_overrides.gui.components.ModelPreview;
 import net.orifu.skin_overrides.library.CapeLibrary;
 import net.orifu.skin_overrides.library.SkinLibrary;
 import net.orifu.skin_overrides.library.SkinLibrary.SkinEntry;
-import net.orifu.skin_overrides.screen.widget.ModelPreviewWidget;
 import net.orifu.skin_overrides.texture.LocalPlayerTexture;
 import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.Toast;
 import net.orifu.skin_overrides.util.Util;
-import net.orifu.xplat.CommonTexts;
 import net.orifu.xplat.gui.GuiGraphics;
-import net.orifu.xplat.gui.LayoutSettings;
 import net.orifu.xplat.gui.Screen;
-import net.orifu.xplat.gui.widget.ButtonWidget;
-import net.orifu.xplat.gui.widget.CyclingButtonWidget;
-import net.orifu.xplat.gui.widget.FrameWidget;
-import net.orifu.xplat.gui.widget.LinearLayoutWidget;
-import net.orifu.xplat.gui.widget.TextFieldWidget;
-import net.orifu.xplat.gui.widget.TextWidget;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
@@ -37,7 +37,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class LibraryScreen extends Screen {
-    private static final Text TITLE = Text.translatable("skin_overrides.library.title");
+    private static final Component TITLE = Component.translatable("skin_overrides.library.title");
 
     private static final int OPTIONS_PAD = 24;
     private static final int OPTIONS_WIDTH = 150;
@@ -50,13 +50,13 @@ public class LibraryScreen extends Screen {
 
     public final Skin userSkin = Skin.fromProfile(ProfileHelper.user());
 
-    private LibraryListWidget libraryList;
+    private LibrarySelectionGrid libraryList;
 
-    private TextFieldWidget searchBox;
+    private EditBox searchBox;
     @Nullable
-    private ModelPreviewWidget entryPreview;
+    private ModelPreview entryPreview;
     @Nullable
-    private TextFieldWidget nameField;
+    private EditBox nameField;
 
     @Nullable
     protected LibraryListEntry selectedEntry;
@@ -80,41 +80,41 @@ public class LibraryScreen extends Screen {
     @Override
     protected void init() {
         if (this.libraryList == null) {
-            this.libraryList = new LibraryListWidget(this, this.ov);
+            this.libraryList = new LibrarySelectionGrid(this, this.ov);
         }
 
         if (this.searchBox == null) {
-            this.searchBox = new TextFieldWidget(this.textRenderer, 200, 20,
-                    Text.translatable("skin_overrides.input.search"));
-            this.searchBox.setHint(Text.translatable("skin_overrides.input.search.hint"));
-            this.searchBox.setChangedListener(query -> {
+            this.searchBox = new EditBox(this.font, 200, 20,
+                    Component.translatable("skin_overrides.input.search"));
+            this.searchBox.setHint(Component.translatable("skin_overrides.input.search.hint"));
+            this.searchBox.setResponder(query -> {
                 this.libraryList.filter(query);
-                this.clearAndInit();
+                this.rebuildWidgets();
             });
             this.searchBox.setMaxLength(100);
         }
 
         int libraryListWidth = this.selectedEntry == null ? this.width : this.width - OPTIONS_WIDTH - OPTIONS_PAD;
 
-        var root = LinearLayoutWidget.createVertical();
+        var root = LinearLayout.vertical();
 
-        root.add(new TextWidget(TITLE, this.textRenderer),
-                LayoutSettings.create().alignHorizontallyCenter().setTopPadding(8).setBottomPadding(5));
+        root.addChild(new StringWidget(TITLE, this.font),
+                LayoutSettings.defaults().alignHorizontallyCenter().paddingTop(8).paddingBottom(5));
 
-        var search = root.add(LinearLayoutWidget.createHorizontal(),
-                LayoutSettings.create().alignHorizontallyCenter().setBottomPadding(6));
-        search.add(this.searchBox);
-        search.add(ButtonWidget
-                .builder(Text.translatable("skin_overrides.library.search_add"), btn -> this.addFromSearch())
+        var search = root.addChild(LinearLayout.horizontal(),
+                LayoutSettings.defaults().alignHorizontallyCenter().paddingBottom(6));
+        search.addChild(this.searchBox);
+        search.addChild(Button
+                .builder(Component.translatable("skin_overrides.library.search_add"), btn -> this.addFromSearch())
                 .width(60).build());
 
-        var body = root.add(LinearLayoutWidget.createHorizontal());
-        this.libraryList.add(body::add, this::addDrawableSelectableElement);
-        this.libraryList.setDimensions(libraryListWidth, this.height - 8 - 9 - 5 - 20 - 6 - 33);
+        var body = root.addChild(LinearLayout.horizontal());
+        this.libraryList.addEntry(body::addChild, this::addRenderableWidget);
+        this.libraryList.setSize(libraryListWidth, this.height - 8 - 9 - 5 - 20 - 6 - 33);
 
         if (this.selectedEntry != null) {
-            var controlsFrame = body.add(new FrameWidget(OPTIONS_WIDTH + OPTIONS_PAD, 0));
-            var controls = controlsFrame.add(LinearLayoutWidget.createVertical().setSpacing(2));
+            var controlsFrame = body.addChild(new FrameLayout(OPTIONS_WIDTH + OPTIONS_PAD, 0));
+            var controls = controlsFrame.addChild(LinearLayout.vertical().spacing(2));
 
             // believe me, "figure out a way to stop tiny player" is on my to-do
             int previewScale = PlayerSkinRenderer.HEIGHT * 5 + 210 < this.height ? 5
@@ -123,118 +123,118 @@ public class LibraryScreen extends Screen {
                     : PlayerSkinRenderer.HEIGHT * 2 + 210 < this.height ? 2 : 1;
 
             // library entry preview
-            this.entryPreview = controls.add(this.ov.skin
-                            ? ModelPreviewWidget.skin(null, previewScale, this.client)
-                            : ModelPreviewWidget.cape(null, previewScale, this.client),
-                    LayoutSettings.create().alignHorizontallyCenter());
+            this.entryPreview = controls.addChild(this.ov.skin
+                            ? ModelPreview.skin(null, previewScale, this.minecraft)
+                            : ModelPreview.cape(null, previewScale, this.minecraft),
+                    LayoutSettings.defaults().alignHorizontallyCenter());
 
             // padding
-            controls.add(new FrameWidget(0, 4));
+            controls.addChild(new FrameLayout(0, 4));
 
             // control layer 1
-            var smallControls = controls.add(LinearLayoutWidget.createHorizontal());
+            var smallControls = controls.addChild(LinearLayout.horizontal());
 
             // previous entry
             int index = this.libraryList.indexOf(this.selectedEntry);
             boolean isFirst = index == 0;
-            smallControls.add(ButtonWidget.builder(Text.literal("<"),
+            smallControls.addChild(Button.builder(Component.literal("<"),
                             btn -> this.libraryList.moveSelection(-1)).width(20)
-                    .tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.back")))
+                    .tooltip(Tooltip.create(Component.translatable("skin_overrides.library.input.back")))
                     .build()).active = !isFirst;
 
             // name input
             if (this.nameField == null) {
-                this.nameField = new TextFieldWidget(this.textRenderer, OPTIONS_WIDTH - 20 * 2, 20,
-                        Text.translatable("skin_overrides.library.input.name"));
+                this.nameField = new EditBox(this.font, OPTIONS_WIDTH - 20 * 2, 20,
+                        Component.translatable("skin_overrides.library.input.name"));
                 this.nameField.setMaxLength(32);
-                this.nameField.setChangedListener(this::renameEntry);
-                this.nameField.setText(this.selectedEntry.entry.getName());
+                this.nameField.setResponder(this::renameEntry);
+                this.nameField.setValue(this.selectedEntry.entry.getName());
             }
-            smallControls.add(this.nameField, LayoutSettings.create().alignHorizontallyCenter());
+            smallControls.addChild(this.nameField, LayoutSettings.defaults().alignHorizontallyCenter());
 
             // next entry
             boolean isLast = index == this.libraryList.children().size() - 1;
-            smallControls.add(ButtonWidget.builder(Text.literal(">"),
+            smallControls.addChild(Button.builder(Component.literal(">"),
                             btn -> this.libraryList.moveSelection(1))
-                    .tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.next"))).width(20)
+                    .tooltip(Tooltip.create(Component.translatable("skin_overrides.library.input.next"))).width(20)
                     .build()).active = !isLast;
 
             // control layer 2
-            var otherControls = controls.add(LinearLayoutWidget.createHorizontal());
+            var otherControls = controls.addChild(LinearLayout.horizontal());
 
             // swap this and previous entry
-            otherControls.add(ButtonWidget.builder(Text.literal("<<"), btn -> {
+            otherControls.addChild(Button.builder(Component.literal("<<"), btn -> {
                 this.libraryList.move(index, index - 1);
                 this.libraryList.ensureVisible(this.selectedEntry);
-                this.clearAndInit();
-            }).width(20).tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.move_back")))
+                this.rebuildWidgets();
+            }).width(20).tooltip(Tooltip.create(Component.translatable("skin_overrides.library.input.move_back")))
                     .build()).active = !isFirst;
 
             // use this entry
-            otherControls.add(ButtonWidget.builder(Text.translatable("skin_overrides.library.input.use"), btn -> {
+            otherControls.addChild(Button.builder(Component.translatable("skin_overrides.library.input.use"), btn -> {
                         if (this.callback != null) {
                             this.callback.accept(this.selectedEntry.entry);
                         }
-                        this.client.setScreen(this.parent);
+                        this.minecraft.setScreen(this.parent);
                     })
                     .width(OPTIONS_WIDTH - 20 * 2)
                     .build()).active = this.callback != null;
 
             // swap this and next entry
-            otherControls.add(ButtonWidget.builder(Text.literal(">>"), btn -> {
+            otherControls.addChild(Button.builder(Component.literal(">>"), btn -> {
                 this.libraryList.move(index, index + 1);
                 this.libraryList.ensureVisible(this.selectedEntry);
-                this.clearAndInit();
-            }).width(20).tooltip(Tooltip.create(Text.translatable("skin_overrides.library.input.move_next")))
+                this.rebuildWidgets();
+            }).width(20).tooltip(Tooltip.create(Component.translatable("skin_overrides.library.input.move_next")))
                     .build()).active = !isLast;
 
             // preview options
-            controls.add(new FrameWidget(0, 4));
+            controls.addChild(new FrameLayout(0, 4));
             if (this.ov.skin) {
-                controls.add(CyclingButtonWidget
-                        .builder(option -> option.equals(0) ? CommonTexts.OFF : option.equals(1)
-                                ? Text.translatable("skin_overrides.model.cape")
-                                : Text.translatable("skin_overrides.model.elytra"))
-                        .values(0, 1, 2).initially(this.showAttachment ? this.showElytra ? 2 : 1 : 0)
-                        .build(
+                controls.addChild(CycleButton
+                        .builder(option -> option.equals(0) ? CommonComponents.OPTION_OFF : option.equals(1)
+                                ? Component.translatable("skin_overrides.model.cape")
+                                : Component.translatable("skin_overrides.model.elytra"))
+                        .withValues(0, 1, 2).withInitialValue(this.showAttachment ? this.showElytra ? 2 : 1 : 0)
+                        .create(
                                 0, 0, OPTIONS_WIDTH, 20,
-                                Text.translatable("skin_overrides.library.input.accessory"),
+                                Component.translatable("skin_overrides.library.input.accessory"),
                                 (btn, opt) -> {
                                     this.showAttachment = !opt.equals(0);
                                     this.showElytra = opt.equals(2);
                                 }));
             } else {
-                controls.add(CyclingButtonWidget
-                        .builder(option -> (Boolean) option ? CommonTexts.ON : CommonTexts.OFF)
-                        .values(true, false).initially(this.showAttachment)
-                        .build(
+                controls.addChild(CycleButton
+                        .builder(option -> (Boolean) option ? CommonComponents.OPTION_ON : CommonComponents.OPTION_OFF)
+                        .withValues(true, false).withInitialValue(this.showAttachment)
+                        .create(
                                 0, 0, OPTIONS_WIDTH, 20,
-                                Text.translatable("skin_overrides.library.input.show_skin"),
+                                Component.translatable("skin_overrides.library.input.show_skin"),
                                 (btn, opt) -> this.showAttachment = (boolean) opt));
-                controls.add(CyclingButtonWidget
+                controls.addChild(CycleButton
                         .builder(option -> (Boolean) option
-                                ? Text.translatable("skin_overrides.model.elytra")
-                                : Text.translatable("skin_overrides.model.cape"))
-                        .values(true, false).initially(this.showElytra)
-                        .build(
+                                ? Component.translatable("skin_overrides.model.elytra")
+                                : Component.translatable("skin_overrides.model.cape"))
+                        .withValues(true, false).withInitialValue(this.showElytra)
+                        .create(
                                 0, 0, OPTIONS_WIDTH, 20,
-                                Text.translatable("skin_overrides.library.input.model"),
+                                Component.translatable("skin_overrides.library.input.model"),
                                 (btn, opt) -> this.showElytra = (boolean) opt));
             }
 
             // remove this entry
-            controls.add(new FrameWidget(0, 4));
-            controls.add(ButtonWidget.builder(Text.translatable("skin_overrides.library.input.delete"), btn ->
+            controls.addChild(new FrameLayout(0, 4));
+            controls.addChild(Button.builder(Component.translatable("skin_overrides.library.input.delete"), btn ->
                             this.libraryList.removeFromLibrary()
                     ).width(OPTIONS_WIDTH).build()).active = this.callback != null;
         }
 
-        var footer = root.add(new FrameWidget(this.width, 33));
-        footer.add(ButtonWidget.builder(CommonTexts.BACK, btn -> this.closeScreen()).build());
+        var footer = root.addChild(new FrameLayout(this.width, 33));
+        footer.addChild(Button.builder(CommonComponents.GUI_BACK, btn -> this.onClose()).build());
 
-        root.visitWidgets(this::addDrawableSelectableElement);
+        root.visitWidgets(this::addRenderableWidget);
         root.arrangeElements();
-        this.setFocusedChild(this.searchBox);
+        this.setFocused(this.searchBox);
     }
 
     @Override
@@ -259,7 +259,7 @@ public class LibraryScreen extends Screen {
 
         // empty list text
         if (this.libraryList.children().isEmpty()) {
-            graphics.drawCenteredShadowedText(this.textRenderer, Text.translatable("skin_overrides.library.empty"),
+            graphics.drawCenteredString(this.font, Component.translatable("skin_overrides.library.empty"),
                     this.libraryList.getX() + this.libraryList.getWidth() / 2,
                     this.libraryList.getY() + this.libraryList.getHeight() / 2 - 4, 0xaaaaaa);
         }
@@ -271,26 +271,26 @@ public class LibraryScreen extends Screen {
             if (this.ov.skin) {
                 ((SkinLibrary) this.ov.library()).createSigned(name, skin.texture(), skin.model(), this.addingProfile);
             } else {
-                Identifier cape = skin.capeTexture();
+                ResourceLocation cape = skin.capeTexture();
                 if (cape != null) {
                     ((CapeLibrary) this.ov.library()).create(name, cape);
                 } else {
-                    Toast.show(Text.translatable("skin_overrides.no_cape.title"),
-                            Text.translatable("skin_overrides.no_cape.description", name));
+                    Toast.show(Component.translatable("skin_overrides.no_cape.title"),
+                            Component.translatable("skin_overrides.no_cape.description", name));
                 }
             }
 
             this.adding = null;
             this.libraryList.reload();
-            LibraryListEntry entry = this.libraryList.getFirstChild();
+            LibraryListEntry entry = this.libraryList.getFirstElement();
             this.libraryList.setSelected(entry);
             this.selectEntry(entry);
         }
     }
 
     @Override
-    public void closeScreen() {
-        this.client.setScreen(this.parent);
+    public void onClose() {
+        this.minecraft.setScreen(this.parent);
     }
 
     @Override
@@ -306,7 +306,7 @@ public class LibraryScreen extends Screen {
     public void selectEntry(@Nullable LibraryListEntry entry) {
         this.selectedEntry = entry;
         this.nameField = null;
-        this.clearAndInit();
+        this.rebuildWidgets();
 
         if (entry != null) {
             this.libraryList.ensureVisible(entry);
@@ -316,13 +316,13 @@ public class LibraryScreen extends Screen {
     public void renameEntry(String newName) {
         if (!newName.equals(this.selectedEntry.entry.getName())) {
             this.ov.library().rename(this.selectedEntry.entry, newName);
-            this.clearAndInit();
-            this.setFocusedChild(this.nameField);
+            this.rebuildWidgets();
+            this.setFocused(this.nameField);
         }
     }
 
     @Override
-    public void filesDragged(List<Path> paths) {
+    public void onFilesDrop(List<Path> paths) {
         if (paths.isEmpty()) {
             return;
         }
@@ -334,35 +334,35 @@ public class LibraryScreen extends Screen {
 
         if (this.ov.skin) {
             // open name and model input screen
-            this.client.setScreen(OverrideInfoEntryScreen.getNameAndModel(this,
+            this.minecraft.setScreen(OverrideInfoEntryScreen.getNameAndModel(this,
                     Util.texture(new LocalSkinTexture(path.toFile())), guessedName,
                     (name, model) -> {
                         // add skin
                         ((SkinLibrary) this.ov.library()).create(name, path, model);
                         this.libraryList.reload();
-                        this.clearAndInit();
+                        this.rebuildWidgets();
                     }));
         } else {
             // open name input screen
-            this.client.setScreen(OverrideInfoEntryScreen.getName(this,
+            this.minecraft.setScreen(OverrideInfoEntryScreen.getName(this,
                     Util.texture(new LocalPlayerTexture(path.toFile())), guessedName,
                     name -> {
                         // add cape
                         ((CapeLibrary) this.ov.library()).create(name, path);
                         this.libraryList.reload();
-                        this.clearAndInit();
+                        this.rebuildWidgets();
                     }));
         }
     }
 
     private void addFromSearch() {
-        String name = this.searchBox.getText();
-        this.searchBox.setText("");
+        String name = this.searchBox.getValue();
+        this.searchBox.setValue("");
 
         ProfileHelper.idToSecureProfile(name).thenAccept(profile -> {
             if (profile.isEmpty()) {
-                Toast.show(Text.translatable("skin_overrides.no_profile.title", this.searchBox.getText()),
-                        Text.translatable("skin_overrides.no_profile.description"));
+                Toast.show(Component.translatable("skin_overrides.no_profile.title", this.searchBox.getValue()),
+                        Component.translatable("skin_overrides.no_profile.description"));
             } else {
                 // i tried getting the skin asynchronously here... don't do that.
                 // i guess it needs to be on the render thread to be added?
