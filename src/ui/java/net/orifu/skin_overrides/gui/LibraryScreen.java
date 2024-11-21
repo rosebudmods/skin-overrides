@@ -8,7 +8,6 @@ import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.layouts.FrameLayout;
 import net.minecraft.client.gui.layouts.LayoutSettings;
-import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -25,8 +24,10 @@ import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.Toast;
 import net.orifu.skin_overrides.util.Util;
+import net.orifu.xplat.GuiHelper;
 import net.orifu.xplat.gui.GuiGraphics;
 import net.orifu.xplat.gui.Screen;
+import net.orifu.xplat.gui.components.LinearLayout;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
@@ -84,7 +85,7 @@ public class LibraryScreen extends Screen {
         }
 
         if (this.searchBox == null) {
-            this.searchBox = new EditBox(this.font, 200, 20,
+            this.searchBox = GuiHelper.editBox(this.font, 200, 20,
                     Component.translatable("skin_overrides.input.search"));
             this.searchBox.setHint(Component.translatable("skin_overrides.input.search.hint"));
             this.searchBox.setResponder(query -> {
@@ -144,7 +145,7 @@ public class LibraryScreen extends Screen {
 
             // name input
             if (this.nameField == null) {
-                this.nameField = new EditBox(this.font, OPTIONS_WIDTH - 20 * 2, 20,
+                this.nameField = GuiHelper.editBox(this.font, OPTIONS_WIDTH - 20 * 2, 20,
                         Component.translatable("skin_overrides.library.input.name"));
                 this.nameField.setMaxLength(32);
                 this.nameField.setResponder(this::renameEntry);

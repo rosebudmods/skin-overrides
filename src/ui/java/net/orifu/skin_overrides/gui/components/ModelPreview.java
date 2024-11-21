@@ -37,11 +37,9 @@ public class ModelPreview extends AbstractWidget {
     }
 
     @Override
-    //? if >=1.20.1 {
-    protected void renderWidget(net.minecraft.client.gui.GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-    //?} else
-    /*public void renderWidget(net.minecraft.client.util.math.MatrixStack graphics, int mouseX, int mouseY, float delta) {*/
-        this.renderer.draw(new GuiGraphics(graphics), this.getX(), this.getY());
+    /*? if >=1.20.1 {*/protected void renderWidget(net.minecraft.client.gui.GuiGraphics ctx, int mouseX, int mouseY, float delta) {
+    /*?} else*/ /*public void renderWidget(com.mojang.blaze3d.vertex.PoseStack ctx, int mouseX, int mouseY, float delta) {*/
+        this.renderer.draw(new GuiGraphics(ctx), this.getX(), this.getY());
     }
 
     @Override

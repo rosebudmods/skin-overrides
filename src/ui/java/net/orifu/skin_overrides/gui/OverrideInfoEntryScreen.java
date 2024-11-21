@@ -7,8 +7,8 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.layouts.GridLayout;
+import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LayoutSettings;
-import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -16,8 +16,10 @@ import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.gui.components.ModelPreview;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.skin_overrides.util.ProfileHelper;
+import net.orifu.xplat.GuiHelper;
 import net.orifu.xplat.gui.GuiGraphics;
 import net.orifu.xplat.gui.Screen;
+import net.orifu.xplat.gui.components.LinearLayout;
 import org.jetbrains.annotations.Nullable;
 
 public class OverrideInfoEntryScreen extends Screen {
@@ -49,7 +51,7 @@ public class OverrideInfoEntryScreen extends Screen {
     private MultiLineLabel message;
 
     @Nullable
-    private LinearLayout root;
+    private Layout root;
     @Nullable
     private EditBox nameInput;
 
@@ -93,14 +95,15 @@ public class OverrideInfoEntryScreen extends Screen {
     protected void init() {
          this.message = MultiLineLabel.create(this.font, this.getMessage(), this.width - 50);
 
-         this.root = LinearLayout.vertical().spacing(PAD);
+         var root = LinearLayout.vertical().spacing(PAD);
+         this.root = root;
 
         // add name input
         if (this.wantsName) {
-            var nameInputWrapper = this.root.addChild(LinearLayout.horizontal(),
+            var nameInputWrapper = root.addChild(LinearLayout.horizontal(),
                     LayoutSettings.defaults().alignHorizontallyCenter());
 
-            this.nameInput = nameInputWrapper.addChild(new EditBox(this.font, 120, 20,
+            this.nameInput = nameInputWrapper.addChild(GuiHelper.editBox(this.font, 120, 20,
                     Component.translatable("skin_overrides.library.input.name")));
             this.nameInput.setValue(this.defaultName);
             this.setFocused(this.nameInput);
@@ -112,7 +115,7 @@ public class OverrideInfoEntryScreen extends Screen {
 
             // add player model widget
             if (this.model != null) {
-                this.root.addChild(ModelPreview.skin(
+                root.addChild(ModelPreview.skin(
                                 new Skin(this.texture, null, null, this.model),
                                 SKIN_SCALE, this.minecraft),
                         LayoutSettings.defaults().alignHorizontallyCenter());
@@ -120,7 +123,7 @@ public class OverrideInfoEntryScreen extends Screen {
         }
 
         if (this.wantsModel) {
-            var grid = this.root.addChild(new GridLayout().spacing(PAD), LayoutSettings.defaults().alignHorizontallyCenter());
+            var grid = root.addChild(new GridLayout().spacing(PAD), LayoutSettings.defaults().alignHorizontallyCenter());
 
             // add player model widgets
             grid.addChild(ModelPreview.skin(
@@ -143,7 +146,7 @@ public class OverrideInfoEntryScreen extends Screen {
 
         if (!this.wantsModel && this.model == null) {
             // add cape model widget
-            this.root.addChild(ModelPreview.capeWithSkin(
+            root.addChild(ModelPreview.capeWithSkin(
                         Skin.fromProfile(ProfileHelper.user()).withCape(this.texture),
                         SKIN_SCALE, this.minecraft),
                     LayoutSettings.defaults().alignHorizontallyCenter());
@@ -214,7 +217,7 @@ public class OverrideInfoEntryScreen extends Screen {
     }
 
     private int getContentHeight() {
-        return this.getContentOffset() + root.getHeight();
+        return this.getContentOffset() + this.root.getHeight();
     }
 
     @Override

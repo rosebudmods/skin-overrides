@@ -4,15 +4,13 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.SkinManager;
 import net.minecraft.resources.ResourceLocation;
-//? if hasNetworking
-import net.orifu.skin_overrides.networking.ModNetworking;
 import org.jetbrains.annotations.Nullable;
 
 //? if >=1.20.2 {
 import net.minecraft.client.resources.PlayerSkin;
 //?} else {
-/*import net.minecraft.client.util.DefaultSkinHelper;
-import com.mojang.authlib.minecraft.MinecraftProfileTexture;
+/*import com.mojang.authlib.minecraft.MinecraftProfileTexture;
+import net.minecraft.client.resources.DefaultPlayerSkin;
 *///?}
 
 //? if hasUi {
@@ -33,6 +31,9 @@ import java.io.File;
 import java.io.IOException;
 //?}
 
+//? if hasNetworking
+import net.orifu.skin_overrides.networking.ModNetworking;
+
 import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -47,20 +48,20 @@ public record Skin(
         var manager = Minecraft.getInstance().getSkinManager();
 
         //? if <1.20.2 {
-        /*var textures = provider.getTextures(profile);
+        /*var textures = manager.getInsecureSkinInformation(profile);
         var skin = textures.get(MinecraftProfileTexture.Type.SKIN);
         var cape = textures.get(MinecraftProfileTexture.Type.CAPE);
         var elytra = textures.get(MinecraftProfileTexture.Type.ELYTRA);
 
         var skinId = skin != null
-                ? provider.loadSkin(skin, MinecraftProfileTexture.Type.SKIN)
-                : DefaultSkinHelper.getTexture(profile.getId());
+                ? manager.registerTexture(skin, MinecraftProfileTexture.Type.SKIN)
+                : DefaultPlayerSkin.getDefaultSkin(profile.getId());
 
         return new Skin(
                 skinId,
-                cape != null ? provider.loadSkin(cape, MinecraftProfileTexture.Type.CAPE) : null,
-                elytra != null ? provider.loadSkin(elytra, MinecraftProfileTexture.Type.ELYTRA) : null,
-                skin != null ? Model.parse(skin.getMetadata("model")) : Model.parse(DefaultSkinHelper.getModel(profile.getId()))
+                cape != null ? manager.registerTexture(cape, MinecraftProfileTexture.Type.CAPE) : null,
+                elytra != null ? manager.registerTexture(elytra, MinecraftProfileTexture.Type.ELYTRA) : null,
+                skin != null ? Model.parse(skin.getMetadata("model")) : Model.parse(DefaultPlayerSkin.getSkinModelName(profile.getId()))
         );
         *///?} else
         return fromPlayerSkin(manager.getInsecureSkin(profile));
@@ -71,7 +72,7 @@ public record Skin(
 
         //? if <1.20.2 {
         /*CompletableFuture<Skin> future = new CompletableFuture<>();
-        provider.loadSkin(profile, (ty, id, tx) -> {
+        manager.registerSkins(profile, (ty, id, tx) -> {
             if (ty.equals(MinecraftProfileTexture.Type.SKIN)) {
                 future.complete(new Skin(id, null, null, Model.parse(tx.getMetadata("model"))));
             }
@@ -86,7 +87,7 @@ public record Skin(
 
         //? if <1.20.2 {
         /*CompletableFuture<Skin> future = new CompletableFuture<>();
-        provider.loadSkin(profile, (ty, id, tx) -> {
+        manager.registerSkins(profile, (ty, id, tx) -> {
             if (ty.equals(MinecraftProfileTexture.Type.CAPE)) {
                 future.complete(new Skin(null, id, null, null));
             }

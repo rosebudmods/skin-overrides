@@ -5,12 +5,16 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.client.multiplayer.PlayerInfo;
 //? if >=1.20.2
 import net.minecraft.client.resources.PlayerSkin;
+import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Skin;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+
+//? if <1.20.2
+/*import net.minecraft.util.Tuple;*/
 
 @Mixin(PlayerInfo.class)
 public class PlayerInfoMixin {
@@ -28,18 +32,18 @@ public class PlayerInfoMixin {
     
     //?} else {
     
-    /*@ModifyReturnValue(method = "getSkinTexture", at = @At("RETURN"))
-    private Identifier getSkinTexture(Identifier texture) {
-        return Mod.overrideSkin(profile).map(Pair::getLeft).orElse(texture);
+    /*@ModifyReturnValue(method = "getSkinLocation", at = @At("RETURN"))
+    private ResourceLocation getSkinTexture(ResourceLocation texture) {
+        return Mod.overrideSkin(profile).map(Tuple::getA).orElse(texture);
     }
 
-    @ModifyReturnValue(method = "getModel", at = @At("RETURN"))
+    @ModifyReturnValue(method = "getModelName", at = @At("RETURN"))
     private String getModel(String model) {
-        return Mod.overrideSkin(profile).map(p -> p.getRight().id()).orElse(model);
+        return Mod.overrideSkin(profile).map(p -> p.getB().id()).orElse(model);
     }
 
-    @ModifyReturnValue(method = "getCapeTexture", at = @At("RETURN"))
-    private Identifier getCapeTexture(Identifier texture) {
+    @ModifyReturnValue(method = "getCapeLocation", at = @At("RETURN"))
+    private ResourceLocation getCapeTexture(ResourceLocation texture) {
         return Mod.overrideCape(profile).orElse(texture);
     }
 

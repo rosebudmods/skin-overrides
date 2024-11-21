@@ -13,7 +13,6 @@ import net.minecraft.client.gui.layouts.FrameLayout;
 import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
 import net.minecraft.client.gui.layouts.LayoutSettings;
-import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -28,8 +27,10 @@ import net.orifu.skin_overrides.gui.components.ModelPreview;
 import net.orifu.skin_overrides.texture.LocalSkinTexture;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.Util;
+import net.orifu.xplat.GuiHelper;
 import net.orifu.xplat.gui.GuiGraphics;
 import net.orifu.xplat.gui.Screen;
+import net.orifu.xplat.gui.components.LinearLayout;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
@@ -105,7 +106,7 @@ public class OverridesScreen extends Screen {
 
         if (this.overrideList == null || this.overrideList.ov != this.ov) {
             this.overrideList = new OverridesSelectionList(this, this.ov);
-            this.searchBox = new EditBox(this.font, 200, 20,
+            this.searchBox = GuiHelper.editBox(this.font, 200, 20,
                     Component.translatable("skin_overrides.input.search"));
             this.searchBox.setResponder(this.overrideList::filter);
         }

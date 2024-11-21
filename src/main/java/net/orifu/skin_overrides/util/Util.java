@@ -11,10 +11,7 @@ import java.util.concurrent.CompletableFuture;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.systems.RenderSystem;
-//? if >=1.19.2 {
 import com.mojang.blaze3d.platform.NativeImage;
-//?} else
-/*import net.minecraft.client.texture.NativeImage;*/
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
 import net.minecraft.client.renderer.texture.AbstractTexture;
@@ -46,7 +43,7 @@ public class Util {
     public static String id(GameProfile profile) {
         var user = Minecraft.getInstance().getUser();
         return /*? if >=1.17.1 {*/ user.getType()
-                /*?} else*/ /*user.accountType*/
+                /*?} else*/ /*user.type*/
                 != User.Type.LEGACY
                 ? profile.getId().toString()
                 : profile.getName();
@@ -68,8 +65,10 @@ public class Util {
             try {
                 //? if >=1.21.3 {
                 RenderSystem.bindTexture(Minecraft.getInstance().getTextureManager().getTexture(texture).getId());
-                //?} else
-                /*MinecraftClient.getInstance().getTextureManager().bindTexture(texture);*/
+                //?} else if >=1.17.1 {
+                /*Minecraft.getInstance().getTextureManager().bindForSetup(texture);
+                *///?} else
+                /*Minecraft.getInstance().getTextureManager().bind(texture);*/
                 NativeImage img = new NativeImage(w, h, false);
                 img.downloadTexture(0, false);
                 img.writeToFile(path);

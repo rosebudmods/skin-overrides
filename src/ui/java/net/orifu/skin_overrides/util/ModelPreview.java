@@ -24,8 +24,8 @@ public class ModelPreview {
 
     protected final int scale;
 
-    protected float pitch = -5;
-    protected float yaw = -30;
+    protected float xRot = -5;
+    protected float yRot = -30;
 
     protected boolean showSkin = true;
     protected boolean showCape = true;
@@ -37,16 +37,16 @@ public class ModelPreview {
     protected final PlayerCapeModel cape;
     protected final ElytraModel elytra;
     //?} else {
-    /*protected final PlayerEntityModel<?> wide;
-    protected final PlayerEntityModel<?> slim;
+    /*protected final PlayerModel<?> wide;
+    protected final PlayerModel<?> slim;
     protected final PlayerCapeModel<?> cape;
-    protected final ElytraEntityModel<?> elytra;
+    protected final ElytraModel<?> elytra;
     *///?}
 
     // see PlayerSkinModelWidget
     protected static final float MODEL_HEIGHT = 2.125f;
     protected static final float MODEL_Y_OFFSET = 0.0625f;
-    protected static final float MAX_PITCH = 50;
+    protected static final float MAX_X_ROT = 50;
 
     public ModelPreview(@Nullable Skin skin, int scale, Minecraft client) {
         this.skin = skin;
@@ -60,16 +60,16 @@ public class ModelPreview {
         this.cape = new PlayerCapeModel(models.bakeLayer(ModelLayers.PLAYER_CAPE));
         this.elytra = new ElytraModel(models.bakeLayer(ModelLayers.ELYTRA));
         //?} else {
-        /*this.wide = new PlayerEntityModel<>(models.getModelPart(EntityModelLayers.PLAYER), false);
-        this.slim = new PlayerEntityModel<>(models.getModelPart(EntityModelLayers.PLAYER_SLIM), true);
-        this.cape = new PlayerCapeModel<>(PlayerCapeModel.getTexturedModelData().createModel());
-        this.elytra = new ElytraEntityModel<>(models.getModelPart(EntityModelLayers.ELYTRA));
+        /*this.wide = new PlayerModel<>(models.bakeLayer(ModelLayers.PLAYER), false);
+        this.slim = new PlayerModel<>(models.bakeLayer(ModelLayers.PLAYER_SLIM), true);
+        this.cape = new PlayerCapeModel<>(PlayerCapeModel.getLayerDefinition().bakeRoot());
+        this.elytra = new ElytraModel<>(models.bakeLayer(ModelLayers.ELYTRA));
 
         // why is this the default??
-        this.wide.child = false;
-        this.slim.child = false;
-        this.cape.child = false;
-        this.elytra.child = false;
+        this.wide.young = false;
+        this.slim.young = false;
+        this.cape.young = false;
+        this.elytra.young = false;
         *///?}
     }
 
@@ -97,21 +97,21 @@ public class ModelPreview {
         this.showElytra = showElytra;
     }
 
-    public void setPitch(float pitch) {
-        this.pitch = Mth.clamp(pitch, -MAX_PITCH, MAX_PITCH);
+    public void setXRot(float xRot) {
+        this.xRot = Mth.clamp(xRot, -MAX_X_ROT, MAX_X_ROT);
     }
 
-    public void setYaw(float yaw) {
-        this.yaw = yaw;
+    public void setYRot(float yRot) {
+        this.yRot = yRot;
     }
 
     public void turn(float angle) {
-        this.setYaw(this.yaw + angle);
+        this.setYRot(this.yRot + angle);
     }
 
-    public void setPitchAndYaw(float pitch, float yaw) {
-        this.setPitch(pitch);
-        this.setYaw(yaw);
+    public void setRotation(float xRot, float yRot) {
+        this.setXRot(xRot);
+        this.setYRot(yRot);
     }
 
     public int width() {
@@ -123,11 +123,11 @@ public class ModelPreview {
     }
 
     public void spin(float delta) {
-        this.setYaw(this.yaw + delta * 4f);
+        this.setYRot(this.yRot + delta * 4f);
     }
 
     public void drag(float deltaX, float deltaY) {
-        this.setPitchAndYaw(this.pitch - deltaY * 2.5f, this.yaw + deltaX * 2.5f);
+        this.setRotation(this.xRot - deltaY * 2.5f, this.yRot + deltaX * 2.5f);
     }
 
     public void draw(GuiGraphics graphics, int x, int y) {
@@ -138,19 +138,19 @@ public class ModelPreview {
         float scale = this.height() / MODEL_HEIGHT;
         graphics.pose().scale(scale, scale, scale);
         graphics.pose().translate(0, -MODEL_Y_OFFSET, 0);
-        graphics.pose().rotateAround(Axis.XP.rotationDegrees(this.pitch), 0, -MODEL_HEIGHT / 2, 0);
+        graphics.pose().rotateAround(Axis.XP.rotationDegrees(this.xRot), 0, -MODEL_HEIGHT / 2, 0);
         //? if >=1.20.6 {
-        graphics.pose().mulPose(Axis.YP.rotationDegrees(this.yaw));
+        graphics.pose().mulPose(Axis.YP.rotationDegrees(this.yRot));
         //?} else
-        /*graphics.getMatrices().multiply(Axis.Y_POSITIVE.rotationDegrees(this.yaw));*/
+        /*graphics.pose().mulPose(Axis.YP.rotationDegrees(this.yRot));*/
         graphics.flush();
 
-        Lighting.setupForEntityInInventory(Axis.XP.rotationDegrees(this.pitch));
+        Lighting.setupForEntityInInventory(Axis.XP.rotationDegrees(this.xRot));
         graphics.pose().pushPose();
         //? if >=1.20.6 {
         graphics.pose().scale(1, 1, -1);
         //?} else
-        /*graphics.getMatrices().multiplyMatrix(new org.joml.Matrix4f().scale(1, 1, -1));*/
+        /*graphics.pose().mulPoseMatrix(new org.joml.Matrix4f().scale(1, 1, -1));*/
         graphics.pose().translate(0, -1.5, 0);
         this.render(graphics);
         graphics.pose().popPose();
@@ -186,8 +186,8 @@ public class ModelPreview {
         graphics.drawSpecial(bufferSource ->
             model.renderToBuffer(graphics.pose(), bufferSource.getBuffer(type), 0xf000f0, OverlayTexture.NO_OVERLAY));
         //?} else if >=1.21 {
-        /*model.method_60879(graphics.getMatrices(), graphics.getVertexConsumers().getBuffer(layer), 0xf000f0, OverlayTexture.DEFAULT_UV);
+        /*model.renderToBuffer(graphics.pose(), graphics.bufferSource().getBuffer(type), 0xf000f0, OverlayTexture.NO_OVERLAY);
         *///?} else
-        /*model.render(graphics.getMatrices(), graphics.getVertexConsumers().getBuffer(layer), 0xf000f0, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);*/
+        /*model.renderToBuffer(graphics.pose(), graphics.bufferSource().getBuffer(type), 0xf000f0, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);*/
     }
 }

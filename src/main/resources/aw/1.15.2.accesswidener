@@ -1,11 +1,11 @@
 accessWidener v2 named
 
-accessible method net/minecraft/client/texture/PlayerSkinTexture loadTexture (Ljava/io/InputStream;)Lnet/minecraft/client/texture/NativeImage;
-accessible method net/minecraft/client/texture/PlayerSkinTexture onTextureLoaded (Lnet/minecraft/client/texture/NativeImage;)V
+accessible method net/minecraft/client/renderer/texture/HttpTexture load (Ljava/io/InputStream;)Lcom/mojang/blaze3d/platform/NativeImage;
+accessible method net/minecraft/client/renderer/texture/HttpTexture loadCallback (Lcom/mojang/blaze3d/platform/NativeImage;)V
 
-accessible field net/minecraft/client/MinecraftClient renderTaskQueue Ljava/util/Queue;
+accessible field net/minecraft/client/Minecraft progressTasks Ljava/util/Queue;
 
-accessible field net/minecraft/client/util/DefaultSkinHelper STEVE_SKIN Lnet/minecraft/util/Identifier;
-accessible field net/minecraft/client/util/DefaultSkinHelper ALEX_SKIN Lnet/minecraft/util/Identifier;
+accessible field net/minecraft/client/resources/DefaultPlayerSkin STEVE_SKIN_LOCATION Lnet/minecraft/resources/ResourceLocation;
+accessible field net/minecraft/client/resources/DefaultPlayerSkin ALEX_SKIN_LOCATION Lnet/minecraft/resources/ResourceLocation;
 
-accessible field net/minecraft/client/util/Session accountType Lnet/minecraft/client/util/Session$AccountType;
+accessible field net/minecraft/client/User type Lnet/minecraft/client/User$Type;

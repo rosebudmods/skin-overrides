@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LayoutSettings;
-import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.multiplayer.WarningScreen;
 import net.minecraft.network.chat.CommonComponents;
@@ -13,6 +12,7 @@ import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.override.SkinChangeOverride;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.Toast;
+import net.orifu.xplat.gui.components.LinearLayout;
 
 //? if hasNetworking
 import net.orifu.skin_overrides.networking.ModNetworking;
@@ -39,7 +39,10 @@ public class SkinChangeInfoScreen extends WarningScreen {
     }
 
     @Override
+    //? if >=1.20.6 {
     protected Layout addFooterButtons()
+    //?} else
+    /*public void initButtons(int textHeight)*/
     {
         var rows = LinearLayout.vertical().spacing(8);
 
@@ -48,15 +51,16 @@ public class SkinChangeInfoScreen extends WarningScreen {
         buttons.addChild(Button.builder(CommonComponents.GUI_CANCEL, btn -> this.onClose()).build());
 
         rows.addChild(Button.builder(Component.translatable("skin_overrides.change_skin.learn_more"),
-                        ConfirmLinkScreen.confirmLink(this, LEARN_MORE_URL)).build(),
+                        /*? if >=1.20.4 {*/ ConfirmLinkScreen.confirmLink(this, LEARN_MORE_URL)
+                        /*?} else*/ /*ConfirmLinkScreen.confirmLink(LEARN_MORE_URL, this, true)*/
+                ).build(),
                 LayoutSettings.defaults().alignHorizontallyCenter());
 
         //? if >=1.20.6 {
         return rows;
         //?} else {
         /*rows.setPosition((this.width - (150 * 2 + 8)) / 2, textHeight + 100);
-        /^? if >=1.20.2 {^//^rows.visitWidgets(this::addDrawableSelectableElement);
-        ^//^?} else^/ rows.visitWidgets(this::addDrawableChild);
+        rows.visitWidgets(this::addRenderableWidget);
         rows.arrangeElements();
         *///?}
     }

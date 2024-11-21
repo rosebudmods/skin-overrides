@@ -1,17 +1,15 @@
 accessWidener v2 named
 
-accessible method net/minecraft/client/texture/PlayerSkinTexture loadTexture (Ljava/io/InputStream;)Lcom/mojang/blaze3d/texture/NativeImage;
-accessible method net/minecraft/client/texture/PlayerSkinTexture onTextureLoaded (Lcom/mojang/blaze3d/texture/NativeImage;)V
+accessible method net/minecraft/client/renderer/texture/HttpTexture load (Ljava/io/InputStream;)Lcom/mojang/blaze3d/platform/NativeImage;
+accessible method net/minecraft/client/renderer/texture/HttpTexture loadCallback (Lcom/mojang/blaze3d/platform/NativeImage;)V
 
-accessible field net/minecraft/client/MinecraftClient authService Lcom/mojang/authlib/yggdrasil/YggdrasilAuthenticationService;
-accessible field net/minecraft/client/MinecraftClient userApiService Lcom/mojang/authlib/minecraft/UserApiService;
-accessible field net/minecraft/client/MinecraftClient renderTaskQueue Ljava/util/Queue;
+accessible field net/minecraft/client/Minecraft authenticationService Lcom/mojang/authlib/yggdrasil/YggdrasilAuthenticationService;
+accessible field net/minecraft/client/Minecraft userApiService Lcom/mojang/authlib/minecraft/UserApiService;
+accessible field net/minecraft/client/Minecraft progressTasks Ljava/util/Queue;
 
-accessible field net/minecraft/client/util/DefaultSkinHelper field_41121 [Lnet/minecraft/client/util/DefaultSkinHelper$C_jiggekeo;
-accessible method net/minecraft/client/util/DefaultSkinHelper$C_jiggekeo texture ()Lnet/minecraft/util/Identifier;
-accessible method net/minecraft/client/util/DefaultSkinHelper$C_jiggekeo model ()Lnet/minecraft/client/util/DefaultSkinHelper$C_pdcbqpco;
-accessible class net/minecraft/client/util/DefaultSkinHelper$C_pdcbqpco
+accessible field net/minecraft/client/resources/DefaultPlayerSkin DEFAULT_SKINS [Lnet/minecraft/client/resources/DefaultPlayerSkin$SkinType;
+accessible method net/minecraft/client/resources/DefaultPlayerSkin$SkinType texture ()Lnet/minecraft/resources/ResourceLocation;
+accessible method net/minecraft/client/resources/DefaultPlayerSkin$SkinType model ()Lnet/minecraft/client/resources/DefaultPlayerSkin$ModelType;
+accessible class net/minecraft/client/resources/DefaultPlayerSkin$ModelType
 
-extendable method net/minecraft/client/gui/widget/EntryListWidget getEntryAtPosition (DD)Lnet/minecraft/client/gui/widget/EntryListWidget$Entry;
-
-extendable method net/minecraft/class_8089 <init> (ILnet/minecraft/class_8088;Ljava/lang/Iterable;)V
+extendable method net/minecraft/client/gui/components/AbstractSelectionList getEntryAtPosition (DD)Lnet/minecraft/client/gui/components/AbstractSelectionList$Entry;

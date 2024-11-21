@@ -34,13 +34,6 @@ import net.minecraft.server.Services;
 //? if >=1.19.3 <1.20.2
 /*import java.util.ArrayList;*/
 
-//? if >=1.19.2 {
-import static net.minecraft.core.UUIDUtil.createOfflinePlayerUUID;
-//?} else if >=1.19 {
-/*import static net.minecraft.util.dynamic.DynamicSerializableUuid.getOfflinePlayerUuid;
-*///?} else
-/*import static net.minecraft.entity.player.PlayerEntity.getOfflinePlayerUuid;*/
-
 public class ProfileHelper {
     public static final String UUID_REGEX = "[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{12}";
 
@@ -50,14 +43,14 @@ public class ProfileHelper {
         //? if >=1.20.2 {
         return Minecraft.getInstance().getGameProfile();
         //?} else
-        /*return MinecraftClient.getInstance().getSession().getProfile();*/
+        /*return Minecraft.getInstance().getUser().getGameProfile();*/
     }
 
     public static ResourceLocation userSkin() {
         //? if >=1.20.2 {
         return DefaultPlayerSkin.getDefaultTexture();
         //?} else
-        /*return DefaultSkinHelper.getTexture(user().getId());*/
+        /*return DefaultPlayerSkin.getDefaultSkin(user().getId());*/
     }
 
     public static CompletableFuture<GameProfile> idToBasicProfile(String id) {
@@ -84,7 +77,7 @@ public class ProfileHelper {
             profile = optional(getProfileCache().get(id));
         }
 
-        return profile.orElseGet(() -> new GameProfile(createOfflinePlayerUUID(id), id));
+        return profile.orElseGet(() -> new GameProfile(getOfflinePlayerUuid(id), id));
     }
 
     public static CompletableFuture<Optional<GameProfile>> idToProfile(String id) {
@@ -144,7 +137,7 @@ public class ProfileHelper {
         var packed = Minecraft.getInstance().getMinecraftSessionService().getPackedTextures(profile);
         return Minecraft.getInstance().getMinecraftSessionService().unpackTextures(packed).skin().getUrl();
         //?} else {
-        /*return MinecraftClient.getInstance().getSessionService().getTextures(profile, false)
+        /*return Minecraft.getInstance().getMinecraftSessionService().getTextures(profile, false)
                 .get(MinecraftProfileTexture.Type.SKIN).getUrl();
         *///?}
     }
@@ -155,8 +148,8 @@ public class ProfileHelper {
         return new Skin.Signature(packed.value(), packed.signature());
         //?} else {
         /*var property = profile.getProperties().get("textures").stream().findFirst().orElseThrow();
-        /^? if >=1.20.2 {^/ return new Skin.Signature(property.value(), property.signature());
-        /^?} else^/ return new Skin.Signature(property.getValue(), property.getSignature());
+        /^? if >=1.20.2 {^/ /^return new Skin.Signature(property.value(), property.signature());
+        ^//^?} else^/ return new Skin.Signature(property.getValue(), property.getSignature());
         *///?}
     }
 
@@ -177,19 +170,25 @@ public class ProfileHelper {
         return Arrays.stream(DefaultPlayerSkin.DEFAULT_SKINS).map(Skin::fromPlayerSkin).toArray(Skin[]::new);
         //?} else if >=1.19.3 {
         /*ArrayList<Skin> skins = new ArrayList<>();
-        for (var skin : DefaultSkinHelper. /^? if >=1.20.1 {^/ DEFAULT_SKINS /^?} else >>^/ /^field_41121^/ ) {
+        for (var skin : DefaultPlayerSkin.DEFAULT_SKINS) {
             skins.add(new Skin(
                     skin.texture(), null, null,
-                    skin.model().equals(DefaultSkinHelper. /^? if >=1.20.1 {^/ ModelType /^?} else >>^/ /^C_pdcbqpco^/ .WIDE)
+                    skin.model().equals(DefaultPlayerSkin.ModelType.WIDE)
                             ? Skin.Model.WIDE : Skin.Model.SLIM));
         }
         return skins.toArray(Skin[]::new);
         *///?} else {
         /*return new Skin[] {
-                new Skin(DefaultSkinHelper.STEVE_SKIN, null, null, Skin.Model.WIDE),
-                new Skin(DefaultSkinHelper.ALEX_SKIN, null, null, Skin.Model.SLIM)
+                new Skin(DefaultPlayerSkin.STEVE_SKIN_LOCATION, null, null, Skin.Model.WIDE),
+                new Skin(DefaultPlayerSkin.ALEX_SKIN_LOCATION, null, null, Skin.Model.SLIM)
         };
         *///?}
+    }
+
+    public static UUID getOfflinePlayerUuid(String name) {
+        /*? if >=1.19.2 {*/ return net.minecraft.core.UUIDUtil.createOfflinePlayerUUID(name);
+        /*?} else if >=1.19 {*/ /*return net.minecraft.util.dynamic.DynamicSerializableUuid.getOfflinePlayerUuid(name);
+        *//*?} else*/ /*return net.minecraft.world.entity.player.Player.createPlayerUUID(name);*/
     }
 
     protected static GameProfileCache getProfileCache() {
@@ -206,9 +205,9 @@ public class ProfileHelper {
         *///?}
         profileCache = services.profileCache();
         //?} else {
-        /*var gameProfileRepository = new YggdrasilAuthenticationService(client.getNetworkProxy()/^? if <1.16.5 {^//^, null^//^?}^/)
+        /*var gameProfileRepository = new YggdrasilAuthenticationService(client.getProxy()/^? if <1.16.5 {^/, null/^?}^/)
                 .createProfileRepository();
-        userCache = new UserCache(gameProfileRepository, new File(client.runDirectory, MinecraftServer.USER_CACHE_FILE.getName()));
+        profileCache = new GameProfileCache(gameProfileRepository, new File(client.gameDirectory, MinecraftServer.USERID_CACHE_FILE.getName()));
         *///?}
         return profileCache;
     }

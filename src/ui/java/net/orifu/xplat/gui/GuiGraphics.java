@@ -28,52 +28,52 @@ public class GuiGraphics extends net.minecraft.client.gui.GuiGraphics {
 //?} else {
 
 /*import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
 public class GuiGraphics {
-    private final MatrixStack stack;
+    private final PoseStack stack;
 
-    public GuiGraphics(MatrixStack matrixStack) {
-        this.stack = matrixStack;
+    public GuiGraphics(PoseStack poseStack) {
+        this.stack = poseStack;
     }
 
-    public MatrixStack portable() {
+    public PoseStack portable() {
         return this.stack;
     }
 
-    public MatrixStack getMatrices() {
+    public PoseStack pose() {
         return this.stack;
     }
 
-    public VertexConsumerProvider.Immediate getVertexConsumers() {
-        return MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+    public MultiBufferSource.BufferSource bufferSource() {
+        return Minecraft.getInstance().renderBuffers().bufferSource();
     }
 
-    public void draw() {
-        this.getVertexConsumers().draw();
+    public void flush() {
+        this.bufferSource().endBatch();
     }
 
-    public void drawTexture(Identifier texture, int x, int y, int w, int h, int u, int v, int uvW, int uvH, int txW, int txH) {
+    public void blit(ResourceLocation texture, int x, int y, int w, int h, int u, int v, int uvW, int uvH, int txW, int txH) {
         RenderSystem.setShaderTexture(0, texture);
-        DrawableHelper.drawTexture(this.stack, x, y, w, h, u, v, uvW, uvH, txW, txH);
+        GuiComponent.blit(this.stack, x, y, w, h, u, v, uvW, uvH, txW, txH);
     }
 
-    public void drawShadowedText(TextRenderer textRenderer, Text text, int x, int y, int color) {
-        DrawableHelper.drawTextWithShadow(this.stack, textRenderer, text, x, y, color);
+    public void drawString(Font font, Component component, int x, int y, int color) {
+        GuiComponent.drawString(this.stack, font, component, x, y, color);
     }
 
-    public void drawCenteredShadowedText(TextRenderer textRenderer, Text text, int x, int y, int color) {
-        DrawableHelper.drawCenteredTextWithShadow(this.stack, textRenderer, text.asOrderedText(), x, y, color);
+    public void drawCenteredString(Font font, Component component, int x, int y, int color) {
+        GuiComponent.drawCenteredString(this.stack, font, component.getVisualOrderText(), x, y, color);
     }
 
     public void fill(int x1, int y1, int x2, int y2, int color) {
-        DrawableHelper.fill(this.stack, x1, y1, x2, y2, color);
+        GuiComponent.fill(this.stack, x1, y1, x2, y2, color);
     }
 }
 

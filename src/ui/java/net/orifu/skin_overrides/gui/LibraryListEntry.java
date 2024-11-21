@@ -35,11 +35,11 @@ public class LibraryListEntry extends ObjectSelectionList.Entry<LibraryListEntry
 
         if (this.entry instanceof SkinEntry skinEntry) {
             this.preview = new ModelPreview(skinEntry.toSkin(), 2, this.client);
-            this.preview.setPitchAndYaw(0, 0);
+            this.preview.setRotation(0, 0);
         } else {
             this.preview = new ModelPreview(parent.userSkin, 2, this.client);
             this.preview.setCape(this.entry.getTexture());
-            this.preview.setPitchAndYaw(0, 180);
+            this.preview.setRotation(0, 180);
         }
     }
 
@@ -51,7 +51,7 @@ public class LibraryListEntry extends ObjectSelectionList.Entry<LibraryListEntry
         if (this.isMouseOver(mouseX, mouseY)) {
             this.preview.spin(delta);
         } else {
-            this.preview.setYaw(this.parent.ov.skin ? 0 : 180);
+            this.preview.setYRot(this.parent.ov.skin ? 0 : 180);
         }
 
         graphics.drawCenteredString(this.client.font, Component.literal(this.entry.getName()),

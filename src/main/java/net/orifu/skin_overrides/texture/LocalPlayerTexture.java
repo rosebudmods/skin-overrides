@@ -1,9 +1,6 @@
 package net.orifu.skin_overrides.texture;
 
-//? if >=1.19.2 {
 import com.mojang.blaze3d.platform.NativeImage;
-//?} else
-/*import net.minecraft.client.texture.NativeImage;*/
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.HttpTexture;
 import net.minecraft.server.packs.resources.ResourceManager;
