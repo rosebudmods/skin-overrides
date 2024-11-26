@@ -1,6 +1,7 @@
 package net.orifu.skin_overrides.override;
 
 import com.mojang.authlib.GameProfile;
+import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.OverrideManager;
@@ -22,13 +23,13 @@ public class LocalCapeOverrider implements OverrideManager.Overrider {
     @Override
     public Optional<OverrideManager.Override> get(File file, String name, String ext) {
         if (ext.equals("png")) {
-            return Optional.of(new LocalCapeOverride(name.toLowerCase(Locale.ROOT), new LocalPlayerTexture(file)));
+            return Optional.of(new LocalCapeOverride(name.toLowerCase(Locale.ROOT), LocalPlayerTexture.fromFile(file)));
         }
 
         return Optional.empty();
     }
 
-    public record LocalCapeOverride(String playerIdent, LocalPlayerTexture tex) implements OverrideManager.Override {
+    public record LocalCapeOverride(String playerIdent, AbstractTexture tex) implements OverrideManager.Override {
         @Override
         public ResourceLocation texture() {
             return Util.texture("cape/local/" + this.playerIdent, this.tex);

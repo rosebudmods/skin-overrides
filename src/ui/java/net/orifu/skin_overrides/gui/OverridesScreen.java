@@ -24,7 +24,7 @@ import net.orifu.skin_overrides.library.CapeLibrary;
 import net.orifu.skin_overrides.library.SkinLibrary;
 import net.orifu.skin_overrides.override.LibraryOverrider.LibraryOverride;
 import net.orifu.skin_overrides.gui.components.ModelPreview;
-import net.orifu.skin_overrides.texture.LocalSkinTexture;
+import net.orifu.skin_overrides.texture.LocalPlayerTexture;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.Util;
 import net.orifu.xplat.GuiHelper;
@@ -334,7 +334,7 @@ public class OverridesScreen extends Screen {
         if (this.ov.skin) {
             // open model selection screen
             this.minecraft.setScreen(OverrideInfoEntryScreen.getModel(this,
-                    Util.texture(new LocalSkinTexture(path.toFile())),
+                    Util.texture(LocalPlayerTexture.fromFile(path.toFile())),
                     model -> {
                         this.ov.copyOverride(profile, path, model);
                         this.rebuildWidgets();

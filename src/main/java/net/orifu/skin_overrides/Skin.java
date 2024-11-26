@@ -2,6 +2,7 @@ package net.orifu.skin_overrides;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.SkinManager;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
@@ -70,7 +71,9 @@ public record Skin(
     public static CompletableFuture<Skin> fetchSkin(GameProfile profile) {
         var manager = Minecraft.getInstance().getSkinManager();
 
-        //? if <1.20.2 {
+        //? if >=1.20.2 {
+        return manager.getOrLoad(profile).thenApply(s -> Skin.fromPlayerSkin(s, profile));
+        //?} else {
         /*CompletableFuture<Skin> future = new CompletableFuture<>();
         manager.registerSkins(profile, (ty, id, tx) -> {
             if (ty.equals(MinecraftProfileTexture.Type.SKIN)) {
@@ -78,23 +81,22 @@ public record Skin(
             }
         }, false);
         return future;
-        *///?} else
-        return manager.getOrLoad(profile).thenApply(Skin::fromPlayerSkin);
+        *///?}
     }
 
     public static CompletableFuture<Skin> fetchCape(GameProfile profile) {
-        var manager = Minecraft.getInstance().getSkinManager();
-
-        //? if <1.20.2 {
-        /*CompletableFuture<Skin> future = new CompletableFuture<>();
+        //? if >=1.20.2 {
+        return Skin.fetchSkin(profile);
+        //?} else {
+        /*var manager = Minecraft.getInstance().getSkinManager();
+        CompletableFuture<Skin> future = new CompletableFuture<>();
         manager.registerSkins(profile, (ty, id, tx) -> {
             if (ty.equals(MinecraftProfileTexture.Type.CAPE)) {
                 future.complete(new Skin(null, id, null, null));
             }
         }, false);
         return future;
-        *///?} else
-        return manager.getOrLoad(profile).thenApply(Skin::fromPlayerSkin);
+        *///?}
     }
 
     public Skin withSkin(ResourceLocation skin, Model model) {
@@ -115,7 +117,7 @@ public record Skin(
             var skinFuture = manager.skinCache.getUnchecked(new SkinManager.CacheKey(profile.getId(), property));
 
             // if we have the default skin, use its cape. otherwise, use what we currently have.
-            return Optional.ofNullable(skinFuture.getNow(null)).map(Skin::fromPlayerSkin)
+            return Optional.ofNullable(skinFuture.getNow(null)).map(s -> Skin.fromPlayerSkin(s, profile))
                     .map(sk -> this.withCape(sk.capeTexture())).orElse(this);
         }
         //?}
@@ -126,6 +128,14 @@ public record Skin(
     //? if >=1.20.2 {
     public static Skin fromPlayerSkin(PlayerSkin skin) {
         return new Skin(skin.texture(), skin.capeTexture(), skin.elytraTexture(), Model.from(skin.model()));
+    }
+
+    public static Skin fromPlayerSkin(PlayerSkin skin, GameProfile profile) {
+        return Skin.fromPlayerSkin(skin);
+    }
+
+    public static Skin fromPlayerSkin(Optional<PlayerSkin> skin, GameProfile profile) {
+        return Skin.fromPlayerSkin(skin.orElseGet(() -> DefaultPlayerSkin.get(profile)), profile);
     }
 
     public PlayerSkin toPlayerSkin() {

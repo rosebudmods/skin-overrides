@@ -77,7 +77,7 @@ public class CapeLibrary extends AbstractLibrary {
 
         @Override
         protected ResourceLocation getTextureFromFile() {
-            return Util.texture("cape/library/" + this.id, new LocalPlayerTexture(this.file));
+            return Util.texture("cape/library/" + this.id, LocalPlayerTexture.fromFile(this.file));
         }
     }
 }

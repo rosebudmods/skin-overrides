@@ -23,7 +23,7 @@ public abstract class ObjectSelectionGrid<E extends ObjectSelectionList.Entry<E>
     }
 
     @Override
-    protected int getMaxPosition() {
+    public int maxScrollAmount() {
         // divide entry count by x tiles
         return this.headerHeight + Mth.positiveCeilDiv(this.getItemCount(), this.xTiles()) * this.itemHeight + 4;
     }
@@ -31,7 +31,7 @@ public abstract class ObjectSelectionGrid<E extends ObjectSelectionList.Entry<E>
     @Override
     public int getRowTop(int index) {
         // divide index by x tiles
-        return this.getY() + 4 - (int) this.getScrollAmount()
+        return this.getY() + 4 - (int) this.scrollAmount()
                 + Mth.floorDiv(index, this.xTiles()) * this.itemHeight
                 + this.headerHeight;
     }
@@ -82,7 +82,7 @@ public abstract class ObjectSelectionGrid<E extends ObjectSelectionList.Entry<E>
     protected E getEntryAtPosition(double x, double y) {
         double relativeX = x - this.getRowLeft();
         double unscrolledRelativeY = y - this.getY() - this.headerHeight - 4;
-        double relativeY = unscrolledRelativeY + this.getScrollAmount();
+        double relativeY = unscrolledRelativeY + this.scrollAmount();
 
         // ensure position is within boundaries
         if (relativeX < 0 || relativeX > this.getRowWidth() || unscrolledRelativeY < 0
@@ -90,7 +90,7 @@ public abstract class ObjectSelectionGrid<E extends ObjectSelectionList.Entry<E>
             return null;
         }
         // ensure the position is not on the scroll bar
-        if (x > this.getScrollbarPosition()) {
+        if (x > this.scrollBarX()) {
             return null;
         }
 

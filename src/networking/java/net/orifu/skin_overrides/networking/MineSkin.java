@@ -9,6 +9,7 @@ import org.mineskin.GenerateOptions;
 import org.mineskin.MineSkinClient;
 import org.mineskin.data.Variant;
 import org.mineskin.data.Visibility;
+import org.mineskin.request.GenerateRequest;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,9 +30,11 @@ public class MineSkin {
 
             var variant = model.equals(Skin.Model.WIDE) ? Variant.CLASSIC : Variant.SLIM;
 
-            var resp = CLIENT.generateUpload(skin, GenerateOptions.create()
-                    .visibility(Visibility.UNLISTED).variant(variant)).get();
-            var signedTexture = resp.getSkin().data().texture();
+            var resp = CLIENT.queue().submit(GenerateRequest.upload(skin)
+                    .options(GenerateOptions.create().visibility(Visibility.UNLISTED).variant(variant)))
+                    .get().getJob().waitForCompletion(CLIENT).get().getOrLoadSkin(CLIENT).get();
+
+            var signedTexture = resp.texture().data();
             skin.delete();
 
             return Optional.of(new Skin.Signature(signedTexture.value(), signedTexture.signature()));

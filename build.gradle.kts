@@ -128,8 +128,8 @@ dependencies {
 		modRuntimeOnly("maven.modrinth:ears:${property("deps.ears")}")
 
 	if (hasNetworking) {
-		implementation("org.mineskin:java-client:3.0.0-SNAPSHOT")?.let { include(it) }
-		implementation("org.mineskin:java-client-apache:3.0.0-SNAPSHOT")?.let { include(it) }
+		implementation("org.mineskin:java-client:3.0.1-SNAPSHOT")?.let { include(it) }
+		implementation("org.mineskin:java-client-apache:3.0.1-SNAPSHOT")?.let { include(it) }
 	}
 
 	// include httpmime (it will show up in a dev environment, but don't believe its lies)

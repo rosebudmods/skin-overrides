@@ -7,8 +7,8 @@ import net.orifu.xplat.gui.GuiGraphics;
 
 import java.util.function.Consumer;
 
-public class ObjectSelectionList<E extends ObjectSelectionList.Entry<E>> extends net.minecraft.client.gui.components.ObjectSelectionList<E> {
-    //? if <1.20.2
+public abstract class ObjectSelectionList<E extends ObjectSelectionList.Entry<E>> extends net.minecraft.client.gui.components.ObjectSelectionList<E> {
+    //? if <1.20.2 || >=1.21.4
     /*public static final int SCROLLBAR_WIDTH = 6;*/
 
     //? if <1.20.4
@@ -70,6 +70,30 @@ public class ObjectSelectionList<E extends ObjectSelectionList.Entry<E>> extends
         screen.accept(this);
         *///?}
     }
+
+    //? if <1.21.4 {
+    public double scrollAmount() {
+        return this.getScrollAmount();
+    }
+
+    @Override
+    public int getScrollbarPosition() {
+        return this.scrollBarX();
+    }
+
+    public int scrollBarX() {
+        return super.getScrollbarPosition();
+    }
+
+    @Override
+    public int getMaxScroll() {
+        return this.maxScrollAmount();
+    }
+
+    public int maxScrollAmount() {
+        return super.getMaxScroll();
+    }
+    //?}
 
     //? if <1.20.4 {
     /*public int getWidth() {

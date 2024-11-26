@@ -38,7 +38,12 @@ public class OverrideManager {
 
     public void update() {
         Map<String, Overridden> newOverrides = new HashMap<>();
-        this.findOverrides(ov -> newOverrides.put(ov.override.playerIdent().toLowerCase(Locale.ROOT), ov));
+        this.findOverrides(ov -> {
+            String key = ov.override.playerIdent().toLowerCase(Locale.ROOT);
+            var maybeExisting = this.overrides.get(key);
+
+            newOverrides.put(key, ov.equals(maybeExisting) ? maybeExisting : ov);
+        });
 
         synchronized (this.overrides) {
             Optional<Override> oldUserOverride = this.get(ProfileHelper.user());

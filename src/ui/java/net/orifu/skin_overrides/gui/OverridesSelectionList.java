@@ -121,7 +121,7 @@ public class OverridesSelectionList extends ObjectSelectionList<OverrideListEntr
 
     // fix scrollbar position
     @Override
-    public int getScrollbarPosition() {
+    protected int scrollBarX() {
         return this.getRight();
     }
 
@@ -135,9 +135,9 @@ public class OverridesSelectionList extends ObjectSelectionList<OverrideListEntr
 
     // pad bottom
     @Override
-    public int getMaxScroll() {
-        int maxScroll = super.getMaxScroll();
-        return maxScroll > 0 ? Math.max(0, super.getMaxScroll() - 4 + PADDING * 2) : 0;
+    public int maxScrollAmount() {
+        int maxScroll = super.maxScrollAmount();
+        return maxScroll > 0 ? Math.max(0, super.maxScrollAmount() - 4 + PADDING * 2) : 0;
     }
 
     //?}
