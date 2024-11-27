@@ -11,6 +11,7 @@ import net.orifu.skin_overrides.util.Util;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -50,6 +51,13 @@ public class SkinCopyOverrider implements OverrideManager.Overrider {
         public Skin.Model model() {
             Skin skin = this.copyFrom.getNow(null);
             return skin != null ? skin.model() : null;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof SkinCopyOverride that)) return false;
+            return Objects.equals(playerIdent, that.playerIdent) && Objects.equals(profile, that.profile);
         }
     }
 }

@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.Optional;
 
 public class LibraryOverrider implements OverrideManager.Overrider {
@@ -94,6 +95,13 @@ public class LibraryOverrider implements OverrideManager.Overrider {
             signed.ifPresent(newEntry -> SkinLibrary.INSTANCE.replace(this.entry, newEntry));
 
             return signed.map(s -> s.signature);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof LibraryOverride that)) return false;
+            return Objects.equals(playerIdent, that.playerIdent) && Objects.equals(entry, that.entry);
         }
     }
 }

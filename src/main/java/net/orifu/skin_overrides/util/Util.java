@@ -20,9 +20,13 @@ import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.SimpleTexture;
-import net.minecraft.client.renderer.texture.SkinTextureDownloader;
 import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Mod;
+
+//? if >=1.21.4 {
+/*import net.minecraft.client.renderer.texture.SkinTextureDownloader;
+*///?} else
+import net.minecraft.client.renderer.texture.HttpTexture;
 
 public class Util {
     public static Optional<String> readFile(File file) {
@@ -40,6 +44,12 @@ public class Util {
         }
 
         return Optional.ofNullable(obj.get(key).getAsString());
+    }
+
+    public static String hashFile(File file) {
+        // it's cheap, and you'd have to go out of your way to have a collision.
+        // it works, okay?!
+        return file.length() + "-" + file.lastModified();
     }
 
     public static String randomId() {
@@ -111,6 +121,15 @@ public class Util {
     }
 
     public static AbstractTexture skinTextureFromFile(File textureFile) {
-        return textureFromFile(textureFile, image -> SkinTextureDownloader.processLegacySkin(image, textureFile.getName()));
+        return textureFromFile(textureFile, image ->
+                /*? if >=1.21.4 {*/ /*SkinTextureDownloader.processLegacySkin(image, textureFile.getName())
+                *///?} else {
+                {
+                    try (var temp = new HttpTexture(null, textureFile.getName(), null, true, () -> {})) {
+                        return temp.processLegacySkin(image);
+                    }
+                }
+                //?}
+        );
     }
 }

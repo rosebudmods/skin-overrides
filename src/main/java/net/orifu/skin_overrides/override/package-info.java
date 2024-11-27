@@ -1,0 +1,4 @@
+@ParametersAreNonnullByDefault
+package net.orifu.skin_overrides.override;
+
+import javax.annotation.ParametersAreNonnullByDefault;

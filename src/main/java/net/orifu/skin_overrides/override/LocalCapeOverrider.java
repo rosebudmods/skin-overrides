@@ -11,6 +11,7 @@ import net.orifu.skin_overrides.util.Util;
 
 import java.io.File;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 
 public class LocalCapeOverrider implements OverrideManager.Overrider {
@@ -22,13 +23,15 @@ public class LocalCapeOverrider implements OverrideManager.Overrider {
     @Override
     public Optional<OverrideManager.Override> get(File file, String name, String ext) {
         if (ext.equals("png")) {
-            return Optional.of(new LocalCapeOverride(name.toLowerCase(Locale.ROOT), Util.textureFromFile(file)));
+            var texture = Util.textureFromFile(file);
+            String hash = Util.hashFile(file);
+            return Optional.of(new LocalCapeOverride(name.toLowerCase(Locale.ROOT), texture, hash));
         }
 
         return Optional.empty();
     }
 
-    public record LocalCapeOverride(String playerIdent, AbstractTexture tex) implements OverrideManager.Override {
+    public record LocalCapeOverride(String playerIdent, AbstractTexture tex, String texHash) implements OverrideManager.Override {
         @Override
         public ResourceLocation texture() {
             return Util.texture("cape/local/" + this.playerIdent, this.tex);
@@ -37,6 +40,13 @@ public class LocalCapeOverrider implements OverrideManager.Overrider {
         @Override
         public Component info() {
             return ComponentUtil.translatable("skin_overrides.override.local_image");
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof LocalCapeOverride that)) return false;
+            return Objects.equals(texHash, that.texHash) && Objects.equals(playerIdent, that.playerIdent);
         }
     }
 }

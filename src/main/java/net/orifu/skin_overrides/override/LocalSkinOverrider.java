@@ -27,12 +27,12 @@ public class LocalSkinOverrider implements OverrideManager.Overrider {
             Skin.Model maybeModel = Skin.Model.tryParse(parts[1]);
             if (ext.equals("png") && maybeModel != null) {
                 var texture = Util.skinTextureFromFile(file);
-                String hash = file.length() + "-" + file.lastModified(); // TODO: util
+                String hash = Util.hashFile(file);
                 return Optional.of(new LocalSkinOverride(parts[0].toLowerCase(Locale.ROOT), texture, hash, maybeModel));
             }
         } else if (ext.equals("png")) {
             var texture = Util.skinTextureFromFile(file);
-            String hash = file.length() + "-" + file.lastModified();
+            String hash = Util.hashFile(file);
             return Optional.of(new LocalSkinOverride(name.toLowerCase(Locale.ROOT), texture, hash, Skin.Model.WIDE));
         }
 
