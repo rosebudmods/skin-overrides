@@ -87,10 +87,10 @@ public abstract class ObjectSelectionList<E extends ObjectSelectionList.Entry<E>
 
     @Override
     public int getMaxScroll() {
-        return this.maxScrollAmount();
+        return this.contentHeight();
     }
 
-    public int maxScrollAmount() {
+    public int contentHeight() {
         return super.getMaxScroll();
     }
     //?}

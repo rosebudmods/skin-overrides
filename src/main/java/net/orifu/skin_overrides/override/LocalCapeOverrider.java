@@ -6,7 +6,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.OverrideManager;
 import net.orifu.skin_overrides.Skin;
-import net.orifu.skin_overrides.texture.LocalPlayerTexture;
 import net.orifu.skin_overrides.util.ComponentUtil;
 import net.orifu.skin_overrides.util.Util;
 
@@ -23,7 +22,7 @@ public class LocalCapeOverrider implements OverrideManager.Overrider {
     @Override
     public Optional<OverrideManager.Override> get(File file, String name, String ext) {
         if (ext.equals("png")) {
-            return Optional.of(new LocalCapeOverride(name.toLowerCase(Locale.ROOT), LocalPlayerTexture.fromFile(file)));
+            return Optional.of(new LocalCapeOverride(name.toLowerCase(Locale.ROOT), Util.textureFromFile(file)));
         }
 
         return Optional.empty();

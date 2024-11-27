@@ -98,11 +98,8 @@ public class LibrarySelectionGrid extends ObjectSelectionGrid<LibraryListEntry> 
         return this.xTiles() * this.itemWidth;
     }
 
-    // TODO
-    //? if <1.21.4 {
     @Override
-    public int getScrollbarPosition() {
+    protected int scrollBarX() {
         return this.getRight() - SCROLLBAR_WIDTH;
     }
-    //?}
 }

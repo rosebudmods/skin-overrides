@@ -1,6 +1,5 @@
 package net.orifu.skin_overrides.override;
 
-import net.minecraft.client.Minecraft;
 //import net.minecraft.client.renderer.texture.HttpTexture;
 import net.minecraft.client.renderer.texture.SkinTextureDownloader;
 import net.minecraft.resources.ResourceLocation;
@@ -29,9 +28,8 @@ public class SkinChangeOverride {
 
             var location = Mod.res("skin/user-change");
 
-            SkinTextureDownloader.downloadAndRegisterSkin(location, null, null, true).thenRun(() -> {
-                override = new Tuple<>(location, model);
-            });
+            SkinTextureDownloader.downloadAndRegisterSkin(location, file.toPath(), url, true).thenRun(
+                    () -> override = new Tuple<>(location, model));
 
             // TODO
 //            var texture = new HttpTexture(file, url, ProfileHelper.userSkin(), true,

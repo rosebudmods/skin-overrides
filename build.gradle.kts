@@ -18,7 +18,8 @@ val scVersion = stonecutter.current.version
 val hasUi = stonecutter.compare(scVersion, "1.19.4") >= 0
 val hasNetworking = stonecutter.compare(scVersion, "1.20.6") >= 0
 val awVersion =
-	if (stonecutter.compare(scVersion, "1.20.6") >= 0) "1.20.6"
+	if (stonecutter.compare(scVersion, "1.21.4") >= 0) "1.21.4"
+	else if (stonecutter.compare(scVersion, "1.20.6") >= 0) "1.20.6"
 	else if (stonecutter.compare(scVersion, "1.20.2") >= 0) "1.20.2"
 	else if (stonecutter.compare(scVersion, "1.20.1") >= 0) "1.20.1"
 	else if (stonecutter.compare(scVersion, "1.19.4") >= 0) "1.19.4"

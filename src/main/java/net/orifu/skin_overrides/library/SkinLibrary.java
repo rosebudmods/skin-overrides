@@ -8,7 +8,6 @@ import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Skin;
 //? if hasNetworking
 import net.orifu.skin_overrides.networking.MineSkin;
-import net.orifu.skin_overrides.texture.LocalPlayerTexture;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.Util;
 import org.jetbrains.annotations.NotNull;
@@ -133,7 +132,7 @@ public class SkinLibrary extends AbstractLibrary {
 
         @Override
         protected ResourceLocation getTextureFromFile() {
-            return Util.texture("skin/library/" + this.id, LocalPlayerTexture.fromFile(this.file, this.model));
+            return Util.texture("skin/library/" + this.id, Util.skinTextureFromFile(this.file));
         }
 
         public Skin toSkin() {

@@ -135,9 +135,9 @@ public class OverridesSelectionList extends ObjectSelectionList<OverrideListEntr
 
     // pad bottom
     @Override
-    public int maxScrollAmount() {
-        int maxScroll = super.maxScrollAmount();
-        return maxScroll > 0 ? Math.max(0, super.maxScrollAmount() - 4 + PADDING * 2) : 0;
+    public int contentHeight() {
+        int parentHeight = super.contentHeight();
+        return parentHeight > 0 ? Math.max(0, parentHeight - 4 + PADDING * 2) : 0;
     }
 
     //?}

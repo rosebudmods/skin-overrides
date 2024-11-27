@@ -18,7 +18,6 @@ import net.orifu.skin_overrides.gui.components.ModelPreview;
 import net.orifu.skin_overrides.library.CapeLibrary;
 import net.orifu.skin_overrides.library.SkinLibrary;
 import net.orifu.skin_overrides.library.SkinLibrary.SkinEntry;
-import net.orifu.skin_overrides.texture.LocalPlayerTexture;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.Toast;
@@ -335,7 +334,7 @@ public class LibraryScreen extends Screen {
         if (this.ov.skin) {
             // open name and model input screen
             this.minecraft.setScreen(OverrideInfoEntryScreen.getNameAndModel(this,
-                    Util.texture(LocalPlayerTexture.fromFile(path.toFile())), guessedName,
+                    Util.texture(Util.skinTextureFromFile(path.toFile())), guessedName,
                     (name, model) -> {
                         // add skin
                         ((SkinLibrary) this.ov.library()).create(name, path, model);
@@ -345,7 +344,7 @@ public class LibraryScreen extends Screen {
         } else {
             // open name input screen
             this.minecraft.setScreen(OverrideInfoEntryScreen.getName(this,
-                    Util.texture(LocalPlayerTexture.fromFile(path.toFile())), guessedName,
+                    Util.texture(Util.textureFromFile(path.toFile())), guessedName,
                     name -> {
                         // add cape
                         ((CapeLibrary) this.ov.library()).create(name, path);

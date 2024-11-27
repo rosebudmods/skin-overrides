@@ -1,12 +1,14 @@
 package net.orifu.skin_overrides.util;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.UnaryOperator;
 
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
@@ -15,6 +17,10 @@ import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
 import net.minecraft.client.renderer.texture.AbstractTexture;
+import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.client.renderer.texture.SimpleTexture;
+import net.minecraft.client.renderer.texture.SkinTextureDownloader;
 import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Mod;
 
@@ -85,5 +91,26 @@ public class Util {
             Minecraft.getInstance().progressTasks.add(runnable);
             future.join();
         }
+    }
+
+    public static AbstractTexture textureFromFile(File textureFile, UnaryOperator<NativeImage> transform) {
+        try {
+            if (textureFile.isFile()) {
+                var stream = new FileInputStream(textureFile);
+                var image = NativeImage.read(stream);
+
+                return new DynamicTexture(transform.apply(image));
+            }
+        } catch (IOException ignored) {}
+
+        return new SimpleTexture(MissingTextureAtlasSprite.getLocation());
+    }
+
+    public static AbstractTexture textureFromFile(File textureFile) {
+        return textureFromFile(textureFile, t -> t);
+    }
+
+    public static AbstractTexture skinTextureFromFile(File textureFile) {
+        return textureFromFile(textureFile, image -> SkinTextureDownloader.processLegacySkin(image, textureFile.getName()));
     }
 }

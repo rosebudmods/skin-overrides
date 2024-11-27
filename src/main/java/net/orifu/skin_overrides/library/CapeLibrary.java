@@ -3,7 +3,6 @@ package net.orifu.skin_overrides.library;
 import com.google.gson.JsonObject;
 import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Mod;
-import net.orifu.skin_overrides.texture.LocalPlayerTexture;
 import net.orifu.skin_overrides.util.Util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -77,7 +76,7 @@ public class CapeLibrary extends AbstractLibrary {
 
         @Override
         protected ResourceLocation getTextureFromFile() {
-            return Util.texture("cape/library/" + this.id, LocalPlayerTexture.fromFile(this.file));
+            return Util.texture("cape/library/" + this.id, Util.textureFromFile(this.file));
         }
     }
 }

@@ -6,7 +6,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.OverrideManager;
 import net.orifu.skin_overrides.Skin;
-import net.orifu.skin_overrides.texture.LocalPlayerTexture;
 import net.orifu.skin_overrides.util.ComponentUtil;
 import net.orifu.skin_overrides.util.Util;
 
@@ -27,12 +26,12 @@ public class LocalSkinOverrider implements OverrideManager.Overrider {
             String[] parts = name.split("\\.", 2);
             Skin.Model maybeModel = Skin.Model.tryParse(parts[1]);
             if (ext.equals("png") && maybeModel != null) {
-                var texture = LocalPlayerTexture.fromFile(file, maybeModel);
-                String hash = file.length() + "-" + file.lastModified();
+                var texture = Util.skinTextureFromFile(file);
+                String hash = file.length() + "-" + file.lastModified(); // TODO: util
                 return Optional.of(new LocalSkinOverride(parts[0].toLowerCase(Locale.ROOT), texture, hash, maybeModel));
             }
         } else if (ext.equals("png")) {
-            var texture = LocalPlayerTexture.fromFile(file, Skin.Model.WIDE);
+            var texture = Util.skinTextureFromFile(file);
             String hash = file.length() + "-" + file.lastModified();
             return Optional.of(new LocalSkinOverride(name.toLowerCase(Locale.ROOT), texture, hash, Skin.Model.WIDE));
         }

@@ -23,7 +23,7 @@ public abstract class ObjectSelectionGrid<E extends ObjectSelectionList.Entry<E>
     }
 
     @Override
-    public int maxScrollAmount() {
+    public int contentHeight() {
         // divide entry count by x tiles
         return this.headerHeight + Mth.positiveCeilDiv(this.getItemCount(), this.xTiles()) * this.itemHeight + 4;
     }
