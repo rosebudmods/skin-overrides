@@ -81,13 +81,13 @@ public abstract class ObjectSelectionList<E extends ObjectSelectionList.Entry<E>
         return this.scrollBarX();
     }
 
-    public int scrollBarX() {
+    protected int scrollBarX() {
         return super.getScrollbarPosition();
     }
 
     @Override
     public int getMaxScroll() {
-        return this.contentHeight();
+        return Math.max(0, this.contentHeight() - (this.height - 4));
     }
 
     public int contentHeight() {

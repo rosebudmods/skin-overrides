@@ -123,13 +123,14 @@ public class Util {
     public static AbstractTexture skinTextureFromFile(File textureFile) {
         return textureFromFile(textureFile, image ->
                 /*? if >=1.21.4 {*/ /*SkinTextureDownloader.processLegacySkin(image, textureFile.getName())
-                *///?} else {
+                *///?} else if >=1.16.5 {
                 {
                     try (var temp = new HttpTexture(null, textureFile.getName(), null, true, () -> {})) {
                         return temp.processLegacySkin(image);
                     }
                 }
-                //?}
+                //?} else
+                /*new HttpTexture(null, textureFile.getName(), null, true, () -> {}).processLegacySkin(image)*/
         );
     }
 }
