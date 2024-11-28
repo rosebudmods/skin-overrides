@@ -29,7 +29,8 @@ val awVersion =
 	else if (stonecutter.compare(scVersion, "1.17.1") >= 0) "1.17.1"
 	else "1.15.2"
 val mixinFile =
-	if (stonecutter.compare(scVersion, "1.19.4") >= 0) "1.19.4.mixins.json"
+	if (stonecutter.compare(scVersion, "1.20.2") >= 0) "1.20.2.mixins.json"
+	else if (stonecutter.compare(scVersion, "1.19.4") >= 0) "1.19.4.mixins.json"
 	else "1.15.2.mixins.json"
 
 stonecutter {

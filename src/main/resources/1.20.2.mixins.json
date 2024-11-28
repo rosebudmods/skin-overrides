@@ -9,8 +9,7 @@
 	],
 	"client": [
 		"SkinManagerMixin",
-        "PlayerInfoMixin",
-		"CapeLayerMixin"
+        "PlayerInfoMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
