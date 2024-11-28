@@ -44,6 +44,7 @@ public class PlayerInfoMixin {
 
     @ModifyReturnValue(method = "getCapeLocation", at = @At("RETURN"))
     private ResourceLocation getCapeTexture(ResourceLocation texture) {
+        // TODO
         return Mod.overrideCape(profile).orElse(texture);
     }
 

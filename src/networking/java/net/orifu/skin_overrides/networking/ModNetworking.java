@@ -3,15 +3,21 @@ package net.orifu.skin_overrides.networking;
 import com.mojang.authlib.properties.Property;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.players.PlayerList;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.util.ProfileHelper;
+
+//? if >=1.20.6 {
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+//?} else {
+/*import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.minecraft.network.FriendlyByteBuf;
+*///?}
 
 import java.util.Collections;
 import java.util.Optional;
@@ -21,49 +27,69 @@ public class ModNetworking {
 
     public static void init() {
         // register the skin update payload packet
+        //? if >=1.20.6
         PayloadTypeRegistry.playC2S().register(SkinUpdatePayload.TYPE, SkinUpdatePayload.PACKET_CODEC);
 
         // listen for the packet
+        //? if >=1.20.6 {
         ServerPlayNetworking.registerGlobalReceiver(SkinUpdatePayload.TYPE, (payload, ctx) -> {
-            Mod.LOGGER.debug("received packet; {} changed skin:\nval: {}\nsig: {}",
-                    ctx.player().getGameProfile().getName(),
-                    payload.skinValue(), payload.signature());
+            var player = ctx.player();
+            var skinValue = payload.skinValue();
+            var signature = payload.signature();
 
-            ServerPlayer player = ctx.player();
             PlayerList playerList = ctx.server().getPlayerList();
+        //?} else {
+        /*ServerPlayNetworking.registerGlobalReceiver(Mod.res("update_skin"), (srv, player, lstn, buf, sender) -> {
+            var skinValue = buf.readOptional(FriendlyByteBuf::readUtf);
+            var signature = buf.readOptional(FriendlyByteBuf::readUtf);
+
+            PlayerList playerList = srv.getPlayerList();
+        *///?}
+
+            Mod.LOGGER.debug("received packet; {} changed skin:\nval: {}\nsig: {}",
+                    player.getGameProfile().getName(), skinValue, signature);
 
             // store default textures
             var properties = player.getGameProfile().getProperties();
             if (!properties.containsKey(DEFAULT_TEXTURES_KEY) && properties.containsKey("textures")) {
                 var defaultTextures = properties.get("textures").stream().findFirst().orElseThrow();
                 properties.put(DEFAULT_TEXTURES_KEY, new Property(DEFAULT_TEXTURES_KEY,
-                        defaultTextures.value(), defaultTextures.signature()));
+                        propValue(defaultTextures), propSig(defaultTextures)));
             }
 
             // set skin
             properties.removeAll("textures");
-            if (payload.skinValue().isPresent() && payload.signature().isPresent()) {
+            if (skinValue.isPresent() && signature.isPresent()) {
                 Mod.LOGGER.debug("using new textures property");
                 properties.put("textures", new Property("textures",
-                        payload.skinValue().get(), payload.signature().get()));
+                        skinValue.get(), signature.get()));
             } else {
                 // restore default textures
                 properties.get(DEFAULT_TEXTURES_KEY).stream().findFirst().ifPresent(textures ->
                     properties.put("textures", new Property("textures",
-                            textures.value(), textures.signature())));
+                            propValue(textures), propSig(textures))));
             }
 
             Mod.LOGGER.debug("texture properties:\nprofile textures:                        {}\ndefault textures: {}",
                     properties.get("textures"), properties.get(DEFAULT_TEXTURES_KEY));
 
             // remove and re-add player (updates skin in tab list)
-            playerList.broadcastAll(new ClientboundPlayerInfoRemovePacket(Collections.singletonList(ctx.player().getUUID())));
+            playerList.broadcastAll(new ClientboundPlayerInfoRemovePacket(Collections.singletonList(player.getUUID())));
             playerList.broadcastAll(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(Collections.singleton(player)));
 
             // update skin for players that are tracking this player
-            var tracker = player.serverLevel().getChunkSource().chunkMap.entityMap.get(player.getId());
+            var level = /*? if >=1.20.1 {*/ player.serverLevel() /*?} else >>*/ /*player.level*/ ;
+            var tracker = ((ServerChunkCache) level.getChunkSource()).chunkMap.entityMap.get(player.getId());
             tracker.seenBy.forEach(listener -> tracker.serverEntity.addPairing(listener.getPlayer()));
         });
+    }
+
+    private static String propValue(Property property) {
+        return /*? if >=1.20.2 {*/ property.value() /*?} else >>*/ /*property.getValue()*/ ;
+    }
+
+    private static String propSig(Property property) {
+        return /*? if >=1.20.2 {*/ property.signature() /*?} else >>*/ /*property.getSignature()*/ ;
     }
 
     public static void initClient() {
@@ -81,11 +107,20 @@ public class ModNetworking {
         if (isOnSkinOverridesServer()) {
             Mod.LOGGER.debug("updating skin on server");
 
-            signatureProvider.signature().ifPresent(sig ->
-                ClientPlayNetworking.send(new SkinUpdatePayload(
-                        Optional.ofNullable(sig.value()), Optional.ofNullable(sig.signature())))
-            );
+            signatureProvider.signature().ifPresent(ModNetworking::updateSkinOnServer);
         }
+    }
+
+    private static void updateSkinOnServer(Skin.Signature sig) {
+        //? if >=1.20.6 {
+        ClientPlayNetworking.send(new SkinUpdatePayload(
+                Optional.ofNullable(sig.value()), Optional.ofNullable(sig.signature())));
+        //?} else {
+        /*var buf = PacketByteBufs.create();
+        buf.writeOptional(Optional.ofNullable(sig.value()), FriendlyByteBuf::writeUtf);
+        buf.writeOptional(Optional.ofNullable(sig.signature()), FriendlyByteBuf::writeUtf);
+        ClientPlayNetworking.send(Mod.res("update_skin"), buf);
+        *///?}
     }
 
     public static void clearSkinOverrideOnServer() {
@@ -101,7 +136,7 @@ public class ModNetworking {
         properties.get(DEFAULT_TEXTURES_KEY).stream().findFirst().ifPresent(textures -> {
             properties.removeAll("textures");
             properties.put("textures", new Property("textures",
-                    textures.value(), textures.signature()));
+                    propValue(textures), propSig(textures)));
         });
     }
 

@@ -16,7 +16,7 @@ group = property("maven_group").toString()
 
 val scVersion = stonecutter.current.version
 val hasUi = stonecutter.compare(scVersion, "1.19.4") >= 0
-val hasNetworking = stonecutter.compare(scVersion, "1.20.6") >= 0
+val hasNetworking = stonecutter.compare(scVersion, "1.19.4") >= 0
 val awVersion =
 	if (stonecutter.compare(scVersion, "1.21.4") >= 0) "1.21.4"
 	else if (stonecutter.compare(scVersion, "1.20.6") >= 0) "1.20.6"
@@ -28,8 +28,8 @@ val awVersion =
 	else if (stonecutter.compare(scVersion, "1.17.1") >= 0) "1.17.1"
 	else "1.15.2"
 val mixinFile =
-	if (stonecutter.compare(scVersion, "1.19.4") >= 0) "skin_overrides.mixins.json"
-	else "skin_overrides-old.mixins.json"
+	if (stonecutter.compare(scVersion, "1.19.4") >= 0) "1.19.4.mixins.json"
+	else "1.15.2.mixins.json"
 
 stonecutter {
 	const("hasUi", hasUi)

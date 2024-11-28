@@ -108,7 +108,7 @@ public record Skin(
     }
 
     public Skin withDefaultCape(GameProfile profile) {
-        //? if hasNetworking {
+        //? if >=1.20.6 {
         if (profile.getProperties().containsKey(ModNetworking.DEFAULT_TEXTURES_KEY)) {
             // get the default textures
             var manager = Minecraft.getInstance().getSkinManager();
@@ -122,6 +122,9 @@ public record Skin(
         }
         //?}
 
+        //? if >=1.19.4 && <1.20.6 {
+        /*return this.withCape(Skin.fromProfile(profile).capeTexture);
+        *///?} else
         return this;
     }
 

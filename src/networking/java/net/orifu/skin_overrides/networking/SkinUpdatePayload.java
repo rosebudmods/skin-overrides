@@ -1,5 +1,6 @@
 package net.orifu.skin_overrides.networking;
 
+//? if >=1.20.6 {
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -21,3 +22,11 @@ public record SkinUpdatePayload(Optional<String> skinValue, Optional<String> sig
         return TYPE;
     }
 }
+//?} else {
+/*import net.minecraft.resources.ResourceLocation;
+import net.orifu.skin_overrides.Mod;
+
+public class SkinUpdatePayload {
+    public static final ResourceLocation TYPE = Mod.res("update_skin");
+}
+*///?}
