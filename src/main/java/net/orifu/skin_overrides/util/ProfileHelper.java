@@ -37,13 +37,18 @@ import net.minecraft.server.Services;
 public class ProfileHelper {
     public static final String UUID_REGEX = "[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{12}";
 
+    //? if <1.20.2
+    /*private static GameProfile cachedUserProfile;*/
     private static GameProfileCache profileCache;
 
     public static GameProfile user() {
         //? if >=1.20.2 {
         return Minecraft.getInstance().getGameProfile();
-        //?} else
-        /*return Minecraft.getInstance().getUser().getGameProfile();*/
+        //?} else {
+        /*cachedUserProfile = uuidToSecureProfile(Minecraft.getInstance().getUser().getProfileId())
+                .orElse(Minecraft.getInstance().getUser().getGameProfile());
+        return cachedUserProfile;
+        *///?}
     }
 
     public static ResourceLocation userSkin() {
