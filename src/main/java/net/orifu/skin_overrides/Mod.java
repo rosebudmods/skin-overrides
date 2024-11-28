@@ -62,9 +62,7 @@ public class Mod {
 			skin = skin.withSkin(ovSkin.get().getA(), ovSkin.get().getB());
 
 		// override cape
-		var ovCape = overrideCape(profile);
-		if (ovCape.isPresent())
-			skin = skin.withCape(ovCape.get());
+		skin = skin.withCape(overrideCapeOrDefault(profile));
 
 		return skin;
 	}
@@ -78,6 +76,10 @@ public class Mod {
 
 	public static Optional<ResourceLocation> overrideCape(GameProfile profile) {
 		return CAPES.get(profile).map(OverrideManager.Override::texture);
+	}
+
+	public static ResourceLocation overrideCapeOrDefault(GameProfile profile) {
+		return overrideCape(profile).orElseGet(() -> Skin.fromProfile(profile).withDefaultCape(profile).capeTexture());
 	}
 
 	public static void onUserOverrideUpdate(

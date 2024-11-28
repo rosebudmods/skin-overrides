@@ -27,11 +27,11 @@ public class PlayerInfoMixin {
     @ModifyReturnValue(method = "getSkin", at = @At("RETURN"))
     private PlayerSkin getSkin(PlayerSkin skin) {
         // the return value of this method is otherwise memoised
-        return Mod.override(this.profile, Skin.fromPlayerSkin(skin).withDefaultCape(this.profile)).toPlayerSkin();
+        return Mod.override(this.profile, Skin.fromPlayerSkin(skin)).toPlayerSkin();
     }
-    
+
     //?} else {
-    
+
     /*@ModifyReturnValue(method = "getSkinLocation", at = @At("RETURN"))
     private ResourceLocation getSkinTexture(ResourceLocation texture) {
         return Mod.overrideSkin(profile).map(Tuple::getA).orElse(texture);
@@ -44,8 +44,7 @@ public class PlayerInfoMixin {
 
     @ModifyReturnValue(method = "getCapeLocation", at = @At("RETURN"))
     private ResourceLocation getCapeTexture(ResourceLocation texture) {
-        // TODO
-        return Mod.overrideCape(profile).orElse(texture);
+        return Mod.overrideCapeOrDefault(profile);
     }
 
     *///?}
