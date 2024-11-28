@@ -108,23 +108,36 @@ public record Skin(
     }
 
     public Skin withDefaultCape(GameProfile profile) {
-        //? if >=1.20.6 {
+        //? if hasNetworking {
         if (profile.getProperties().containsKey(ModNetworking.DEFAULT_TEXTURES_KEY)) {
             // get the default textures
             var manager = Minecraft.getInstance().getSkinManager();
             var property = profile.getProperties().get(ModNetworking.DEFAULT_TEXTURES_KEY).stream().findFirst().orElseThrow();
+
+            //? if >=1.20.2 {
             // get the skin from the default textures
+            //? if >=1.20.4 {
             var skinFuture = manager.skinCache.getUnchecked(new SkinManager.CacheKey(profile.getId(), property));
+            //?} else
+            /*var skinFuture = manager.skinCache.getUnchecked(new SkinManager.CacheKey(profile));*/
 
             // if we have the default skin, use its cape. otherwise, use what we currently have.
             return Optional.ofNullable(skinFuture.getNow(null)).map(s -> Skin.fromPlayerSkin(s, profile))
                     .map(sk -> this.withCape(sk.capeTexture())).orElse(this);
+            //?} else {
+            /*// get the skin from the default textures
+            var textures = manager.insecureSkinCache.getUnchecked(property.getValue());
+
+            // register its cape and use it
+            var capeTexture = textures.get(MinecraftProfileTexture.Type.CAPE);
+            var location = capeTexture != null
+                    ? manager.registerTexture(capeTexture, MinecraftProfileTexture.Type.CAPE)
+                    : null;
+            return this.withCape(location);
+            *///?}
         }
         //?}
 
-        //? if >=1.19.4 && <1.20.6 {
-        /*return this.withCape(Skin.fromProfile(profile).capeTexture);
-        *///?} else
         return this;
     }
 

@@ -11,6 +11,8 @@ accessible method net/minecraft/client/resources/DefaultPlayerSkin$SkinType text
 accessible method net/minecraft/client/resources/DefaultPlayerSkin$SkinType model ()Lnet/minecraft/client/resources/DefaultPlayerSkin$ModelType;
 accessible class net/minecraft/client/resources/DefaultPlayerSkin$ModelType
 
+accessible field net/minecraft/client/resources/SkinManager insecureSkinCache Lcom/google/common/cache/LoadingCache;
+
 extendable method net/minecraft/client/gui/components/AbstractSelectionList getEntryAtPosition (DD)Lnet/minecraft/client/gui/components/AbstractSelectionList$Entry;
 
 accessible field net/minecraft/server/level/ChunkMap entityMap Lit/unimi/dsi/fastutil/ints/Int2ObjectMap;

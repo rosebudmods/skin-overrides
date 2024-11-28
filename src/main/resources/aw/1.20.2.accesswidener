@@ -8,6 +8,10 @@ accessible field net/minecraft/client/Minecraft progressTasks Ljava/util/Queue;
 
 accessible field net/minecraft/client/resources/DefaultPlayerSkin DEFAULT_SKINS [Lnet/minecraft/client/resources/PlayerSkin;
 
+accessible field net/minecraft/client/resources/SkinManager skinCache Lcom/google/common/cache/LoadingCache;
+accessible class net/minecraft/client/resources/SkinManager$CacheKey
+accessible method net/minecraft/client/resources/SkinManager$CacheKey <init> (Lcom/mojang/authlib/GameProfile;)V
+
 extendable method net/minecraft/client/gui/components/AbstractSelectionList getEntryAtPosition (DD)Lnet/minecraft/client/gui/components/AbstractSelectionList$Entry;
 
 accessible field net/minecraft/client/gui/GuiGraphics bufferSource Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;

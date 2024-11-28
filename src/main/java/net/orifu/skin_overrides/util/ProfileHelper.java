@@ -45,8 +45,9 @@ public class ProfileHelper {
         //? if >=1.20.2 {
         return Minecraft.getInstance().getGameProfile();
         //?} else {
-        /*cachedUserProfile = uuidToSecureProfile(Minecraft.getInstance().getUser().getProfileId())
-                .orElse(Minecraft.getInstance().getUser().getGameProfile());
+        /*if (cachedUserProfile != null) return cachedUserProfile;
+        cachedUserProfile = Minecraft.getInstance().getUser().getGameProfile();
+        cachedUserProfile.getProperties().putAll(Minecraft.getInstance().getProfileProperties());
         return cachedUserProfile;
         *///?}
     }
