@@ -360,7 +360,7 @@ public class LibraryScreen extends Screen {
 
         ProfileHelper.idToSecureProfile(name).thenAccept(profile -> {
             if (profile.isEmpty()) {
-                Toast.show(Component.translatable("skin_overrides.no_profile.title", this.searchBox.getValue()),
+                Toast.show(Component.translatable("skin_overrides.no_profile.title", name),
                         Component.translatable("skin_overrides.no_profile.description"));
             } else {
                 // i tried getting the skin asynchronously here... don't do that.
