@@ -12,6 +12,7 @@ import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.gui.components.ModelPreview;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
@@ -122,6 +123,7 @@ public class OverrideInfoEntryScreen extends Screen {
             }
         }
 
+        // add model input
         if (this.wantsModel) {
             var grid = root.addChild(new GridLayout().spacing(PAD), LayoutSettings.defaults().alignHorizontallyCenter());
 
@@ -147,7 +149,7 @@ public class OverrideInfoEntryScreen extends Screen {
         if (!this.wantsModel && this.model == null) {
             // add cape model widget
             root.addChild(ModelPreview.capeWithSkin(
-                        Skin.fromProfile(ProfileHelper.user()).withCape(this.texture),
+                        Mod.override(ProfileHelper.user()).withCape(this.texture),
                         SKIN_SCALE, this.minecraft),
                     LayoutSettings.defaults().alignHorizontallyCenter());
         }

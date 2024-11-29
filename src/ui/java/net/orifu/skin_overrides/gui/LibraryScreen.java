@@ -12,6 +12,7 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Library.LibraryEntry;
+import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.OverrideManager;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.gui.components.ModelPreview;
@@ -47,7 +48,7 @@ public class LibraryScreen extends Screen {
     @Nullable
     private final Consumer<LibraryEntry> callback;
 
-    public final Skin userSkin = Skin.fromProfile(ProfileHelper.user());
+    public final Skin userSkin = Mod.override(ProfileHelper.user());
 
     private LibrarySelectionGrid libraryList;
 
