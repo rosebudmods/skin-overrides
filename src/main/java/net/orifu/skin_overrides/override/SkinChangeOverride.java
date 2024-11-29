@@ -11,12 +11,12 @@ import java.io.IOException;
 import java.util.Optional;
 
 //? if >=1.21.4 {
-/*import net.minecraft.client.renderer.texture.SkinTextureDownloader;
-*///?} else {
-import net.minecraft.client.renderer.texture.HttpTexture;
+import net.minecraft.client.renderer.texture.SkinTextureDownloader;
+//?} else {
+/*import net.minecraft.client.renderer.texture.HttpTexture;
 import net.minecraft.client.Minecraft;
 import net.orifu.skin_overrides.util.ProfileHelper;
-//?}
+*///?}
 
 public class SkinChangeOverride {
     @Nullable
@@ -34,14 +34,14 @@ public class SkinChangeOverride {
             var location = Mod.res("skin/user-change");
 
             //? if >=1.21.4 {
-            /*SkinTextureDownloader.downloadAndRegisterSkin(location, file.toPath(), url, true).thenRun(
+            SkinTextureDownloader.downloadAndRegisterSkin(location, file.toPath(), url, true).thenRun(
                     () -> override = new Tuple<>(location, model));
-            *///?} else {
-            var texture = new HttpTexture(file, url, ProfileHelper.userSkin(), true,
+            //?} else {
+            /*var texture = new HttpTexture(file, url, ProfileHelper.userSkin(), true,
                     () -> override = new Tuple<>(location, model));
 
             Minecraft.getInstance().getTextureManager().register(location, texture);
-            //?}
+            *///?}
         } catch (IOException e) {
             Mod.LOGGER.error("failed to set player skin locally", e);
         }

@@ -56,10 +56,10 @@ public record Skin(
         var manager = Minecraft.getInstance().getSkinManager();
 
         //? if >=1.21.4 {
-        /*return manager.getOrLoad(profile).thenApply(sk -> sk.map(Skin::fromPlayerSkin).orElse(DEFAULT_SKIN)).getNow(DEFAULT_SKIN);
-        *///?} else if >=1.20.2 {
-        return manager.getOrLoad(profile).thenApply(Skin::fromPlayerSkin).getNow(DEFAULT_SKIN);
-        //?} else {
+        return manager.getOrLoad(profile).thenApply(sk -> sk.map(Skin::fromPlayerSkin).orElse(DEFAULT_SKIN)).getNow(DEFAULT_SKIN);
+        //?} else if >=1.20.2 {
+        /*return manager.getOrLoad(profile).thenApply(Skin::fromPlayerSkin).getNow(DEFAULT_SKIN);
+        *///?} else {
         /*var textures = manager.getInsecureSkinInformation(profile);
         var skin = textures.get(MinecraftProfileTexture.Type.SKIN);
         var cape = textures.get(MinecraftProfileTexture.Type.CAPE);

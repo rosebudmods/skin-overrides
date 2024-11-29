@@ -26,9 +26,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Mod;
 
 //? if >=1.21.4 {
-/*import net.minecraft.client.renderer.texture.SkinTextureDownloader;
-*///?} else
-import net.minecraft.client.renderer.texture.HttpTexture;
+import net.minecraft.client.renderer.texture.SkinTextureDownloader;
+//?} else
+/*import net.minecraft.client.renderer.texture.HttpTexture;*/
 
 public class Util {
     public static Optional<String> readFile(File file) {
@@ -124,9 +124,9 @@ public class Util {
 
     public static AbstractTexture skinTextureFromFile(File textureFile) {
         return textureFromFile(textureFile, image ->
-                /*? if >=1.21.4 {*/ /*new DynamicTexture(SkinTextureDownloader.processLegacySkin(image, textureFile.getName()))
-                *///?} else
-                new HttpTexture(textureFile, "", ProfileHelper.getDefaultSkin(), true, null)
+                /*? if >=1.21.4 {*/ new DynamicTexture(SkinTextureDownloader.processLegacySkin(image, textureFile.getName()))
+                //?} else
+                /*new HttpTexture(textureFile, "", ProfileHelper.getDefaultSkin(), true, null)*/
         );
     }
 }

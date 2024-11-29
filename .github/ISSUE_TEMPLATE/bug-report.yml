@@ -14,6 +14,7 @@ body:
       label: minecraft version
       description: on what version of minecraft did you encounter the bug?
       options:
+        - The Garden Awakens (1.21.4)
         - Bundles of Bravery (1.21.3)
         - Tricky Trials (1.21.1)
         - Armored Paws (1.20.6)
@@ -42,6 +43,7 @@ body:
         - 2.1.0
         - 2.0.0
         - 1.0.0
+        - 2.2.2 (beta)
     validations:
       required: true
   - type: dropdown

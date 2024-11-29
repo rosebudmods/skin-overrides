@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 
 public abstract class ObjectSelectionList<E extends ObjectSelectionList.Entry<E>> extends net.minecraft.client.gui.components.ObjectSelectionList<E> {
     //? if <1.20.2 || >=1.21.4
-    /*public static final int SCROLLBAR_WIDTH = 6;*/
+    public static final int SCROLLBAR_WIDTH = 6;
 
     //? if <1.20.4
     /*private final ListShim shim = new ListShim();*/
@@ -72,7 +72,7 @@ public abstract class ObjectSelectionList<E extends ObjectSelectionList.Entry<E>
     }
 
     //? if <1.21.4 {
-    public double scrollAmount() {
+    /*public double scrollAmount() {
         return this.getScrollAmount();
     }
 
@@ -93,7 +93,7 @@ public abstract class ObjectSelectionList<E extends ObjectSelectionList.Entry<E>
     public int contentHeight() {
         return super.getMaxPosition();
     }
-    //?}
+    *///?}
 
     //? if <1.20.4 {
     /*public int getWidth() {
