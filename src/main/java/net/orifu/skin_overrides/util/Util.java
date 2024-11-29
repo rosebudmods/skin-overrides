@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 import com.google.gson.JsonObject;
@@ -20,6 +21,7 @@ import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.SimpleTexture;
+import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Mod;
 
@@ -103,13 +105,13 @@ public class Util {
         }
     }
 
-    public static AbstractTexture textureFromFile(File textureFile, UnaryOperator<NativeImage> transform) {
+    public static AbstractTexture textureFromFile(File textureFile, Function<NativeImage, AbstractTexture> transform) {
         try {
             if (textureFile.isFile()) {
                 var stream = new FileInputStream(textureFile);
                 var image = NativeImage.read(stream);
 
-                return new DynamicTexture(transform.apply(image));
+                return transform.apply(image);
             }
         } catch (IOException ignored) {}
 
@@ -117,20 +119,14 @@ public class Util {
     }
 
     public static AbstractTexture textureFromFile(File textureFile) {
-        return textureFromFile(textureFile, t -> t);
+        return textureFromFile(textureFile, DynamicTexture::new);
     }
 
     public static AbstractTexture skinTextureFromFile(File textureFile) {
         return textureFromFile(textureFile, image ->
-                /*? if >=1.21.4 {*/ /*SkinTextureDownloader.processLegacySkin(image, textureFile.getName())
-                *///?} else if >=1.16.5 {
-                {
-                    try (var temp = new HttpTexture(null, textureFile.getName(), null, true, () -> {})) {
-                        return temp.processLegacySkin(image);
-                    }
-                }
-                //?} else
-                /*new HttpTexture(null, textureFile.getName(), null, true, () -> {}).processLegacySkin(image)*/
+                /*? if >=1.21.4 {*/ /*new DynamicTexture(SkinTextureDownloader.processLegacySkin(image, textureFile.getName()))
+                *///?} else
+                new HttpTexture(textureFile, "", ProfileHelper.getDefaultSkin(), true, null)
         );
     }
 }

@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.SkinManager;
 import net.minecraft.resources.ResourceLocation;
+import net.orifu.skin_overrides.util.ProfileHelper;
 import org.jetbrains.annotations.Nullable;
 
 //? if >=1.20.2 {
@@ -45,10 +46,20 @@ public record Skin(
         @Nullable ResourceLocation elytraTexture,
         Model model
 ) {
+    public static final Skin DEFAULT_SKIN = new Skin();
+
+    public Skin() {
+        this(ProfileHelper.getDefaultSkin(), null, null, Model.WIDE);
+    }
+
     public static Skin fromProfile(GameProfile profile) {
         var manager = Minecraft.getInstance().getSkinManager();
 
-        //? if <1.20.2 {
+        //? if >=1.21.4 {
+        /*return manager.getOrLoad(profile).thenApply(sk -> sk.map(Skin::fromPlayerSkin).orElse(DEFAULT_SKIN)).getNow(DEFAULT_SKIN);
+        *///?} else if >=1.20.2 {
+        return manager.getOrLoad(profile).thenApply(Skin::fromPlayerSkin).getNow(DEFAULT_SKIN);
+        //?} else {
         /*var textures = manager.getInsecureSkinInformation(profile);
         var skin = textures.get(MinecraftProfileTexture.Type.SKIN);
         var cape = textures.get(MinecraftProfileTexture.Type.CAPE);
@@ -64,8 +75,7 @@ public record Skin(
                 elytra != null ? manager.registerTexture(elytra, MinecraftProfileTexture.Type.ELYTRA) : null,
                 skin != null ? Model.parse(skin.getMetadata("model")) : Model.parse(DefaultPlayerSkin.getSkinModelName(profile.getId()))
         );
-        *///?} else
-        return fromPlayerSkin(manager.getInsecureSkin(profile));
+        *///?}
     }
 
     public static CompletableFuture<Skin> fetchSkin(GameProfile profile) {

@@ -171,6 +171,13 @@ public class ProfileHelper {
         /*return profileResult.getName() != null ? Optional.of(profileResult) : Optional.empty();*/
     }
 
+    public static ResourceLocation getDefaultSkin() {
+        //? if >=1.20.2 {
+        return DefaultPlayerSkin.getDefaultTexture();
+        //?} else
+        /*return DefaultPlayerSkin.getDefaultSkin();*/
+    }
+
     public static Skin[] getDefaultSkins() {
         //? if >=1.20.2 {
         return Arrays.stream(DefaultPlayerSkin.DEFAULT_SKINS).map(Skin::fromPlayerSkin).toArray(Skin[]::new);
