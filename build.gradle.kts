@@ -127,8 +127,9 @@ dependencies {
 	if (property("deps.modmenu") != "none")
 		modImplementation("maven.modrinth:modmenu:${property("deps.modmenu")}")
 
-	if (property("deps.ears") != "none")
-		modRuntimeOnly("maven.modrinth:ears:${property("deps.ears")}")
+	properties
+		.filter { it.key.startsWith("compat.") && it.value != "none" }
+		.map { modRuntimeOnly("maven.modrinth:${it.key.substring(7)}:${it.value}") }
 
 	if (hasNetworking) {
 		implementation("org.mineskin:java-client:3.0.1-SNAPSHOT")?.let { include(it) }
