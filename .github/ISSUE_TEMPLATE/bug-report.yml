@@ -37,13 +37,13 @@ body:
       label: mod version
       description: which version of skin overrides are you using?
       options:
+        - 2.2.2
         - 2.2.1
         - 2.2.0
         - 2.1.1
         - 2.1.0
         - 2.0.0
         - 1.0.0
-        - 2.2.2 (beta)
     validations:
       required: true
   - type: dropdown
