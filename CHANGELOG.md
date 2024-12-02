@@ -1,1 +1,6 @@
-fixed jar-in-jar not working on fabric
+- networking functionality is now on 1.19.4, 1.20.1, 1.20.2, and 1.20.4!
+- ported to The Garden Awakens (1.21.4)
+- overrides will now only be reloaded in-game if they have updated
+- uninteresting bug fixes
+  - fixed the name being missing in the toast when failing to add from search
+  - fixed the user's profile possibly being missing on 1.20.1 and below

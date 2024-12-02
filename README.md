@@ -18,7 +18,7 @@ similarly, you can [change your skin](https://rosebud.dev/skin-overrides/usage/#
 
 ![the player opens the library and applies an override, and another player sees the change](https://raw.githubusercontent.com/rosebudmods/skin-overrides/refs/heads/main/.assets/networking.avif)
 
-skin overrides also supports a wide variety of minecraft versions - [as early back as 1.14.4](https://rosebud.dev/skin-overrides/compatibility/). note that only versions since 1.19.4 have the ui and networking functionality.
+skin overrides also supports a wide variety of minecraft versions - [as early back as 1.14.4](https://rosebud.dev/skin-overrides/compatibility/). for technical reasons, only versions since 1.19.4 have the ui, and the server behaviour.
 
 skin overrides also intends to keep compatibility with other skin related mods, such as [ears](https://modrinth.com/mod/mfzaZK3Z) and [3D skin layers](https://modrinth.com/mod/zV5r3pPn). see the [compatibility page](https://rosebud.dev/skin-overrides/compatibility/) for more info!
 
