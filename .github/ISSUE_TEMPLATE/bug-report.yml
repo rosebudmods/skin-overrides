@@ -44,6 +44,7 @@ body:
         - 2.1.0
         - 2.0.0
         - 1.0.0
+        - beta
     validations:
       required: true
   - type: dropdown
@@ -52,8 +53,8 @@ body:
       label: mod loader
       description: which mod loader are you using?
       options:
-        - quilt
         - fabric
+        - quilt
         - neoforge
         - i don't know/other
     validations:

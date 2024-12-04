@@ -11,6 +11,8 @@ public abstract class Screen extends net.minecraft.client.gui.screens.Screen {
     public abstract void render(GuiGraphics graphics, int mouseX, int mouseY, float delta);
 
     public void renderSuper(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+        //? if <1.20.2
+        /*this.renderBackground(graphics.portable());*/
         super.render(graphics.portable(), mouseX, mouseY, delta);
     }
 
@@ -25,4 +27,22 @@ public abstract class Screen extends net.minecraft.client.gui.screens.Screen {
         this.render(new GuiGraphics(graphics), mouseX, mouseY, delta);
     }
     //?}
+
+    // render dirt background on versions below 1.20.6
+    //? if <1.20.1 {
+    /*@Override
+    public void renderBackground(PoseStack stack) {
+        this.renderDirtBackground(stack);
+    }
+    *///?} else if <1.20.2 {
+    /*@Override
+    public void renderBackground(net.minecraft.client.gui.GuiGraphics guiGraphics) {
+        this.renderDirtBackground(guiGraphics);
+    }
+    *///?} else if <1.20.6 {
+    /*@Override
+    public void renderBackground(net.minecraft.client.gui.GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+        this.renderDirtBackground(guiGraphics);
+    }
+    *///?}
 }

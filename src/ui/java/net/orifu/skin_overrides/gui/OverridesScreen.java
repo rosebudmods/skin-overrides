@@ -182,8 +182,6 @@ public class OverridesScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        //? if <1.20.2
-        /*this.renderBackground(graphics.portable());*/
         this.renderSuper(graphics, mouseX, mouseY, delta);
 
         // ensure displayed skin is up to date (e.g. if just loaded)
