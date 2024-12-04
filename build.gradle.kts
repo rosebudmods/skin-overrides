@@ -10,6 +10,7 @@ base {
 
 val modVersion = property("mod.version").toString()
 val mcVersion = property("deps.minecraft").toString()
+// TODO: have a friendly mc version so various things look better
 val snapshot = property("mod.snapshot") != "false"
 version = "$modVersion+$mcVersion"
 group = property("maven_group").toString()
