@@ -9,30 +9,18 @@ base {
 }
 
 val modVersion = property("mod.version").toString()
-val mcVersion = property("deps.minecraft").toString()
-// TODO: have a friendly mc version so various things look better
+val mcVersion = stonecutter.current.project
 val snapshot = property("mod.snapshot") != "false"
 version = "$modVersion+$mcVersion"
 group = property("maven_group").toString()
 
 val scVersion = stonecutter.current.version
-val hasUi = stonecutter.compare(scVersion, "1.19.4") >= 0
-val hasNetworking = stonecutter.compare(scVersion, "1.19.4") >= 0
-val awVersion =
-	if (stonecutter.compare(scVersion, "1.21.4") >= 0) "1.21.4"
-	else if (stonecutter.compare(scVersion, "1.20.6") >= 0) "1.20.6"
-	else if (stonecutter.compare(scVersion, "1.20.4") >= 0) "1.20.4"
-	else if (stonecutter.compare(scVersion, "1.20.2") >= 0) "1.20.2"
-	else if (stonecutter.compare(scVersion, "1.20.1") >= 0) "1.20.1"
-	else if (stonecutter.compare(scVersion, "1.19.4") >= 0) "1.19.4"
-	else if (stonecutter.compare(scVersion, "1.19.3") >= 0) "1.19.3"
-	else if (stonecutter.compare(scVersion, "1.19.2") >= 0) "1.19.2"
-	else if (stonecutter.compare(scVersion, "1.17.1") >= 0) "1.17.1"
-	else "1.15.2"
-val mixinFile =
-	if (stonecutter.compare(scVersion, "1.20.2") >= 0) "1.20.2.mixins.json"
-	else if (stonecutter.compare(scVersion, "1.19.4") >= 0) "1.19.4.mixins.json"
-	else "1.15.2.mixins.json"
+val hasUi = stonecutter.eval(scVersion, ">=1.19.4")
+val hasNetworking = stonecutter.eval(scVersion, ">=1.19.4")
+val awVersion = versionFrom("1.21.4", "1.20.6", "1.20.4", "1.20.2", "1.20.1", "1.19.4", "1.19.3", "1.19.2", "1.17.1", "1.15.2")
+val mixinFile = versionFrom("1.20.2", "1.19.4", "1.15.2") + ".mixins.json"
+
+fun versionFrom(vararg versions: String): String = versions.find { stonecutter.eval(scVersion, ">=$it") }.orEmpty()
 
 stonecutter {
 	const("hasUi", hasUi)

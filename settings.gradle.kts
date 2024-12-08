@@ -3,6 +3,7 @@ import dev.kikugie.stonecutter.StonecutterSettings
 pluginManagement {
 	repositories {
 		maven("https://maven.quiltmc.org/repository/release") { name = "Quilt" }
+		maven("https://maven.kikugie.dev/snapshots")
 		// Currently needed for Intermediary and other temporary dependencies
 		maven("https://maven.fabricmc.net/") { name = "Fabric" }
 		gradlePluginPortal()
@@ -10,7 +11,7 @@ pluginManagement {
 }
 
 plugins {
-	id("dev.kikugie.stonecutter") version "0.4.5"
+	id("dev.kikugie.stonecutter") version "0.5-beta.5"
 }
 
 extensions.configure<StonecutterSettings> {
