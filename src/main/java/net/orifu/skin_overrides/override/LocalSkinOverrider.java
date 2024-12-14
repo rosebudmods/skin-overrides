@@ -42,7 +42,7 @@ public class LocalSkinOverrider implements OverrideManager.Overrider {
     public record LocalSkinOverride(String playerIdent, AbstractTexture tex, String texHash, Skin.Model model) implements OverrideManager.Override {
         @Override
         public ResourceLocation texture() {
-            return Util.texture("skin/local/" + this.playerIdent, this.tex);
+            return Util.texture("skin/local/" + this.texHash, this.tex);
         }
 
         @Override

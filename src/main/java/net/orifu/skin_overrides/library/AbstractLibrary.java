@@ -122,12 +122,15 @@ public abstract class AbstractLibrary implements Library {
         @Nullable
         protected final File file;
         @Nullable
+        protected final String fileHash;
+        @Nullable
         protected final ResourceLocation textureLoc;
 
         protected AbstractLibraryEntry(String name, String id, @Nullable File file, @Nullable ResourceLocation textureLoc) {
             super(name, id);
             this.isFile = file != null;
             this.file = file;
+            this.fileHash = file == null ? null : Util.hashFile(file);
             this.textureLoc = textureLoc;
         }
 

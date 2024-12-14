@@ -1,6 +1,7 @@
 accessWidener v2 named
 
 accessible method net/minecraft/client/renderer/texture/HttpTexture processLegacySkin (Lcom/mojang/blaze3d/platform/NativeImage;)Lcom/mojang/blaze3d/platform/NativeImage;
+accessible field net/minecraft/client/renderer/texture/TextureManager byPath Ljava/util/Map;
 
 accessible field net/minecraft/client/Minecraft authenticationService Lcom/mojang/authlib/yggdrasil/YggdrasilAuthenticationService;
 accessible field net/minecraft/client/Minecraft progressTasks Ljava/util/Queue;

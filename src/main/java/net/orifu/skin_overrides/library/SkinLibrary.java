@@ -132,7 +132,7 @@ public class SkinLibrary extends AbstractLibrary {
 
         @Override
         protected ResourceLocation getTextureFromFile() {
-            return Util.texture("skin/library/" + this.id, Util.skinTextureFromFile(this.file));
+            return Util.texture("skin/library/" + this.fileHash, Util.skinTextureFromFile(this.file));
         }
 
         public Skin toSkin() {

@@ -67,9 +67,18 @@ public class Util {
                 : profile.getName();
     }
 
+    public static void texture(ResourceLocation res, AbstractTexture texture) {
+        // don't register this texture if there is already one with this resource location
+        if (Minecraft.getInstance().getTextureManager().byPath.containsKey(res)) {
+            return;
+        }
+
+        Minecraft.getInstance().getTextureManager().register(res, texture);
+    }
+
     public static ResourceLocation texture(String res, AbstractTexture texture) {
         ResourceLocation textureLoc = Mod.res(res);
-        Minecraft.getInstance().getTextureManager().register(textureLoc, texture);
+        texture(textureLoc, texture);
         return textureLoc;
     }
 

@@ -34,7 +34,7 @@ public class LocalCapeOverrider implements OverrideManager.Overrider {
     public record LocalCapeOverride(String playerIdent, AbstractTexture tex, String texHash) implements OverrideManager.Override {
         @Override
         public ResourceLocation texture() {
-            return Util.texture("cape/local/" + this.playerIdent, this.tex);
+            return Util.texture("cape/local/" + this.texHash, this.tex);
         }
 
         @Override
