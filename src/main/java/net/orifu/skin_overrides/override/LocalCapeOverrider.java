@@ -1,5 +1,6 @@
 package net.orifu.skin_overrides.override;
 
+import com.google.common.base.Suppliers;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.network.chat.Component;
@@ -13,6 +14,7 @@ import java.io.File;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class LocalCapeOverrider implements OverrideManager.Overrider {
     @Override
@@ -31,10 +33,16 @@ public class LocalCapeOverrider implements OverrideManager.Overrider {
         return Optional.empty();
     }
 
-    public record LocalCapeOverride(String playerIdent, AbstractTexture tex, String texHash) implements OverrideManager.Override {
+    public record LocalCapeOverride(String playerIdent, AbstractTexture tex, String texHash,
+                Supplier<ResourceLocation> memoizedTexture) implements OverrideManager.Override {
+        public LocalCapeOverride(String playerIdent, AbstractTexture tex, String texHash) {
+            this(playerIdent, tex, texHash, Suppliers.memoize(() ->
+                    Util.texture("cape/local/" + texHash, tex)));
+        }
+
         @Override
         public ResourceLocation texture() {
-            return Util.texture("cape/local/" + this.texHash, this.tex);
+            return this.memoizedTexture.get();
         }
 
         @Override

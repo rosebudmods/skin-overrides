@@ -1,5 +1,6 @@
 package net.orifu.skin_overrides.library;
 
+import com.google.common.base.Suppliers;
 import com.google.gson.JsonObject;
 import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Mod;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import static net.orifu.skin_overrides.Mod.CAPE_OVERRIDES_PATH;
 
@@ -62,6 +64,9 @@ public class CapeLibrary extends AbstractLibrary {
     }
 
     public static class CapeEntry extends AbstractLibraryEntry {
+        private final Supplier<ResourceLocation> texture = Suppliers.memoize(() ->
+                Util.texture("cape/library/" + this.fileHash, Util.textureFromFile(this.file)));
+
         protected CapeEntry(String name, String id, @Nullable File file, @Nullable ResourceLocation textureLoc) {
             super(name, id, file, textureLoc);
         }
@@ -76,7 +81,7 @@ public class CapeLibrary extends AbstractLibrary {
 
         @Override
         protected ResourceLocation getTextureFromFile() {
-            return Util.texture("cape/library/" + this.fileHash, Util.textureFromFile(this.file));
+            return this.texture.get();
         }
     }
 }

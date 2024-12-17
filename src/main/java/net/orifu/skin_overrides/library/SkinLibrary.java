@@ -1,5 +1,6 @@
 package net.orifu.skin_overrides.library;
 
+import com.google.common.base.Suppliers;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import static net.orifu.skin_overrides.Mod.SKIN_OVERRIDES_PATH;
 
@@ -109,6 +111,9 @@ public class SkinLibrary extends AbstractLibrary {
         @Nullable
         public final Skin.Signature signature;
 
+        private final Supplier<ResourceLocation> texture = Suppliers.memoize(() ->
+                Util.texture("skin/library/" + this.fileHash, Util.skinTextureFromFile(this.file)));
+
         protected SkinEntry(
                 String name, String id, Skin.Model model,
                 @Nullable File file, @Nullable ResourceLocation textureLoc,
@@ -132,7 +137,7 @@ public class SkinLibrary extends AbstractLibrary {
 
         @Override
         protected ResourceLocation getTextureFromFile() {
-            return Util.texture("skin/library/" + this.fileHash, Util.skinTextureFromFile(this.file));
+            return this.texture.get();
         }
 
         public Skin toSkin() {

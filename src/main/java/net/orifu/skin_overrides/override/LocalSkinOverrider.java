@@ -1,5 +1,6 @@
 package net.orifu.skin_overrides.override;
 
+import com.google.common.base.Suppliers;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.network.chat.Component;
@@ -13,6 +14,7 @@ import java.io.File;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class LocalSkinOverrider implements OverrideManager.Overrider {
     @Override
@@ -39,10 +41,16 @@ public class LocalSkinOverrider implements OverrideManager.Overrider {
         return Optional.empty();
     }
 
-    public record LocalSkinOverride(String playerIdent, AbstractTexture tex, String texHash, Skin.Model model) implements OverrideManager.Override {
+    public record LocalSkinOverride(String playerIdent, AbstractTexture tex, String texHash, Skin.Model model,
+                Supplier<ResourceLocation> memoizedTexture) implements OverrideManager.Override {
+        public LocalSkinOverride(String playerIdent, AbstractTexture tex, String texHash, Skin.Model model) {
+            this(playerIdent, tex, texHash, model, Suppliers.memoize(() ->
+                    Util.texture("skin/local/" + texHash, tex)));
+        }
+
         @Override
         public ResourceLocation texture() {
-            return Util.texture("skin/local/" + this.texHash, this.tex);
+            return this.memoizedTexture.get();
         }
 
         @Override
