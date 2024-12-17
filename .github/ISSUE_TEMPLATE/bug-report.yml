@@ -37,6 +37,7 @@ body:
       label: mod version
       description: which version of skin overrides are you using?
       options:
+        - 2.2.3
         - 2.2.2
         - 2.2.1
         - 2.2.0

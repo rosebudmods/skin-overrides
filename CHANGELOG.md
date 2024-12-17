@@ -1,6 +1,4 @@
-- networking functionality is now on 1.19.4, 1.20.1, 1.20.2, and 1.20.4!
-- ported to The Garden Awakens (1.21.4)
-- overrides will now only be reloaded in-game if they have updated
-- uninteresting bug fixes
-  - fixed the name being missing in the toast when failing to add from search
-  - fixed the user's profile possibly being missing on 1.20.1 and below
+- on 1.20.4 and below, the dirt background is now properly shown on all screens
+- fixed compatibility with [entity culling](https://modrinth.com/project/NNAgCjsB)
+- fixed performance impact when using an override
+- fixed a memory leak caused by texture loading
