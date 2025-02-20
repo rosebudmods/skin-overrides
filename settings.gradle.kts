@@ -1,5 +1,3 @@
-import dev.kikugie.stonecutter.StonecutterSettings
-
 pluginManagement {
 	repositories {
 		maven("https://maven.quiltmc.org/repository/release") { name = "Quilt" }
@@ -14,7 +12,7 @@ plugins {
 	id("dev.kikugie.stonecutter") version "0.5-beta.5"
 }
 
-extensions.configure<StonecutterSettings> {
+stonecutter {
 	kotlinController = true
 	centralScript = "build.gradle.kts"
 
@@ -27,10 +25,10 @@ extensions.configure<StonecutterSettings> {
 				"1.17.1", "1.18.2",
 				"1.19.2", "1.19.3", "1.19.4",
 				"1.20.1", "1.20.2", "1.20.4", "1.20.6",
-				"1.21.1", "1.21.3", "1.21.4"
+				"1.21.1", "1.21.3", "1.21.4", "1.21.5"
 		)
 
-		vcsVersion = "1.21.4"
+		vcsVersion = "1.21.5"
 	}
 
 	create(rootProject)

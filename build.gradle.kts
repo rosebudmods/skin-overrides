@@ -9,9 +9,10 @@ base {
 }
 
 val modVersion = property("mod.version").toString()
-val mcVersion = stonecutter.current.project
+val mcFriendlyName = stonecutter.current.project
+val mcDep = property("deps.minecraft").toString()
 val snapshot = property("mod.snapshot") != "false"
-version = "$modVersion+$mcVersion"
+version = "$modVersion+$mcFriendlyName"
 group = property("maven_group").toString()
 
 val scVersion = stonecutter.current.version
@@ -96,7 +97,7 @@ loom {
 }
 
 dependencies {
-	minecraft("com.mojang:minecraft:$mcVersion")
+	minecraft("com.mojang:minecraft:$mcDep")
 	modImplementation("org.quiltmc:quilt-loader:${property("deps.quilt_loader")}")
 
 	mappings(loom.layered {
@@ -172,7 +173,7 @@ tasks.jar {
 }
 
 publishMods {
-	displayName = "skin overrides $modVersion for $mcVersion"
+	displayName = "skin overrides $modVersion for $mcFriendlyName"
 	file = tasks.remapJar.get().archiveFile
 	changelog = rootProject.file("CHANGELOG.md").readText()
 	type = STABLE
@@ -183,10 +184,16 @@ publishMods {
 	dryRun = !providers.environmentVariable("MODRINTH_TOKEN").isPresent()
 			|| property("pub.should_publish") == "false"
 
-	val mcVersions = mutableListOf(mcVersion)
+	val mcVersions = mutableListOf(mcDep)
+
+	// add additional versions
 	mcVersions.addAll(
 		property("pub.additional_versions").toString().split(" ")
 			.filter(String::isNotEmpty))
+
+	// if the "friendly" version is different to the dependency version, add it
+	if (mcFriendlyName != mcDep)
+		mcVersions.add(mcFriendlyName)
 
 	modrinth {
 		projectId = "GON0Fdk5"

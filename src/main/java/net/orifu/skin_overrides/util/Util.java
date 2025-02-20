@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
@@ -90,14 +91,16 @@ public class Util {
         var future = new CompletableFuture<Path>();
         Runnable runnable = () -> {
             try {
-                //? if >=1.21.3 {
-                RenderSystem.bindTexture(Minecraft.getInstance().getTextureManager().getTexture(texture).getId());
-                //?} else if >=1.17.1 {
+                //? if >=1.21.5 {
+                //?} else if >=1.21.3 {
+                /*RenderSystem.bindTexture(Minecraft.getInstance().getTextureManager().getTexture(texture).getId());
+                *///?} else if >=1.17.1 {
                 /*Minecraft.getInstance().getTextureManager().bindForSetup(texture);
                 *///?} else
                 /*Minecraft.getInstance().getTextureManager().bind(texture);*/
                 NativeImage img = new NativeImage(w, h, false);
-                img.downloadTexture(0, false);
+                //? if <1.21.5
+                /*img.downloadTexture(0, false);*/
                 img.writeToFile(path);
                 img.close();
                 future.complete(path);
@@ -117,23 +120,33 @@ public class Util {
     public static AbstractTexture textureFromFile(File textureFile, Function<NativeImage, AbstractTexture> transform) {
         try {
             if (textureFile.isFile()) {
-                var stream = new FileInputStream(textureFile);
+                var stream = Files.newInputStream(textureFile.toPath());
                 var image = NativeImage.read(stream);
 
-                return transform.apply(image);
+                // run NativeImage -> AbstractTexture transformer on render thread on 1.21.5+
+                // otherwise the thingy hangs forever trying to create/register the texture.
+                // seems to work fine in 1.21.4 and lower, but it's not what SkinTextureDownloader
+                // does, so maybe it should be changed?
+                //? if >=1.21.5 {
+                return Minecraft.getInstance().<AbstractTexture>scheduleWithResult(fut ->
+                        fut.complete(transform.apply(image))).get();
+                //?} else
+                /*return transform.apply(image);*/
             }
-        } catch (IOException ignored) {}
+        } catch (IOException /*? if >=1.21.5 {*/ | InterruptedException | ExecutionException /*?}*/ ignored) {}
 
         return new SimpleTexture(MissingTextureAtlasSprite.getLocation());
     }
 
     public static AbstractTexture textureFromFile(File textureFile) {
-        return textureFromFile(textureFile, DynamicTexture::new);
+        return textureFromFile(textureFile, image -> new DynamicTexture(/*? if >=1.21.5 {*/null,/*?}*/ image));
     }
 
     public static AbstractTexture skinTextureFromFile(File textureFile) {
         return textureFromFile(textureFile, image ->
-                /*? if >=1.21.4 {*/ new DynamicTexture(SkinTextureDownloader.processLegacySkin(image, textureFile.getName()))
+                /*? if >=1.21.4 {*/ new DynamicTexture(
+                        /*? if >=1.21.5*/ null,
+                        SkinTextureDownloader.processLegacySkin(image, textureFile.getName()))
                 //?} else
                 /*new HttpTexture(textureFile, "", ProfileHelper.getDefaultSkin(), true, null)*/
         );
