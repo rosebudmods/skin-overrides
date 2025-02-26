@@ -1,16 +1,14 @@
 package net.orifu.skin_overrides.util;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.UnaryOperator;
 
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
@@ -22,7 +20,6 @@ import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.SimpleTexture;
-import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Mod;
 
@@ -30,6 +27,13 @@ import net.orifu.skin_overrides.Mod;
 import net.minecraft.client.renderer.texture.SkinTextureDownloader;
 //?} else
 /*import net.minecraft.client.renderer.texture.HttpTexture;*/
+
+//? if >=1.21.5 {
+import com.mojang.blaze3d.buffers.BufferType;
+import com.mojang.blaze3d.buffers.BufferUsage;
+import com.mojang.blaze3d.buffers.GpuBuffer;
+import com.mojang.blaze3d.textures.GpuTexture;
+//?}
 
 public class Util {
     public static Optional<String> readFile(File file) {
@@ -89,18 +93,8 @@ public class Util {
 
     public static void saveTexture(ResourceLocation texture, int w, int h, Path path) {
         var future = new CompletableFuture<Path>();
-        Runnable runnable = () -> {
+        Consumer<NativeImage> imageConsumer = img -> {
             try {
-                //? if >=1.21.5 {
-                //?} else if >=1.21.3 {
-                /*RenderSystem.bindTexture(Minecraft.getInstance().getTextureManager().getTexture(texture).getId());
-                *///?} else if >=1.17.1 {
-                /*Minecraft.getInstance().getTextureManager().bindForSetup(texture);
-                *///?} else
-                /*Minecraft.getInstance().getTextureManager().bind(texture);*/
-                NativeImage img = new NativeImage(w, h, false);
-                //? if <1.21.5
-                /*img.downloadTexture(0, false);*/
                 img.writeToFile(path);
                 img.close();
                 future.complete(path);
@@ -109,13 +103,65 @@ public class Util {
             }
         };
 
+        Runnable runnable = () -> {
+            //? if >=1.21.5 {
+            var imgFut = gpuTextureToNativeImage(Minecraft.getInstance().getTextureManager().getTexture(texture).getTexture());
+            imgFut.thenAccept(imageConsumer);
+
+            //?} else {
+            /*//? if >=1.21.3 {
+            RenderSystem.bindTexture(Minecraft.getInstance().getTextureManager().getTexture(texture).getId());
+            //?} else if >=1.17.1 {
+            /^Minecraft.getInstance().getTextureManager().bindForSetup(texture);
+             ^///?} else
+            /^Minecraft.getInstance().getTextureManager().bind(texture);^/
+
+            NativeImage img = new NativeImage(w, h, false);
+            img.downloadTexture(0, false);
+            imageConsumer.accept(img);
+            *///?}
+        };
+
         if (RenderSystem.isOnRenderThread()) {
             runnable.run();
         } else {
             Minecraft.getInstance().progressTasks.add(runnable);
-            future.join();
         }
     }
+
+    //? if >=1.21.5 {
+    public static CompletableFuture<NativeImage> gpuTextureToNativeImage(GpuTexture gpuTex) {
+        RenderSystem.assertOnRenderThread();
+
+        int mip = 0;
+        int width = gpuTex.getWidth(mip);
+        int height = gpuTex.getHeight(mip);
+
+        int bufSize = gpuTex.getFormat().pixelSize() * width * height;
+        var buffer = new GpuBuffer(BufferType.PIXEL_PACK, BufferUsage.STATIC_READ, bufSize);
+
+        var fut = new CompletableFuture<NativeImage>();
+
+        gpuTex.copyToBuffer(buffer, 0, () -> {
+            var img = new NativeImage(width, height, false);
+            var view = buffer.read();
+
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    int px = view.data().getInt((x + y * width) * gpuTex.getFormat().pixelSize());
+                    img.setPixelABGR(x, y, px);
+                }
+            }
+
+            view.close();
+            buffer.close();
+
+            fut.complete(img);
+        }, mip);
+
+        return fut;
+    }
+    //?}
 
     public static AbstractTexture textureFromFile(File textureFile, Function<NativeImage, AbstractTexture> transform) {
         try {

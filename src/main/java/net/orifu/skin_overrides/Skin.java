@@ -183,6 +183,7 @@ public record Skin(
                 /*?} else*/ /*userApiServiceAccessor.getEnvironment().getServicesHost();*/
             var url = servicesHost + "/minecraft/profile/skins";
 
+            // TODO: do not use saveTexture
             File skin = File.createTempFile("skin-overrides_", "_temp-skin");
             Util.saveTexture(this.texture, 64, 64, skin.toPath());
 

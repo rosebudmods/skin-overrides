@@ -46,7 +46,7 @@ public class CapeLibrary extends AbstractLibrary {
         try {
             String id = Util.randomId();
             File file = new File(this.libraryFolder, id + ".png");
-            var entry = new CapeEntry(name, id, file);
+            var entry = new CapeEntry(name, id, file, texture);
 
             if (path != null) {
                 Files.copy(path, file.toPath());
@@ -68,10 +68,6 @@ public class CapeLibrary extends AbstractLibrary {
 
         protected CapeEntry(String name, String id, @Nullable File file, @Nullable ResourceLocation textureLoc) {
             super(name, id, file, textureLoc);
-        }
-
-        protected CapeEntry(String name, String id, @NotNull File file) {
-            super(name, id, file);
         }
 
         protected CapeEntry(String name, String id, @NotNull ResourceLocation textureLoc) {

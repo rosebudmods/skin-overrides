@@ -25,6 +25,7 @@ public class MineSkin {
 
     public static Optional<Skin.Signature> sign(ResourceLocation texture, Skin.Model model) {
         try {
+            // TODO: do not use saveTexture
             File skin = File.createTempFile("skin-overrides_", "_temp-skin");
             Util.saveTexture(texture, 64, 64, skin.toPath());
 
