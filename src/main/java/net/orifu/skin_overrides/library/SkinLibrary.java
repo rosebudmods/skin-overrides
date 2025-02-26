@@ -31,7 +31,7 @@ public class SkinLibrary extends AbstractLibrary {
     }
 
     @Override
-    protected boolean tryLoadFromJson(JsonObject object, String name, String id, @Nullable File file, @Nullable ResourceLocation textureLoc) {
+    protected Optional<LibraryEntry> tryLoadFromJson(JsonObject object, String name, String id, @Nullable File file, @Nullable ResourceLocation textureLoc) {
         var model = Util.readString(object, "model");
         if (model.isPresent()) {
             Skin.Model skinModel = Skin.Model.parse(model.get());
@@ -47,11 +47,10 @@ public class SkinLibrary extends AbstractLibrary {
                 }
             }
 
-            this.entries.add(new SkinEntry(name, id, skinModel, file, textureLoc, signature));
-            return true;
+            return Optional.of(new SkinEntry(name, id, skinModel, file, textureLoc, signature));
         }
 
-        return false;
+        return Optional.empty();
     }
 
     @Override
@@ -89,7 +88,7 @@ public class SkinLibrary extends AbstractLibrary {
         try {
             String id = Util.randomId();
             File file = new File(this.libraryFolder, id + ".png");
-            var entry = new SkinEntry(name, id, model, file, signature);
+            var entry = new SkinEntry(name, id, model, file, texture, signature);
 
             if (path != null) {
                 Files.copy(path, file.toPath());

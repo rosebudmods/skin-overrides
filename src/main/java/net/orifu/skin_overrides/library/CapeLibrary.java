@@ -25,9 +25,8 @@ public class CapeLibrary extends AbstractLibrary {
     }
 
     @Override
-    protected boolean tryLoadFromJson(JsonObject object, String name, String id, @Nullable File file, @Nullable ResourceLocation textureLoc) {
-        this.entries.add(new CapeEntry(name, id, file, textureLoc));
-        return true;
+    protected Optional<LibraryEntry> tryLoadFromJson(JsonObject object, String name, String id, @Nullable File file, @Nullable ResourceLocation textureLoc) {
+        return Optional.of(new CapeEntry(name, id, file, textureLoc));
     }
 
     @Override

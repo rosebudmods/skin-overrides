@@ -123,17 +123,9 @@ public class Util {
                 var stream = Files.newInputStream(textureFile.toPath());
                 var image = NativeImage.read(stream);
 
-                // run NativeImage -> AbstractTexture transformer on render thread on 1.21.5+
-                // otherwise the thingy hangs forever trying to create/register the texture.
-                // seems to work fine in 1.21.4 and lower, but it's not what SkinTextureDownloader
-                // does, so maybe it should be changed?
-                //? if >=1.21.5 {
-                return Minecraft.getInstance().<AbstractTexture>scheduleWithResult(fut ->
-                        fut.complete(transform.apply(image))).get();
-                //?} else
-                /*return transform.apply(image);*/
+                return transform.apply(image);
             }
-        } catch (IOException /*? if >=1.21.5 {*/ | InterruptedException | ExecutionException /*?}*/ ignored) {}
+        } catch (IOException ignored) {}
 
         return new SimpleTexture(MissingTextureAtlasSprite.getLocation());
     }

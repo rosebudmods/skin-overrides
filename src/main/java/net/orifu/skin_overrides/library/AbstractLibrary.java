@@ -22,6 +22,7 @@ import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public abstract class AbstractLibrary implements Library {
     protected static final Gson GSON = new Gson();
@@ -65,14 +66,22 @@ public abstract class AbstractLibrary implements Library {
 
     @Override
     public void reload() {
-        this.entries = new ArrayList<>();
+        ArrayList<LibraryEntry> newEntries = new ArrayList<>();
 
         try {
             var reader = Files.newBufferedReader(this.libraryJsonFile.toPath(), StandardCharsets.UTF_8);
             JsonArray arr = GSON.fromJson(reader, JsonArray.class);
 
-            synchronized (this.entries) {
-                arr.forEach(this::tryLoadFromJsonElement);
+            for (var el : arr) {
+                var maybeLoaded = this.tryLoadFromJsonElement(el);
+
+                if (maybeLoaded.isPresent()) {
+                    var loaded = maybeLoaded.get();
+
+                    // re-use existing entry (if any)
+                    var existing = this.entries.stream().filter(ent -> ent.equals(loaded)).findAny();
+                    newEntries.add(existing.orElse(loaded));
+                }
             }
 
             reader.close();
@@ -82,6 +91,8 @@ public abstract class AbstractLibrary implements Library {
         } catch (IOException | JsonParseException | NullPointerException e) {
             Mod.LOGGER.error("failed to load library file {}", this.libraryJsonFile, e);
         }
+
+        this.entries = newEntries;
     }
 
     @Override
@@ -89,7 +100,7 @@ public abstract class AbstractLibrary implements Library {
         return new LibraryOverrider(this, this.rootFolder);
     }
 
-    protected void tryLoadFromJsonElement(JsonElement el) {
+    protected Optional<LibraryEntry> tryLoadFromJsonElement(JsonElement el) {
         if (el.isJsonObject()) {
             var obj = el.getAsJsonObject();
             var name = Util.readString(obj, "name");
@@ -98,27 +109,28 @@ public abstract class AbstractLibrary implements Library {
             var texture = Util.readString(obj, "texture");
 
             if (name.isPresent() && id.isPresent()) {
-                if (file.isPresent() && texture.isEmpty()
-                        && this.tryLoadFromJson(obj, name.get(), id.get(), new File(this.libraryFolder, file.get()), null)) {
-                    return;
+                if (file.isPresent() && texture.isEmpty()) {
+                    var maybe = this.tryLoadFromJson(obj, name.get(), id.get(), new File(this.libraryFolder, file.get()), null);
+                    if (maybe.isPresent()) return maybe;
                 } else if (texture.isPresent() && file.isEmpty()) {
                     ResourceLocation textureLoc = ResourceLocation.tryParse(texture.get());
-                    if (textureLoc != null && this.tryLoadFromJson(obj, name.get(), id.get(), null, textureLoc)) {
-                        return;
+                    if (textureLoc != null) {
+                        var maybe = this.tryLoadFromJson(obj, name.get(), id.get(), null, textureLoc);
+                        if (maybe.isPresent()) return maybe;
                     }
                 }
             }
         }
 
         Mod.LOGGER.warn("failed to load library entry {}", el);
+        return Optional.empty();
     }
 
-    protected abstract boolean tryLoadFromJson(JsonObject object, String name, String id, @Nullable File file, @Nullable ResourceLocation textureLoc);
+    protected abstract Optional<LibraryEntry> tryLoadFromJson(JsonObject object, String name, String id, @Nullable File file, @Nullable ResourceLocation textureLoc);
 
     protected void addDefaultEntries() {}
 
     public static abstract class AbstractLibraryEntry extends LibraryEntry {
-        protected final boolean isFile;
         @Nullable
         protected final File file;
         @Nullable
@@ -128,7 +140,6 @@ public abstract class AbstractLibrary implements Library {
 
         protected AbstractLibraryEntry(String name, String id, @Nullable File file, @Nullable ResourceLocation textureLoc) {
             super(name, id);
-            this.isFile = file != null;
             this.file = file;
             this.fileHash = file == null ? null : Util.hashFile(file);
             this.textureLoc = textureLoc;
@@ -144,7 +155,7 @@ public abstract class AbstractLibrary implements Library {
 
         @Override
         public ResourceLocation getTexture() {
-            return this.isFile ? this.getTextureFromFile() : this.textureLoc;
+            return this.textureLoc != null ? this.textureLoc : this.getTextureFromFile();
         }
 
         protected abstract ResourceLocation getTextureFromFile();
@@ -155,7 +166,7 @@ public abstract class AbstractLibrary implements Library {
             obj.addProperty("name", this.name);
             obj.addProperty("id", this.id);
 
-            if (this.isFile) {
+            if (this.file != null) {
                 obj.addProperty("file", this.file.getName());
             } else {
                 obj.addProperty("texture", this.textureLoc.toString());
@@ -166,7 +177,7 @@ public abstract class AbstractLibrary implements Library {
 
         @Override
         public void removeFiles() {
-            if (this.isFile) {
+            if (this.file != null) {
                 this.file.delete();
             }
         }
@@ -175,7 +186,8 @@ public abstract class AbstractLibrary implements Library {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (!(o instanceof AbstractLibraryEntry that)) return false;
-            return isFile == that.isFile && Objects.equals(file, that.file) && Objects.equals(textureLoc, that.textureLoc);
+
+            return Objects.equals(file, that.file) && (file != null || Objects.equals(textureLoc, that.textureLoc));
         }
     }
 }
