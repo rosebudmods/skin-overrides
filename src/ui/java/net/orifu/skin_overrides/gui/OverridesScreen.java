@@ -162,8 +162,10 @@ public class OverridesScreen extends Screen {
                 .width(120).build(), 2, 0).active = override.isPresent();
 
         // add to library button
+        var hasLibraryOverride = override.map(ov -> ov instanceof LibraryOverride).orElse(false);
+        var hasNoCape = Mod.override(this.selectedProfile).capeTexture() == null;
         config.addChild(Button.builder(Component.translatable("skin_overrides.library.add"), btn -> this.addToLibrary())
-                .width(120).build(), 4, 0).active = !override.map(ov -> ov instanceof LibraryOverride).orElse(false);
+                .width(120).build(), 4, 0).active = !hasLibraryOverride && !(!this.ov.skin && hasNoCape);
 
         // change skin button
         if (this.selectedProfile.equals(ProfileHelper.user())) {
