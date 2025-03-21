@@ -8,9 +8,9 @@
 		"YggdrasilServiceClientAccessor"
 	],
 	"client": [
-		"SkinManagerMixin",
         "PlayerInfoMixin",
-		"CapeLayerMixin"
+		"CapeLayerMixin",
+		"SkullBlockRendererMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
