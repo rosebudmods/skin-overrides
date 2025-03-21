@@ -74,8 +74,15 @@ public class ModNetworking {
                     properties.get("textures"), properties.get(DEFAULT_TEXTURES_KEY));
 
             // remove and re-add player (updates skin in tab list)
-            playerList.broadcastAll(new ClientboundPlayerInfoRemovePacket(Collections.singletonList(player.getUUID())));
-            playerList.broadcastAll(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(Collections.singleton(player)));
+            for (var notifyPlayer : playerList.getPlayers()) {
+                // do not notify the player of their own skin update
+                if (notifyPlayer.equals(player)) {
+                    continue;
+                }
+
+                notifyPlayer.connection.send(new ClientboundPlayerInfoRemovePacket(Collections.singletonList(player.getUUID())));
+                notifyPlayer.connection.send(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(Collections.singleton(player)));
+            }
 
             // update skin for players that are tracking this player
             var level = /*? if >=1.20.1 {*/ player.serverLevel() /*?} else >>*/ /*player.level*/ ;
