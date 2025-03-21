@@ -71,7 +71,7 @@ public class Mod {
 		return SKINS.get(profile)
 				.filter(ov -> ov.texture() != null)
 				.map(ov -> new Tuple<>(ov.texture(), ov.model()))
-				.or(SkinChangeOverride::texture);
+				.or(() -> SkinChangeOverride.texture(profile));
 	}
 
 	public static Optional<ResourceLocation> overrideCape(GameProfile profile) {
