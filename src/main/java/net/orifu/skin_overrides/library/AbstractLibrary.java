@@ -79,7 +79,8 @@ public abstract class AbstractLibrary implements Library {
                     var loaded = maybeLoaded.get();
 
                     // re-use existing entry (if any)
-                    var existing = this.entries.stream().filter(ent -> ent.equals(loaded)).findAny();
+                    var existing = Optional.ofNullable(this.entries).flatMap(entries ->
+                            entries.stream().filter(ent -> ent.equals(loaded)).findAny());
                     newEntries.add(existing.orElse(loaded));
                 }
             }
