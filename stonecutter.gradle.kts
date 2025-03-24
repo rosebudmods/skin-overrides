@@ -1,6 +1,6 @@
 plugins {
     id("dev.kikugie.stonecutter")
-    id("org.quiltmc.loom") version "1.8.5" apply false
+    id("fabric-loom") version "1.10-SNAPSHOT" apply false
 }
 
 stonecutter active "1.21.5" /* [SC] DO NOT EDIT */

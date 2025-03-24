@@ -77,7 +77,9 @@ public class PlayerSkinRenderer {
         blitRightLeg(graphics, texture, x, y, scale, false);
         blitTorso(graphics, texture, x, y, scale, false);
 
-        RenderSystem.enableBlend();
+        //? if <=1.21.1
+        /*RenderSystem.enableBlend();*/
+
         blitLeftArm(graphics, texture, x, y, scale, armWidth, true);
         blitRightArm(graphics, texture, x, y, scale, armWidth, rightArmOffset, true);
         blitLeftLeg(graphics, texture, x, y, scale, true);
@@ -86,7 +88,9 @@ public class PlayerSkinRenderer {
 
         blitHead(graphics, texture, x, y, scale, false);
         blitHead(graphics, texture, x, y, scale, true);
-        RenderSystem.disableBlend();
+
+        //? if <=1.21.1
+        /*RenderSystem.disableBlend();*/
     }
 
     public static void blitFace(GuiGraphics graphics, Skin skin, int x, int y, int scale) {
@@ -97,10 +101,15 @@ public class PlayerSkinRenderer {
         int inflate = Math.max(scale / LAYER_DOWNSCALE, 1);
         blitComponent(graphics, texture, x, y, scale, -inflate, false,
                 0, 0, HEAD_SIZE, HEAD_SIZE, HEAD_U, HEAD_V, HEAD_LAYER_U, HEAD_LAYER_V);
-        RenderSystem.enableBlend();
+
+        //? if <=1.21.1
+        /*RenderSystem.enableBlend();*/
+
         blitComponent(graphics, texture, x, y, scale, 0, true,
                 0, 0, HEAD_SIZE, HEAD_SIZE, HEAD_U, HEAD_V, HEAD_LAYER_U, HEAD_LAYER_V);
-        RenderSystem.disableBlend();
+
+        //? if <=1.21.1
+        /*RenderSystem.disableBlend();*/
     }
 
     private static void blitComponent(GuiGraphics graphics, ResourceLocation texture,

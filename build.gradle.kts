@@ -1,6 +1,6 @@
 plugins {
 	id("maven-publish")
-	id("org.quiltmc.loom")
+	id("fabric-loom")
 	id("me.modmuss50.mod-publish-plugin") version "0.5.2"
 }
 
@@ -98,7 +98,7 @@ loom {
 
 dependencies {
 	minecraft("com.mojang:minecraft:$mcDep")
-	modImplementation("org.quiltmc:quilt-loader:${property("deps.quilt_loader")}")
+	modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
 
 	mappings(loom.layered {
 		if (property("deps.parchment") != "none")
@@ -122,8 +122,8 @@ dependencies {
 		.map { modRuntimeOnly("maven.modrinth:${it.key.substring(7)}:${it.value}") }
 
 	if (hasNetworking) {
-		implementation("org.mineskin:java-client:3.0.1-SNAPSHOT")?.let { include(it) }
-		implementation("org.mineskin:java-client-apache:3.0.1-SNAPSHOT")?.let { include(it) }
+		implementation("org.mineskin:java-client:3.0.2-SNAPSHOT")?.let { include(it) }
+		implementation("org.mineskin:java-client-apache:3.0.2-SNAPSHOT")?.let { include(it) }
 	}
 
 	// include httpmime (it will show up in a dev environment, but don't believe its lies)

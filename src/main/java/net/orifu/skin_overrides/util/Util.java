@@ -131,6 +131,7 @@ public class Util {
 
     //? if >=1.21.5 {
     public static CompletableFuture<NativeImage> gpuTextureToNativeImage(GpuTexture gpuTex) {
+        // see TextureUtil.writeAsPNG
         RenderSystem.assertOnRenderThread();
 
         int mip = 0;
@@ -138,13 +139,15 @@ public class Util {
         int height = gpuTex.getHeight(mip);
 
         int bufSize = gpuTex.getFormat().pixelSize() * width * height;
-        var buffer = new GpuBuffer(BufferType.PIXEL_PACK, BufferUsage.STATIC_READ, bufSize);
+        var buffer = RenderSystem.getDevice().createBuffer(() -> "skin overrides - texture to PNG",
+                BufferType.PIXEL_PACK, BufferUsage.STATIC_READ, bufSize);
+        var commandEncoder = RenderSystem.getDevice().createCommandEncoder();
 
         var fut = new CompletableFuture<NativeImage>();
 
-        gpuTex.copyToBuffer(buffer, 0, () -> {
+        commandEncoder.copyTextureToBuffer(gpuTex, buffer, 0, () -> {
             var img = new NativeImage(width, height, false);
-            var view = buffer.read();
+            var view = commandEncoder.readBuffer(buffer);
 
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
