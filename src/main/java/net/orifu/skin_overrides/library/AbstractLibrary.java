@@ -27,7 +27,8 @@ import java.util.Optional;
 public abstract class AbstractLibrary implements Library {
     protected static final Gson GSON = new Gson();
 
-    protected List<LibraryEntry> entries;
+    @NotNull
+    protected List<LibraryEntry> entries = new ArrayList<>();
 
     protected final String rootFolder;
     protected final File libraryJsonFile;
@@ -43,10 +44,6 @@ public abstract class AbstractLibrary implements Library {
 
     @Override
     public List<LibraryEntry> entries() {
-        if (this.entries == null) {
-            this.reload();
-        }
-
         return this.entries;
     }
 
@@ -79,8 +76,7 @@ public abstract class AbstractLibrary implements Library {
                     var loaded = maybeLoaded.get();
 
                     // re-use existing entry (if any)
-                    var existing = Optional.ofNullable(this.entries).flatMap(entries ->
-                            entries.stream().filter(ent -> ent.equals(loaded)).findAny());
+                    var existing = this.entries.stream().filter(ent -> ent.equals(loaded)).findAny();
                     newEntries.add(existing.orElse(loaded));
                 }
             }
