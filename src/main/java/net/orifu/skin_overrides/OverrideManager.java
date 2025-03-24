@@ -54,7 +54,8 @@ public class OverrideManager {
             Optional<Override> newUserOverride = this.get(ProfileHelper.user());
 
             if (!oldUserOverride.equals(newUserOverride)) {
-                Mod.onUserOverrideUpdate(oldUserOverride.orElse(null), newUserOverride.orElse(null));
+                CompletableFuture.runAsync(() ->
+                        Mod.onUserOverrideUpdate(oldUserOverride.orElse(null), newUserOverride.orElse(null)));
             }
         }
     }

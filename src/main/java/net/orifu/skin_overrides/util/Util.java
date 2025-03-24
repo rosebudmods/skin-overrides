@@ -122,7 +122,7 @@ public class Util {
 
             NativeImage img = new NativeImage(w, h, false);
             img.downloadTexture(0, false);
-            imageConsumer.accept(img);
+            future.complete(img);
             *///?}
         };
 

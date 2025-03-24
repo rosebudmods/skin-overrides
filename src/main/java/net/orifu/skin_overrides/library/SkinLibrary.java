@@ -181,7 +181,7 @@ public class SkinLibrary extends AbstractLibrary {
                 return this.signedCache;
             }
             //?} else
-            /*return Optional.empty();*/
+            /*return CompletableFuture.completedFuture(Optional.empty());*/
         }
 
         @Override

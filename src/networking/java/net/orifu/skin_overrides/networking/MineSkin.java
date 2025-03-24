@@ -25,7 +25,7 @@ public class MineSkin {
 
     public static CompletableFuture<Optional<Skin.Signature>> sign(ResourceLocation texture, Skin.Model model) {
         var image = Util.saveTexture(texture, 64, 64);
-        return image.thenApply(img -> sign(img, model));
+        return image.thenApplyAsync(img -> sign(img, model));
     }
 
     public static Optional<Skin.Signature> sign(NativeImage image, Skin.Model model) {

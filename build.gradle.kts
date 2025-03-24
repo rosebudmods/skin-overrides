@@ -58,8 +58,6 @@ repositories {
 
 	maven("https://maven.parchmentmc.org/") { name = "ParchmentMC" }
 
-	maven("https://repo.inventivetalent.org/repository/public/") { name = "inventive-repo" }
-
 	// for some reason using the terraformers maven version of
 	// modmenu breaks quilt loader.
 	// maven {
@@ -121,15 +119,12 @@ dependencies {
 		.filter { it.key.startsWith("compat.") && it.value != "none" }
 		.map { modRuntimeOnly("maven.modrinth:${it.key.substring(7)}:${it.value}") }
 
-	if (hasNetworking) {
-		implementation("org.mineskin:java-client:3.0.2-SNAPSHOT")?.let { include(it) }
-		implementation("org.mineskin:java-client-apache:3.0.2-SNAPSHOT")?.let { include(it) }
-	}
-
 	// include httpmime (it will show up in a dev environment, but don't believe its lies)
 	if (hasUi) {
 		implementation("org.apache.httpcomponents:httpmime:4.5.14")?.let { include(it) }
 	}
+
+	compileOnly("com.github.spotbugs:spotbugs-annotations:4.9.3")
 }
 
 tasks.processResources {
