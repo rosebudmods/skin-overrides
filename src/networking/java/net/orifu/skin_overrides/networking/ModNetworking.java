@@ -21,6 +21,7 @@ import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.Collections;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public class ModNetworking {
     public static final String DEFAULT_TEXTURES_KEY = "skin_overrides-default_textures";
@@ -106,19 +107,27 @@ public class ModNetworking {
         });
     }
 
-    public static void updateSkinOnServer(String skinValue, String signature) {
-        updateSkinOnServer(() -> Optional.of(new Skin.Signature(skinValue, signature)));
+    public static CompletableFuture<Optional<Skin.Signature>> updateSkinOnServer(String skinValue, String signature) {
+        return updateSkinOnServer(() -> CompletableFuture.completedFuture(Optional.of(new Skin.Signature(skinValue, signature))));
     }
 
-    public static void updateSkinOnServer(Skin.Signature.Provider signatureProvider) {
+    public static CompletableFuture<Optional<Skin.Signature>> updateSkinOnServer(Skin.Signature.Provider signatureProvider) {
         if (isOnSkinOverridesServer()) {
             Mod.LOGGER.debug("updating skin on server");
 
-            signatureProvider.signature().ifPresent(ModNetworking::updateSkinOnServer);
+            return signatureProvider.signature().thenApply(sig -> {
+                Mod.LOGGER.debug("received signature\n{}", sig);
+                sig.ifPresent(ModNetworking::updateSkinOnServer);
+                return sig;
+            });
         }
+
+        return CompletableFuture.completedFuture(Optional.empty());
     }
 
     private static void updateSkinOnServer(Skin.Signature sig) {
+        Mod.LOGGER.debug("updating skin on server with signature:\n{}\n{}", sig.value(), sig.signature());
+
         //? if >=1.20.6 {
         ClientPlayNetworking.send(new SkinUpdatePayload(
                 Optional.ofNullable(sig.value()), Optional.ofNullable(sig.signature())));

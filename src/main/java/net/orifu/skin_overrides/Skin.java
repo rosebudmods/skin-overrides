@@ -222,7 +222,7 @@ public record Skin(
         SLIM("slim");
 
         private final String key;
-        private final String apiName;
+        public final String apiName;
 
         Model(String key) {
             this(key, key);
@@ -283,7 +283,7 @@ public record Skin(
         }
 
         public interface Provider {
-            Optional<Signature> signature();
+            CompletableFuture<Optional<Signature>> signature();
         }
     }
 }

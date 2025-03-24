@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public class LibraryOverrider implements OverrideManager.Overrider {
     protected final Library library;
@@ -79,22 +80,22 @@ public class LibraryOverrider implements OverrideManager.Overrider {
         }
 
         @Override
-        public Optional<Skin.Signature> signature() {
+        public CompletableFuture<Optional<Skin.Signature>> signature() {
             if (!(this.entry instanceof SkinLibrary.SkinEntry skinEntry)) {
-                return Optional.empty();
+                return CompletableFuture.completedFuture(Optional.empty());
             }
 
-            var signed = skinEntry.signed();
+            return skinEntry.signed().thenApply(signed -> {
+                // it would be best to reassign `this.entry` here, but it's final, and i'm not
+                // bothered to make this class *not* be a record. we can rely on the fact that
+                // overrides are reloaded every 500ms (see `ModClient`) to know this instance of
+                // LibraryOverride with the outdated entry will be replaced with one that isn't
+                // out of date soon.
+                // if you're applying an unsigned library entry more often than every 500ms, kudos.
+                signed.ifPresent(newEntry -> SkinLibrary.INSTANCE.replace(this.entry, newEntry));
 
-            // it would be best to reassign `this.entry` here, but it's final, and i'm not
-            // bothered to make this class *not* be a record. we can rely on the fact that
-            // overrides are reloaded every 500ms (see `ModClient`) to know this instance of
-            // LibraryOverride with the outdated entry will be replaced with one that isn't
-            // out of date soon.
-            // if you're applying an unsigned library entry more often than every 500ms, kudos.
-            signed.ifPresent(newEntry -> SkinLibrary.INSTANCE.replace(this.entry, newEntry));
-
-            return signed.map(s -> s.signature);
+                return signed.map(s -> s.signature);
+            });
         }
 
         @Override

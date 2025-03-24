@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 import static net.orifu.skin_overrides.Mod.SKIN_OVERRIDES_PATH;
@@ -113,6 +114,11 @@ public class SkinLibrary extends AbstractLibrary {
         private final Supplier<ResourceLocation> texture = Suppliers.memoize(() ->
                 Util.texture("skin/library/" + this.fileHash, Util.skinTextureFromFile(this.file)));
 
+        //? if hasNetworking {
+        @Nullable
+        private CompletableFuture<Optional<SkinEntry>> signedCache = null;
+        //?}
+
         protected SkinEntry(
                 String name, String id, Skin.Model model,
                 @Nullable File file, @Nullable ResourceLocation textureLoc,
@@ -162,13 +168,17 @@ public class SkinLibrary extends AbstractLibrary {
             return obj;
         }
 
-        public Optional<SkinEntry> signed() {
+        public CompletableFuture<Optional<SkinEntry>> signed() {
             //? if hasNetworking {
             if (this.signature != null) {
-                return Optional.of(this);
+                return CompletableFuture.completedFuture(Optional.of(this));
+            } else if (this.signedCache != null) {
+                return this.signedCache;
             } else {
                 var signature = MineSkin.sign(this.getTexture(), this.model);
-                return signature.map(sig -> new SkinEntry(this.name, this.id, this.model, this.file, this.textureLoc, sig));
+                this.signedCache = signature.thenApply(maybeSig -> maybeSig.map(sig ->
+                        new SkinEntry(this.name, this.id, this.model, this.file, this.textureLoc, sig)));
+                return this.signedCache;
             }
             //?} else
             /*return Optional.empty();*/

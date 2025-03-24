@@ -166,8 +166,8 @@ public class OverrideManager {
         }
 
         @java.lang.Override
-        default Optional<Skin.Signature> signature() {
-            return Optional.empty();
+        default CompletableFuture<Optional<Skin.Signature>> signature() {
+            return CompletableFuture.completedFuture(Optional.empty());
         }
     }
 }

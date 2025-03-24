@@ -93,7 +93,7 @@ public class Util {
 
     public static void saveTexture(ResourceLocation texture, int w, int h, Path path) {
         var future = new CompletableFuture<Path>();
-        Consumer<NativeImage> imageConsumer = img -> {
+        saveTexture(texture, w, h).thenAccept(img -> {
             try {
                 img.writeToFile(path);
                 img.close();
@@ -101,12 +101,16 @@ public class Util {
             } catch (IOException e) {
                 future.completeExceptionally(e);
             }
-        };
+        });
+    }
+
+    public static CompletableFuture<NativeImage> saveTexture(ResourceLocation texture, int w, int h) {
+        var future = new CompletableFuture<NativeImage>();
 
         Runnable runnable = () -> {
             //? if >=1.21.5 {
             var imgFut = gpuTextureToNativeImage(Minecraft.getInstance().getTextureManager().getTexture(texture).getTexture());
-            imgFut.thenAccept(imageConsumer);
+            imgFut.thenAccept(future::complete);
 
             //?} else {
             /*//? if >=1.21.3 {
@@ -127,6 +131,8 @@ public class Util {
         } else {
             Minecraft.getInstance().progressTasks.add(runnable);
         }
+
+        return future;
     }
 
     //? if >=1.21.5 {
