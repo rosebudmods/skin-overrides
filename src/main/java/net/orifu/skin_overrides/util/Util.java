@@ -7,7 +7,6 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.google.gson.JsonObject;
@@ -31,7 +30,6 @@ import net.minecraft.client.renderer.texture.SkinTextureDownloader;
 //? if >=1.21.5 {
 import com.mojang.blaze3d.buffers.BufferType;
 import com.mojang.blaze3d.buffers.BufferUsage;
-import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.textures.GpuTexture;
 //?}
 
@@ -72,6 +70,18 @@ public class Util {
                 : profile.getName();
     }
 
+    public static void runOnRenderThread(Runnable runnable) {
+        if (RenderSystem.tryGetDevice() == null) {
+            return;
+        }
+
+        if (RenderSystem.isOnRenderThread()) {
+            runnable.run();
+        } else {
+            Minecraft.getInstance().progressTasks.add(runnable);
+        }
+    }
+
     public static void texture(ResourceLocation res, AbstractTexture texture) {
         // don't register this texture if there is already one with this resource location
         if (Minecraft.getInstance().getTextureManager().byPath.containsKey(res)) {
@@ -107,7 +117,7 @@ public class Util {
     public static CompletableFuture<NativeImage> saveTexture(ResourceLocation texture, int w, int h) {
         var future = new CompletableFuture<NativeImage>();
 
-        Runnable runnable = () -> {
+        runOnRenderThread(() -> {
             //? if >=1.21.5 {
             var imgFut = gpuTextureToNativeImage(Minecraft.getInstance().getTextureManager().getTexture(texture).getTexture());
             imgFut.thenAccept(future::complete);
@@ -124,13 +134,7 @@ public class Util {
             img.downloadTexture(0, false);
             future.complete(img);
             *///?}
-        };
-
-        if (RenderSystem.isOnRenderThread()) {
-            runnable.run();
-        } else {
-            Minecraft.getInstance().progressTasks.add(runnable);
-        }
+        });
 
         return future;
     }
@@ -173,6 +177,8 @@ public class Util {
     //?}
 
     public static AbstractTexture textureFromFile(File textureFile, Function<NativeImage, AbstractTexture> transform) {
+        RenderSystem.assertOnRenderThread();
+
         try {
             if (textureFile.isFile()) {
                 var stream = Files.newInputStream(textureFile.toPath());

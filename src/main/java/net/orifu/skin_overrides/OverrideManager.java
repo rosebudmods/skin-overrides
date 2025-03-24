@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.util.ProfileHelper;
+import net.orifu.skin_overrides.util.Util;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,6 +38,10 @@ public class OverrideManager {
     }
 
     public void update() {
+        Util.runOnRenderThread(this::updateOnRenderThread);
+    }
+
+    protected void updateOnRenderThread() {
         Map<String, Overridden> newOverrides = new HashMap<>();
         this.findOverrides(ov -> {
             String key = ov.override.playerIdent().toLowerCase(Locale.ROOT);
@@ -135,6 +140,7 @@ public class OverrideManager {
 
     public List<CompletableFuture<GameProfile>> profilesWithOverride() {
         synchronized (this.overrides) {
+            System.out.println(this.overrides);
             return this.overrides.keySet().stream().map(ProfileHelper::idToBasicProfile).toList();
         }
     }
