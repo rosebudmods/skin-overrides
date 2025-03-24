@@ -67,8 +67,13 @@ public class OverrideManager {
 
     public void removeOverride(GameProfile profile) {
         Optional<Overridden> data;
+        boolean hasUpdated = false;
         while ((data = this.getData(profile)).isPresent()) {
             data.get().file.delete();
+            hasUpdated = true;
+        }
+
+        if (hasUpdated) {
             this.update();
         }
     }

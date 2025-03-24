@@ -20,7 +20,6 @@ import java.util.concurrent.TimeUnit;
 import static net.orifu.skin_overrides.Mod.CAPES;
 import static net.orifu.skin_overrides.Mod.SKINS;
 
-@SuppressWarnings("deprecation")
 public class ModClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {

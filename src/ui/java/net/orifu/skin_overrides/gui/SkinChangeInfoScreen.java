@@ -14,6 +14,7 @@ import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.override.SkinChangeOverride;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.Toast;
+import net.orifu.skin_overrides.util.Util;
 import net.orifu.xplat.gui.components.LinearLayout;
 
 //? if hasNetworking
@@ -75,10 +76,12 @@ public class SkinChangeInfoScreen extends WarningScreen {
     }
 
     protected void changeSkin() {
+        Mod.LOGGER.info(System.nanoTime() + " @ " + Thread.currentThread().getName() + " - button pressed");
         this.minecraft.setScreen(this.parent);
 
         var userProfile = ProfileHelper.user();
         var skin = Mod.override(userProfile);
+        Mod.LOGGER.info(System.nanoTime() + " @ " + Thread.currentThread().getName() + " - changing skin");
         skin.setUserSkin().thenAccept(newSkin -> this.onSkinChanged(newSkin, userProfile, skin));
     }
 
@@ -88,7 +91,8 @@ public class SkinChangeInfoScreen extends WarningScreen {
 
             // remove existing override
             Mod.SKINS.removeOverride(userProfile);
-//            this.parent.reload();
+            Util.runOnRenderThread(this.parent::reload);
+
             // add new "override" for showing updated skin until restarting
             SkinChangeOverride.set(newSkin.get(), skin.model());
 
