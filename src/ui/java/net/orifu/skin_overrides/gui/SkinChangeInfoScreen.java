@@ -1,5 +1,6 @@
 package net.orifu.skin_overrides.gui;
 
+import com.mojang.authlib.GameProfile;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.layouts.Layout;
@@ -9,6 +10,7 @@ import net.minecraft.client.gui.screens.multiplayer.WarningScreen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.orifu.skin_overrides.Mod;
+import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.override.SkinChangeOverride;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.Toast;
@@ -16,6 +18,8 @@ import net.orifu.xplat.gui.components.LinearLayout;
 
 //? if hasNetworking
 import net.orifu.skin_overrides.networking.ModNetworking;
+
+import java.util.Optional;
 
 public class SkinChangeInfoScreen extends WarningScreen {
     private static final Component HEADER = Component.translatable("skin_overrides.change_skin.title");
@@ -71,21 +75,24 @@ public class SkinChangeInfoScreen extends WarningScreen {
     }
 
     protected void changeSkin() {
+        this.minecraft.setScreen(this.parent);
+
         var userProfile = ProfileHelper.user();
         var skin = Mod.override(userProfile);
-        var newSkin = skin.setUserSkin();
+        skin.setUserSkin().thenAccept(newSkin -> this.onSkinChanged(newSkin, userProfile, skin));
+    }
 
+    protected void onSkinChanged(Optional<String> newSkin, GameProfile userProfile, Skin skin) {
         if (newSkin.isPresent()) {
-            Mod.LOGGER.debug("player has changed skin. api response:\nurl: {}\nmodel: {}",
-                    newSkin.get().getA(), newSkin.get().getB());
+            Mod.LOGGER.debug("player has changed skin. new url: {}", newSkin.get());
 
             // remove existing override
             Mod.SKINS.removeOverride(userProfile);
-            this.parent.reload();
+//            this.parent.reload();
             // add new "override" for showing updated skin until restarting
-            SkinChangeOverride.set(newSkin.get().getA(), newSkin.get().getB());
+            SkinChangeOverride.set(newSkin.get(), skin.model());
 
-            var updatedProfile = ProfileHelper.uuidToProfileExpectingSkinUrl(userProfile.getId(), newSkin.get().getA());
+            var updatedProfile = ProfileHelper.uuidToProfileExpectingSkinUrl(userProfile.getId(), newSkin.get());
             updatedProfile.thenAccept(profile -> {
                 if (profile.isPresent()) {
                     var signedSkin = ProfileHelper.getProfileSkinSignature(profile.get());
@@ -104,7 +111,5 @@ public class SkinChangeInfoScreen extends WarningScreen {
             Toast.show(Component.translatable("skin_overrides.change_skin.fail.title"),
                     Component.translatable("skin_overrides.change_skin.fail.description"));
         }
-
-        this.onClose();
     }
 }

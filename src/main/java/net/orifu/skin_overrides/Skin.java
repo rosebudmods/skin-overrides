@@ -15,24 +15,6 @@ import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 *///?}
 
-//? if hasUi {
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.mojang.authlib.yggdrasil.YggdrasilUserApiService;
-import net.minecraft.util.Tuple;
-import net.orifu.skin_overrides.mixin.YggdrasilServiceClientAccessor;
-import net.orifu.skin_overrides.mixin.YggdrasilUserApiServiceAccessor;
-import net.orifu.skin_overrides.util.Util;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-
-import java.io.File;
-import java.io.IOException;
-//?}
-
 //? if hasNetworking
 import net.orifu.skin_overrides.networking.ModNetworking;
 
@@ -173,47 +155,8 @@ public record Skin(
     //?}
 
     //? if hasUi {
-    public Optional<Tuple<String, Model>> setUserSkin() {
-        try {
-            var userApiService = (YggdrasilUserApiService) Minecraft.getInstance().userApiService;
-            var userApiServiceAccessor = (YggdrasilUserApiServiceAccessor) userApiService;
-            var serviceClient = userApiServiceAccessor.getMinecraftClient();
-            var serviceClientAccessor = (YggdrasilServiceClientAccessor) serviceClient;
-            var servicesHost = /*? if >=1.20.2 {*/ userApiServiceAccessor.getEnvironment().servicesHost();
-                /*?} else*/ /*userApiServiceAccessor.getEnvironment().getServicesHost();*/
-            var url = servicesHost + "/minecraft/profile/skins";
-
-            // TODO: do not use saveTexture
-            File skin = File.createTempFile("skin-overrides_", "_temp-skin");
-            Util.saveTexture(this.texture, 64, 64, skin.toPath());
-
-            var post = new HttpPost(url);
-            post.setHeader("Authorization", "Bearer " + serviceClientAccessor.getAccessToken());
-            post.setEntity(MultipartEntityBuilder.create()
-                    .addTextBody("variant", this.model.apiName)
-                    .addBinaryBody("file", skin, ContentType.IMAGE_PNG, "skin.png")
-                    .build());
-
-            var client = HttpClients.createDefault();
-            var response = client.execute(post);
-            String body = EntityUtils.toString(response.getEntity(), "utf-8");
-            client.close();
-
-            if (response.getStatusLine().getStatusCode() / 100 != 2) {
-                Mod.LOGGER.error("failed to set skin, got API response:\n" + body);
-                return Optional.empty();
-            }
-
-            var jsonBody = new Gson().fromJson(body, JsonObject.class);
-            var skinInfo = jsonBody.getAsJsonArray("skins").get(0).getAsJsonObject();
-            String textureUrl = skinInfo.get("url").getAsString();
-            Model model = Model.parse(skinInfo.get("variant").getAsString());
-
-            return Optional.of(new Tuple<>(textureUrl, model));
-        } catch (IOException e) {
-            Mod.LOGGER.error("failed to set skin, got IO error:", e);
-            return Optional.empty();
-        }
+    public CompletableFuture<Optional<String>> setUserSkin() {
+        return SkinNetworking.setUserSkin(this);
     }
     //?}
 

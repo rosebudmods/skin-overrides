@@ -8,11 +8,9 @@ import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.util.Util;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import java.io.File;
@@ -20,9 +18,9 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-public class MineSkin {
-    private static final HttpClient HTTP_CLIENT = HttpClients.createDefault();
+import static net.orifu.skin_overrides.SkinNetworking.HTTP_CLIENT;
 
+public class MineSkin {
     public static CompletableFuture<Optional<Skin.Signature>> sign(ResourceLocation texture, Skin.Model model) {
         var image = Util.saveTexture(texture, 64, 64);
         return image.thenApplyAsync(img -> sign(img, model));
