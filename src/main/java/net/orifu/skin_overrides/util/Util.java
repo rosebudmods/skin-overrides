@@ -71,9 +71,11 @@ public class Util {
     }
 
     public static void runOnRenderThread(Runnable runnable) {
+        //? if >=1.21.5 {
         if (RenderSystem.tryGetDevice() == null) {
             return;
         }
+        //?}
 
         if (RenderSystem.isOnRenderThread()) {
             runnable.run();
@@ -177,6 +179,7 @@ public class Util {
     //?}
 
     public static AbstractTexture textureFromFile(File textureFile, Function<NativeImage, AbstractTexture> transform) {
+        //? if >=1.18.2
         RenderSystem.assertOnRenderThread();
 
         try {

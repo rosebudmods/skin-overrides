@@ -14,11 +14,12 @@ body:
       label: minecraft version
       description: on what version of minecraft did you encounter the bug?
       options:
-        - The Garden Awakens (1.21.4)
-        - Bundles of Bravery (1.21.3)
-        - Tricky Trials (1.21.1)
-        - Armored Paws (1.20.6)
-        - Bats and Pots (1.20.4)
+        - 1.21.5 (Spring to Life)
+        - 1.21.4 (The Garden Awakens)
+        - 1.21.3 (Bundles of Bravery)
+        - 1.21.1 (Tricky Trials)
+        - 1.20.6 (Armored Paws)
+        - 1.20.4 (Bats and Pots)
         - 1.20.2
         - 1.20.1
         - 1.19.4

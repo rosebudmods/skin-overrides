@@ -145,7 +145,6 @@ public class OverrideManager {
 
     public List<CompletableFuture<GameProfile>> profilesWithOverride() {
         synchronized (this.overrides) {
-            System.out.println(this.overrides);
             return this.overrides.keySet().stream().map(ProfileHelper::idToBasicProfile).toList();
         }
     }
