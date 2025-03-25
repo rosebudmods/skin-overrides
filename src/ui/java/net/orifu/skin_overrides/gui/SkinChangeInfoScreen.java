@@ -76,12 +76,10 @@ public class SkinChangeInfoScreen extends WarningScreen {
     }
 
     protected void changeSkin() {
-        Mod.LOGGER.info(System.nanoTime() + " @ " + Thread.currentThread().getName() + " - button pressed");
         this.minecraft.setScreen(this.parent);
 
         var userProfile = ProfileHelper.user();
         var skin = Mod.override(userProfile);
-        Mod.LOGGER.info(System.nanoTime() + " @ " + Thread.currentThread().getName() + " - changing skin");
         skin.setUserSkin().thenAccept(newSkin -> this.onSkinChanged(newSkin, userProfile, skin));
     }
 
