@@ -66,16 +66,10 @@ public class OverrideManager {
     }
 
     public void removeOverride(GameProfile profile) {
-        Optional<Overridden> data;
-        boolean hasUpdated = false;
-        while ((data = this.getData(profile)).isPresent()) {
-            data.get().file.delete();
-            hasUpdated = true;
-        }
-
-        if (hasUpdated) {
+        this.getData(profile).ifPresent(data -> {
+            data.file.delete();
             this.update();
-        }
+        });
     }
 
     private void findOverrides(Consumer<Overridden> handler) {
@@ -108,7 +102,8 @@ public class OverrideManager {
     }
 
     private synchronized Optional<Overridden> getData(GameProfile profile) {
-        return this.getData(profile.getName()).or(() -> this.getData(profile.getId().toString()));
+        return this.getData(profile.getName())
+                .or(() -> this.getData(ProfileHelper.getDefaultStringId(profile)));
     }
 
     private synchronized Optional<Overridden> getData(String ident) {
