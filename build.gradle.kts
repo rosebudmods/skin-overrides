@@ -112,8 +112,14 @@ dependencies {
 
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
 
-	if (property("deps.modmenu") != "none")
-		modImplementation("maven.modrinth:modmenu:${property("deps.modmenu")}")
+	if (property("deps.modmenu") != "none") {
+		val dep = "maven.modrinth:modmenu:${property("deps.modmenu")}"
+
+		if (property("deps.modmenu.works") == "true")
+			modImplementation(dep)
+		else
+			modCompileOnly(dep)
+	}
 
 	properties
 		.filter { it.key.startsWith("compat.") && it.value != "none" }
