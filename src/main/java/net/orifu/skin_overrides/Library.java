@@ -63,8 +63,14 @@ public interface Library {
     }
 
     default void rename(LibraryEntry entry, String newName) {
-        entry.name = this.get(entry.id).get().name = newName;
-        this.save();
+        this.get(entry.id).ifPresent(internalEntry -> {
+            entry.name = internalEntry.name = newName;
+            this.save();
+        });
+
+        if (!entry.name.equals(newName)) {
+            Mod.LOGGER.error("you encountered a rare bug! please report this on our issue tracker.");
+        }
     }
 
     abstract class LibraryEntry {
