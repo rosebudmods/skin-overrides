@@ -12,7 +12,7 @@ body:
     id: minecraft
     attributes:
       label: minecraft version
-      description: on what version of minecraft did you encounter the bug?
+      description: which version of minecraft are you using?
       options:
         - 1.21.5 (Spring to Life)
         - 1.21.4 (The Garden Awakens)
@@ -38,6 +38,7 @@ body:
       label: mod version
       description: which version of skin overrides are you using?
       options:
+        - 2.3.0
         - 2.2.3
         - 2.2.2
         - 2.2.1
@@ -59,8 +60,6 @@ body:
         - quilt
         - neoforge
         - i don't know/other
-    validations:
-      required: true
   - type: textarea
     id: description
     attributes:
