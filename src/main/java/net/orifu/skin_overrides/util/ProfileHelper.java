@@ -1,7 +1,6 @@
 package net.orifu.skin_overrides.util;
 
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.resources.ResourceLocation;
@@ -37,19 +36,12 @@ import net.minecraft.server.Services;
 
 public class ProfileHelper {
     public static final String UUID_REGEX = "[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{12}";
-    public static final String DEFAULT_UUID_KEY = "skin_overrides:default_uuid";
 
     //? if <1.20.2
     /*private static GameProfile cachedUserProfile;*/
     private static GameProfileCache profileCache;
 
     public static GameProfile user() {
-        var profile = userInternal();
-        addDefaultId(profile);
-        return profile;
-    }
-
-    protected static GameProfile userInternal() {
         //? if >=1.20.2 {
         return Minecraft.getInstance().getGameProfile();
         //?} else {
@@ -177,31 +169,6 @@ public class ProfileHelper {
         return Optional.ofNullable(profileResult).map(ProfileResult::profile);
         //?} else
         /*return profileResult.getName() != null ? Optional.of(profileResult) : Optional.empty();*/
-    }
-
-    public static String propValue(Property property) {
-        return /*? if >=1.20.2 {*/ property.value() /*?} else >>*/ /*property.getValue()*/ ;
-    }
-
-    public static String propSig(Property property) {
-        return /*? if >=1.20.2 {*/ property.signature() /*?} else >>*/ /*property.getSignature()*/ ;
-    }
-
-    public static UUID getDefaultId(GameProfile profile) {
-        return profile.getProperties().get(DEFAULT_UUID_KEY).stream().findAny()
-                .map(prop -> UUID.fromString(propValue(prop))).orElse(profile.getId());
-    }
-
-    public static String getDefaultStringId(GameProfile profile) {
-        return profile.getProperties().get(DEFAULT_UUID_KEY).stream().findAny()
-                .map(ProfileHelper::propValue).orElse(profile.getId().toString());
-    }
-
-    public static void addDefaultId(GameProfile profile) {
-        if (!profile.getProperties().containsKey(DEFAULT_UUID_KEY)) {
-            profile.getProperties().put(DEFAULT_UUID_KEY,
-                    new Property(DEFAULT_UUID_KEY, profile.getId().toString()));
-        }
     }
 
     public static ResourceLocation getDefaultSkin() {

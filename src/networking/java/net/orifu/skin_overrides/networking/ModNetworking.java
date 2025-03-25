@@ -23,9 +23,6 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-import static net.orifu.skin_overrides.util.ProfileHelper.propSig;
-import static net.orifu.skin_overrides.util.ProfileHelper.propValue;
-
 public class ModNetworking {
     public static final String DEFAULT_TEXTURES_KEY = "skin_overrides-default_textures";
 
@@ -93,6 +90,14 @@ public class ModNetworking {
             var tracker = ((ServerChunkCache) level.getChunkSource()).chunkMap.entityMap.get(player.getId());
             tracker.seenBy.forEach(listener -> tracker.serverEntity.addPairing(listener.getPlayer()));
         });
+    }
+
+    private static String propValue(Property property) {
+        return /*? if >=1.20.2 {*/ property.value() /*?} else >>*/ /*property.getValue()*/ ;
+    }
+
+    private static String propSig(Property property) {
+        return /*? if >=1.20.2 {*/ property.signature() /*?} else >>*/ /*property.getSignature()*/ ;
     }
 
     public static void initClient() {
