@@ -102,7 +102,8 @@ public class OverrideManager {
     }
 
     private synchronized Optional<Overridden> getData(GameProfile profile) {
-        return this.getData(profile.getName()).or(() -> this.getData(profile.getId().toString()));
+        return Optional.ofNullable(profile.getName()).flatMap(this::getData)
+                .or(() -> Optional.ofNullable(profile.getId()).flatMap(id -> this.getData(id.toString())));
     }
 
     private synchronized Optional<Overridden> getData(String ident) {
