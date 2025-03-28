@@ -178,7 +178,7 @@ public class Util {
     }
     //?}
 
-    public static AbstractTexture textureFromFile(File textureFile, Function<NativeImage, AbstractTexture> transform) {
+    public static Optional<NativeImage> imageFromFile(File textureFile) {
         //? if >=1.18.2
         RenderSystem.assertOnRenderThread();
 
@@ -187,18 +187,22 @@ public class Util {
                 var stream = Files.newInputStream(textureFile.toPath());
                 var image = NativeImage.read(stream);
 
-                return transform.apply(image);
+                return Optional.of(image);
             }
         } catch (IOException ignored) {}
 
-        return new SimpleTexture(MissingTextureAtlasSprite.getLocation());
+        return Optional.empty();
     }
 
-    public static AbstractTexture textureFromFile(File textureFile) {
+    public static Optional<AbstractTexture> textureFromFile(File textureFile, Function<NativeImage, AbstractTexture> transform) {
+        return imageFromFile(textureFile).map(transform);
+    }
+
+    public static Optional<AbstractTexture> textureFromFile(File textureFile) {
         return textureFromFile(textureFile, image -> new DynamicTexture(/*? if >=1.21.5 {*/null,/*?}*/ image));
     }
 
-    public static AbstractTexture skinTextureFromFile(File textureFile) {
+    public static Optional<AbstractTexture> skinTextureFromFile(File textureFile) {
         return textureFromFile(textureFile, image ->
                 /*? if >=1.21.4 {*/ new DynamicTexture(
                         /*? if >=1.21.5*/ null,

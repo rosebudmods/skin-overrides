@@ -25,7 +25,7 @@ public class LocalCapeOverrider implements OverrideManager.Overrider {
     @Override
     public Optional<OverrideManager.Override> get(File file, String name, String ext) {
         if (ext.equals("png")) {
-            var texture = Util.textureFromFile(file);
+            var texture = Util.textureFromFile(file).orElseThrow();
             String hash = Util.hashFile(file);
             return Optional.of(new LocalCapeOverride(name.toLowerCase(Locale.ROOT), texture, hash));
         }

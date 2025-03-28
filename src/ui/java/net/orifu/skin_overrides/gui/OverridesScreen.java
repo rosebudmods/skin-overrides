@@ -25,12 +25,12 @@ import net.orifu.skin_overrides.library.SkinLibrary;
 import net.orifu.skin_overrides.override.LibraryOverrider.LibraryOverride;
 import net.orifu.skin_overrides.gui.components.ModelPreview;
 import net.orifu.skin_overrides.util.ProfileHelper;
+import net.orifu.skin_overrides.util.Toast;
 import net.orifu.skin_overrides.util.Util;
 import net.orifu.xplat.GuiHelper;
 import net.orifu.xplat.gui.GuiGraphics;
 import net.orifu.xplat.gui.Screen;
 import net.orifu.xplat.gui.components.LinearLayout;
-import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
@@ -324,23 +324,31 @@ public class OverridesScreen extends Screen {
             return;
         }
         Path path = paths.get(0);
-        if (!path.toFile().isFile() || !FilenameUtils.isExtension(path.toFile().getName(), "png")) {
+        if (!path.toFile().isFile()) {
             return;
         }
 
         GameProfile profile = this.selectedProfile != null ? this.selectedProfile : ProfileHelper.user();
 
         if (this.ov.skin) {
-            // open model selection screen
-            this.minecraft.setScreen(OverrideInfoEntryScreen.getModel(this,
-                    Util.texture(Util.skinTextureFromFile(path.toFile())),
-                    model -> {
-                        this.ov.copyOverride(profile, path, model);
-                        this.rebuildWidgets();
-                    }));
+            Util.skinTextureFromFile(path.toFile()).ifPresentOrElse(
+                    // open model selection screen
+                    tex -> this.minecraft.setScreen(OverrideInfoEntryScreen.getModel(this,
+                            Util.texture(tex),
+                            model -> {
+                                this.ov.copyOverride(profile, path, model);
+                                this.rebuildWidgets();
+                            })),
+                    Toast::showInvalidImage
+            );
         } else {
-            this.ov.copyOverride(profile, path, null);
-            this.rebuildWidgets();
+            Util.imageFromFile(path.toFile()).ifPresentOrElse(
+                    _img -> {
+                        this.ov.copyOverride(profile, path, null);
+                        this.rebuildWidgets();
+                    },
+                    Toast::showInvalidImage
+            );
         }
     }
 

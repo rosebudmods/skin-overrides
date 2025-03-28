@@ -64,7 +64,7 @@ public class CapeLibrary extends AbstractLibrary {
 
     public static class CapeEntry extends AbstractLibraryEntry {
         private final Supplier<ResourceLocation> texture = Suppliers.memoize(() ->
-                Util.texture("cape/library/" + this.fileHash, Util.textureFromFile(this.file)));
+                Util.texture("cape/library/" + this.fileHash, Util.textureFromFile(this.file).orElseThrow()));
 
         protected CapeEntry(String name, String id, @Nullable File file, @Nullable ResourceLocation textureLoc) {
             super(name, id, file, textureLoc);

@@ -14,4 +14,9 @@ public class Toast {
                 .PACK_LOAD_FAILURE, title, description));
         *///?}
     }
+
+    public static void showInvalidImage() {
+        show(Component.translatable("skin_overrides.invalid.title"),
+                Component.translatable("skin_overrides.invalid.description"));
+    }
 }

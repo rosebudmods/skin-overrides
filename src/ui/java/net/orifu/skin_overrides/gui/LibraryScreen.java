@@ -27,7 +27,6 @@ import net.orifu.xplat.GuiHelper;
 import net.orifu.xplat.gui.GuiGraphics;
 import net.orifu.xplat.gui.Screen;
 import net.orifu.xplat.gui.components.LinearLayout;
-import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
@@ -325,31 +324,37 @@ public class LibraryScreen extends Screen {
             return;
         }
         Path path = paths.get(0);
-        if (!path.toFile().isFile() || !FilenameUtils.isExtension(path.toFile().getName(), "png")) {
+        if (!path.toFile().isFile()) {
             return;
         }
         String guessedName = path.toFile().getName().replace(".png", "").replace("_", " ");
 
         if (this.ov.skin) {
             // open name and model input screen
-            this.minecraft.setScreen(OverrideInfoEntryScreen.getNameAndModel(this,
-                    Util.texture(Util.skinTextureFromFile(path.toFile())), guessedName,
-                    (name, model) -> {
-                        // add skin
-                        ((SkinLibrary) this.ov.library()).create(name, path, model);
-                        this.libraryList.reload();
-                        this.rebuildWidgets();
-                    }));
+            Util.skinTextureFromFile(path.toFile()).ifPresentOrElse(
+                    tex -> this.minecraft.setScreen(OverrideInfoEntryScreen.getNameAndModel(this,
+                            Util.texture(tex), guessedName,
+                            (name, model) -> {
+                                // add skin
+                                ((SkinLibrary) this.ov.library()).create(name, path, model);
+                                this.libraryList.reload();
+                                this.rebuildWidgets();
+                            })),
+                    Toast::showInvalidImage
+            );
         } else {
             // open name input screen
-            this.minecraft.setScreen(OverrideInfoEntryScreen.getName(this,
-                    Util.texture(Util.textureFromFile(path.toFile())), guessedName,
-                    name -> {
-                        // add cape
-                        ((CapeLibrary) this.ov.library()).create(name, path);
-                        this.libraryList.reload();
-                        this.rebuildWidgets();
-                    }));
+            Util.textureFromFile(path.toFile()).ifPresentOrElse(
+                    tex -> this.minecraft.setScreen(OverrideInfoEntryScreen.getName(this,
+                            Util.texture(tex), guessedName,
+                            name -> {
+                                // add cape
+                                ((CapeLibrary) this.ov.library()).create(name, path);
+                                this.libraryList.reload();
+                                this.rebuildWidgets();
+                            })),
+                    Toast::showInvalidImage
+            );
         }
     }
 

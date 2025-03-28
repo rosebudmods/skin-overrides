@@ -53,5 +53,7 @@
     "skin_overrides.no_profile.description": "No profile with that name/UUID exists",
     "skin_overrides.no_cape.title": "No cape on profile",
     "skin_overrides.no_cape.description": "%s does not have a cape",
+    "skin_overrides.invalid.title": "Invalid image",
+    "skin_overrides.invalid.description": "The provided image is not a valid PNG file.",
     "key.skin_overrides.open_screen": "Open Skin Overrides"
 }
