@@ -5,6 +5,7 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.OverrideManager;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.util.ComponentUtil;
@@ -43,7 +44,7 @@ public class LocalSkinOverrider implements OverrideManager.Overrider {
                 Supplier<ResourceLocation> memoizedTexture) implements OverrideManager.Override {
         public LocalSkinOverride(String playerIdent, File file, String texHash, Skin.Model model) {
             this(playerIdent, texHash, model, Suppliers.memoize(() ->
-                    Util.texture("skin/local/" + texHash, Util.skinTextureFromFile(file).orElseThrow())));
+                    Util.skinTextureFromFile(file, Mod.res("skin/local/" + texHash)).orElseThrow()));
         }
 
         @Override

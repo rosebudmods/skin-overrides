@@ -332,8 +332,8 @@ public class LibraryScreen extends Screen {
         if (this.ov.skin) {
             // open name and model input screen
             Util.skinTextureFromFile(path.toFile()).ifPresentOrElse(
-                    tex -> this.minecraft.setScreen(OverrideInfoEntryScreen.getNameAndModel(this,
-                            Util.texture(tex), guessedName,
+                    res -> this.minecraft.setScreen(OverrideInfoEntryScreen.getNameAndModel(this,
+                            res, guessedName,
                             (name, model) -> {
                                 // add skin
                                 ((SkinLibrary) this.ov.library()).create(name, path, model);

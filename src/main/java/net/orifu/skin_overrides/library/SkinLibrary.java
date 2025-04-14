@@ -112,7 +112,7 @@ public class SkinLibrary extends AbstractLibrary {
         public final Skin.Signature signature;
 
         private final Supplier<ResourceLocation> texture = Suppliers.memoize(() ->
-                Util.texture("skin/library/" + this.fileHash, Util.skinTextureFromFile(this.file).orElseThrow()));
+                Util.skinTextureFromFile(this.file, Mod.res("skin/library/" + this.fileHash)).orElseThrow());
 
         //? if hasNetworking {
         @Nullable

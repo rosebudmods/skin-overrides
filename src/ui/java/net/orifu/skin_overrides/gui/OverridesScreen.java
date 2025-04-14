@@ -333,8 +333,8 @@ public class OverridesScreen extends Screen {
         if (this.ov.skin) {
             Util.skinTextureFromFile(path.toFile()).ifPresentOrElse(
                     // open model selection screen
-                    tex -> this.minecraft.setScreen(OverrideInfoEntryScreen.getModel(this,
-                            Util.texture(tex),
+                    res -> this.minecraft.setScreen(OverrideInfoEntryScreen.getModel(this,
+                            res,
                             model -> {
                                 this.ov.copyOverride(profile, path, model);
                                 this.rebuildWidgets();

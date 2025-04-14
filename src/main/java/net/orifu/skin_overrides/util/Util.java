@@ -7,6 +7,9 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 
 import com.google.gson.JsonObject;
@@ -202,13 +205,28 @@ public class Util {
         return textureFromFile(textureFile, image -> new DynamicTexture(/*? if >=1.21.5 {*/null,/*?}*/ image));
     }
 
-    public static Optional<AbstractTexture> skinTextureFromFile(File textureFile) {
-        return textureFromFile(textureFile, image ->
-                /*? if >=1.21.4 {*/ new DynamicTexture(
-                        /*? if >=1.21.5*/ null,
-                        SkinTextureDownloader.processLegacySkin(image, textureFile.getName()))
-                //?} else
-                /*new HttpTexture(textureFile, "", ProfileHelper.getDefaultSkin(), true, null)*/
-        );
+    public static Optional<ResourceLocation> skinTextureFromFile(File textureFile) {
+        return skinTextureFromFile(textureFile, Mod.res("temp/" + Util.randomId()));
+    }
+
+    public static Optional<ResourceLocation> skinTextureFromFile(File textureFile, ResourceLocation res) {
+        //? if >=1.21.4 {
+        return imageFromFile(textureFile).flatMap(image -> {
+            // process legacy skins and register the skin using the method in the SkinTextureDownloader.
+            // this *can* be done normally (see #texture above) but this is done in case another
+            // mod mixes into that method.
+            var skinImage = SkinTextureDownloader.processLegacySkin(image, textureFile.getName());
+            try {
+                SkinTextureDownloader.registerTextureInManager(res, skinImage).get(100, TimeUnit.MILLISECONDS);
+                return Optional.of(res);
+            } catch (InterruptedException | ExecutionException | TimeoutException ignored) {}
+
+            return Optional.empty();
+        });
+        //?} else {
+        /*var tex = new HttpTexture(textureFile, "", ProfileHelper.getDefaultSkin(), true, null);
+        texture(res, tex);
+        return Optional.of(res);
+        *///?}
     }
 }
