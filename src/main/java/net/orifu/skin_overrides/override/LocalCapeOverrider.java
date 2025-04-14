@@ -25,19 +25,18 @@ public class LocalCapeOverrider implements OverrideManager.Overrider {
     @Override
     public Optional<OverrideManager.Override> get(File file, String name, String ext) {
         if (ext.equals("png")) {
-            var texture = Util.textureFromFile(file).orElseThrow();
             String hash = Util.hashFile(file);
-            return Optional.of(new LocalCapeOverride(name.toLowerCase(Locale.ROOT), texture, hash));
+            return Optional.of(new LocalCapeOverride(name.toLowerCase(Locale.ROOT), file, hash));
         }
 
         return Optional.empty();
     }
 
-    public record LocalCapeOverride(String playerIdent, AbstractTexture tex, String texHash,
+    public record LocalCapeOverride(String playerIdent, String texHash,
                 Supplier<ResourceLocation> memoizedTexture) implements OverrideManager.Override {
-        public LocalCapeOverride(String playerIdent, AbstractTexture tex, String texHash) {
-            this(playerIdent, tex, texHash, Suppliers.memoize(() ->
-                    Util.texture("cape/local/" + texHash, tex)));
+        public LocalCapeOverride(String playerIdent, File file, String texHash) {
+            this(playerIdent, texHash, Suppliers.memoize(() ->
+                    Util.texture("cape/local/" + texHash, Util.textureFromFile(file).orElseThrow())));
         }
 
         @Override

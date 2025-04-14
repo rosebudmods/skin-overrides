@@ -28,24 +28,22 @@ public class LocalSkinOverrider implements OverrideManager.Overrider {
             String[] parts = name.split("\\.", 2);
             Skin.Model maybeModel = Skin.Model.tryParse(parts[1]);
             if (ext.equals("png") && maybeModel != null) {
-                var texture = Util.skinTextureFromFile(file).orElseThrow();
                 String hash = Util.hashFile(file);
-                return Optional.of(new LocalSkinOverride(parts[0].toLowerCase(Locale.ROOT), texture, hash, maybeModel));
+                return Optional.of(new LocalSkinOverride(parts[0].toLowerCase(Locale.ROOT), file, hash, maybeModel));
             }
         } else if (ext.equals("png")) {
-            var texture = Util.skinTextureFromFile(file).orElseThrow();
             String hash = Util.hashFile(file);
-            return Optional.of(new LocalSkinOverride(name.toLowerCase(Locale.ROOT), texture, hash, Skin.Model.WIDE));
+            return Optional.of(new LocalSkinOverride(name.toLowerCase(Locale.ROOT), file, hash, Skin.Model.WIDE));
         }
 
         return Optional.empty();
     }
 
-    public record LocalSkinOverride(String playerIdent, AbstractTexture tex, String texHash, Skin.Model model,
+    public record LocalSkinOverride(String playerIdent, String texHash, Skin.Model model,
                 Supplier<ResourceLocation> memoizedTexture) implements OverrideManager.Override {
-        public LocalSkinOverride(String playerIdent, AbstractTexture tex, String texHash, Skin.Model model) {
-            this(playerIdent, tex, texHash, model, Suppliers.memoize(() ->
-                    Util.texture("skin/local/" + texHash, tex)));
+        public LocalSkinOverride(String playerIdent, File file, String texHash, Skin.Model model) {
+            this(playerIdent, texHash, model, Suppliers.memoize(() ->
+                    Util.texture("skin/local/" + texHash, Util.skinTextureFromFile(file).orElseThrow())));
         }
 
         @Override
