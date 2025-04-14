@@ -1,0 +1,24 @@
+name: build
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v4
+      - name: setup java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 21
+      - name: setup gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: build all versions
+        run: ./gradlew chiseledBuild
+      - name: copy build files to root
+        run: cp versions/*/build/libs/*.jar .
+      - name: upload built files
+        uses: actions/upload-artifact@v4
+        with:
+          path: '*.jar'
