@@ -26,7 +26,7 @@ public class Mod {
 	public static final Logger LOGGER = /*? if >=1.17.1 {*/ LoggerFactory /*?} else >>*/ /*LogManager*/
 			.getLogger("skin overrides");
 	public static final String MOD_ID = "skin_overrides";
-	public static final String MOD_VERSION = /*$ modVersion*/ "2.3.1";
+	public static final String MOD_VERSION = /*$ modVersion*/ "2.3.2-beta";
 
 	public static final String SKIN_OVERRIDES_PATH = "skin_overrides";
 	public static final String CAPE_OVERRIDES_PATH = "cape_overrides";
