@@ -9,7 +9,6 @@ import net.orifu.skin_overrides.OverrideManager;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.library.SkinLibrary;
 import net.orifu.skin_overrides.util.Util;
-import net.orifu.skin_overrides.util.ComponentUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -31,7 +30,7 @@ public class LibraryOverrider implements OverrideManager.Overrider {
     }
 
     @Override
-    public final String fileName(GameProfile profile, Skin.Model model) {
+    public final String fileName(GameProfile profile, @Nullable Skin.Model model) {
         return Util.id(profile) + ".txt";
     }
 
@@ -76,7 +75,7 @@ public class LibraryOverrider implements OverrideManager.Overrider {
 
         @Override
         public Component info() {
-            return ComponentUtil.translatable("skin_overrides.override.library", this.entry.getName());
+            return Component.translatable("skin_overrides.override.library", this.entry.getName());
         }
 
         @Override

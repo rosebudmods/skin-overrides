@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.SkinManager;
 import net.minecraft.resources.ResourceLocation;
+import net.orifu.skin_overrides.networking.ModNetworking;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,9 +15,6 @@ import net.minecraft.client.resources.PlayerSkin;
 /*import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 *///?}
-
-//? if hasNetworking
-import net.orifu.skin_overrides.networking.ModNetworking;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -100,7 +98,6 @@ public record Skin(
     }
 
     public Skin withDefaultCape(GameProfile profile) {
-        //? if hasNetworking {
         if (profile.getProperties().containsKey(ModNetworking.DEFAULT_TEXTURES_KEY)) {
             // get the default textures
             var manager = Minecraft.getInstance().getSkinManager();
@@ -128,7 +125,6 @@ public record Skin(
             return this.withCape(location);
             *///?}
         }
-        //?}
 
         return this;
     }
@@ -154,11 +150,9 @@ public record Skin(
     }
     //?}
 
-    //? if hasUi {
     public CompletableFuture<Optional<String>> setUserSkin() {
         return SkinNetworking.setUserSkin(this);
     }
-    //?}
 
     public enum Model {
         WIDE("wide", "classic"),

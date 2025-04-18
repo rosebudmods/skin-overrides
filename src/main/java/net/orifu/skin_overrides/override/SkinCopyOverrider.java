@@ -6,7 +6,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.OverrideManager;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.util.ProfileHelper;
-import net.orifu.skin_overrides.util.ComponentUtil;
 import net.orifu.skin_overrides.util.Util;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,7 +42,7 @@ public class SkinCopyOverrider implements OverrideManager.Overrider {
 
         @Override
         public Component info() {
-            return ComponentUtil.translatable("skin_overrides.override.copy", this.profile.getName());
+            return Component.translatable("skin_overrides.override.copy", this.profile.getName());
         }
 
         @Override

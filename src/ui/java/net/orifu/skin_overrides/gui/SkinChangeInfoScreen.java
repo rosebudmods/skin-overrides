@@ -11,14 +11,12 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Skin;
+import net.orifu.skin_overrides.networking.ModNetworking;
 import net.orifu.skin_overrides.override.SkinChangeOverride;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.Toast;
 import net.orifu.skin_overrides.util.Util;
 import net.orifu.xplat.gui.components.LinearLayout;
-
-//? if hasNetworking
-import net.orifu.skin_overrides.networking.ModNetworking;
 
 import java.util.Optional;
 
@@ -40,7 +38,7 @@ public class SkinChangeInfoScreen extends WarningScreen {
 
     protected static Component getMessage() {
         return Minecraft.getInstance().player == null ? MESSAGE
-                : Mod.isOnSkinOverridesServer() ? MESSAGE_MODDED : MESSAGE_VANILLA;
+                : ModNetworking.isOnSkinOverridesServer() ? MESSAGE_MODDED : MESSAGE_VANILLA;
     }
 
     @Override
@@ -102,7 +100,6 @@ public class SkinChangeInfoScreen extends WarningScreen {
                     Mod.LOGGER.debug("received updated profile from services:\nval: {}\nsig: {}",
                             signedSkin.value(), signedSkin.signature());
 
-                    //? if hasNetworking
                     ModNetworking.updateSkinOnServer(signedSkin.value(), signedSkin.signature());
                 } else {
                     Toast.show(Component.translatable("skin_overrides.change_skin.reload_fail.title"),

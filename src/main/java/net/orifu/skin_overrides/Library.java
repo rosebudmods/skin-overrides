@@ -1,13 +1,11 @@
 package net.orifu.skin_overrides;
 
+import com.google.gson.JsonElement;
+import net.minecraft.resources.ResourceLocation;
+import net.orifu.skin_overrides.override.LibraryOverrider;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-
-import com.google.gson.JsonElement;
-
-import net.minecraft.resources.ResourceLocation;
-import net.orifu.skin_overrides.override.LibraryOverrider;
 
 public interface Library {
     List<LibraryEntry> entries();

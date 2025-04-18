@@ -1,6 +1,6 @@
 package net.orifu.skin_overrides.mixin;
 
-//? if >=1.19.4 <1.20.2 {
+//? if <1.20.2 {
 /*import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.layers.CapeLayer;
 import net.minecraft.resources.ResourceLocation;

@@ -2,13 +2,11 @@ package net.orifu.skin_overrides.override;
 
 import com.google.common.base.Suppliers;
 import com.mojang.authlib.GameProfile;
-import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.OverrideManager;
 import net.orifu.skin_overrides.Skin;
-import net.orifu.skin_overrides.util.ComponentUtil;
 import net.orifu.skin_overrides.util.Util;
 
 import java.io.File;
@@ -59,7 +57,7 @@ public class LocalSkinOverrider implements OverrideManager.Overrider {
 
         @Override
         public Component info() {
-            return ComponentUtil.translatable("skin_overrides.override.local_image");
+            return Component.translatable("skin_overrides.override.local_image");
         }
 
         @Override

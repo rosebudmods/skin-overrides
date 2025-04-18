@@ -1,5 +1,15 @@
 package net.orifu.skin_overrides.util;
 
+import com.google.gson.JsonObject;
+import com.mojang.authlib.GameProfile;
+import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.User;
+import net.minecraft.client.renderer.texture.AbstractTexture;
+import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.resources.ResourceLocation;
+import net.orifu.skin_overrides.Mod;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,24 +22,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 
-import com.google.gson.JsonObject;
-import com.mojang.authlib.GameProfile;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.platform.NativeImage;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.User;
-import net.minecraft.client.renderer.texture.AbstractTexture;
-import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
-import net.minecraft.client.renderer.texture.SimpleTexture;
-import net.minecraft.resources.ResourceLocation;
-import net.orifu.skin_overrides.Mod;
-
 //? if >=1.21.4 {
 import net.minecraft.client.renderer.texture.SkinTextureDownloader;
 //?} else
 /*import net.minecraft.client.renderer.texture.HttpTexture;*/
-
 //? if >=1.21.5 {
 import com.mojang.blaze3d.buffers.BufferType;
 import com.mojang.blaze3d.buffers.BufferUsage;
@@ -66,9 +62,7 @@ public class Util {
 
     public static String id(GameProfile profile) {
         var user = Minecraft.getInstance().getUser();
-        return /*? if >=1.17.1 {*/ user.getType()
-                /*?} else*/ /*user.type*/
-                != User.Type.LEGACY
+        return user.getType() != User.Type.LEGACY
                 ? profile.getId().toString()
                 : profile.getName();
     }
@@ -130,10 +124,8 @@ public class Util {
             //?} else {
             /*//? if >=1.21.3 {
             RenderSystem.bindTexture(Minecraft.getInstance().getTextureManager().getTexture(texture).getId());
-            //?} else if >=1.17.1 {
-            /^Minecraft.getInstance().getTextureManager().bindForSetup(texture);
-             ^///?} else
-            /^Minecraft.getInstance().getTextureManager().bind(texture);^/
+            //?} else
+            /^Minecraft.getInstance().getTextureManager().bindForSetup(texture);^/
 
             NativeImage img = new NativeImage(w, h, false);
             img.downloadTexture(0, false);
@@ -182,7 +174,6 @@ public class Util {
     //?}
 
     public static Optional<NativeImage> imageFromFile(File textureFile) {
-        //? if >=1.18.2
         RenderSystem.assertOnRenderThread();
 
         try {

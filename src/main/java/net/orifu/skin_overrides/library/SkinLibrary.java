@@ -7,7 +7,6 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Skin;
-//? if hasNetworking
 import net.orifu.skin_overrides.networking.MineSkin;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.Util;
@@ -114,10 +113,8 @@ public class SkinLibrary extends AbstractLibrary {
         private final Supplier<ResourceLocation> texture = Suppliers.memoize(() ->
                 Util.skinTextureFromFile(this.file, Mod.res("skin/library/" + this.fileHash)).orElseThrow());
 
-        //? if hasNetworking {
         @Nullable
         private CompletableFuture<Optional<SkinEntry>> signedCache = null;
-        //?}
 
         protected SkinEntry(
                 String name, String id, Skin.Model model,
@@ -169,7 +166,6 @@ public class SkinLibrary extends AbstractLibrary {
         }
 
         public CompletableFuture<Optional<SkinEntry>> signed() {
-            //? if hasNetworking {
             if (this.signature != null) {
                 return CompletableFuture.completedFuture(Optional.of(this));
             } else if (this.signedCache != null) {
@@ -180,8 +176,6 @@ public class SkinLibrary extends AbstractLibrary {
                         new SkinEntry(this.name, this.id, this.model, this.file, this.textureLoc, sig)));
                 return this.signedCache;
             }
-            //?} else
-            /*return CompletableFuture.completedFuture(Optional.empty());*/
         }
 
         @Override

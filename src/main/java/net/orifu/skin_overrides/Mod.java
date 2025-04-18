@@ -5,26 +5,18 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.orifu.skin_overrides.library.CapeLibrary;
 import net.orifu.skin_overrides.library.SkinLibrary;
-//? if hasNetworking
 import net.orifu.skin_overrides.networking.ModNetworking;
 import net.orifu.skin_overrides.override.LocalCapeOverrider;
 import net.orifu.skin_overrides.override.LocalSkinOverrider;
 import net.orifu.skin_overrides.override.SkinChangeOverride;
 import net.orifu.skin_overrides.override.SkinCopyOverrider;
 import org.jetbrains.annotations.Nullable;
-//? if >=1.17.1 {
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-//?} else {
-/*import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-*///?}
-
 import java.util.Optional;
 
 public class Mod {
-	public static final Logger LOGGER = /*? if >=1.17.1 {*/ LoggerFactory /*?} else >>*/ /*LogManager*/
-			.getLogger("skin overrides");
+	public static final Logger LOGGER = LoggerFactory.getLogger("skin overrides");
 	public static final String MOD_ID = "skin_overrides";
 	public static final String MOD_VERSION = /*$ modVersion*/ "2.3.2";
 
@@ -85,7 +77,6 @@ public class Mod {
 	public static void onUserOverrideUpdate(
 			@Nullable OverrideManager.Override oldOverride,
 			@Nullable OverrideManager.Override newOverride) {
-		//? if hasNetworking {
 		if (newOverride != null) {
 			// switched to a possibly signed override
 			ModNetworking.updateSkinOnServer(newOverride);
@@ -94,13 +85,5 @@ public class Mod {
 			// clear skin just in case!
 			ModNetworking.clearSkinOverrideOnServer();
 		}
-		//?}
-	}
-
-	public static boolean isOnSkinOverridesServer() {
-		//? if hasNetworking {
-		return ModNetworking.isOnSkinOverridesServer();
-		//?} else
-		/*return false;*/
 	}
 }

@@ -47,16 +47,12 @@ base {
 version = "${mod.version}+${mod.mc.release}"
 group = mod.group
 
-val hasUi = stonecutter.eval(mod.mc.release, ">=1.19.4")
-val hasNetworking = stonecutter.eval(mod.mc.release, ">=1.19.4")
-val awVersion = versionFrom("1.21.4", "1.20.6", "1.20.4", "1.20.2", "1.20.1", "1.19.4", "1.19.3", "1.19.2", "1.17.1", "1.15.2")
-val mixinFile = versionFrom("1.20.2", "1.19.4", "1.15.2") + ".mixins.json"
+val awVersion = versionFrom("1.21.4", "1.20.6", "1.20.4", "1.20.2", "1.20.1", "1.19.4")
+val mixinFile = versionFrom("1.20.2", "1.19.4") + ".mixins.json"
 
 fun versionFrom(vararg versions: String): String = versions.find { stonecutter.eval(mod.mc.release, ">=$it") }.orEmpty()
 
 stonecutter {
-	const("hasUi", hasUi)
-	const("hasNetworking", hasNetworking)
 	const("hasModMenu", property("deps.modmenu") != "none")
 	swap("modVersion", "\"${mod.version}\";")
 }
@@ -97,15 +93,11 @@ repositories {
 	// }
 }
 
-if (hasUi) {
-	sourceSets["main"].java {
-		srcDir("src/ui/java")
-	}
+sourceSets["main"].java {
+	srcDir("src/ui/java")
 }
-if (hasNetworking) {
-	sourceSets["main"].java {
-		srcDir("src/networking/java")
-	}
+sourceSets["main"].java {
+	srcDir("src/networking/java")
 }
 
 loom {
@@ -122,6 +114,10 @@ loom {
 	}
 
 	accessWidenerPath = getRootProject().file("src/main/resources/aw/$awVersion.accesswidener")
+
+	runConfigs.all {
+		runDir = "../../run"
+	}
 }
 
 dependencies {
@@ -148,9 +144,7 @@ dependencies {
 	mod.deps.compat.forEach { modRuntimeOnly(it) }
 
 	// include httpmime (it will show up in a dev environment, but don't believe its lies)
-	if (hasUi) {
-		implementation("org.apache.httpcomponents:httpmime:4.5.14")?.let { include(it) }
-	}
+	implementation("org.apache.httpcomponents:httpmime:4.5.14")?.let { include(it) }
 
 	compileOnly("com.github.spotbugs:spotbugs-annotations:4.9.3")
 }
@@ -162,7 +156,6 @@ tasks.processResources {
 		"minecraft_version" to mod.mc.version + if (mod.supportsSnapshot) "-" else "",
 		"access_widener" to awVersion,
 		"mixin_file" to mixinFile,
-		"modmenu_entrypoint" to if (hasUi) "modmenu" else ""
 	)
 
 	inputs.properties(map)

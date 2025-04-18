@@ -15,7 +15,7 @@
     "entrypoints": {
         "main": ["net.orifu.skin_overrides.ModInit"],
         "client": ["net.orifu.skin_overrides.ModClient"],
-        "${modmenu_entrypoint}": ["net.orifu.skin_overrides.ModMenuEntrypoint"]
+        "modmenu": ["net.orifu.skin_overrides.ModMenuEntrypoint"]
     },
     "depends": {
         "fabricloader": ">=0.15.11",

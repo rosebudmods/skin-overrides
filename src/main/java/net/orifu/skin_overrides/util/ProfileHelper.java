@@ -3,7 +3,9 @@ package net.orifu.skin_overrides.util;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DefaultPlayerSkin;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.Services;
 import net.minecraft.server.players.GameProfileCache;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Skin;
@@ -15,24 +17,12 @@ import java.util.concurrent.CompletableFuture;
 
 //? if <1.20.4
 /*import com.mojang.authlib.minecraft.MinecraftProfileTexture;*/
-//? if >=1.20.2
+//? if >=1.20.2 {
 import com.mojang.authlib.yggdrasil.ProfileResult;
-//? if <1.19
-/*import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;*/
-//? if <1.20.2
-/*import com.mojang.util.UUIDTypeAdapter;*/
-
-//? if >=1.19.2 {
-import net.minecraft.server.Services;
-//?} else if >=1.19 {
-/*import net.minecraft.util.ApiServices;*/
-//?} else
-/*import net.minecraft.server.MinecraftServer;*/
-
-//? if <1.19
-/*import java.io.File;*/
-//? if >=1.19.3 <1.20.2
-/*import java.util.ArrayList;*/
+//?} else {
+/*import java.util.ArrayList;
+import com.mojang.util.UUIDTypeAdapter;*/
+//?}
 
 public class ProfileHelper {
     public static final String UUID_REGEX = "[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{12}";
@@ -74,13 +64,12 @@ public class ProfileHelper {
                         /*?} else >>*/ /*UUIDTypeAdapter.fromString*/ (id);
                 // convert uuid to profile (cached)
                 // if not in cache, fetch the profile (also cached)
-                profile = optional(getProfileCache().get(uuid)).or(() -> uuidToProfile(uuid));
-            } catch (IllegalArgumentException e) {
-            }
+                profile = getProfileCache().get(uuid).or(() -> uuidToProfile(uuid));
+            } catch (IllegalArgumentException ignored) {}
 
         } else {
             // convert player username to profile (cached)
-            profile = optional(getProfileCache().get(id));
+            profile = getProfileCache().get(id);
         }
 
         return profile.orElseGet(() -> new GameProfile(getOfflinePlayerUuid(id), id));
@@ -181,7 +170,7 @@ public class ProfileHelper {
     public static Skin[] getDefaultSkins() {
         //? if >=1.20.2 {
         return Arrays.stream(DefaultPlayerSkin.DEFAULT_SKINS).map(Skin::fromPlayerSkin).toArray(Skin[]::new);
-        //?} else if >=1.19.3 {
+        //?} else {
         /*ArrayList<Skin> skins = new ArrayList<>();
         for (var skin : DefaultPlayerSkin.DEFAULT_SKINS) {
             skins.add(new Skin(
@@ -190,18 +179,11 @@ public class ProfileHelper {
                             ? Skin.Model.WIDE : Skin.Model.SLIM));
         }
         return skins.toArray(Skin[]::new);
-        *///?} else {
-        /*return new Skin[] {
-                new Skin(DefaultPlayerSkin.STEVE_SKIN_LOCATION, null, null, Skin.Model.WIDE),
-                new Skin(DefaultPlayerSkin.ALEX_SKIN_LOCATION, null, null, Skin.Model.SLIM)
-        };
         *///?}
     }
 
     public static UUID getOfflinePlayerUuid(String name) {
-        /*? if >=1.19.2 {*/ return net.minecraft.core.UUIDUtil.createOfflinePlayerUUID(name);
-        /*?} else if >=1.19 {*/ /*return net.minecraft.util.dynamic.DynamicSerializableUuid.getOfflinePlayerUuid(name);
-        *//*?} else*/ /*return net.minecraft.world.entity.player.Player.createPlayerUUID(name);*/
+        return UUIDUtil.createOfflinePlayerUUID(name);
     }
 
     protected static GameProfileCache getProfileCache() {
@@ -210,28 +192,8 @@ public class ProfileHelper {
         }
 
         Minecraft client = Minecraft.getInstance();
-        //? if >=1.19 {
-        //? if >=1.19.2 {
         Services services = Services.create(client.authenticationService, client.gameDirectory);
-        //?} else {
-        /*ApiServices services = ApiServices.create(client.authenticationService, client.runDirectory);
-        *///?}
         profileCache = services.profileCache();
-        //?} else {
-        /*var gameProfileRepository = new YggdrasilAuthenticationService(client.getProxy()/^? if <1.16.5 {^/, null/^?}^/)
-                .createProfileRepository();
-        profileCache = new GameProfileCache(gameProfileRepository, new File(client.gameDirectory, MinecraftServer.USERID_CACHE_FILE.getName()));
-        *///?}
         return profileCache;
     }
-
-    //? if >=1.17.1 {
-    private static <T> Optional<T> optional(Optional<T> value) {
-        return value;
-    }
-    //?} else {
-    /*private static <T> Optional<T> optional(T value) {
-        return Optional.ofNullable(value);
-    }
-    *///?}
 }

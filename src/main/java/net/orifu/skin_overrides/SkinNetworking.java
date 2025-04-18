@@ -1,6 +1,5 @@
 package net.orifu.skin_overrides;
 
-//? if hasUi {
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.yggdrasil.YggdrasilUserApiService;
@@ -21,10 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-//?}
 
 public class SkinNetworking {
-    //? if hasUi {
     public static final HttpClient HTTP_CLIENT = HttpClients.createDefault();
 
     public static CompletableFuture<Optional<String>> setUserSkin(Skin skin) {
@@ -93,5 +90,4 @@ public class SkinNetworking {
 
         return Optional.of(textureUrl);
     }
-    //?}
 }
