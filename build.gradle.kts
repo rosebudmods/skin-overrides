@@ -93,13 +93,6 @@ repositories {
 	// }
 }
 
-sourceSets["main"].java {
-	srcDir("src/ui/java")
-}
-sourceSets["main"].java {
-	srcDir("src/networking/java")
-}
-
 loom {
 	// Loom and Loader both use this block in order to gather more information about your mod.
 	mods {

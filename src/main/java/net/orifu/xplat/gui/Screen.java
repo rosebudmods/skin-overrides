@@ -1,7 +1,9 @@
 package net.orifu.xplat.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.network.chat.Component;
+
+//? if <1.20.1
+/*import com.mojang.blaze3d.vertex.PoseStack;*/
 
 public abstract class Screen extends net.minecraft.client.gui.screens.Screen {
     protected Screen(Component title) {

@@ -1,6 +1,7 @@
 package net.orifu.skin_overrides.util;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+//? if <=1.21.1
+/*import com.mojang.blaze3d.systems.RenderSystem;*/
 import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.xplat.gui.GuiGraphics;
