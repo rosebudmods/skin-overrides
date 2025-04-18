@@ -1,1 +1,6 @@
-fixed an crash caused by mods misusing player skulls on 1.15.2 - 1.20.1.
+- textures are no longer eagerly loaded, which should reduce memory usage when using iris ([gh#21](https://github.com/rosebudmods/skin-overrides/issues/21))
+- valid PNGs are now always accepted, even if they aren't named .png
+- uploading a file which is not a PNG now gives a warning instead of crashing ([gh#20](https://github.com/rosebudmods/skin-overrides/issues/20))
+- fixed ears sometimes not working on 1.21.4+
+  - the builtin `SkinTextureDownloader.registerTextureInManager` method is now used, allowing it to be used for injecting
+- fixed another mystery crash ([gh#19](https://github.com/rosebudmods/skin-overrides/issues/19))
