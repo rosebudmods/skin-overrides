@@ -6,10 +6,7 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
-import net.minecraft.client.renderer.texture.AbstractTexture;
-import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
-import net.orifu.skin_overrides.Mod;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,19 +14,12 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.function.Function;
 
-//? if >=1.21.4 {
-import net.minecraft.client.renderer.texture.SkinTextureDownloader;
-//?} else
-/*import net.minecraft.client.renderer.texture.HttpTexture;*/
 //? if >=1.21.5 {
 import com.mojang.blaze3d.buffers.BufferType;
 import com.mojang.blaze3d.buffers.BufferUsage;
 import com.mojang.blaze3d.textures.GpuTexture;
+import org.jetbrains.annotations.Nullable;
 //?}
 
 public class Util {
@@ -42,7 +32,7 @@ public class Util {
         }
     }
 
-    public static Optional<String> readString(JsonObject obj, String key) {
+    public static Optional<String> readString(@Nullable JsonObject obj, String key) {
         if (obj == null || !obj.has(key)) {
             return Optional.empty();
         }
@@ -67,6 +57,16 @@ public class Util {
                 : profile.getName();
     }
 
+    public static Optional<File> nameTempFile() {
+        try {
+            File file = File.createTempFile("skin-overrides_", "_temp");
+            file.delete();
+            return Optional.of(file);
+        } catch (IOException ignored) {}
+
+        return Optional.empty();
+    }
+
     public static void runOnRenderThread(Runnable runnable) {
         //? if >=1.21.5 {
         if (RenderSystem.tryGetDevice() == null) {
@@ -79,25 +79,6 @@ public class Util {
         } else {
             Minecraft.getInstance().progressTasks.add(runnable);
         }
-    }
-
-    public static void texture(ResourceLocation res, AbstractTexture texture) {
-        // don't register this texture if there is already one with this resource location
-        if (Minecraft.getInstance().getTextureManager().byPath.containsKey(res)) {
-            return;
-        }
-
-        Minecraft.getInstance().getTextureManager().register(res, texture);
-    }
-
-    public static ResourceLocation texture(String res, AbstractTexture texture) {
-        ResourceLocation textureLoc = Mod.res(res);
-        texture(textureLoc, texture);
-        return textureLoc;
-    }
-
-    public static ResourceLocation texture(AbstractTexture texture) {
-        return texture("temp/" + Util.randomId(), texture);
     }
 
     public static void saveTexture(ResourceLocation texture, int w, int h, Path path) {
@@ -172,52 +153,4 @@ public class Util {
         return fut;
     }
     //?}
-
-    public static Optional<NativeImage> imageFromFile(File textureFile) {
-        RenderSystem.assertOnRenderThread();
-
-        try {
-            if (textureFile.isFile()) {
-                var stream = Files.newInputStream(textureFile.toPath());
-                var image = NativeImage.read(stream);
-
-                return Optional.of(image);
-            }
-        } catch (IOException ignored) {}
-
-        return Optional.empty();
-    }
-
-    public static Optional<AbstractTexture> textureFromFile(File textureFile, Function<NativeImage, AbstractTexture> transform) {
-        return imageFromFile(textureFile).map(transform);
-    }
-
-    public static Optional<AbstractTexture> textureFromFile(File textureFile) {
-        return textureFromFile(textureFile, image -> new DynamicTexture(/*? if >=1.21.5 {*/null,/*?}*/ image));
-    }
-
-    public static Optional<ResourceLocation> skinTextureFromFile(File textureFile) {
-        return skinTextureFromFile(textureFile, Mod.res("temp/" + Util.randomId()));
-    }
-
-    public static Optional<ResourceLocation> skinTextureFromFile(File textureFile, ResourceLocation res) {
-        //? if >=1.21.4 {
-        return imageFromFile(textureFile).flatMap(image -> {
-            // process legacy skins and register the skin using the method in the SkinTextureDownloader.
-            // this *can* be done normally (see #texture above) but this is done in case another
-            // mod mixes into that method.
-            var skinImage = SkinTextureDownloader.processLegacySkin(image, textureFile.getName());
-            try {
-                SkinTextureDownloader.registerTextureInManager(res, skinImage).get(100, TimeUnit.MILLISECONDS);
-                return Optional.of(res);
-            } catch (InterruptedException | ExecutionException | TimeoutException ignored) {}
-
-            return Optional.empty();
-        });
-        //?} else {
-        /*var tex = new HttpTexture(textureFile, "", ProfileHelper.getDefaultSkin(), true, null);
-        texture(res, tex);
-        return Optional.of(res);
-        *///?}
-    }
 }

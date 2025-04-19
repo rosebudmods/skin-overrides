@@ -6,6 +6,7 @@ import net.minecraft.util.Tuple;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.util.ProfileHelper;
+import net.orifu.skin_overrides.util.Util;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -33,11 +34,10 @@ public class SkinChangeOverride {
 
     public static void set(String url, Skin.Model model) {
         try {
-            File file = File.createTempFile("skin-overrides_", "_user-change");
-            file.delete();
-
+            var file = Util.nameTempFile().orElseThrow();
             var location = Mod.res("skin/user-change");
 
+            // TODO: update this
             //? if >=1.21.4 {
             SkinTextureDownloader.downloadAndRegisterSkin(location, file.toPath(), url, true).thenRun(
                     () -> override = new Tuple<>(location, model));
@@ -47,7 +47,7 @@ public class SkinChangeOverride {
 
             Minecraft.getInstance().getTextureManager().register(location, texture);
             *///?}
-        } catch (IOException e) {
+        } catch (NullPointerException e) {
             Mod.LOGGER.error("failed to set player skin locally", e);
         }
     }

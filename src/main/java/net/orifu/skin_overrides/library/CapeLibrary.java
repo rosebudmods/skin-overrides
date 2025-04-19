@@ -2,10 +2,10 @@ package net.orifu.skin_overrides.library;
 
 import com.google.common.base.Suppliers;
 import com.google.gson.JsonObject;
-import net.minecraft.client.renderer.texture.SkinTextureDownloader;
 import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.SkinNetworking;
+import net.orifu.skin_overrides.util.TextureHelper;
 import net.orifu.skin_overrides.util.Util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 
 import static net.orifu.skin_overrides.Mod.CAPE_OVERRIDES_PATH;
@@ -39,16 +38,13 @@ public class CapeLibrary extends AbstractLibrary {
         // add user's existing capes
         SkinNetworking.getPlayerProfile().ifPresent(profile -> {
             for (var cape : profile.capes().reversed()) {
-                try {
-                    var url = cape.url();
-                    var file = File.createTempFile("skin-overrides_", "_user-cape");
-                    file.delete();
-                    var location =SkinTextureDownloader.downloadAndRegisterSkin(
-                            Mod.res("temp/" + Util.randomId()), file.toPath(), url, false).get();
+                var texture = TextureHelper.cape().url(cape.url());
+                var maybeLocation = texture.register();
+                var maybePath = texture.path();
 
-                    this.createInternal(cape.alias(), location, file.toPath(), cape.id());
-                } catch (IOException | ExecutionException | InterruptedException e) {
-                    Mod.LOGGER.error("error downloading cape", e);
+                if (maybeLocation.flatMap(location -> maybePath.map(path ->
+                        this.createInternal(cape.alias(), location, path, cape.id()))).isEmpty()) {
+                    Mod.LOGGER.error("error downloading cape");
                 }
             }
         });
@@ -86,7 +82,7 @@ public class CapeLibrary extends AbstractLibrary {
 
     public static class CapeEntry extends AbstractLibraryEntry {
         private final Supplier<ResourceLocation> texture = Suppliers.memoize(() ->
-                Util.texture("cape/library/" + this.fileHash, Util.textureFromFile(this.file).orElseThrow()));
+                TextureHelper.cape().location("cape/library/" + this.fileHash).path(this.file).register().orElseThrow());
 
         protected CapeEntry(String name, String id, @Nullable File file, @Nullable ResourceLocation textureLoc) {
             super(name, id, file, textureLoc);

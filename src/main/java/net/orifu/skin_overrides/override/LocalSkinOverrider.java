@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.OverrideManager;
 import net.orifu.skin_overrides.Skin;
+import net.orifu.skin_overrides.util.TextureHelper;
 import net.orifu.skin_overrides.util.Util;
 
 import java.io.File;
@@ -42,7 +43,7 @@ public class LocalSkinOverrider implements OverrideManager.Overrider {
                 Supplier<ResourceLocation> memoizedTexture) implements OverrideManager.Override {
         public LocalSkinOverride(String playerIdent, File file, String texHash, Skin.Model model) {
             this(playerIdent, texHash, model, Suppliers.memoize(() ->
-                    Util.skinTextureFromFile(file, Mod.res("skin/local/" + texHash)).orElseThrow()));
+                    TextureHelper.skin().location("skin/local/" + texHash).path(file).register().orElseThrow()));
         }
 
         @Override

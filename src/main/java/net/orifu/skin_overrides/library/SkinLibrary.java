@@ -9,6 +9,7 @@ import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.networking.MineSkin;
 import net.orifu.skin_overrides.util.ProfileHelper;
+import net.orifu.skin_overrides.util.TextureHelper;
 import net.orifu.skin_overrides.util.Util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -111,7 +112,7 @@ public class SkinLibrary extends AbstractLibrary {
         public final Skin.Signature signature;
 
         private final Supplier<ResourceLocation> texture = Suppliers.memoize(() ->
-                Util.skinTextureFromFile(this.file, Mod.res("skin/library/" + this.fileHash)).orElseThrow());
+                TextureHelper.skin().location("skin/library/" + this.fileHash).path(this.file).register().orElseThrow());
 
         @Nullable
         private CompletableFuture<Optional<SkinEntry>> signedCache = null;
@@ -185,7 +186,7 @@ public class SkinLibrary extends AbstractLibrary {
             if (!super.equals(o)) return false;
 
             // intentionally ignore the signature when comparing, as the skin doesn't change
-            // just because it's signed now
+            // just because it's signed now.
             return model == skinEntry.model;
         }
     }

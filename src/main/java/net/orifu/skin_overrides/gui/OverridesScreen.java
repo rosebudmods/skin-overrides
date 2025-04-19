@@ -25,8 +25,8 @@ import net.orifu.skin_overrides.library.SkinLibrary;
 import net.orifu.skin_overrides.override.LibraryOverrider.LibraryOverride;
 import net.orifu.skin_overrides.gui.components.ModelPreview;
 import net.orifu.skin_overrides.util.ProfileHelper;
+import net.orifu.skin_overrides.util.TextureHelper;
 import net.orifu.skin_overrides.util.Toast;
-import net.orifu.skin_overrides.util.Util;
 import net.orifu.xplat.GuiHelper;
 import net.orifu.xplat.gui.GuiGraphics;
 import net.orifu.xplat.gui.Screen;
@@ -331,7 +331,7 @@ public class OverridesScreen extends Screen {
         GameProfile profile = this.selectedProfile != null ? this.selectedProfile : ProfileHelper.user();
 
         if (this.ov.skin) {
-            Util.skinTextureFromFile(path.toFile()).ifPresentOrElse(
+            TextureHelper.skin().path(path).register().ifPresentOrElse(
                     // open model selection screen
                     res -> this.minecraft.setScreen(OverrideInfoEntryScreen.getModel(this,
                             res,
@@ -342,7 +342,7 @@ public class OverridesScreen extends Screen {
                     Toast::showInvalidImage
             );
         } else {
-            Util.imageFromFile(path.toFile()).ifPresentOrElse(
+            TextureHelper.cape().path(path).image().ifPresentOrElse(
                     _img -> {
                         this.ov.copyOverride(profile, path, null);
                         this.rebuildWidgets();

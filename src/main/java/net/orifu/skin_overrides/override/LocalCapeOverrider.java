@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.OverrideManager;
 import net.orifu.skin_overrides.Skin;
+import net.orifu.skin_overrides.util.TextureHelper;
 import net.orifu.skin_overrides.util.Util;
 
 import java.io.File;
@@ -34,7 +35,7 @@ public class LocalCapeOverrider implements OverrideManager.Overrider {
                 Supplier<ResourceLocation> memoizedTexture) implements OverrideManager.Override {
         public LocalCapeOverride(String playerIdent, File file, String texHash) {
             this(playerIdent, texHash, Suppliers.memoize(() ->
-                    Util.texture("cape/local/" + texHash, Util.textureFromFile(file).orElseThrow())));
+                    TextureHelper.cape().location("cape/local/" + texHash).path(file).register().orElseThrow()));
         }
 
         @Override
