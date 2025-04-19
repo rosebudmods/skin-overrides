@@ -2,6 +2,8 @@ package net.orifu.skin_overrides;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.annotations.SerializedName;
+import com.mojang.authlib.HttpAuthenticationService;
 import com.mojang.authlib.yggdrasil.YggdrasilUserApiService;
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
@@ -18,7 +20,9 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class SkinNetworking {
@@ -90,4 +94,53 @@ public class SkinNetworking {
 
         return Optional.of(textureUrl);
     }
+
+    public static Optional<PlayerProfileResponse> getPlayerProfile() {
+        boolean isSignedIn = Minecraft.getInstance().userApiService instanceof YggdrasilUserApiService;
+
+        if (!isSignedIn) return Optional.empty();
+
+        var userApiService = (YggdrasilUserApiService) Minecraft.getInstance().userApiService;
+        var userApiServiceAccessor = (YggdrasilUserApiServiceAccessor) userApiService;
+        var serviceClient = userApiServiceAccessor.getMinecraftClient();
+        var servicesHost = /*? if >=1.20.2 {*/ userApiServiceAccessor.getEnvironment().servicesHost();
+        /*?} else*/ /*userApiServiceAccessor.getEnvironment().getServicesHost();*/
+
+        return Optional.ofNullable(serviceClient.get(HttpAuthenticationService.constantURL(servicesHost + "/minecraft/profile"), PlayerProfileResponse.class));
+    }
+
+    public record PlayerProfileResponse(
+            @SerializedName("id")
+            UUID id,
+            @SerializedName("name")
+            String name,
+            @SerializedName("skins")
+            List<PlayerProfileSkin> skins,
+            @SerializedName("capes")
+            List<PlayerProfileCape> capes
+    ) {}
+
+    public record PlayerProfileSkin(
+            // @SerializedName("id")
+            // UUID id,
+            @SerializedName("state")
+            String state,
+            @SerializedName("url")
+            String url,
+            // @SerializedName("textureKey")
+            // String textureKey,
+            @SerializedName("variant")
+            String variant
+    ) {}
+
+    public record PlayerProfileCape(
+            @SerializedName("id")
+            String id,
+            @SerializedName("state")
+            String state,
+            @SerializedName("url")
+            String url,
+            @SerializedName("alias")
+            String alias
+    ) {}
 }

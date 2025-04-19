@@ -2,8 +2,10 @@ package net.orifu.skin_overrides.library;
 
 import com.google.common.base.Suppliers;
 import com.google.gson.JsonObject;
+import net.minecraft.client.renderer.texture.SkinTextureDownloader;
 import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Mod;
+import net.orifu.skin_overrides.SkinNetworking;
 import net.orifu.skin_overrides.util.Util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 
 import static net.orifu.skin_overrides.Mod.CAPE_OVERRIDES_PATH;
@@ -32,19 +35,38 @@ public class CapeLibrary extends AbstractLibrary {
     @Override
     protected void addDefaultEntries() {
         this.entries.add(new CapeEntry("skin overrides", "skin_overrides", Mod.res("cape.png")));
+
+        // add user's existing capes
+        SkinNetworking.getPlayerProfile().ifPresent(profile -> {
+            for (var cape : profile.capes().reversed()) {
+                try {
+                    var url = cape.url();
+                    var file = File.createTempFile("skin-overrides_", "_user-cape");
+                    file.delete();
+                    var location =SkinTextureDownloader.downloadAndRegisterSkin(
+                            Mod.res("temp/" + Util.randomId()), file.toPath(), url, false).get();
+
+                    this.createInternal(cape.alias(), location, file.toPath(), cape.id());
+                } catch (IOException | ExecutionException | InterruptedException e) {
+                    Mod.LOGGER.error("error downloading cape", e);
+                }
+            }
+        });
     }
 
     public Optional<CapeEntry> create(String name, Path path) {
-        return this.createInternal(name, null, path);
+        return this.createInternal(name, null, path, null);
     }
 
     public Optional<CapeEntry> create(String name, ResourceLocation texture) {
-        return this.createInternal(name, texture, null);
+        return this.createInternal(name, texture, null, null);
     }
 
-    private Optional<CapeEntry> createInternal(String name, ResourceLocation texture, Path path) {
+    private Optional<CapeEntry> createInternal(String name, ResourceLocation texture, Path path, @Nullable String id) {
+        if (id == null)
+            id = Util.randomId();
+
         try {
-            String id = Util.randomId();
             File file = new File(this.libraryFolder, id + ".png");
             var entry = new CapeEntry(name, id, file, texture);
 
