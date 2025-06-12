@@ -64,13 +64,14 @@ public class CapeLibrary extends AbstractLibrary {
 
         try {
             File file = new File(this.libraryFolder, id + ".png");
-            var entry = new CapeEntry(name, id, file, texture);
 
             if (path != null) {
                 Files.copy(path, file.toPath());
             } else {
                 Util.saveTexture(texture, 64, 32, file.toPath());
             }
+
+            var entry = new CapeEntry(name, id, file, texture);
 
             this.add(entry);
             return Optional.of(entry);

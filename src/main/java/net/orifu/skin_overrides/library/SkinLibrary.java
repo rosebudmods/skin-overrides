@@ -89,13 +89,14 @@ public class SkinLibrary extends AbstractLibrary {
         try {
             String id = Util.randomId();
             File file = new File(this.libraryFolder, id + ".png");
-            var entry = new SkinEntry(name, id, model, file, texture, signature);
 
             if (path != null) {
                 Files.copy(path, file.toPath());
             } else {
                 Util.saveTexture(texture, 64, 64, file.toPath());
             }
+
+            var entry = new SkinEntry(name, id, model, file, texture, signature);
 
             this.add(entry);
             return Optional.of(entry);
