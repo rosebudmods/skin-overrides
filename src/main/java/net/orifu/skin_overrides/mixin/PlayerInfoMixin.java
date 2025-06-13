@@ -23,6 +23,9 @@ import net.orifu.skin_overrides.Skin;
 //?} else {
 /*import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
+import net.orifu.skin_overrides.networking.ModNetworking;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 *///?}
 
 @Mixin(PlayerInfo.class)
@@ -48,7 +51,13 @@ public abstract class PlayerInfoMixin {
 
     //?} else {
 
-    /*@ModifyReturnValue(method = "getSkinLocation", at = @At("RETURN"))
+    /*@Inject(method = "<init>", at = @At("RETURN"))
+    private void loadProfile(GameProfile gameProfile, boolean bl, CallbackInfo ci) {
+        this.registerTextures();
+        ModNetworking.onProfileLoad();
+    }
+
+    @ModifyReturnValue(method = "getSkinLocation", at = @At("RETURN"))
     private ResourceLocation getSkinTexture(ResourceLocation texture) {
         return Mod.overrideSkin(profile).map(Tuple::getA).orElse(texture);
     }
@@ -62,6 +71,9 @@ public abstract class PlayerInfoMixin {
     private ResourceLocation getCapeTexture(ResourceLocation texture) {
         return Mod.overrideCapeOrDefault(profile);
     }
+
+    @Shadow
+    protected abstract void registerTextures();
 
     *///?}
 }
