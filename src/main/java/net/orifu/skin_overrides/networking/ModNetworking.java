@@ -26,6 +26,9 @@ import java.util.concurrent.CompletableFuture;
 public class ModNetworking {
     public static final String DEFAULT_TEXTURES_KEY = "skin_overrides-default_textures";
 
+    //? if <1.20.6
+    /*private static boolean justJoinedServer = false;*/
+
     public static void init() {
         // register the skin update payload packet
         //? if >=1.20.6
@@ -105,9 +108,27 @@ public class ModNetworking {
     public static void initClient() {
         // send packet when joining (if applicable)
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+            //? if >=1.20.6 {
             Mod.SKINS.get(ProfileHelper.user()).ifPresent(ModNetworking::updateSkinOnServer);
+            //?} else
+            /*justJoinedServer = true;*/
         });
+
+        //? if <1.20.6 {
+        /*ClientPlayConnectionEvents.DISCONNECT.register((listener, mc) -> {
+            justJoinedServer = false;
+        });
+        *///?}
     }
+
+    //? if <1.20.6 {
+    /*public static void onProfileLoad() {
+        if (justJoinedServer) {
+            justJoinedServer = false;
+            Mod.SKINS.get(ProfileHelper.user()).ifPresent(ModNetworking::updateSkinOnServer);
+        }
+    }
+    *///?}
 
     public static CompletableFuture<Optional<Skin.Signature>> updateSkinOnServer(String skinValue, String signature) {
         return updateSkinOnServer(() -> CompletableFuture.completedFuture(Optional.of(new Skin.Signature(skinValue, signature))));
