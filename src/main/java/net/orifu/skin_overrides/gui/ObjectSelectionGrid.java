@@ -1,8 +1,8 @@
 package net.orifu.skin_overrides.gui;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
-import net.orifu.xplat.gui.GuiGraphics;
 import net.orifu.xplat.gui.components.ObjectSelectionList;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,14 +62,14 @@ public abstract class ObjectSelectionGrid<E extends ObjectSelectionList.Entry<E>
         E entry = this.getEntry(index);
         boolean isHovered = this.getHovered() != null && this.getHovered().equals(entry);
 
-        entry.renderBack(graphics.portable(), index, y, x, width, height, mouseX, mouseY, isHovered, delta);
+        entry.renderBack(graphics, index, y, x, width, height, mouseX, mouseY, isHovered, delta);
 
         if (this.isSelectedItem(index)) {
             int borderColor = this.isFocused() ? 0xff_ffffff : 0xff_808080;
             this.renderSelection(graphics, x, y, borderColor, 0xff_000000);
         }
 
-        entry.render(graphics.portable(), index, y, x, width, height, mouseX, mouseY, isHovered, delta);
+        entry.render(graphics, index, y, x, width, height, mouseX, mouseY, isHovered, delta);
     }
 
     protected void renderSelection(GuiGraphics graphics, int x, int y, int borderColor, int fillColor) {

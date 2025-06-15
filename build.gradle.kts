@@ -47,8 +47,8 @@ base {
 version = "${mod.version}+${mod.mc.release}"
 group = mod.group
 
-val awVersion = versionFrom("1.21.4", "1.20.6", "1.20.4", "1.20.2", "1.20.1", "1.19.4")
-val mixinFile = versionFrom("1.20.2", "1.19.4") + ".mixins.json"
+val awVersion = versionFrom("1.21.6", "1.21.4", "1.20.6", "1.20.4", "1.20.2", "1.20.1", "1.19.4")
+val mixinFile = versionFrom("1.21.6", "1.20.2", "1.19.4") + ".mixins.json"
 
 fun versionFrom(vararg versions: String): String = versions.find { stonecutter.eval(mod.mc.release, ">=$it") }.orEmpty()
 
@@ -146,7 +146,7 @@ tasks.processResources {
 	val map = mapOf(
 		"version" to version,
 		"group" to project.group,
-		"minecraft_version" to mod.mc.version + if (mod.supportsSnapshot) "-" else "",
+		"minecraft_version" to mod.mc.release + if (mod.supportsSnapshot) "-" else "",
 		"access_widener" to awVersion,
 		"mixin_file" to mixinFile,
 	)

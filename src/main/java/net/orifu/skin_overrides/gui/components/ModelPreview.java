@@ -1,13 +1,13 @@
 package net.orifu.skin_overrides.gui.components;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Skin;
-import net.orifu.xplat.gui.GuiGraphics;
 import org.jetbrains.annotations.Nullable;
 
 public class ModelPreview extends AbstractWidget {
@@ -39,7 +39,7 @@ public class ModelPreview extends AbstractWidget {
     @Override
     /*? if >=1.20.1 {*/protected void renderWidget(net.minecraft.client.gui.GuiGraphics ctx, int mouseX, int mouseY, float delta) {
     /*?} else*/ /*public void renderWidget(com.mojang.blaze3d.vertex.PoseStack ctx, int mouseX, int mouseY, float delta) {*/
-        this.renderer.draw(new GuiGraphics(ctx), this.getX(), this.getY());
+        this.renderer.draw(ctx, this.getX(), this.getY());
     }
 
     @Override

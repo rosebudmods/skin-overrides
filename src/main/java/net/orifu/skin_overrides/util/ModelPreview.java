@@ -1,19 +1,18 @@
 package net.orifu.skin_overrides.util;
 
-import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.model.ElytraModel;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Skin;
-import net.orifu.xplat.Lighting;
-import net.orifu.xplat.gui.GuiGraphics;
+import net.orifu.skin_overrides.gui.GuiGraphicsExt;
+import net.orifu.skin_overrides.gui.pip.GuiModelPreviewRenderer;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -133,7 +132,20 @@ public class ModelPreview {
     public void draw(GuiGraphics graphics, int x, int y) {
         if (this.skin == null) return;
 
-        graphics.pose().pushPose();
+        var state = GuiModelPreviewRenderer.GuiModelPreviewRenderState.create(
+                x, y,
+                this.width(), this.height(),
+                this.xRot, this.yRot,
+                this.height() / MODEL_HEIGHT,
+                -1 - MODEL_Y_OFFSET,
+                this.skin.model().equals(Skin.Model.WIDE) ? this.wide : this.slim,
+                this.skin.texture()
+        );
+
+        ((GuiGraphicsExt) graphics).addMultiplePipRenderer(state, GuiModelPreviewRenderer::new, state);
+
+        //? if <1.21.6 {
+        /*graphics.pose().pushPose();
         graphics.pose().translate(x + this.width() / 2.0, y + this.height(), 100);
         float scale = this.height() / MODEL_HEIGHT;
         graphics.pose().scale(scale, scale, scale);
@@ -142,7 +154,7 @@ public class ModelPreview {
         //? if >=1.20.6 {
         graphics.pose().mulPose(Axis.YP.rotationDegrees(this.yRot));
         //?} else
-        /*graphics.pose().mulPose(Axis.YP.rotationDegrees(this.yRot));*/
+        /^graphics.pose().mulPose(Axis.YP.rotationDegrees(this.yRot));^/
         graphics.flush();
 
         Lighting.setupForEntityInInventory(Axis.XP.rotationDegrees(this.xRot));
@@ -150,7 +162,7 @@ public class ModelPreview {
         //? if >=1.20.6 {
         graphics.pose().scale(1, 1, -1);
         //?} else
-        /*graphics.pose().mulPoseMatrix(new org.joml.Matrix4f().scale(1, 1, -1));*/
+        /^graphics.pose().mulPoseMatrix(new org.joml.Matrix4f().scale(1, 1, -1));^/
         graphics.pose().translate(0, -1.5, 0);
         this.render(graphics);
         graphics.pose().popPose();
@@ -158,6 +170,7 @@ public class ModelPreview {
 
         Lighting.setupFor3DItems();
         graphics.pose().popPose();
+        *///?}
     }
 
     protected void render(GuiGraphics graphics) {
@@ -182,10 +195,11 @@ public class ModelPreview {
     }
 
     private static void renderModel(EntityModel<?> model, RenderType type, GuiGraphics graphics) {
-        //? if >=1.21.3 {
-        graphics.drawSpecial(bufferSource ->
+        //? if >=1.21.6 {
+        //?} else if >=1.21.3 {
+        /*graphics.drawSpecial(bufferSource ->
             model.renderToBuffer(graphics.pose(), bufferSource.getBuffer(type), 0xf000f0, OverlayTexture.NO_OVERLAY));
-        //?} else if >=1.21 {
+        *///?} else if >=1.21 {
         /*model.renderToBuffer(graphics.pose(), graphics.bufferSource().getBuffer(type), 0xf000f0, OverlayTexture.NO_OVERLAY);
         *///?} else
         /*model.renderToBuffer(graphics.pose(), graphics.bufferSource().getBuffer(type), 0xf000f0, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);*/

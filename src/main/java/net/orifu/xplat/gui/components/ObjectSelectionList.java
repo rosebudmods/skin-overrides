@@ -1,8 +1,8 @@
 package net.orifu.xplat.gui.components;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.layouts.LayoutElement;
-import net.orifu.xplat.gui.GuiGraphics;
 
 //? if <1.20.4
 /*import net.minecraft.client.gui.layouts.FrameLayout;*/
@@ -26,42 +26,7 @@ public abstract class ObjectSelectionList<E extends ObjectSelectionList.Entry<E>
         /*this.setRenderTopAndBottom(false);*/
     }
 
-    protected void renderListItems(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        //? if >=1.20.6 {
-        super.renderListItems(graphics.portable(), mouseX, mouseY, delta);
-        //?} else
-        /*super.renderList(graphics.portable(), mouseX, mouseY, delta);*/
-    }
-
-    @Override
-    /*? if >=1.20.6 {*/ protected void renderListItems(net.minecraft.client.gui.GuiGraphics ctx, int mouseX, int mouseY, float delta) {
-    /*?} else if >=1.20.1 {*/ /*protected void renderList(net.minecraft.client.gui.GuiGraphics ctx, int mouseX, int mouseY, float delta) {
-    *//*?} else*/ /*protected void renderList(com.mojang.blaze3d.vertex.PoseStack ctx, int mouseX, int mouseY, float delta) {*/
-        this.renderListItems(new GuiGraphics(ctx), mouseX, mouseY, delta);
-    }
-
-    protected void renderItem(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta, int index,
-            int x, int y, int width, int height) {
-        super.renderItem(guiGraphics.portable(), mouseX, mouseY, delta, index, x, y, width, height);
-    }
-
-    @Override
-    /*? if >=1.20.1 {*/ protected void renderItem(net.minecraft.client.gui.GuiGraphics ctx, int mouseX, int mouseY,
-    /*?} else*/ /*protected void renderItem(com.mojang.blaze3d.vertex.PoseStack ctx, int mouseX, int mouseY,*/
-            float delta, int index, int x, int y, int width, int height) {
-        this.renderItem(new GuiGraphics(ctx), mouseX, mouseY, delta, index, x, y, width, height);
-    }
-
     public static abstract class Entry<E extends Entry<E>> extends net.minecraft.client.gui.components.ObjectSelectionList.Entry<E> {
-        public abstract void render(GuiGraphics graphics, int index, int y, int x,
-                int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta);
-
-        @Override
-        /*? if >=1.20.1 {*/ public void render(net.minecraft.client.gui.GuiGraphics ctx, int index, int y, int x,
-        /*?} else*/ /*public void render(com.mojang.blaze3d.vertex.PoseStack ctx, int index, int y, int x,*/
-                int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-            this.render(new GuiGraphics(ctx), index, y, x, entryWidth, entryHeight, mouseX, mouseY, hovered, tickDelta);
-        }
     }
 
     public void addEntry(Consumer<LayoutElement> add, Consumer<ObjectSelectionList<E>> screen) {

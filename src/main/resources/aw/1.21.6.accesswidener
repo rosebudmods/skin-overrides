@@ -1,0 +1,25 @@
+accessWidener v2 named
+
+accessible method net/minecraft/client/renderer/texture/SkinTextureDownloader processLegacySkin (Lcom/mojang/blaze3d/platform/NativeImage;Ljava/lang/String;)Lcom/mojang/blaze3d/platform/NativeImage;
+accessible method net/minecraft/client/renderer/texture/SkinTextureDownloader registerTextureInManager (Lnet/minecraft/resources/ResourceLocation;Lcom/mojang/blaze3d/platform/NativeImage;)Ljava/util/concurrent/CompletableFuture;
+accessible method net/minecraft/client/renderer/texture/SkinTextureDownloader downloadSkin (Ljava/nio/file/Path;Ljava/lang/String;)Lcom/mojang/blaze3d/platform/NativeImage;
+accessible field net/minecraft/client/renderer/texture/TextureManager byPath Ljava/util/Map;
+
+accessible field net/minecraft/client/Minecraft authenticationService Lcom/mojang/authlib/yggdrasil/YggdrasilAuthenticationService;
+accessible field net/minecraft/client/Minecraft userApiService Lcom/mojang/authlib/minecraft/UserApiService;
+accessible field net/minecraft/client/Minecraft progressTasks Ljava/util/Queue;
+
+accessible field net/minecraft/client/resources/DefaultPlayerSkin DEFAULT_SKINS [Lnet/minecraft/client/resources/PlayerSkin;
+
+accessible field net/minecraft/client/resources/SkinManager skinCache Lcom/google/common/cache/LoadingCache;
+accessible class net/minecraft/client/resources/SkinManager$CacheKey
+accessible method net/minecraft/client/resources/SkinManager$CacheKey <init> (Ljava/util/UUID;Lcom/mojang/authlib/properties/Property;)V
+
+extendable method net/minecraft/client/gui/components/AbstractSelectionList getEntryAtPosition (DD)Lnet/minecraft/client/gui/components/AbstractSelectionList$Entry;
+
+accessible class net/minecraft/client/gui/GuiGraphics$ScissorStack
+accessible field net/minecraft/client/renderer/GameRenderer guiRenderer Lnet/minecraft/client/gui/render/GuiRenderer;
+
+accessible field net/minecraft/server/level/ChunkMap entityMap Lit/unimi/dsi/fastutil/ints/Int2ObjectMap;
+accessible field net/minecraft/server/level/ChunkMap$TrackedEntity seenBy Ljava/util/Set;
+accessible field net/minecraft/server/level/ChunkMap$TrackedEntity serverEntity Lnet/minecraft/server/level/ServerEntity;

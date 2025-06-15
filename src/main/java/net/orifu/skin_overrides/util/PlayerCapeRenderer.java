@@ -1,8 +1,9 @@
 package net.orifu.skin_overrides.util;
 
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Skin;
-import net.orifu.xplat.gui.GuiGraphics;
 
 public class PlayerCapeRenderer {
     public static final int WIDTH = 10;
@@ -19,7 +20,7 @@ public class PlayerCapeRenderer {
     }
 
     public static void blit(GuiGraphics graphics, ResourceLocation texture, int x, int y, int scale) {
-        graphics.blit(texture,
+        graphics.blit(RenderPipelines.GUI_TEXTURED, texture,
                 x, y, WIDTH * scale, HEIGHT * scale,
                 U, V, WIDTH, HEIGHT, 64, 32);
     }

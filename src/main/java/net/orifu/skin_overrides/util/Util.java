@@ -18,8 +18,8 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 //? if >=1.21.5 {
-import com.mojang.blaze3d.buffers.BufferType;
-import com.mojang.blaze3d.buffers.BufferUsage;
+//import com.mojang.blaze3d.buffers.BufferType;
+//import com.mojang.blaze3d.buffers.BufferUsage;
 import com.mojang.blaze3d.textures.GpuTexture;
 //?}
 
@@ -129,14 +129,18 @@ public class Util {
 
         int bufSize = gpuTex.getFormat().pixelSize() * width * height;
         var buffer = RenderSystem.getDevice().createBuffer(() -> "skin overrides - texture to PNG",
-                BufferType.PIXEL_PACK, BufferUsage.STATIC_READ, bufSize);
+                GpuTexture.USAGE_COPY_DST | GpuTexture.USAGE_RENDER_ATTACHMENT, bufSize);
+//        var buffer = RenderSystem.getDevice().createBuffer(() -> "skin overrides - texture to PNG",
+//                BufferType.PIXEL_PACK, BufferUsage.STATIC_READ, bufSize);
         var commandEncoder = RenderSystem.getDevice().createCommandEncoder();
 
         var fut = new CompletableFuture<NativeImage>();
 
+        // TODO: this crashes if gpuTex is not USAGE_COPY_SRC
         commandEncoder.copyTextureToBuffer(gpuTex, buffer, 0, () -> {
             var img = new NativeImage(width, height, false);
-            var view = commandEncoder.readBuffer(buffer);
+//            var view = commandEncoder.readBuffer(buffer);
+            var view = commandEncoder.mapBuffer(buffer, true, false);
 
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {

@@ -3,6 +3,7 @@ package net.orifu.skin_overrides.gui;
 import java.util.function.Consumer;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.MultiLineLabel;
@@ -18,7 +19,6 @@ import net.orifu.skin_overrides.gui.components.ModelPreview;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.xplat.GuiHelper;
-import net.orifu.xplat.gui.GuiGraphics;
 import net.orifu.xplat.gui.Screen;
 import net.orifu.xplat.gui.components.LinearLayout;
 import org.jetbrains.annotations.Nullable;
@@ -163,9 +163,9 @@ public class OverrideInfoEntryScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        this.renderSuper(graphics, mouseX, mouseY, delta);
+        super.render(graphics, mouseX, mouseY, delta);
 
-        this.message.renderCentered(graphics.portable(), this.width / 2, this.getMessageY());
+        this.message.renderCentered(graphics, this.width / 2, this.getMessageY());
     }
 
     @Override

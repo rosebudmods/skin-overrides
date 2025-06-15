@@ -1,12 +1,12 @@
 package net.orifu.skin_overrides.gui;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.library.SkinLibrary.SkinEntry;
 import net.orifu.skin_overrides.util.ModelPreview;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
-import net.orifu.xplat.gui.GuiGraphics;
 import net.orifu.xplat.gui.components.ObjectSelectionList;
 
 public class LibraryListEntry extends ObjectSelectionList.Entry<LibraryListEntry> {
@@ -55,7 +55,7 @@ public class LibraryListEntry extends ObjectSelectionList.Entry<LibraryListEntry
         }
 
         graphics.drawCenteredString(this.client.font, Component.literal(this.entry.getName()),
-                x + WIDTH / 2, y + PAD + SKIN_HEIGHT + 2, 0xffffff);
+                x + WIDTH / 2, y + PAD + SKIN_HEIGHT + 2, 0xffffffff);
     }
 
     @Override

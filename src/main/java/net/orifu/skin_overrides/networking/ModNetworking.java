@@ -89,7 +89,7 @@ public class ModNetworking {
             }
 
             // update skin for players that are tracking this player
-            var level = /*? if >=1.20.1 {*/ player.serverLevel() /*?} else >>*/ /*player.level*/ ;
+            var level = /*? if >=1.21.6 {*/ player.level() /*?} else if >=1.20.1 {*/ /*player.serverLevel() *//*?} else >>*/ /*player.level*/ ;
             var tracker = ((ServerChunkCache) level.getChunkSource()).chunkMap.entityMap.get(player.getId());
             if (tracker != null) {
                 tracker.seenBy.forEach(listener -> tracker.serverEntity.addPairing(listener.getPlayer()));

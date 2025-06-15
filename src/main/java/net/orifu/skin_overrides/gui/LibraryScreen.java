@@ -1,6 +1,7 @@
 package net.orifu.skin_overrides.gui;
 
 import com.mojang.authlib.GameProfile;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.EditBox;
@@ -24,7 +25,6 @@ import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.TextureHelper;
 import net.orifu.skin_overrides.util.Toast;
 import net.orifu.xplat.GuiHelper;
-import net.orifu.xplat.gui.GuiGraphics;
 import net.orifu.xplat.gui.Screen;
 import net.orifu.xplat.gui.components.LinearLayout;
 import org.jetbrains.annotations.Nullable;
@@ -238,7 +238,7 @@ public class LibraryScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        this.renderSuper(graphics, mouseX, mouseY, delta);
+        super.render(graphics, mouseX, mouseY, delta);
 
         if (this.selectedEntry != null) {
             if (this.selectedEntry.entry instanceof SkinEntry entry) {

@@ -1,6 +1,7 @@
 package net.orifu.skin_overrides.gui;
 
 import com.mojang.authlib.GameProfile;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -28,7 +29,6 @@ import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.TextureHelper;
 import net.orifu.skin_overrides.util.Toast;
 import net.orifu.xplat.GuiHelper;
-import net.orifu.xplat.gui.GuiGraphics;
 import net.orifu.xplat.gui.Screen;
 import net.orifu.xplat.gui.components.LinearLayout;
 import org.jetbrains.annotations.Nullable;
@@ -184,7 +184,7 @@ public class OverridesScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        this.renderSuper(graphics, mouseX, mouseY, delta);
+        super.render(graphics, mouseX, mouseY, delta);
 
         // ensure displayed skin is up to date (e.g. if just loaded)
         if (this.selectedProfile != null) {
@@ -374,5 +374,12 @@ public class OverridesScreen extends Screen {
 
         @Override
         public void doLayout(ScreenRectangle rect) {}
+
+        //? if >=1.21.6 {
+        @Override
+        public Component getTabExtraNarration() {
+            return Component.empty();
+        }
+        //?}
     }
 }

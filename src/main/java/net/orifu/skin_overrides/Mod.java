@@ -18,7 +18,7 @@ import java.util.Optional;
 public class Mod {
 	public static final Logger LOGGER = LoggerFactory.getLogger("skin overrides");
 	public static final String MOD_ID = "skin_overrides";
-	public static final String MOD_VERSION = /*$ modVersion*/ "2.3.2";
+	public static final String MOD_VERSION = /*$ modVersion*/ "2.4.0-alpha";
 
 	public static final String SKIN_OVERRIDES_PATH = "skin_overrides";
 	public static final String CAPE_OVERRIDES_PATH = "cape_overrides";
