@@ -28,7 +28,7 @@ public class GuiRendererMixin implements GuiRendererExt {
 
     @Shadow
     @Final
-    private GuiRenderState renderState;
+    GuiRenderState renderState;
 
     @Unique
     private final Map<Object, MultiplePictureInPictureRenderer<?>> multiplePipRenderers = new Object2ObjectOpenHashMap<>();

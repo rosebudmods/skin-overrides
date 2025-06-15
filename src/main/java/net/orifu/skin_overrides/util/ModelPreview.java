@@ -30,12 +30,13 @@ public class ModelPreview {
     protected boolean showCape = true;
     protected boolean showElytra = false;
 
-    //? if >=1.21.3 {
-    protected final PlayerModel wide;
+    //? if >=1.21.6 {
+    //?} else if >=1.21.3 {
+    /*protected final PlayerModel wide;
     protected final PlayerModel slim;
     protected final PlayerCapeModel cape;
     protected final ElytraModel elytra;
-    //?} else {
+    *///?} else {
     /*protected final PlayerModel<?> wide;
     protected final PlayerModel<?> slim;
     protected final PlayerCapeModel<?> cape;
@@ -53,12 +54,13 @@ public class ModelPreview {
 
         var models = client.getEntityModels();
 
-        //? if >=1.21.3 {
-        this.wide = new PlayerModel(models.bakeLayer(ModelLayers.PLAYER), false);
+        //? if >=1.21.6 {
+        //?} else if >=1.21.3 {
+        /*this.wide = new PlayerModel(models.bakeLayer(ModelLayers.PLAYER), false);
         this.slim = new PlayerModel(models.bakeLayer(ModelLayers.PLAYER_SLIM), true);
         this.cape = new PlayerCapeModel(models.bakeLayer(ModelLayers.PLAYER_CAPE));
         this.elytra = new ElytraModel(models.bakeLayer(ModelLayers.ELYTRA));
-        //?} else {
+        *///?} else {
         /*this.wide = new PlayerModel<>(models.bakeLayer(ModelLayers.PLAYER), false);
         this.slim = new PlayerModel<>(models.bakeLayer(ModelLayers.PLAYER_SLIM), true);
         this.cape = new PlayerCapeModel<>(PlayerCapeModel.getLayerDefinition().bakeRoot());
@@ -132,19 +134,22 @@ public class ModelPreview {
     public void draw(GuiGraphics graphics, int x, int y) {
         if (this.skin == null) return;
 
+        //? if >=1.21.6 {
         var state = GuiModelPreviewRenderer.GuiModelPreviewRenderState.create(
                 x, y,
                 this.width(), this.height(),
                 this.xRot, this.yRot,
                 this.height() / MODEL_HEIGHT,
                 -1 - MODEL_Y_OFFSET,
-                this.skin.model().equals(Skin.Model.WIDE) ? this.wide : this.slim,
-                this.skin.texture()
+                this.showSkin,
+                this.showCape,
+                this.showElytra,
+                this.skin
         );
 
-        ((GuiGraphicsExt) graphics).addMultiplePipRenderer(state, GuiModelPreviewRenderer::new, state);
+        ((GuiGraphicsExt) graphics).addMultiplePipRenderer(this.skin, GuiModelPreviewRenderer::new, state);
 
-        //? if <1.21.6 {
+        //?} else {
         /*graphics.pose().pushPose();
         graphics.pose().translate(x + this.width() / 2.0, y + this.height(), 100);
         float scale = this.height() / MODEL_HEIGHT;
@@ -173,7 +178,8 @@ public class ModelPreview {
         *///?}
     }
 
-    protected void render(GuiGraphics graphics) {
+    //? if <1.21.6 {
+    /*protected void render(GuiGraphics graphics) {
         var model = this.skin.model().equals(Skin.Model.WIDE) ? this.wide : this.slim;
 
         if (this.showSkin) {
@@ -189,19 +195,20 @@ public class ModelPreview {
             ResourceLocation elytra = Optional.ofNullable(this.skin.elytraTexture())
                     .or(() -> Optional.ofNullable(this.skin.capeTexture()))
                     .orElse(Mod.defaultId("textures/entity/elytra.png"));
+            // TODO: why use player model render type?
             RenderType elytraType = model.renderType(elytra);
             renderModel(this.elytra, elytraType, graphics);
         }
     }
 
     private static void renderModel(EntityModel<?> model, RenderType type, GuiGraphics graphics) {
-        //? if >=1.21.6 {
-        //?} else if >=1.21.3 {
-        /*graphics.drawSpecial(bufferSource ->
+        //? if >=1.21.3 {
+        graphics.drawSpecial(bufferSource ->
             model.renderToBuffer(graphics.pose(), bufferSource.getBuffer(type), 0xf000f0, OverlayTexture.NO_OVERLAY));
-        *///?} else if >=1.21 {
-        /*model.renderToBuffer(graphics.pose(), graphics.bufferSource().getBuffer(type), 0xf000f0, OverlayTexture.NO_OVERLAY);
-        *///?} else
-        /*model.renderToBuffer(graphics.pose(), graphics.bufferSource().getBuffer(type), 0xf000f0, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);*/
+        //?} else if >=1.21 {
+        /^model.renderToBuffer(graphics.pose(), graphics.bufferSource().getBuffer(type), 0xf000f0, OverlayTexture.NO_OVERLAY);
+        ^///?} else
+        /^model.renderToBuffer(graphics.pose(), graphics.bufferSource().getBuffer(type), 0xf000f0, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);^/
     }
+    *///?}
 }

@@ -21,7 +21,7 @@ public class PlayerCapeRenderer {
 
     public static void blit(GuiGraphics graphics, ResourceLocation texture, int x, int y, int scale) {
         graphics.blit(RenderPipelines.GUI_TEXTURED, texture,
-                x, y, WIDTH * scale, HEIGHT * scale,
-                U, V, WIDTH, HEIGHT, 64, 32);
+                x, y, U, V, WIDTH * scale, HEIGHT * scale,
+                WIDTH, HEIGHT, 64, 32);
     }
 }
