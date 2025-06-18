@@ -62,7 +62,7 @@ public class SkinLibrary extends AbstractLibrary {
             name = name.substring(name.lastIndexOf('/') + 1);
             name = name.substring(0, 1).toUpperCase() + name.substring(1).replace(".png", "");
             name += playerSkin.model().equals(Skin.Model.WIDE) ? " (wide)" : " (slim)";
-            this.entries.add(new SkinEntry(name, Util.randomId(), playerSkin.model(), playerSkin.texture()));
+            this.entries.add(new SkinEntry(name, Util.seededId(name), playerSkin.model(), playerSkin.texture()));
         }
     }
 

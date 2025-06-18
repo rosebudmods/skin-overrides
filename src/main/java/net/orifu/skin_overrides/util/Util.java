@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
@@ -45,6 +46,10 @@ public class Util {
 
     public static String randomId() {
         return UUID.randomUUID().toString();
+    }
+
+    public static String seededId(String seed) {
+        return UUID.nameUUIDFromBytes(seed.getBytes(StandardCharsets.UTF_8)).toString();
     }
 
     public static String id(GameProfile profile) {
