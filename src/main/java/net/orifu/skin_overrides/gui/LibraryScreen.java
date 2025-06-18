@@ -123,8 +123,8 @@ public class LibraryScreen extends Screen {
 
             // library entry preview
             this.entryPreview = controls.addChild(this.ov.skin
-                            ? ModelPreview.skin(null, previewScale, this.minecraft)
-                            : ModelPreview.cape(null, previewScale, this.minecraft),
+                            ? ModelPreview.skin("preview", null, previewScale, this.minecraft)
+                            : ModelPreview.cape("preview", null, previewScale, this.minecraft),
                     LayoutSettings.defaults().alignHorizontallyCenter());
 
             // padding

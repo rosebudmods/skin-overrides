@@ -4,8 +4,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.orifu.skin_overrides.Library.LibraryEntry;
+import net.orifu.skin_overrides.gui.util.PlayerModelRenderer;
 import net.orifu.skin_overrides.library.SkinLibrary.SkinEntry;
-import net.orifu.skin_overrides.util.ModelPreview;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.xplat.gui.components.ObjectSelectionList;
 
@@ -24,7 +24,7 @@ public class LibraryListEntry extends ObjectSelectionList.Entry<LibraryListEntry
     public LibraryEntry entry;
     public int index;
 
-    private ModelPreview preview;
+    private PlayerModelRenderer preview;
 
     public LibraryListEntry(LibraryEntry entry, int index, LibraryScreen parent) {
         this.parent = parent;
@@ -34,10 +34,10 @@ public class LibraryListEntry extends ObjectSelectionList.Entry<LibraryListEntry
         this.index = index;
 
         if (this.entry instanceof SkinEntry skinEntry) {
-            this.preview = new ModelPreview(skinEntry.toSkin(), 2, this.client);
+            this.preview = new PlayerModelRenderer(skinEntry.getId(), skinEntry.toSkin(), 2, this.client);
             this.preview.setRotation(0, 0);
         } else {
-            this.preview = new ModelPreview(parent.userSkin, 2, this.client);
+            this.preview = new PlayerModelRenderer(entry.getId(), parent.userSkin, 2, this.client);
             this.preview.setCape(this.entry.getTexture());
             this.preview.setRotation(0, 180);
         }

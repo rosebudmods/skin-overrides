@@ -117,6 +117,7 @@ public class OverrideInfoEntryScreen extends Screen {
             // add player model widget
             if (this.model != null) {
                 root.addChild(ModelPreview.skin(
+                                "info-entry-skin",
                                 new Skin(this.texture, null, null, this.model),
                                 SKIN_SCALE, this.minecraft),
                         LayoutSettings.defaults().alignHorizontallyCenter());
@@ -129,10 +130,12 @@ public class OverrideInfoEntryScreen extends Screen {
 
             // add player model widgets
             grid.addChild(ModelPreview.skin(
+                            "info-entry-wide-skin",
                             new Skin(this.texture, null, null, Skin.Model.WIDE),
                             SKIN_SCALE, this.minecraft),
                     0, 0, LayoutSettings.defaults().alignHorizontallyCenter());
             grid.addChild(ModelPreview.skin(
+                            "info-entry-slim-skin",
                             new Skin(this.texture, null, null, Skin.Model.SLIM),
                             SKIN_SCALE, this.minecraft),
                     0, 1, LayoutSettings.defaults().alignHorizontallyCenter());
@@ -149,6 +152,7 @@ public class OverrideInfoEntryScreen extends Screen {
         if (!this.wantsModel && this.model == null) {
             // add cape model widget
             root.addChild(ModelPreview.capeWithSkin(
+                        "info-entry-cape",
                         Mod.override(ProfileHelper.user()).withCape(this.texture),
                         SKIN_SCALE, this.minecraft),
                     LayoutSettings.defaults().alignHorizontallyCenter());

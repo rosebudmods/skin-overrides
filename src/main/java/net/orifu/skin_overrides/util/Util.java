@@ -2,11 +2,15 @@ package net.orifu.skin_overrides.util;
 
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
+import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
+import net.minecraft.client.renderer.texture.Dumpable;
+import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.orifu.skin_overrides.Mod;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -100,8 +104,17 @@ public class Util {
 
         runOnRenderThread(() -> {
             //? if >=1.21.5 {
-            var imgFut = gpuTextureToNativeImage(Minecraft.getInstance().getTextureManager().getTexture(texture).getTexture());
-            imgFut.thenAccept(future::complete);
+//            var imgFut = gpuTextureToNativeImage(Minecraft.getInstance().getTextureManager().getTexture(texture).getTexture());
+//            imgFut.thenAccept(future::complete);
+
+            var abstractTexture = Minecraft.getInstance().getTextureManager().getTexture(texture);
+            if (abstractTexture instanceof DynamicTexture dtx) {
+                future.complete(dtx.getPixels());
+            } else {
+                var ex = new UnsupportedOperationException("tried to save a non-dynamic texture. this is a bug! please report it <3");
+                Mod.LOGGER.error("failed to save texture", ex);
+                future.completeExceptionally(ex);
+            }
 
             //?} else {
             /*//? if >=1.21.3 {
@@ -129,7 +142,7 @@ public class Util {
 
         int bufSize = gpuTex.getFormat().pixelSize() * width * height;
         var buffer = RenderSystem.getDevice().createBuffer(() -> "skin overrides - texture to PNG",
-                GpuTexture.USAGE_COPY_DST | GpuTexture.USAGE_RENDER_ATTACHMENT, bufSize);
+                GpuBuffer.USAGE_MAP_READ | GpuBuffer.USAGE_COPY_DST, bufSize);
 //        var buffer = RenderSystem.getDevice().createBuffer(() -> "skin overrides - texture to PNG",
 //                BufferType.PIXEL_PACK, BufferUsage.STATIC_READ, bufSize);
         var commandEncoder = RenderSystem.getDevice().createCommandEncoder();

@@ -133,8 +133,8 @@ public class OverridesScreen extends Screen {
             Skin overriddenSkin = Mod.override(this.selectedProfile);
             if (this.selectedProfile != null) {
                 this.modelPreview = configCols.addChild(this.ov.skin
-                                ? ModelPreview.skin(overriddenSkin, PREVIEW_SCALE, this.minecraft)
-                                : ModelPreview.capeWithSkin(overriddenSkin, PREVIEW_SCALE, this.minecraft),
+                                ? ModelPreview.skin("preview", overriddenSkin, PREVIEW_SCALE, this.minecraft)
+                                : ModelPreview.capeWithSkin("preview", overriddenSkin, PREVIEW_SCALE, this.minecraft),
                         LayoutSettings.defaults().alignHorizontallyRight().alignVerticallyMiddle());
             }
         }

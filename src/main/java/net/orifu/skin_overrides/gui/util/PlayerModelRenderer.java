@@ -1,4 +1,4 @@
-package net.orifu.skin_overrides.util;
+package net.orifu.skin_overrides.gui.util;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -13,11 +13,14 @@ import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.gui.GuiGraphicsExt;
 import net.orifu.skin_overrides.gui.pip.GuiModelPreviewRenderer;
+import net.orifu.skin_overrides.util.PlayerSkinRenderer;
+import net.orifu.skin_overrides.util.ProfileHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class ModelPreview {
+public class PlayerModelRenderer {
+    protected final Object id;
     @Nullable
     protected Skin skin;
 
@@ -48,7 +51,8 @@ public class ModelPreview {
     protected static final float MODEL_Y_OFFSET = 0.0625f;
     protected static final float MAX_X_ROT = 50;
 
-    public ModelPreview(@Nullable Skin skin, int scale, Minecraft client) {
+    public PlayerModelRenderer(Object id, @Nullable Skin skin, int scale, Minecraft client) {
+        this.id = id;
         this.skin = skin;
         this.scale = scale;
 
@@ -147,7 +151,7 @@ public class ModelPreview {
                 this.skin
         );
 
-        ((GuiGraphicsExt) graphics).addMultiplePipRenderer(this.skin, GuiModelPreviewRenderer::new, state);
+        ((GuiGraphicsExt) graphics).addMultiplePipRenderer(this.id, GuiModelPreviewRenderer::new, state);
 
         //?} else {
         /*graphics.pose().pushPose();
