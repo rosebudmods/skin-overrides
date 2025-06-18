@@ -2,12 +2,10 @@ package net.orifu.skin_overrides.util;
 
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
-import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
-import net.minecraft.client.renderer.texture.Dumpable;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Mod;
@@ -20,12 +18,6 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-
-//? if >=1.21.5 {
-//import com.mojang.blaze3d.buffers.BufferType;
-//import com.mojang.blaze3d.buffers.BufferUsage;
-import com.mojang.blaze3d.textures.GpuTexture;
-//?}
 
 public class Util {
     public static Optional<String> readFile(File file) {
@@ -104,9 +96,6 @@ public class Util {
 
         runOnRenderThread(() -> {
             //? if >=1.21.5 {
-//            var imgFut = gpuTextureToNativeImage(Minecraft.getInstance().getTextureManager().getTexture(texture).getTexture());
-//            imgFut.thenAccept(future::complete);
-
             var abstractTexture = Minecraft.getInstance().getTextureManager().getTexture(texture);
             if (abstractTexture instanceof DynamicTexture dtx) {
                 future.complete(dtx.getPixels());
@@ -130,45 +119,4 @@ public class Util {
 
         return future;
     }
-
-    //? if >=1.21.5 {
-    public static CompletableFuture<NativeImage> gpuTextureToNativeImage(GpuTexture gpuTex) {
-        // see TextureUtil.writeAsPNG
-        RenderSystem.assertOnRenderThread();
-
-        int mip = 0;
-        int width = gpuTex.getWidth(mip);
-        int height = gpuTex.getHeight(mip);
-
-        int bufSize = gpuTex.getFormat().pixelSize() * width * height;
-        var buffer = RenderSystem.getDevice().createBuffer(() -> "skin overrides - texture to PNG",
-                GpuBuffer.USAGE_MAP_READ | GpuBuffer.USAGE_COPY_DST, bufSize);
-//        var buffer = RenderSystem.getDevice().createBuffer(() -> "skin overrides - texture to PNG",
-//                BufferType.PIXEL_PACK, BufferUsage.STATIC_READ, bufSize);
-        var commandEncoder = RenderSystem.getDevice().createCommandEncoder();
-
-        var fut = new CompletableFuture<NativeImage>();
-
-        // TODO: this crashes if gpuTex is not USAGE_COPY_SRC
-        commandEncoder.copyTextureToBuffer(gpuTex, buffer, 0, () -> {
-            var img = new NativeImage(width, height, false);
-//            var view = commandEncoder.readBuffer(buffer);
-            var view = commandEncoder.mapBuffer(buffer, true, false);
-
-            for (int y = 0; y < height; y++) {
-                for (int x = 0; x < width; x++) {
-                    int px = view.data().getInt((x + y * width) * gpuTex.getFormat().pixelSize());
-                    img.setPixelABGR(x, y, px);
-                }
-            }
-
-            view.close();
-            buffer.close();
-
-            fut.complete(img);
-        }, mip);
-
-        return fut;
-    }
-    //?}
 }

@@ -1,5 +1,6 @@
 package net.orifu.skin_overrides.gui.pip;
 
+//? if >=1.21.6 {
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -126,3 +127,5 @@ public class GuiModelPreviewRenderer extends MultiplePictureInPictureRenderer<Gu
         }
     }
 }
+//?} else
+/*public class GuiModelPreviewRenderer {}*/

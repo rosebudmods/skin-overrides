@@ -1,5 +1,6 @@
 package net.orifu.skin_overrides.mixin;
 
+//? if >=1.21.6 {
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.GuiRenderer;
@@ -73,3 +74,5 @@ public class GuiRendererMixin implements GuiRendererExt {
         this.multiplePipRenderers.values().forEach(PictureInPictureRenderer::close);
     }
 }
+//?} else
+/*public class GuiRendererMixin {}*/

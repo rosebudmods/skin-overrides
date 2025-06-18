@@ -1,5 +1,6 @@
 package net.orifu.skin_overrides.gui.util;
 
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.model.ElytraModel;
@@ -7,17 +8,23 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Skin;
-import net.orifu.skin_overrides.gui.GuiGraphicsExt;
-import net.orifu.skin_overrides.gui.pip.GuiModelPreviewRenderer;
+import net.orifu.skin_overrides.util.PlayerCapeModel;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.skin_overrides.util.ProfileHelper;
+import net.orifu.xplat.Lighting;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
+
+//? if >=1.21.6 {
+import net.orifu.skin_overrides.gui.GuiGraphicsExt;
+import net.orifu.skin_overrides.gui.pip.GuiModelPreviewRenderer;
+//?}
 
 public class PlayerModelRenderer {
     protected final Object id;

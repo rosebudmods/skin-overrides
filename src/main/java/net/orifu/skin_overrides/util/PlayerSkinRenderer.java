@@ -3,9 +3,9 @@ package net.orifu.skin_overrides.util;
 //? if <=1.21.1
 /*import com.mojang.blaze3d.systems.RenderSystem;*/
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Skin;
+import net.orifu.xplat.gui.RenderPipelines;
 
 public class PlayerSkinRenderer {
     public static final int HEAD_SIZE = 8;
@@ -118,11 +118,14 @@ public class PlayerSkinRenderer {
             int x, int y, int scale, int o, boolean isLayer,
             int compX, int compY, int compW, int compH,
             int u, int v, int uLayer, int vLayer) {
-        graphics.blit(RenderPipelines.GUI_TEXTURED, texture,
+        graphics.blit(
+                /*? if >=1.21.3*/ RenderPipelines.GUI_TEXTURED,
+                texture,
                 x + compX * scale - o, y + compY * scale - o,
+                /*? if <1.21.3*/ /*compW * scale + o * 2, compH * scale + o * 2,*/
                 isLayer ? uLayer : u,
                 isLayer ? vLayer : v,
-                compW * scale + o * 2, compH * scale + o * 2,
+                /*? if >=1.21.3*/ compW * scale + o * 2, compH * scale + o * 2,
                 compW, compH, 64, 64);
     }
 

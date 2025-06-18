@@ -1,5 +1,6 @@
 package net.orifu.skin_overrides.mixin;
 
+//? if >=1.21.6 {
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
@@ -31,3 +32,5 @@ public class GuiGraphicsMixin implements GuiGraphicsExt {
                 .addMultiplePipRenderer(key, function, state.apply(this.scissorStack.peek()));
     }
 }
+//?} else
+/*public class GuiGraphicsMixin {}*/

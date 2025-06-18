@@ -1,5 +1,6 @@
 package net.orifu.skin_overrides.gui.pip;
 
+//? if >=1.21.6 {
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.gui.render.state.GuiRenderState;
 import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
@@ -26,3 +27,5 @@ public abstract class MultiplePictureInPictureRenderer<T extends PictureInPictur
         this.usedOnThisFrame = true;
     }
 }
+//?} else
+/*public class MultiplePictureInPictureRenderer {}*/

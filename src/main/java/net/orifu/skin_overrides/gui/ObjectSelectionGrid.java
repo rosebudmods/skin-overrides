@@ -37,7 +37,9 @@ public abstract class ObjectSelectionGrid<E extends ObjectSelectionList.Entry<E>
     }
 
     @Override
-    protected void renderListItems(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    /*? if >=1.20.6 {*/ protected void renderListItems(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    /*?} else if >=1.20.4 {*/ /*public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    *//*?} else*/ /*public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {*/
         int baseX = this.getRowLeft();
         int w = this.itemWidth;
         int h = this.itemHeight - 4;
