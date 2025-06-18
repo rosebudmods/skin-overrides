@@ -1,9 +1,15 @@
 package net.orifu.skin_overrides.util;
 
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.xplat.gui.RenderPipelines;
+
+//? if >=1.20.1 {
+import net.minecraft.client.gui.GuiGraphics;
+ //?} else {
+/*import com.mojang.blaze3d.vertex.PoseStack;
+import net.orifu.xplat.gui.GuiGraphics;
+*///?}
 
 public class PlayerCapeRenderer {
     public static final int WIDTH = 10;
@@ -18,6 +24,12 @@ public class PlayerCapeRenderer {
             blit(graphics, capeTexture, x, y, scale);
         }
     }
+
+    //? if <1.20.1 {
+    /*public static void draw(PoseStack stack, Skin skin, int x, int y, int scale) {
+        draw(new GuiGraphics(stack), skin, x, y, scale);
+    }
+    *///?}
 
     public static void blit(GuiGraphics graphics, ResourceLocation texture, int x, int y, int scale) {
         graphics.blit(

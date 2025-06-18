@@ -1,13 +1,19 @@
 package net.orifu.skin_overrides.gui;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.gui.util.PlayerModelRenderer;
 import net.orifu.skin_overrides.library.SkinLibrary.SkinEntry;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.xplat.gui.components.ObjectSelectionList;
+
+//? if >=1.20.1 {
+import net.minecraft.client.gui.GuiGraphics;
+ //?} else {
+/*import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiComponent;
+*///?}
 
 public class LibraryListEntry extends ObjectSelectionList.Entry<LibraryListEntry> {
     public static final int SKIN_WIDTH = PlayerSkinRenderer.WIDTH * 2;
@@ -44,8 +50,9 @@ public class LibraryListEntry extends ObjectSelectionList.Entry<LibraryListEntry
     }
 
     @Override
-    public void render(GuiGraphics graphics, int index, int y, int x, int entryWidth, int entryHeight, int mouseX,
-            int mouseY, boolean hovered, float delta) {
+    /*? if >=1.20.1 {*/ public void render(GuiGraphics graphics,
+    /*?} else*/ /*public void render(PoseStack graphics,*/
+            int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float delta) {
         this.preview.draw(graphics, x + SKIN_OFFSET + PAD, y + PAD);
 
         if (this.isMouseOver(mouseX, mouseY)) {
@@ -54,8 +61,13 @@ public class LibraryListEntry extends ObjectSelectionList.Entry<LibraryListEntry
             this.preview.setYRot(this.parent.ov.skin ? 0 : 180);
         }
 
+        //? if >=1.20.1 {
         graphics.drawCenteredString(this.client.font, Component.literal(this.entry.getName()),
                 x + WIDTH / 2, y + PAD + SKIN_HEIGHT + 2, 0xffffffff);
+        //?} else {
+        /*GuiComponent.drawCenteredString(graphics, this.client.font, Component.literal(this.entry.getName()).getVisualOrderText(),
+                x + WIDTH / 2, y + PAD + SKIN_HEIGHT + 2, 0xffffff);
+        *///?}
     }
 
     @Override

@@ -10,7 +10,7 @@ public class Toast {
         SystemToast.addOrUpdate(Minecraft.getInstance().getToastManager(), SystemToast.SystemToastId.PACK_LOAD_FAILURE, title, description);
         //?} else {
         /*Minecraft.getInstance().getToasts().addToast(new SystemToast(SystemToast.
-                /^? if >=1.20.4 {^/ /^SystemToastId ^//^?} else >>^/ SystemToastIds
+                /^? if >=1.20.4 {^/ SystemToastId /^?} else >>^/ /^SystemToastIds^/
                 .PACK_LOAD_FAILURE, title, description));
         *///?}
     }

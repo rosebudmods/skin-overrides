@@ -3,13 +3,13 @@ package net.orifu.skin_overrides.gui;
 import java.util.function.Consumer;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LayoutSettings;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -19,9 +19,13 @@ import net.orifu.skin_overrides.gui.components.ModelPreview;
 import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.xplat.GuiHelper;
-import net.orifu.xplat.gui.Screen;
 import net.orifu.xplat.gui.components.LinearLayout;
 import org.jetbrains.annotations.Nullable;
+
+//? if >=1.20.1 {
+import net.minecraft.client.gui.GuiGraphics;
+ //?} else
+/*import com.mojang.blaze3d.vertex.PoseStack;*/
 
 public class OverrideInfoEntryScreen extends Screen {
     private static final Component INPUT_MODEL = Component.translatable("skin_overrides.input.model");
@@ -166,7 +170,11 @@ public class OverrideInfoEntryScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    public void render(
+            /*? if >=1.20.1 {*/ GuiGraphics graphics, /*?} else*/ /*PoseStack graphics,*/
+            int mouseX, int mouseY, float delta) {
+        //? if <1.20.2
+        /*this.renderBackground(graphics);*/
         super.render(graphics, mouseX, mouseY, delta);
 
         this.message.renderCentered(graphics, this.width / 2, this.getMessageY());

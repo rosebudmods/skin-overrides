@@ -1,7 +1,6 @@
 package net.orifu.skin_overrides.gui;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -15,6 +14,7 @@ import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.orifu.skin_overrides.Library.LibraryEntry;
@@ -29,7 +29,6 @@ import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.TextureHelper;
 import net.orifu.skin_overrides.util.Toast;
 import net.orifu.xplat.GuiHelper;
-import net.orifu.xplat.gui.Screen;
 import net.orifu.xplat.gui.components.LinearLayout;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
@@ -38,6 +37,11 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+
+//? if >=1.20.1 {
+import net.minecraft.client.gui.GuiGraphics;
+ //?} else
+/*import com.mojang.blaze3d.vertex.PoseStack;*/
 
 public class OverridesScreen extends Screen {
     private static final Component TITLE = Component.translatable("skin_overrides.title");
@@ -49,7 +53,7 @@ public class OverridesScreen extends Screen {
     private final TabManager tabManager = new TabManager(this::addRenderableWidget, this::removeWidget);
 
     @Nullable
-    private final net.minecraft.client.gui.screens.Screen parent;
+    private final Screen parent;
 
     private HeaderAndFooterLayout layout;
     private TabNavigationBar header;
@@ -65,7 +69,7 @@ public class OverridesScreen extends Screen {
     @Nullable
     private GameProfile selectedProfile;
 
-    public OverridesScreen(@Nullable net.minecraft.client.gui.screens.Screen parent) {
+    public OverridesScreen(@Nullable Screen parent) {
         super(TITLE);
 
         this.parent = parent;
@@ -183,7 +187,11 @@ public class OverridesScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    public void render(
+            /*? if >=1.20.1 {*/ GuiGraphics graphics, /*?} else*/ /*PoseStack graphics,*/
+            int mouseX, int mouseY, float delta) {
+        //? if <1.20.2
+        /*this.renderBackground(graphics);*/
         super.render(graphics, mouseX, mouseY, delta);
 
         // ensure displayed skin is up to date (e.g. if just loaded)

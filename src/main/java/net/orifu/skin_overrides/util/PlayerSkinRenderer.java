@@ -1,11 +1,18 @@
 package net.orifu.skin_overrides.util;
 
-//? if <=1.21.1
-/*import com.mojang.blaze3d.systems.RenderSystem;*/
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.xplat.gui.RenderPipelines;
+
+//? if <=1.21.1
+/*import com.mojang.blaze3d.systems.RenderSystem;*/
+
+//? if >=1.20.1 {
+import net.minecraft.client.gui.GuiGraphics;
+//?} else {
+/*import com.mojang.blaze3d.vertex.PoseStack;
+import net.orifu.xplat.gui.GuiGraphics;
+*///?}
 
 public class PlayerSkinRenderer {
     public static final int HEAD_SIZE = 8;
@@ -113,6 +120,12 @@ public class PlayerSkinRenderer {
         //? if <=1.21.1
         /*RenderSystem.disableBlend();*/
     }
+
+    //? if <1.20.1 {
+    /*public static void blitFace(PoseStack stack, Skin skin, int x, int y, int scale) {
+        blitFace(new GuiGraphics(stack), skin, x, y, scale);
+    }
+    *///?}
 
     private static void blitComponent(GuiGraphics graphics, ResourceLocation texture,
             int x, int y, int scale, int o, boolean isLayer,

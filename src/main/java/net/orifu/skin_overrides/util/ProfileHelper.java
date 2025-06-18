@@ -21,8 +21,8 @@ import java.util.concurrent.CompletableFuture;
 import com.mojang.authlib.yggdrasil.ProfileResult;
 //?} else {
 /*import java.util.ArrayList;
-import com.mojang.util.UUIDTypeAdapter;*/
-//?}
+import com.mojang.util.UUIDTypeAdapter;
+*///?}
 
 public class ProfileHelper {
     public static final String UUID_REGEX = "[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{12}";
@@ -143,8 +143,8 @@ public class ProfileHelper {
         return new Skin.Signature(packed.value(), packed.signature());
         //?} else {
         /*var property = profile.getProperties().get("textures").stream().findFirst().orElseThrow();
-        /^? if >=1.20.2 {^/ /^return new Skin.Signature(property.value(), property.signature());
-        ^//^?} else^/ return new Skin.Signature(property.getValue(), property.getSignature());
+        /^? if >=1.20.2 {^/ return new Skin.Signature(property.value(), property.signature());
+        /^?} else^/ /^return new Skin.Signature(property.getValue(), property.getSignature());^/
         *///?}
     }
 

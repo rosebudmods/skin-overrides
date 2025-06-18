@@ -3,7 +3,6 @@ package net.orifu.skin_overrides.gui;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.OverrideManager;
@@ -12,6 +11,13 @@ import net.orifu.skin_overrides.util.PlayerSkinRenderer;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.xplat.gui.components.ObjectSelectionList;
 import org.jetbrains.annotations.NotNull;
+
+//? if >=1.20.1 {
+import net.minecraft.client.gui.GuiGraphics;
+ //?} else {
+/*import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiComponent;
+*///?}
 
 public class OverrideListEntry extends ObjectSelectionList.Entry<OverrideListEntry> {
     private final Minecraft client;
@@ -31,7 +37,8 @@ public class OverrideListEntry extends ObjectSelectionList.Entry<OverrideListEnt
 
     @Override
     public void render(
-            GuiGraphics graphics, int index, int y, int x, int entryWidth, int entryHeight, int mouseX,
+            /*? if >=1.20.1 {*/ GuiGraphics graphics, /*?} else*/ /*PoseStack graphics,*/
+            int index, int y, int x, int entryWidth, int entryHeight, int mouseX,
             int mouseY, boolean hovered, float tickDelta) {
         // draw player face/cape
         if (this.ov.skin) {
@@ -41,10 +48,15 @@ public class OverrideListEntry extends ObjectSelectionList.Entry<OverrideListEnt
             PlayerCapeRenderer.draw(graphics, Mod.override(this.profile), capeX, y, 2);
         }
 
+        //? if >=1.20.1 {
         // draw player name
         graphics.drawString(this.client.font, this.getPlayerName(), x + 32 + 2, y + 1, 0xffffffff);
         // draw override status
         graphics.drawString(this.client.font, this.getOverrideStatus(), x + 32 + 2, y + 12, 0xffffffff);
+        //?} else {
+        /*GuiComponent.drawString(graphics, this.client.font, this.getPlayerName(), x + 32 + 2, y + 1, 0xffffff);
+        GuiComponent.drawString(graphics, this.client.font, this.getOverrideStatus(), x + 32 + 2, y + 12, 0xffffff);
+        *///?}
     }
 
     public GameProfile upgrade() {

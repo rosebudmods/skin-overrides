@@ -2,7 +2,6 @@ package net.orifu.skin_overrides.gui.util;
 
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.model.ElytraModel;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.PlayerModel;
@@ -25,6 +24,13 @@ import java.util.Optional;
 import net.orifu.skin_overrides.gui.GuiGraphicsExt;
 import net.orifu.skin_overrides.gui.pip.GuiModelPreviewRenderer;
 //?}
+
+//? if >=1.20.1 {
+import net.minecraft.client.gui.GuiGraphics;
+ //?} else {
+/*import net.orifu.xplat.gui.GuiGraphics;
+import com.mojang.blaze3d.vertex.PoseStack;
+*///?}
 
 public class PlayerModelRenderer {
     protected final Object id;
@@ -188,6 +194,12 @@ public class PlayerModelRenderer {
         graphics.pose().popPose();
         *///?}
     }
+
+    //? if <1.20.1 {
+    /*public void draw(PoseStack stack, int x, int y) {
+        this.draw(new GuiGraphics(stack), x, y);
+    }
+    *///?}
 
     //? if <1.21.6 {
     /*protected void render(GuiGraphics graphics) {

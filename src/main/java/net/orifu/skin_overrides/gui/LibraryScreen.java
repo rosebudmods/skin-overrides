@@ -1,7 +1,6 @@
 package net.orifu.skin_overrides.gui;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.EditBox;
@@ -9,6 +8,7 @@ import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.layouts.FrameLayout;
 import net.minecraft.client.gui.layouts.LayoutSettings;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -25,7 +25,6 @@ import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.TextureHelper;
 import net.orifu.skin_overrides.util.Toast;
 import net.orifu.xplat.GuiHelper;
-import net.orifu.xplat.gui.Screen;
 import net.orifu.xplat.gui.components.LinearLayout;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
@@ -34,6 +33,14 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+
+//? if >=1.20.1 {
+import net.minecraft.client.gui.GuiGraphics;
+ //?} else {
+/*import net.minecraft.client.gui.GuiComponent;
+import net.orifu.xplat.gui.GuiGraphics;
+import com.mojang.blaze3d.vertex.PoseStack;
+*///?}
 
 public class LibraryScreen extends Screen {
     private static final Component TITLE = Component.translatable("skin_overrides.library.title");
@@ -237,7 +244,11 @@ public class LibraryScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    public void render(
+            /*? if >=1.20.1 {*/ GuiGraphics graphics, /*?} else*/ /*PoseStack graphics,*/
+            int mouseX, int mouseY, float delta) {
+        //? if <1.20.2
+        /*this.renderBackground(graphics);*/
         super.render(graphics, mouseX, mouseY, delta);
 
         if (this.selectedEntry != null) {
@@ -256,9 +267,16 @@ public class LibraryScreen extends Screen {
 
         // empty list text
         if (this.libraryList.children().isEmpty()) {
+            //? if >=1.20.1 {
             graphics.drawCenteredString(this.font, Component.translatable("skin_overrides.library.empty"),
                     this.libraryList.getX() + this.libraryList.getWidth() / 2,
+                    this.libraryList.getY() + this.libraryList.getHeight() / 2 - 4, 0xffaaaaaa);
+            //?} else {
+            /*GuiComponent.drawCenteredString(graphics, this.font,
+                    Component.translatable("skin_overrides.library.empty").getVisualOrderText(),
+                    this.libraryList.getX() + this.libraryList.getWidth() / 2,
                     this.libraryList.getY() + this.libraryList.getHeight() / 2 - 4, 0xaaaaaa);
+            *///?}
         }
 
         // the skin won't be properly loaded for a few frames

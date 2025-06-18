@@ -1,10 +1,17 @@
 package net.orifu.skin_overrides.gui;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
 import net.orifu.xplat.gui.components.ObjectSelectionList;
 import org.jetbrains.annotations.Nullable;
+
+//? if >=1.20.1 {
+import net.minecraft.client.gui.GuiGraphics;
+        //?} else {
+/*import net.minecraft.client.gui.GuiComponent;
+import net.orifu.xplat.gui.GuiGraphics;
+import com.mojang.blaze3d.vertex.PoseStack;
+*///?}
 
 public abstract class ObjectSelectionGrid<E extends ObjectSelectionList.Entry<E>> extends ObjectSelectionList<E> {
     protected final int itemWidth;
@@ -39,7 +46,8 @@ public abstract class ObjectSelectionGrid<E extends ObjectSelectionList.Entry<E>
     @Override
     /*? if >=1.20.6 {*/ protected void renderListItems(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
     /*?} else if >=1.20.4 {*/ /*public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-    *//*?} else*/ /*public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {*/
+    *//*?} else if >=1.20.1 {*/ /*public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    *//*?} else*/ /*public void render(PoseStack graphics, int mouseX, int mouseY, float delta) {*/
         int baseX = this.getRowLeft();
         int w = this.itemWidth;
         int h = this.itemHeight - 4;
@@ -57,8 +65,9 @@ public abstract class ObjectSelectionGrid<E extends ObjectSelectionList.Entry<E>
     }
 
     @Override
-    protected void renderItem(GuiGraphics graphics, int mouseX, int mouseY, float delta, int index, int x, int y,
-            int width, int height) {
+    protected void renderItem(
+            /*? if >=1.20.1 {*/ GuiGraphics graphics, /*?} else*/ /*PoseStack graphics,*/
+            int mouseX, int mouseY, float delta, int index, int x, int y, int width, int height) {
         // changed to use the new drawEntrySelectionHighlight method
 
         E entry = this.getEntry(index);
@@ -74,10 +83,17 @@ public abstract class ObjectSelectionGrid<E extends ObjectSelectionList.Entry<E>
         entry.render(graphics, index, y, x, width, height, mouseX, mouseY, isHovered, delta);
     }
 
+    //? if >=1.20.1 {
     protected void renderSelection(GuiGraphics graphics, int x, int y, int borderColor, int fillColor) {
         graphics.fill(x - 2, y - 2, x + this.itemWidth + 2, y + this.itemHeight + 2, borderColor);
         graphics.fill(x - 1, y - 1, x + this.itemWidth + 1, y + this.itemHeight + 1, fillColor);
     }
+    //?} else {
+    /*protected void renderSelection(PoseStack stack, int x, int y, int borderColor, int fillColor) {
+        GuiComponent.fill(stack, x - 2, y - 2, x + this.itemWidth + 2, y + this.itemHeight + 2, borderColor);
+        GuiComponent.fill(stack, x - 1, y - 1, x + itemWidth + 1, y + this.itemHeight + 1, fillColor);
+    }
+    *///?}
 
     @Override
     @Nullable
