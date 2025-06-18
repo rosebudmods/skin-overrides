@@ -1,4 +1,4 @@
-package net.orifu.skin_overrides.gui;
+package net.orifu.skin_overrides.gui.screen;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.gui.components.Button;
@@ -16,16 +16,19 @@ import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.OverrideManager;
 import net.orifu.skin_overrides.Skin;
+import net.orifu.skin_overrides.gui.components.LibraryListEntry;
+import net.orifu.skin_overrides.gui.components.LibrarySelectionGrid;
 import net.orifu.skin_overrides.gui.components.ModelPreview;
 import net.orifu.skin_overrides.library.CapeLibrary;
 import net.orifu.skin_overrides.library.SkinLibrary;
 import net.orifu.skin_overrides.library.SkinLibrary.SkinEntry;
-import net.orifu.skin_overrides.util.PlayerSkinRenderer;
+import net.orifu.skin_overrides.gui.util.SimpleSkinRenderer;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.skin_overrides.util.TextureHelper;
 import net.orifu.skin_overrides.util.Toast;
 import net.orifu.xplat.GuiHelper;
 import net.orifu.xplat.gui.components.LinearLayout;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
@@ -123,10 +126,10 @@ public class LibraryScreen extends Screen {
             var controls = controlsFrame.addChild(LinearLayout.vertical().spacing(2));
 
             // believe me, "figure out a way to stop tiny player" is on my to-do
-            int previewScale = PlayerSkinRenderer.HEIGHT * 5 + 210 < this.height ? 5
-                    : PlayerSkinRenderer.HEIGHT * 4 + 210 < this.height ? 4
-                    : PlayerSkinRenderer.HEIGHT * 3 + 210 < this.height ? 3
-                    : PlayerSkinRenderer.HEIGHT * 2 + 210 < this.height ? 2 : 1;
+            int previewScale = SimpleSkinRenderer.HEIGHT * 5 + 210 < this.height ? 5
+                    : SimpleSkinRenderer.HEIGHT * 4 + 210 < this.height ? 4
+                    : SimpleSkinRenderer.HEIGHT * 3 + 210 < this.height ? 3
+                    : SimpleSkinRenderer.HEIGHT * 2 + 210 < this.height ? 2 : 1;
 
             // library entry preview
             this.entryPreview = controls.addChild(this.ov.skin
@@ -245,6 +248,7 @@ public class LibraryScreen extends Screen {
 
     @Override
     public void render(
+            @NotNull
             /*? if >=1.20.1 {*/ GuiGraphics graphics, /*?} else*/ /*PoseStack graphics,*/
             int mouseX, int mouseY, float delta) {
         //? if <1.20.2

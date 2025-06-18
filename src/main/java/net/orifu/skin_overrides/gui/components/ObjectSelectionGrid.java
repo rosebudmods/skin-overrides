@@ -1,4 +1,4 @@
-package net.orifu.skin_overrides.gui;
+package net.orifu.skin_overrides.gui.components;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
@@ -121,7 +121,7 @@ public abstract class ObjectSelectionGrid<E extends ObjectSelectionList.Entry<E>
     }
 
     @Override
-    protected void ensureVisible(E entry) {
+    public void ensureVisible(E entry) {
         int i = this.children().indexOf(entry);
         int top = this.getRowTop(i);
         int bottom = this.getRowBottom(i);

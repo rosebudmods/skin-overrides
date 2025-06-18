@@ -3,7 +3,7 @@ package net.orifu.skin_overrides;
 //? if hasModMenu {
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
-import net.orifu.skin_overrides.gui.OverridesScreen;
+import net.orifu.skin_overrides.gui.screen.OverridesScreen;
 
 public class ModMenuEntrypoint implements ModMenuApi {
     @Override

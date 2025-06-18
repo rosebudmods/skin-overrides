@@ -1,4 +1,4 @@
-package net.orifu.skin_overrides.gui;
+package net.orifu.skin_overrides.gui.screen;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -21,6 +21,8 @@ import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.OverrideManager;
 import net.orifu.skin_overrides.Skin;
+import net.orifu.skin_overrides.gui.components.OverrideListEntry;
+import net.orifu.skin_overrides.gui.components.OverridesSelectionList;
 import net.orifu.skin_overrides.library.CapeLibrary;
 import net.orifu.skin_overrides.library.SkinLibrary;
 import net.orifu.skin_overrides.override.LibraryOverrider.LibraryOverride;

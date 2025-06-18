@@ -1,4 +1,4 @@
-package net.orifu.skin_overrides.util;
+package net.orifu.skin_overrides.gui.util;
 
 import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Skin;
@@ -11,7 +11,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.orifu.xplat.gui.GuiGraphics;
 *///?}
 
-public class PlayerCapeRenderer {
+public class SimpleCapeRenderer {
     public static final int WIDTH = 10;
     public static final int HEIGHT = 16;
     public static final int U = 1;

@@ -1,4 +1,4 @@
-package net.orifu.skin_overrides.util;
+package net.orifu.skin_overrides.gui.util;
 
 import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Skin;
@@ -14,7 +14,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.orifu.xplat.gui.GuiGraphics;
 *///?}
 
-public class PlayerSkinRenderer {
+public class SimpleSkinRenderer {
     public static final int HEAD_SIZE = 8;
     public static final int HEAD_U = 8;
     public static final int HEAD_V = 8;

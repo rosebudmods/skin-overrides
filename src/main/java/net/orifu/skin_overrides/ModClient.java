@@ -5,7 +5,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
-import net.orifu.skin_overrides.gui.OverridesScreen;
+import net.orifu.skin_overrides.gui.screen.OverridesScreen;
 import net.orifu.skin_overrides.networking.ModNetworking;
 import org.lwjgl.glfw.GLFW;
 import java.util.concurrent.Executors;

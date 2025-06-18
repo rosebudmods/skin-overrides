@@ -1,7 +1,8 @@
-package net.orifu.skin_overrides.gui;
+package net.orifu.skin_overrides.gui.components;
 
 import net.minecraft.client.Minecraft;
 import net.orifu.skin_overrides.OverrideManager;
+import net.orifu.skin_overrides.gui.screen.LibraryScreen;
 
 import java.util.ArrayList;
 

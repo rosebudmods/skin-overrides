@@ -1,4 +1,4 @@
-package net.orifu.skin_overrides.gui;
+package net.orifu.skin_overrides.gui.screen;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.Minecraft;

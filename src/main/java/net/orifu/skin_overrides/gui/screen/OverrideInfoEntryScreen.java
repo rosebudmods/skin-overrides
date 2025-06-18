@@ -1,4 +1,4 @@
-package net.orifu.skin_overrides.gui;
+package net.orifu.skin_overrides.gui.screen;
 
 import java.util.function.Consumer;
 
@@ -16,7 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.gui.components.ModelPreview;
-import net.orifu.skin_overrides.util.PlayerSkinRenderer;
+import net.orifu.skin_overrides.gui.util.SimpleSkinRenderer;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.xplat.GuiHelper;
 import net.orifu.xplat.gui.components.LinearLayout;
@@ -38,7 +38,7 @@ public class OverrideInfoEntryScreen extends Screen {
     private static final int PAD = 10;
 
     private static final int SKIN_SCALE = 4;
-    private static final int SKIN_WIDTH = PlayerSkinRenderer.WIDTH * SKIN_SCALE;
+    private static final int SKIN_WIDTH = SimpleSkinRenderer.WIDTH * SKIN_SCALE;
     private static final int MODEL_BUTTON_WIDTH = SKIN_WIDTH + 20;
 
     @Nullable

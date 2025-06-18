@@ -1,4 +1,4 @@
-package net.orifu.skin_overrides.gui;
+package net.orifu.skin_overrides.gui.components;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.ChatFormatting;
@@ -6,8 +6,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.OverrideManager;
-import net.orifu.skin_overrides.util.PlayerCapeRenderer;
-import net.orifu.skin_overrides.util.PlayerSkinRenderer;
+import net.orifu.skin_overrides.gui.screen.OverridesScreen;
+import net.orifu.skin_overrides.gui.util.SimpleCapeRenderer;
+import net.orifu.skin_overrides.gui.util.SimpleSkinRenderer;
 import net.orifu.skin_overrides.util.ProfileHelper;
 import net.orifu.xplat.gui.components.ObjectSelectionList;
 import org.jetbrains.annotations.NotNull;
@@ -42,10 +43,10 @@ public class OverrideListEntry extends ObjectSelectionList.Entry<OverrideListEnt
             int mouseY, boolean hovered, float tickDelta) {
         // draw player face/cape
         if (this.ov.skin) {
-            PlayerSkinRenderer.blitFace(graphics, Mod.override(this.profile), x, y, 4);
+            SimpleSkinRenderer.blitFace(graphics, Mod.override(this.profile), x, y, 4);
         } else {
-            int capeX = x + (32 - PlayerCapeRenderer.WIDTH * 2) / 2;
-            PlayerCapeRenderer.draw(graphics, Mod.override(this.profile), capeX, y, 2);
+            int capeX = x + (32 - SimpleCapeRenderer.WIDTH * 2) / 2;
+            SimpleCapeRenderer.draw(graphics, Mod.override(this.profile), capeX, y, 2);
         }
 
         //? if >=1.20.1 {

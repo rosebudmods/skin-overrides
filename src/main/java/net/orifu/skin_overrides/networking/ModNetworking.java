@@ -32,11 +32,11 @@ public class ModNetworking {
     public static void init() {
         // register the skin update payload packet
         //? if >=1.20.6
-        PayloadTypeRegistry.playC2S().register(SkinUpdatePayload.TYPE, SkinUpdatePayload.PACKET_CODEC);
+        PayloadTypeRegistry.playC2S().register(ServerboundSkinUpdatePacket.TYPE, ServerboundSkinUpdatePacket.PACKET_CODEC);
 
         // listen for the packet
         //? if >=1.20.6 {
-        ServerPlayNetworking.registerGlobalReceiver(SkinUpdatePayload.TYPE, (payload, ctx) -> {
+        ServerPlayNetworking.registerGlobalReceiver(ServerboundSkinUpdatePacket.TYPE, (payload, ctx) -> {
             var player = ctx.player();
             var skinValue = payload.skinValue();
             var signature = payload.signature();
@@ -152,7 +152,7 @@ public class ModNetworking {
         Mod.LOGGER.debug("updating skin on server with signature:\n{}\n{}", sig.value(), sig.signature());
 
         //? if >=1.20.6 {
-        ClientPlayNetworking.send(new SkinUpdatePayload(
+        ClientPlayNetworking.send(new ServerboundSkinUpdatePacket(
                 Optional.ofNullable(sig.value()), Optional.ofNullable(sig.signature())));
         //?} else {
         /*var buf = PacketByteBufs.create();
@@ -180,6 +180,6 @@ public class ModNetworking {
     }
 
     public static boolean isOnSkinOverridesServer() {
-        return ClientPlayNetworking.canSend(SkinUpdatePayload.TYPE);
+        return ClientPlayNetworking.canSend(ServerboundSkinUpdatePacket.TYPE);
     }
 }

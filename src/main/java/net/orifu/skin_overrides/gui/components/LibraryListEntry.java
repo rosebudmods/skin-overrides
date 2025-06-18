@@ -1,11 +1,12 @@
-package net.orifu.skin_overrides.gui;
+package net.orifu.skin_overrides.gui.components;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.orifu.skin_overrides.Library.LibraryEntry;
+import net.orifu.skin_overrides.gui.screen.LibraryScreen;
 import net.orifu.skin_overrides.gui.util.PlayerModelRenderer;
 import net.orifu.skin_overrides.library.SkinLibrary.SkinEntry;
-import net.orifu.skin_overrides.util.PlayerSkinRenderer;
+import net.orifu.skin_overrides.gui.util.SimpleSkinRenderer;
 import net.orifu.xplat.gui.components.ObjectSelectionList;
 
 //? if >=1.20.1 {
@@ -16,8 +17,8 @@ import net.minecraft.client.gui.GuiComponent;
 *///?}
 
 public class LibraryListEntry extends ObjectSelectionList.Entry<LibraryListEntry> {
-    public static final int SKIN_WIDTH = PlayerSkinRenderer.WIDTH * 2;
-    public static final int SKIN_HEIGHT = PlayerSkinRenderer.HEIGHT * 2;
+    public static final int SKIN_WIDTH = SimpleSkinRenderer.WIDTH * 2;
+    public static final int SKIN_HEIGHT = SimpleSkinRenderer.HEIGHT * 2;
     public static final int SKIN_OFFSET = 16;
 
     public static final int PAD = 3;
