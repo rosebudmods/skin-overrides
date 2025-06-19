@@ -1,6 +1,7 @@
 package net.orifu.skin_overrides.library;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -25,7 +26,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 public abstract class AbstractLibrary implements Library {
-    protected static final Gson GSON = new Gson();
+    protected static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     @NotNull
     protected List<LibraryEntry> entries = new ArrayList<>();
