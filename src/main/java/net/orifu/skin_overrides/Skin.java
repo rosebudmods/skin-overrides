@@ -1,12 +1,14 @@
 package net.orifu.skin_overrides;
 
 import com.mojang.authlib.GameProfile;
+import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.SkinManager;
 import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.networking.ModNetworking;
 import net.orifu.skin_overrides.util.ProfileHelper;
+import net.orifu.skin_overrides.util.TextureHelper;
 import org.jetbrains.annotations.Nullable;
 
 //? if >=1.20.2 {
@@ -57,6 +59,26 @@ public record Skin(
         );
         *///?}
     }
+
+    public static CompletableFuture<Optional<DownloadResult>> download(GameProfile profile, boolean skin) {
+        return CompletableFuture.supplyAsync(() -> {
+            var sessionService = Minecraft.getInstance().getMinecraftSessionService();
+            var property = sessionService.getPackedTextures(profile);
+
+            if (property == null) return Optional.empty();
+
+            var textures = sessionService.unpackTextures(property);
+            var mcTexture = skin ? textures.skin() : textures.cape();
+
+            if (mcTexture == null) return Optional.empty();
+
+            var image = TextureHelper.skin().url(mcTexture.getUrl()).image();
+            var model = Model.parse(mcTexture.getMetadata("model"));
+            return image.map(img -> new DownloadResult(img, model));
+        });
+    }
+
+    public record DownloadResult(NativeImage image, Model model) {}
 
     public static CompletableFuture<Skin> fetchSkin(GameProfile profile) {
         var manager = Minecraft.getInstance().getSkinManager();

@@ -4,6 +4,7 @@ import com.google.common.base.Suppliers;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
+import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Skin;
@@ -67,11 +68,11 @@ public class SkinLibrary extends AbstractLibrary {
     }
 
     public Optional<SkinEntry> create(String name, Path path, Skin.Model model) {
-        return this.createInternal(name, model, null, path, null);
+        return this.createInternal(name, model, null, path, null, null);
     }
 
     public Optional<SkinEntry> create(String name, ResourceLocation texture, Skin.Model model) {
-        return this.createInternal(name, model, texture, null, null);
+        return this.createInternal(name, model, texture, null, null, null);
     }
 
     public Optional<SkinEntry> createSigned(
@@ -79,12 +80,20 @@ public class SkinLibrary extends AbstractLibrary {
             GameProfile profile) {
         var property = profile.getProperties().get("textures").stream().findAny();
         return property.flatMap(Skin.Signature::fromProperty).flatMap(sig ->
-                this.createInternal(name, model, texture, null, sig));
+                this.createInternal(name, model, texture, null, null, sig));
+    }
+
+    public Optional<SkinEntry> createSigned(
+            String name, NativeImage image, Skin.Model model,
+            GameProfile profile) {
+        var property = profile.getProperties().get("textures").stream().findAny();
+        return property.flatMap(Skin.Signature::fromProperty).flatMap(sig ->
+                this.createInternal(name, model, null, null, image, sig));
     }
 
     private Optional<SkinEntry> createInternal(
             String name, Skin.Model model,
-            ResourceLocation texture, Path path,
+            ResourceLocation texture, Path path, NativeImage image,
             Skin.Signature signature) {
         try {
             String id = Util.randomId();
@@ -92,8 +101,10 @@ public class SkinLibrary extends AbstractLibrary {
 
             if (path != null) {
                 Files.copy(path, file.toPath());
-            } else {
+            } else if (texture != null) {
                 Util.saveTexture(texture, 64, 64, file.toPath());
+            } else {
+                Util.saveImage(image, file.toPath());
             }
 
             var entry = new SkinEntry(name, id, model, file, texture, signature);

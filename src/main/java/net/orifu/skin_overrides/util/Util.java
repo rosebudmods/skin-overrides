@@ -86,14 +86,18 @@ public class Util {
     public static void saveTexture(ResourceLocation texture, int w, int h, Path path) {
         var future = new CompletableFuture<Path>();
         saveTexture(texture, w, h).thenAccept(img -> {
-            try {
-                img.writeToFile(path);
-                img.close();
-                future.complete(path);
-            } catch (IOException e) {
-                future.completeExceptionally(e);
-            }
+            saveImage(img, path);
+            future.complete(path);
         });
+    }
+
+    public static void saveImage(NativeImage img, Path path) {
+        try {
+            img.writeToFile(path);
+            img.close();
+        } catch (IOException e) {
+            Mod.LOGGER.error("failed to save image to path {}", path, e);
+        }
     }
 
     public static CompletableFuture<NativeImage> saveTexture(ResourceLocation texture, int w, int h) {

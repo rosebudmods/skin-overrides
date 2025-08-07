@@ -2,6 +2,7 @@ package net.orifu.skin_overrides.library;
 
 import com.google.common.base.Suppliers;
 import com.google.gson.JsonObject;
+import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.SkinNetworking;
@@ -43,7 +44,7 @@ public class CapeLibrary extends AbstractLibrary {
                 var maybePath = texture.path();
 
                 if (maybeLocation.flatMap(location -> maybePath.map(path ->
-                        this.createInternal(cape.alias(), location, path, cape.id()))).isEmpty()) {
+                        this.createInternal(cape.alias(), location, path, null, cape.id()))).isEmpty()) {
                     Mod.LOGGER.error("error downloading cape");
                 }
             }
@@ -51,14 +52,18 @@ public class CapeLibrary extends AbstractLibrary {
     }
 
     public Optional<CapeEntry> create(String name, Path path) {
-        return this.createInternal(name, null, path, null);
+        return this.createInternal(name, null, path, null, null);
     }
 
     public Optional<CapeEntry> create(String name, ResourceLocation texture) {
-        return this.createInternal(name, texture, null, null);
+        return this.createInternal(name, texture, null, null, null);
     }
 
-    private Optional<CapeEntry> createInternal(String name, ResourceLocation texture, Path path, @Nullable String id) {
+    public Optional<CapeEntry> create(String name, NativeImage image) {
+        return this.createInternal(name, null, null, image, null);
+    }
+
+    private Optional<CapeEntry> createInternal(String name, ResourceLocation texture, Path path, NativeImage image, @Nullable String id) {
         if (id == null)
             id = Util.randomId();
 
@@ -67,8 +72,10 @@ public class CapeLibrary extends AbstractLibrary {
 
             if (path != null) {
                 Files.copy(path, file.toPath());
-            } else {
+            } else if (texture != null) {
                 Util.saveTexture(texture, 64, 32, file.toPath());
+            } else {
+                Util.saveImage(image, file.toPath());
             }
 
             var entry = new CapeEntry(name, id, file, texture);

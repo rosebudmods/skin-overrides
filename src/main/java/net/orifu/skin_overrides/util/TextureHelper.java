@@ -182,8 +182,6 @@ public class TextureHelper {
         }
 
         public Optional<NativeImage> image() {
-            RenderSystem.assertOnRenderThread();
-
             // if there is a URL, download the image at this URL.
             // this uses SkinTextureDownloader.downloadSkin, which will also use the file at the
             // path if it exists.
@@ -193,6 +191,8 @@ public class TextureHelper {
 
             // this loads the image from a path.
             if (builder.path != null) {
+                RenderSystem.assertOnRenderThread();
+
                 try {
                     if (builder.path.toFile().isFile()) {
                         var stream = Files.newInputStream(builder.path);

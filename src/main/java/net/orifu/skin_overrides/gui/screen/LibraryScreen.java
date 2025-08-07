@@ -11,7 +11,6 @@ import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.orifu.skin_overrides.Library.LibraryEntry;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.OverrideManager;
@@ -34,6 +33,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -74,7 +74,7 @@ public class LibraryScreen extends Screen {
     protected boolean showElytra = false;
 
     @Nullable
-    private CompletableFuture<Skin> adding;
+    private CompletableFuture<Optional<Skin.DownloadResult>> adding;
     @Nullable
     private GameProfile addingProfile;
 
@@ -285,14 +285,15 @@ public class LibraryScreen extends Screen {
 
         // the skin won't be properly loaded for a few frames
         if (this.adding != null && this.adding.isDone()) {
-            var skin = this.adding.getNow(null);
+            var maybeResult = this.adding.getNow(null);
             String name = this.addingProfile.getName();
+
             if (this.ov.skin) {
-                ((SkinLibrary) this.ov.library()).createSigned(name, skin.texture(), skin.model(), this.addingProfile);
+                var result = maybeResult.orElseThrow();
+                ((SkinLibrary) this.ov.library()).createSigned(name, result.image(), result.model(), this.addingProfile);
             } else {
-                ResourceLocation cape = skin.capeTexture();
-                if (cape != null) {
-                    ((CapeLibrary) this.ov.library()).create(name, cape);
+                if (maybeResult.isPresent()) {
+                    ((CapeLibrary) this.ov.library()).create(name, maybeResult.get().image());
                 } else {
                     Toast.show(Component.translatable("skin_overrides.no_cape.title"),
                             Component.translatable("skin_overrides.no_cape.description", name));
@@ -391,9 +392,7 @@ public class LibraryScreen extends Screen {
             } else {
                 // i tried getting the skin asynchronously here... don't do that.
                 // i guess it needs to be on the render thread to be added?
-                this.adding = this.ov.skin
-                        ? Skin.fetchSkin(profile.get())
-                        : Skin.fetchCape(profile.get());
+                this.adding = Skin.download(profile.get(), this.ov.skin);
                 this.addingProfile = profile.get();
             }
         });
