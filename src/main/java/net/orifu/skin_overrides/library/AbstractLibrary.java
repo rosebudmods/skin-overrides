@@ -156,6 +156,12 @@ public abstract class AbstractLibrary implements Library {
             return this.textureLoc != null ? this.textureLoc : this.getTextureFromFile();
         }
 
+        @Override
+        @Nullable
+        public File texturePath() {
+            return this.file;
+        }
+
         protected abstract ResourceLocation getTextureFromFile();
 
         @Override

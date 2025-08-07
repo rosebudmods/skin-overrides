@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Optional;
@@ -62,6 +63,12 @@ public class LibraryOverrider implements OverrideManager.Overrider {
         @Override
         public ResourceLocation texture() {
             return this.entry.getTexture();
+        }
+
+        @Override
+        @Nullable
+        public File texturePath() {
+            return this.entry.texturePath();
         }
 
         @Override

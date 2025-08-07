@@ -8,6 +8,7 @@ import net.orifu.skin_overrides.OverrideManager;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.util.TextureHelper;
 import net.orifu.skin_overrides.util.Util;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Locale;
@@ -31,16 +32,22 @@ public class LocalCapeOverrider implements OverrideManager.Overrider {
         return Optional.empty();
     }
 
-    public record LocalCapeOverride(String playerIdent, String texHash,
+    public record LocalCapeOverride(String playerIdent, File file, String texHash,
                 Supplier<ResourceLocation> memoizedTexture) implements OverrideManager.Override {
         public LocalCapeOverride(String playerIdent, File file, String texHash) {
-            this(playerIdent, texHash, Suppliers.memoize(() ->
+            this(playerIdent, file, texHash, Suppliers.memoize(() ->
                     TextureHelper.cape().location("cape/local/" + texHash).path(file).register().orElseThrow()));
         }
 
         @Override
         public ResourceLocation texture() {
             return this.memoizedTexture.get();
+        }
+
+        @Override
+        @Nullable
+        public File texturePath() {
+            return this.file;
         }
 
         @Override

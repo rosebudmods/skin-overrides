@@ -41,6 +41,12 @@ public class SkinCopyOverrider implements OverrideManager.Overrider {
         }
 
         @Override
+        @Nullable
+        public File texturePath() {
+            return null;
+        }
+
+        @Override
         public Component info() {
             return Component.translatable("skin_overrides.override.copy", this.profile.getName());
         }

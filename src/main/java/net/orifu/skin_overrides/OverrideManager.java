@@ -164,6 +164,9 @@ public class OverrideManager {
         @Nullable
         ResourceLocation texture();
 
+        @Nullable
+        File texturePath();
+
         Component info();
 
         @Nullable

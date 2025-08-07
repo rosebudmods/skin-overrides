@@ -4,11 +4,11 @@ import com.google.common.base.Suppliers;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.OverrideManager;
 import net.orifu.skin_overrides.Skin;
 import net.orifu.skin_overrides.util.TextureHelper;
 import net.orifu.skin_overrides.util.Util;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Locale;
@@ -39,16 +39,22 @@ public class LocalSkinOverrider implements OverrideManager.Overrider {
         return Optional.empty();
     }
 
-    public record LocalSkinOverride(String playerIdent, String texHash, Skin.Model model,
+    public record LocalSkinOverride(String playerIdent, File file, String texHash, Skin.Model model,
                 Supplier<ResourceLocation> memoizedTexture) implements OverrideManager.Override {
         public LocalSkinOverride(String playerIdent, File file, String texHash, Skin.Model model) {
-            this(playerIdent, texHash, model, Suppliers.memoize(() ->
+            this(playerIdent, file, texHash, model, Suppliers.memoize(() ->
                     TextureHelper.skin().location("skin/local/" + texHash).path(file).register().orElseThrow()));
         }
 
         @Override
         public ResourceLocation texture() {
             return this.memoizedTexture.get();
+        }
+
+        @Override
+        @Nullable
+        public File texturePath() {
+            return this.file;
         }
 
         @Override
