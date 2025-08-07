@@ -1,6 +1,7 @@
 package net.orifu.skin_overrides.gui.screen;
 
 import com.mojang.authlib.GameProfile;
+import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.layouts.Layout;
@@ -11,6 +12,7 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.orifu.skin_overrides.Mod;
 import net.orifu.skin_overrides.Skin;
+import net.orifu.skin_overrides.SkinNetworking;
 import net.orifu.skin_overrides.networking.ModNetworking;
 import net.orifu.skin_overrides.override.SkinChangeOverride;
 import net.orifu.skin_overrides.util.ProfileHelper;
@@ -18,7 +20,10 @@ import net.orifu.skin_overrides.util.Toast;
 import net.orifu.skin_overrides.util.Util;
 import net.orifu.xplat.gui.components.LinearLayout;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public class SkinChangeInfoScreen extends WarningScreen {
     private static final Component HEADER = Component.translatable("skin_overrides.change_skin.title");
@@ -77,11 +82,35 @@ public class SkinChangeInfoScreen extends WarningScreen {
         this.minecraft.setScreen(this.parent);
 
         var userProfile = ProfileHelper.user();
-        var skin = Mod.override(userProfile);
-        skin.setUserSkin().thenAccept(newSkin -> this.onSkinChanged(newSkin, userProfile, skin));
+        var override = Mod.SKINS.get(userProfile);
+
+        if (override.isEmpty()) {
+            Mod.LOGGER.warn("user tried to change skin, but has no override");
+            return;
+        }
+
+        var texturePath = override.get().texturePath();
+        var skinModel = override.get().model();
+
+        if (texturePath == null || skinModel == null) {
+            Mod.LOGGER.warn("user tried to change skin, but current override has no skin texture path/model");
+            return;
+        }
+
+        NativeImage image;
+        try {
+            image = NativeImage.read(new FileInputStream(texturePath));
+        } catch (IOException e) {
+            Mod.LOGGER.error("failed to read skin texture", e);
+            return;
+        }
+
+        CompletableFuture.supplyAsync(() -> SkinNetworking.setUserSkin(image, skinModel))
+                .thenAccept(newSkin ->
+                    Util.runOnRenderThread(() -> this.onSkinChanged(newSkin, userProfile, skinModel)));
     }
 
-    protected void onSkinChanged(Optional<String> newSkin, GameProfile userProfile, Skin skin) {
+    protected void onSkinChanged(Optional<String> newSkin, GameProfile userProfile, Skin.Model model) {
         if (newSkin.isPresent()) {
             Mod.LOGGER.debug("player has changed skin. new url: {}", newSkin.get());
 
@@ -90,7 +119,7 @@ public class SkinChangeInfoScreen extends WarningScreen {
             Util.runOnRenderThread(this.parent::reload);
 
             // add new "override" for showing updated skin until restarting
-            SkinChangeOverride.set(newSkin.get(), skin.model());
+            SkinChangeOverride.set(newSkin.get(), model);
 
             var updatedProfile = ProfileHelper.uuidToProfileExpectingSkinUrl(userProfile.getId(), newSkin.get());
             updatedProfile.thenAccept(profile -> {
