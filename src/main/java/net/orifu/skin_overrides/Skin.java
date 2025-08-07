@@ -14,8 +14,11 @@ import org.jetbrains.annotations.Nullable;
 //? if >=1.20.2 {
 import net.minecraft.client.resources.PlayerSkin;
 //?} else {
+/*import net.minecraft.client.resources.DefaultPlayerSkin;
+*///?}
+
+//? if <=1.20.2 {
 /*import com.mojang.authlib.minecraft.MinecraftProfileTexture;
-import net.minecraft.client.resources.DefaultPlayerSkin;
 *///?}
 
 import java.util.Locale;
@@ -62,6 +65,7 @@ public record Skin(
 
     public static CompletableFuture<Optional<DownloadResult>> download(GameProfile profile, boolean skin) {
         return CompletableFuture.supplyAsync(() -> {
+            //? if >=1.20.4 {
             var sessionService = Minecraft.getInstance().getMinecraftSessionService();
             var property = sessionService.getPackedTextures(profile);
 
@@ -69,6 +73,10 @@ public record Skin(
 
             var textures = sessionService.unpackTextures(property);
             var mcTexture = skin ? textures.skin() : textures.cape();
+            //?} else {
+            /*var textures = Minecraft.getInstance().getMinecraftSessionService().getTextures(profile, false);
+            var mcTexture = textures.get(MinecraftProfileTexture.Type.SKIN);
+            *///?}
 
             if (mcTexture == null) return Optional.empty();
 
