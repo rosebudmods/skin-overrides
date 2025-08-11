@@ -123,7 +123,7 @@ public class OverridesSelectionList extends ObjectSelectionList<OverrideListEntr
     // fix scrollbar position
     @Override
     protected int scrollBarX() {
-        return this.getRight();
+        return this.getRight() - SCROLLBAR_WIDTH;
     }
 
     //? if >=1.20.4 {
