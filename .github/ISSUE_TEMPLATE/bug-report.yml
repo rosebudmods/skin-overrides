@@ -14,7 +14,8 @@ body:
       label: minecraft version
       description: which version of minecraft are you using?
       options:
-        - 1.21.9 - 1.21.10 (The Copper Age)
+        - 1.21.11 (Mounts of Mayhem)
+        - 1.21.10 (The Copper Age)
         - 1.21.8 (Chase the Skies)
         - 1.21.5 (Spring to Life)
         - 1.21.4 (The Garden Awakens)
