@@ -41,6 +41,7 @@ body:
       label: mod version
       description: which version of skin overrides are you using?
       options:
+        - 2.4.0-beta.4
         - 2.4.0-beta.3
         - 2.4.0-beta.2
         - 2.4.0-beta.1
