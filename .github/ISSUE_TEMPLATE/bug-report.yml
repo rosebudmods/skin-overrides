@@ -14,6 +14,7 @@ body:
       label: minecraft version
       description: which version of minecraft are you using?
       options:
+        - 26.1 (Tiny Takeover)
         - 1.21.11 (Mounts of Mayhem)
         - 1.21.10 (The Copper Age)
         - 1.21.8 (Chase the Skies)
@@ -25,13 +26,6 @@ body:
         - 1.20.4 (Bats and Pots)
         - 1.20.2
         - 1.20.1
-        - 1.19.4
-        - 1.19.3
-        - 1.19.2
-        - 1.18.2
-        - 1.17.1
-        - 1.16.5
-        - 1.15.2
         - another version
     validations:
       required: true
@@ -41,6 +35,7 @@ body:
       label: mod version
       description: which version of skin overrides are you using?
       options:
+        - 2.5.0
         - 2.4.0
         - 2.4.0-rc
         - 2.4.0-beta
